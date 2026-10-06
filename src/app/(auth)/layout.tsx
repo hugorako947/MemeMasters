@@ -1,15 +1,15 @@
 import type { ReactNode } from "react";
-import { Logo } from "@/components/brand/Logo";
+import { RarityShowcase } from "@/components/card/RarityShowcase";
+import { PublicShell } from "@/components/layout/PublicShell";
 
+/** Connexion, inscription… : formulaire à gauche, les 8 raretés à côté. */
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="safe-top mx-auto flex min-h-dvh w-full max-w-md flex-col px-5 pb-10 pt-6">
-      <header>
-        <Logo />
-      </header>
-      <main id="contenu" className="flex flex-1 flex-col justify-center py-8">
-        {children}
-      </main>
-    </div>
+    <PublicShell>
+      <div className="grid gap-10 lg:grid-cols-[minmax(0,28rem)_22rem] lg:justify-between">
+        <div className="w-full max-w-md">{children}</div>
+        <RarityShowcase className="lg:self-start" />
+      </div>
+    </PublicShell>
   );
 }

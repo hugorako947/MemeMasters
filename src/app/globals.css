@@ -178,7 +178,7 @@
 .mm-card__art {
   position: relative;
   margin: 0 2.6cqw;
-  aspect-ratio: 5 / 4;
+  aspect-ratio: 3 / 2;
   overflow: hidden;
   border-radius: 2.6cqw;
   border: 0.6cqw solid var(--color-ink);
@@ -508,5 +508,292 @@
   }
   .mm-card .mm-card__glare {
     display: none;
+  }
+}
+
+/* ==========================================================================
+   Boutons « autocollant »
+   Survol : le bouton se soulève et un reflet le traverse.
+   Appui : il s'enfonce dans son ombre. Désactivé : gris, plat, inerte.
+   ========================================================================== */
+
+.mm-btn {
+  --btn-bg: var(--color-surface);
+  --btn-ink: var(--color-ink);
+  --btn-shadow: 4px;
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  min-height: 3.25rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  overflow: hidden;
+  border: 2.5px solid var(--color-ink);
+  border-radius: var(--radius-sticker);
+  padding: 0 1.4rem;
+  background: var(--btn-bg);
+  color: var(--btn-ink);
+  font-size: 1.0625rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  box-shadow: 0 var(--btn-shadow) 0 0 var(--color-ink);
+  transform: translateY(0);
+  transition:
+    transform 0.14s cubic-bezier(0.3, 1.6, 0.6, 1),
+    box-shadow 0.14s ease,
+    background-color 0.2s;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.mm-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(105deg, transparent 30%, rgb(255 255 255 / 0.55) 46%, transparent 62%) no-repeat;
+  background-size: 250% 100%;
+  background-position: 160% 0;
+  transition: background-position 0.6s ease;
+}
+.mm-btn:hover:not(:disabled) {
+  --btn-shadow: 7px;
+  transform: translateY(-3px) rotate(-0.6deg);
+}
+.mm-btn:hover:not(:disabled)::after {
+  background-position: -60% 0;
+}
+.mm-btn:active:not(:disabled) {
+  --btn-shadow: 0px;
+  transform: translateY(4px);
+  transition-duration: 0.05s;
+}
+.mm-btn--primary {
+  --btn-bg: linear-gradient(180deg, #ff6b9d, var(--color-candy) 55%, #f02a70);
+  background: var(--btn-bg);
+}
+.mm-btn--primary:hover:not(:disabled) {
+  animation: mm-btn-wiggle 0.5s ease 0.15s;
+}
+.mm-btn--secondary:hover:not(:disabled) {
+  --btn-bg: #fff8d6;
+}
+.mm-btn--ghost {
+  border-color: transparent;
+  box-shadow: none;
+  background: transparent;
+  padding-inline: 0.25rem;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 5px;
+}
+.mm-btn--ghost:hover:not(:disabled) {
+  --btn-shadow: 0px;
+  transform: none;
+  text-decoration-color: var(--color-candy);
+}
+.mm-btn:disabled {
+  --btn-bg: #e6e3f0;
+  --btn-shadow: 0px;
+  background: var(--btn-bg);
+  border-color: #b9b4cc;
+  color: #8a85a3;
+  cursor: not-allowed;
+  transform: none;
+}
+.mm-btn:disabled::after {
+  display: none;
+}
+@keyframes mm-btn-wiggle {
+  0%, 100% { rotate: 0deg; }
+  30% { rotate: -1.6deg; }
+  60% { rotate: 1.2deg; }
+}
+
+/* Champs remplis automatiquement par le navigateur : détectés par une animation
+   vide, pour activer le bouton de connexion même avant toute frappe. */
+input:-webkit-autofill {
+  animation-name: mm-autofill;
+  animation-duration: 0.001s;
+}
+@keyframes mm-autofill {
+  from { opacity: 1; }
+  to { opacity: 1; }
+}
+
+/* ==========================================================================
+   Carte cliquable, carte non possédée
+   ========================================================================== */
+
+.mm-card__hit {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  border-radius: 5.5cqw;
+  cursor: zoom-in;
+  background: transparent;
+}
+.mm-card__hit:focus-visible {
+  outline: 4px solid var(--color-link);
+  outline-offset: 4px;
+}
+.mm-card[data-owned="false"] .mm-card__art img {
+  filter: grayscale(1) blur(3px);
+  transform: scale(1.06);
+}
+.mm-card[data-owned="false"] .mm-card__frame {
+  filter: grayscale(1);
+  --glow: 0 0 0 0 transparent;
+}
+.mm-card[data-owned="false"] .mm-card__fx,
+.mm-card[data-owned="false"] .mm-card__glare {
+  display: none;
+}
+
+/* ==========================================================================
+   Fenêtre de détail d'une carte : l'arrière-plan se floute.
+   ========================================================================== */
+
+html:has(dialog.mm-detail[open]) {
+  overflow: hidden;
+}
+/* Flou de l'arrière-plan : appliqué au site lui-même (fiable partout), en plus
+   de backdrop-filter quand le navigateur le gère. */
+#mm-app {
+  transition: filter 0.3s ease, scale 0.3s ease;
+}
+body:has(> dialog.mm-detail[open]) #mm-app {
+  filter: blur(10px) saturate(1.15);
+  scale: 0.985;
+}
+.mm-detail {
+  width: min(100% - 1.5rem, 56rem);
+  max-height: min(100dvh - 1.5rem, 54rem);
+  margin: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-ink);
+  overflow: visible;
+}
+.mm-detail::backdrop {
+  background: rgb(26 18 56 / 0.42);
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+}
+.mm-detail[open] {
+  animation: mm-detail-in 0.32s cubic-bezier(0.2, 1.3, 0.4, 1);
+}
+.mm-detail[open]::backdrop {
+  animation: mm-fade-in 0.25s ease;
+}
+@keyframes mm-detail-in {
+  from { opacity: 0; transform: translateY(24px) scale(0.94); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes mm-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.mm-stat-bar {
+  height: 0.6rem;
+  border-radius: 99px;
+  background: var(--color-line);
+  overflow: hidden;
+}
+.mm-stat-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--bar, var(--color-candy));
+}
+
+/* ==========================================================================
+   Illustrations de la page d'accueil
+   ========================================================================== */
+
+/* Sachet de booster : bord supérieur dentelé, reflet métallisé. */
+.mm-pack {
+  position: relative;
+  aspect-ratio: 3 / 4.2;
+  border: 3px solid var(--color-ink);
+  border-radius: 0.6rem 0.6rem 1rem 1rem;
+  background:
+    linear-gradient(115deg, transparent 35%, rgb(255 255 255 / 0.55) 48%, transparent 60%),
+    conic-gradient(from 210deg at 50% 40%, #ff3d7f, #ffd23f, #5fd0ff, #b36bff, #ff3d7f);
+  box-shadow: 0 6px 0 0 var(--color-ink);
+  clip-path: polygon(0 4%, 5% 0, 10% 4%, 15% 0, 20% 4%, 25% 0, 30% 4%, 35% 0, 40% 4%, 45% 0, 50% 4%, 55% 0, 60% 4%, 65% 0, 70% 4%, 75% 0, 80% 4%, 85% 0, 90% 4%, 95% 0, 100% 4%, 100% 100%, 0 100%);
+  container-type: inline-size;
+}
+.mm-pack__tear {
+  position: absolute;
+  inset: 13% 0 auto;
+  border-top: 2.5px dashed rgb(26 18 56 / 0.55);
+}
+.mm-pack__label {
+  position: absolute;
+  inset: 34% 6% auto;
+  text-align: center;
+  font-size: 15cqw;
+  rotate: -6deg;
+}
+.mm-pack__count {
+  position: absolute;
+  inset: auto 0 9%;
+  text-align: center;
+  font-weight: 800;
+  font-size: 9cqw;
+  color: var(--color-ink);
+}
+.mm-float {
+  animation: mm-float 4s ease-in-out infinite;
+}
+@keyframes mm-float {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -8px; }
+}
+
+/* Pages légales : texte long lisible. */
+.mm-prose h2 {
+  margin-top: 2rem;
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+.mm-prose p,
+.mm-prose li {
+  margin-top: 0.75rem;
+  max-width: 70ch;
+  color: var(--color-ink);
+}
+.mm-prose ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+}
+.mm-prose a {
+  color: var(--color-link);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mm-btn,
+  .mm-btn::after {
+    transition: none;
+  }
+  .mm-btn:hover:not(:disabled),
+  .mm-btn:active:not(:disabled) {
+    transform: none;
+    animation: none;
+  }
+  .mm-detail[open],
+  .mm-detail[open]::backdrop,
+  .mm-float {
+    animation: none;
+  }
+  #mm-app {
+    transition: none;
+  }
+  body:has(> dialog.mm-detail[open]) #mm-app {
+    scale: none;
   }
 }

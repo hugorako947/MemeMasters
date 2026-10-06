@@ -3,6 +3,9 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { publicEnv } from "@/lib/env.public";
+import { createPlayer, isUsernameTaken } from "@/lib/server/players";
+import { isValidTimeZone } from "@/lib/time/game-day";
+import { usernameProblem } from "@/lib/validation/username";
 import { clientIp, consumeRateLimit, RATE_LIMITS, type RateLimitRule } from "@/lib/server/rate-limit";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import {
@@ -62,23 +65,76 @@ export async function signInAction(_prev: AuthFormState, formData: FormData): Pr
   redirect(safeNextPath(formData.get("suivant")));
 }
 
-export async function signUpAction(_prev: AuthFormState, formData: FormData): Promise<AuthFormState> {
-  const parsed = signUpSchema.safeParse({ email: formData.get("email"), password: formData.get("password") });
-  if (!parsed.success) {
-    const onPassword = parsed.error.issues.some((i) => i.path[0] === "password");
-    return { status: "error", code: onPassword ? "weak_password" : "invalid_input" };
+/** Code d'erreur du premier champ invalide de l'inscription. */
+function signUpErrorCode(path: PropertyKey | undefined, username: string): string {
+  switch (path) {
+    case "username": {
+      const problem = usernameProblem(username);
+      return problem ? `username_${problem}` : "invalid_input";
+    }
+    case "email":
+      return "invalid_email";
+    case "password":
+      return "weak_password";
+    case "confirm":
+      return "password_mismatch";
+    case "adult":
+      return "adult_required";
+    case "terms":
+      return "terms_required";
+    default:
+      return "invalid_input";
   }
+}
+
+/**
+ * Inscription complète : pseudo, e-mail, mot de passe, majorité attestée et
+ * conditions acceptées. Le profil est créé tout de suite, avec les
+ * consentements horodatés ; le joueur n'a plus qu'à confirmer son e-mail.
+ */
+export async function signUpAction(_prev: AuthFormState, formData: FormData): Promise<AuthFormState> {
+  const username = String(formData.get("username") ?? "").trim();
+  const parsed = signUpSchema.safeParse({
+    username,
+    email: formData.get("email"),
+    password: formData.get("password"),
+    confirm: formData.get("confirm"),
+    adult: formData.get("adult") ?? undefined,
+    terms: formData.get("terms") ?? undefined,
+    timezone: formData.get("timezone") ?? "",
+  });
+  if (!parsed.success) return { status: "error", code: signUpErrorCode(parsed.error.issues[0]?.path[0], username) };
   if (!(await allowed(RATE_LIMITS.signUp))) return { status: "error", code: "rate_limited" };
+
+  const { email, password, timezone: rawTimezone } = parsed.data;
+  const timezone = isValidTimeZone(rawTimezone) ? rawTimezone : "Europe/Paris";
+  if (await isUsernameTaken(parsed.data.username)) return { status: "error", code: "username_taken" };
 
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.auth.signUp({
-    ...parsed.data,
-    options: { emailRedirectTo: `${publicEnv.siteUrl}/auth/confirm?suivant=/bienvenue` },
+    email,
+    password,
+    options: {
+      emailRedirectTo: `${publicEnv.siteUrl}/auth/confirm?suivant=/`,
+      data: { username: parsed.data.username },
+    },
   });
   if (error) return { status: "error", code: authErrorCode(error) };
-  // Confirmation d'e-mail désactivée (rare) : la session existe déjà.
-  if (data.session) redirect("/bienvenue");
-  return { status: "check_email", email: parsed.data.email };
+
+  // Si l'adresse est déjà utilisée, Supabase renvoie un utilisateur sans identité
+  // (pour ne pas révéler qui a un compte) : on ne crée alors rien.
+  const user = data.user;
+  if (user && (user.identities?.length ?? 0) > 0) {
+    try {
+      await createPlayer(user.id, parsed.data.username, timezone);
+    } catch (e) {
+      // Pseudo pris entre-temps (cas rare) : le joueur en choisira un autre sur /bienvenue.
+      console.warn("[inscription] profil non créé", e);
+    }
+  }
+  // Confirmation d'e-mail désactivée : la session existe déjà.
+  if (data.session) redirect("/");
+  return { status: "check_email", email };
 }
 
 export async function forgotPasswordAction(_prev: AuthFormState, formData: FormData): Promise<AuthFormState> {

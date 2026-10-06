@@ -39,7 +39,8 @@
     "power": "{power} de puissance",
     "energyCost": "{count, plural, one {# énergie} other {# énergies}}",
     "ariaLabel": "{name}, carte {rarity}, vibe {vibe}, {hp} PV",
-    "tiltHint": "Bouge le doigt ou la souris sur la carte pour la faire briller."
+    "tiltHint": "Bouge le doigt ou la souris sur la carte pour la faire briller.",
+    "open": "Voir la fiche de {name}"
   },
   "effect": {
     "none": "Aucun effet",
@@ -58,10 +59,9 @@
   },
   "home": {
     "guestTitle": "Les memes ont enfin leurs cartes.",
-    "guestLead": "Ouvre des boosters, complète ta collection et affronte des joueurs du monde entier. Gratuit, chaque jour.",
-    "createAccount": "Créer mon compte",
-    "signIn": "J'ai déjà un compte",
-    "seeRarities": "Voir les 8 raretés",
+    "guestLead": "Ouvre des boosters, complète ta collection et affronte des joueurs du monde entier.",
+    "createAccount": "Inscription",
+    "signIn": "Connexion",
     "playerTitle": "Salut {username} !",
     "playerLead": "Ton compte est prêt. Les boosters, la collection et les combats arrivent très bientôt.",
     "statLevel": "Niveau",
@@ -73,15 +73,14 @@
   "auth": {
     "signInTitle": "Connexion",
     "signInLead": "Content de te revoir.",
-    "signUpTitle": "Créer un compte",
-    "signUpLead": "Gratuit. Aucun achat n'est nécessaire pour jouer.",
+    "signUpTitle": "Inscription",
+    "signUpLead": "Crée ton compte en une minute. Jouer est gratuit.",
     "email": "Adresse e-mail",
     "password": "Mot de passe",
-    "passwordHint": "8 caractères minimum, avec au moins une lettre et un chiffre.",
     "newPassword": "Nouveau mot de passe",
     "confirmPassword": "Confirme le mot de passe",
-    "submitSignIn": "Me connecter",
-    "submitSignUp": "Créer mon compte",
+    "submitSignIn": "Connexion",
+    "submitSignUp": "Inscription",
     "pending": "Un instant…",
     "google": "Continuer avec Google",
     "or": "ou",
@@ -97,23 +96,31 @@
     "resetDone": "Mot de passe modifié.",
     "continue": "Continuer",
     "checkEmailTitle": "Vérifie tes e-mails",
-    "checkEmailLead": "On a envoyé un lien de confirmation à {email}. Clique dessus pour activer ton compte, puis reviens ici.",
+    "checkEmailLead": "On a envoyé un lien de confirmation à {email}. Clique dessus pour activer ton compte, puis connecte-toi.",
     "backToSignIn": "Retour à la connexion",
     "signOut": "Me déconnecter",
     "confirmFailed": "Ce lien n'est plus valable. Connecte-toi ou demande un nouveau lien.",
-    "oauthFailed": "La connexion avec Google n'a pas abouti. Réessaie."
-  },
-  "onboarding": {
-    "title": "Choisis ton pseudo",
-    "lead": "C'est le nom que verront les autres joueurs. Tu ne pourras plus le changer seul.",
+    "oauthFailed": "La connexion avec Google n'a pas abouti. Réessaie.",
+    "signUpLink": "Inscription",
+    "signInLink": "Connexion",
     "username": "Pseudo",
     "usernameHint": "3 à 20 caractères : lettres sans accent, chiffres et _",
     "checking": "Vérification…",
     "available": "Disponible",
-    "taken": "Déjà pris",
+    "passwordsMatch": "Les mots de passe correspondent",
+    "requiredNote": "Champs obligatoires",
+    "adultLabel": "J'atteste avoir au moins 18 ans. Certains memes peuvent heurter, et le jeu propose des achats.",
+    "termsLabel": "J'accepte les <terms>conditions d'utilisation</terms>, les <community>règles de la communauté</community>, les <legal>mentions légales</legal> et la <privacy>politique de confidentialité</privacy>."
+  },
+  "onboarding": {
+    "title": "Encore une étape",
+    "lead": "Choisis le pseudo que verront les autres joueurs, puis valide les conditions.",
     "timezone": "Ton fuseau horaire : {timezone}",
     "timezoneHint": "Tes boosters gratuits reviennent à minuit, à cette heure-là. Modifiable dans les réglages.",
-    "submit": "C'est parti"
+    "submit": "C'est parti",
+    "consentTitle": "Conditions mises à jour",
+    "consentLead": "Nos conditions ont changé. Pour continuer à jouer, confirme ta majorité et accepte la nouvelle version.",
+    "consentSubmit": "Continuer"
   },
   "profile": {
     "title": "Profil de {username}",
@@ -155,7 +162,7 @@
     "invalid_credentials": "Adresse ou mot de passe incorrect.",
     "email_not_confirmed": "Confirme d'abord ton adresse e-mail grâce au lien reçu.",
     "email_taken": "Un compte existe déjà avec cette adresse.",
-    "weak_password": "Mot de passe trop faible : 8 caractères minimum, avec une lettre et un chiffre.",
+    "weak_password": "Le mot de passe ne respecte pas toutes les règles.",
     "password_mismatch": "Les deux mots de passe sont différents.",
     "rate_limited": "Trop de tentatives. Attends un peu avant de réessayer.",
     "unauthenticated": "Ta session a expiré. Reconnecte-toi.",
@@ -173,6 +180,107 @@
     "network": "Connexion impossible. Vérifie ton réseau.",
     "notFoundTitle": "Page introuvable",
     "notFoundLead": "Cette page n'existe pas ou n'existe plus.",
-    "backHome": "Retour à l'accueil"
+    "backHome": "Retour à l'accueil",
+    "invalid_email": "Cette adresse e-mail n'est pas valide.",
+    "adult_required": "Le jeu est réservé aux personnes de 18 ans et plus.",
+    "terms_required": "Tu dois accepter les conditions pour créer ton compte.",
+    "consent_required": "Accepte d'abord les conditions mises à jour."
+  },
+  "statName": {
+    "hp": "Points de vie",
+    "atk": "Attaque",
+    "def": "Défense",
+    "spd": "Vitesse"
+  },
+  "statLower": {
+    "atk": "attaque",
+    "def": "défense",
+    "spd": "vitesse"
+  },
+  "detail": {
+    "close": "Fermer",
+    "stats": "Statistiques",
+    "moves": "Attaques et défense",
+    "attack": "Attaque",
+    "special": "Attaque spéciale",
+    "defense": "Défense",
+    "power": "Puissance {power}",
+    "vibeTitle": "Vibe",
+    "strongAgainst": "Forte contre {vibe}",
+    "weakAgainst": "Faible contre {vibe}",
+    "dropRate": "{rate} % de chance par emplacement de booster",
+    "notOwned": "Cette carte n'est pas encore dans ta collection. Ouvre des boosters pour la trouver !"
+  },
+  "showcase": {
+    "title": "Les 8 raretés",
+    "lead": "De la plus rare à la plus courante. Touche une carte pour découvrir sa fiche.",
+    "rate": "{rate} % par emplacement"
+  },
+  "features": {
+    "title": "Ce qui t'attend",
+    "boosters": {
+      "title": "Ouvre des boosters",
+      "text": "{free} boosters gratuits chaque jour, et d'autres à gagner avec les défis. Déchire le sachet, retourne les {size} cartes une à une… et croise les doigts pour une Godlevel.",
+      "pack": "{size} cartes"
+    },
+    "collection": {
+      "title": "Complète ta collection",
+      "text": "Filtre par rareté ou par vibe, trie, cherche et suis ta progression. Les cartes qui te manquent restent floutées jusqu'à ce que tu les trouves. Le classement compare toutes les cartes du jeu : popularité, attaque, taux de victoire…",
+      "progress": "87 / 240 cartes",
+      "chipRarity": "Rareté",
+      "chipVibe": "Vibe",
+      "chipOwned": "Possédées",
+      "chipSort": "Tri : popularité",
+      "filtersLabel": "Exemples de filtres",
+      "rankingHint": "🏆 Classement : popularité · rareté · PV · attaque · vitesse · taux de victoire"
+    },
+    "battle": {
+      "title": "Affronte le monde",
+      "text": "Compose une équipe de {team} cartes et défie en temps réel des joueurs de ton niveau, partout sur la planète. {seconds} secondes par tour, et chaque victoire fait grimper ton ELO.",
+      "timer": "{seconds} s",
+      "elo": "ELO 1 240"
+    }
+  },
+  "password": {
+    "length": "{min} caractères minimum",
+    "lower": "Une minuscule",
+    "upper": "Une majuscule",
+    "digit": "Un chiffre",
+    "symbol": "Un caractère spécial (! ? # @…)",
+    "ok": "(fait)",
+    "missing": "(manquant)"
+  },
+  "breadcrumb": {
+    "label": "Fil d'Ariane",
+    "home": "Accueil",
+    "connexion": "Connexion",
+    "inscription": "Inscription",
+    "mot-de-passe-oublie": "Mot de passe oublié",
+    "nouveau-mot-de-passe": "Nouveau mot de passe",
+    "bienvenue": "Bienvenue",
+    "profil": "Profil",
+    "parametres": "Réglages",
+    "raretes": "Raretés",
+    "mentions-legales": "Mentions légales",
+    "conditions-utilisation": "Conditions d'utilisation",
+    "confidentialite": "Confidentialité",
+    "regles-communaute": "Règles de la communauté",
+    "hors-ligne": "Hors ligne"
+  },
+  "footer": {
+    "label": "Informations légales",
+    "legal": "Mentions légales",
+    "terms": "Conditions d'utilisation",
+    "privacy": "Confidentialité",
+    "community": "Règles de la communauté",
+    "contact": "Contact",
+    "copyright": "© {years} {name}. Tous droits réservés.",
+    "adults": "Réservé aux personnes de 18 ans et plus. Jouer est gratuit : aucun achat n'est nécessaire.",
+    "independent": "{name} est un jeu indépendant, sans lien avec Instagram, TikTok, X, Reddit ni aucun autre réseau social. Toutes les illustrations sont des créations originales.",
+    "trademarks": "Les marques citées appartiennent à leurs propriétaires respectifs."
+  },
+  "legalPage": {
+    "updated": "Dernière mise à jour : {date}",
+    "draftWarning": "Version de travail : informations à compléter ({fields}) dans src/config/legal.config.ts. Faites relire ces textes par un professionnel avant la mise en ligne."
   }
 }

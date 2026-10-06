@@ -44,7 +44,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <NextIntlClientProvider>
           {/* Respecte prefers-reduced-motion pour toutes les animations Motion. */}
           <MotionConfig reducedMotion="user">
-            <PwaProvider>{children}</PwaProvider>
+            <PwaProvider>
+              {/* Tout le site est dans #mm-app : flouté quand une fiche de carte est ouverte. */}
+              <div id="mm-app">{children}</div>
+            </PwaProvider>
           </MotionConfig>
         </NextIntlClientProvider>
       </body>

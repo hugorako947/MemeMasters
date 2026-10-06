@@ -1,6 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { publicEnv } from "@/lib/env.public";
+import { assertSupabasePublicEnv } from "@/lib/env.public";
 
 /**
  * Rafraîchit la session Supabase à chaque navigation et renvoie l'identifiant
@@ -11,11 +11,10 @@ export async function updateSession(
   requestHeaders: Headers,
 ): Promise<{ response: NextResponse; userId: string | null }> {
   let response = NextResponse.next({ request: { headers: requestHeaders } });
-  if (!publicEnv.supabaseUrl || !publicEnv.supabasePublishableKey) {
-    return { response, userId: null };
-  }
+  // Message explicite si .env.local est mal rempli (nomme la variable fautive).
+  const { url, key } = assertSupabasePublicEnv();
 
-  const supabase = createServerClient(publicEnv.supabaseUrl, publicEnv.supabasePublishableKey, {
+  const supabase = createServerClient(url, key, {
     cookies: {
       getAll() {
         return request.cookies.getAll();

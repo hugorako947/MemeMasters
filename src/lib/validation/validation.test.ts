@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { onboardingSchema, passwordSchema, safeNextPath } from "./auth";
+import { onboardingSchema, passwordIsStrong, passwordSchema, PASSWORD_RULES, safeNextPath, signUpSchema } from "./auth";
 import { usernameProblem } from "./username";
 
 describe("pseudos", () => {
@@ -31,18 +31,66 @@ describe("pseudos", () => {
 });
 
 describe("mots de passe", () => {
-  it("exige 8 caractères, une lettre et un chiffre", () => {
-    expect(passwordSchema.safeParse("abcdefg1").success).toBe(true);
-    expect(passwordSchema.safeParse("abcdefgh").success).toBe(false);
-    expect(passwordSchema.safeParse("12345678").success).toBe(false);
-    expect(passwordSchema.safeParse("ab1").success).toBe(false);
+  it("accepte un mot de passe qui respecte les 5 règles", () => {
+    expect(passwordSchema.safeParse("Meme!Lord42").success).toBe(true);
+  });
+
+  it.each([
+    ["trop court", "Ab1!xyz"],
+    ["sans minuscule", "MEMELORD42!"],
+    ["sans majuscule", "memelord42!"],
+    ["sans chiffre", "MemeLord!!!"],
+    ["sans caractère spécial", "MemeLord4242"],
+  ])("refuse un mot de passe %s", (_, password) => {
+    expect(passwordIsStrong(password)).toBe(false);
+  });
+
+  it("expose une règle par critère, pour la liste affichée en direct", () => {
+    expect(PASSWORD_RULES.map((r) => r.key)).toEqual(["length", "lower", "upper", "digit", "symbol"]);
   });
 });
 
-describe("inscription du profil", () => {
-  it("valide pseudo et fuseau", () => {
-    expect(onboardingSchema.safeParse({ username: "pixel_cat", timezone: "Europe/Paris" }).success).toBe(true);
-    expect(onboardingSchema.safeParse({ username: "pixel_cat", timezone: "Nulle/Part" }).success).toBe(false);
+describe("inscription", () => {
+  const valid = {
+    username: "pixel_cat",
+    email: "Pixel@Exemple.fr",
+    password: "Meme!Lord42",
+    confirm: "Meme!Lord42",
+    adult: "on",
+    terms: "on",
+    timezone: "Europe/Paris",
+  };
+
+  it("accepte un formulaire complet et normalise l'e-mail", () => {
+    const parsed = signUpSchema.safeParse(valid);
+    expect(parsed.success).toBe(true);
+    expect(parsed.data?.email).toBe("pixel@exemple.fr");
+  });
+
+  it("exige que les deux mots de passe soient identiques", () => {
+    const parsed = signUpSchema.safeParse({ ...valid, confirm: "Meme!Lord43" });
+    expect(parsed.error?.issues[0]?.path[0]).toBe("confirm");
+  });
+
+  it("exige l'attestation de majorité", () => {
+    const parsed = signUpSchema.safeParse({ ...valid, adult: undefined });
+    expect(parsed.error?.issues[0]?.path[0]).toBe("adult");
+  });
+
+  it("exige l'acceptation des conditions", () => {
+    const parsed = signUpSchema.safeParse({ ...valid, terms: undefined });
+    expect(parsed.error?.issues[0]?.path[0]).toBe("terms");
+  });
+});
+
+describe("profil créé après une connexion Google", () => {
+  const base = { username: "pixel_cat", timezone: "Europe/Paris", adult: true, terms: true };
+
+  it("valide pseudo, fuseau et attestations", () => {
+    expect(onboardingSchema.safeParse(base).success).toBe(true);
+    expect(onboardingSchema.safeParse({ ...base, timezone: "Nulle/Part" }).success).toBe(false);
+    expect(onboardingSchema.safeParse({ ...base, adult: false }).success).toBe(false);
+    expect(onboardingSchema.safeParse({ ...base, terms: false }).success).toBe(false);
   });
 });
 

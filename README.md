@@ -2,12 +2,13 @@
 
 Jeu web multijoueur de cartes à collectionner sur le thème des memes : boosters, collection, combats et classements. Application installable (PWA) sur mobile et PC.
 
-**État : phase 1 terminée** (fondations). Les boosters, la collection, les combats et la boutique arrivent dans les phases 2 à 5. Ce README sera complété à chaque phase.
+**État : phase 1 terminée** (fondations), avec les retours de la première revue. Les boosters, la collection, les combats et la boutique arrivent dans les phases 2 à 5. Ce README est complété à chaque phase.
 
 ## Ce que contient la phase 1
 
-- Comptes : e-mail + mot de passe (avec confirmation), connexion Google, mot de passe oublié, déconnexion.
-- Écran de bienvenue : choix du pseudo (vérification en direct), fuseau horaire détecté.
+- Comptes réservés aux 18 ans et plus : inscription complète (pseudo, e-mail, mot de passe robuste, attestation de majorité, acceptation des conditions), connexion Google, mot de passe oublié, déconnexion. Les boutons ne s'activent que quand le formulaire est valide.
+- Pages légales (modèles à compléter), pied de page, fil d'Ariane.
+- Accueil : titre, les 8 raretés en vitrine, les fonctionnalités illustrées ; chaque carte s'ouvre en fiche détaillée sur fond flouté.
 - Profil public et réglages (changement de fuseau limité).
 - Base de données complète : schéma de tout le jeu, RLS sur toutes les tables, canaux Realtime privés, vues de classement.
 - Design system : composant Carte avec les 8 raretés, illustrations générées, vitrine sur `/raretes`.
@@ -16,10 +17,29 @@ Jeu web multijoueur de cartes à collectionner sur le thème des memes : booster
 ## Prérequis
 
 - Node.js 20.9 ou plus récent.
-- Docker Desktop (pour faire tourner Supabase en local).
-- Un compte [Supabase](https://supabase.com) et un compte [Vercel](https://vercel.com) pour la mise en ligne.
+- Un compte [Supabase](https://supabase.com) (base de données et comptes) et un compte [Vercel](https://vercel.com) (hébergement du site).
+- Docker Desktop, **seulement** si vous voulez une base Supabase sur votre machine (option B).
 
-## Installation locale
+## Installation, option A (recommandée) : projet Supabase en ligne, sans Docker
+
+1. Créez un projet sur supabase.com (région : Europe).
+2. Envoyez les migrations :
+   ```bash
+   npm install
+   npx supabase login
+   npx supabase link --project-ref <identifiant>   # la partie xxxx de https://xxxx.supabase.co
+   npx supabase db push                           # à refaire à chaque nouvelle migration
+   ```
+3. Copiez `.env.example` en `.env.local` et remplissez :
+   - `NEXT_PUBLIC_SUPABASE_URL` : `https://<identifiant>.supabase.co`, sans guillemets ni espace ;
+   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` : Project Settings → API Keys ;
+   - `DATABASE_URL` : bouton **Connect** → onglet **Direct** → **Transaction pooler** (port 6543), en remplaçant `[YOUR-PASSWORD]` par le mot de passe de la base. Évitez les caractères `@ # / : ? % &` dans ce mot de passe.
+4. Réglez l'authentification dans le tableau de bord (voir « Configurer Supabase » plus bas). Pour tester sans e-mail, désactivez temporairement *Confirm email*.
+5. Lancez `npm run dev` et ouvrez http://localhost:3000.
+
+Si une variable est mal remplie, le site affiche un message qui la nomme.
+
+## Installation, option B : Supabase en local avec Docker
 
 ```bash
 npm install
@@ -67,9 +87,9 @@ En local, les e-mails de confirmation ne partent pas vraiment : ils arrivent dan
    npx supabase link --project-ref <identifiant-du-projet>
    npx supabase db push
    ```
-3. **Authentication → URL Configuration** : *Site URL* = l'URL du site (ex. `https://mememasters.vercel.app`) ; ajoutez dans *Redirect URLs* `https://<votre-domaine>/auth/callback` et `https://<votre-domaine>/auth/confirm`.
-4. **Authentication → Providers → Email** : laissez « Confirm email » activé.
-5. **Authentication → Email Templates** : remplacez les modèles *Confirm signup* et *Reset password* par le contenu de `supabase/templates/confirmation.html` et `supabase/templates/recovery.html` (ils utilisent `/auth/confirm`, indispensable).
+3. **Authentication → URL Configuration** (ajoutez aussi `http://localhost:3000/auth/callback` et `http://localhost:3000/auth/confirm` pour développer) : *Site URL* = l'URL du site (ex. `https://mememasters.vercel.app`) ; ajoutez dans *Redirect URLs* `https://<votre-domaine>/auth/callback` et `https://<votre-domaine>/auth/confirm`.
+4. **Authentication → Providers → Email** : laissez « Confirm email » activé, réglez *Minimum password length* sur **10** et *Password requirements* sur **lettres minuscules, majuscules, chiffres et symboles** (les mêmes règles que le formulaire).
+5. **Authentication → Email Templates** (facultatif mais conseillé) : remplacez *Confirm signup* et *Reset password* par le contenu de `supabase/templates/confirmation.html` et `supabase/templates/recovery.html`, dans l'onglet **Source**. Sans eux, les liens reçus par e-mail ne marchent que dans le navigateur où le compte a été créé. Si l'éditeur est bloqué, configurez d'abord un SMTP (étape 7).
 6. **Authentication → Providers → Google** : activez-le avec l'identifiant et le secret créés dans Google Cloud Console (type « Application Web », URI de redirection autorisée : `https://<projet>.supabase.co/auth/v1/callback`).
 7. Pour un usage réel, configurez un serveur SMTP (Authentication → SMTP) : l'envoi intégré de Supabase est très limité.
 
@@ -80,6 +100,12 @@ En local, les e-mails de confirmation ne partent pas vraiment : ils arrivent dan
 3. Déployez. Chaque nouveau déploiement est détecté par le service worker (l'invite de mise à jour arrive en phase 6).
 
 Attention : le plan gratuit de Vercel interdit l'usage commercial. Il faudra passer au plan Pro avant d'activer les paiements (phase 5).
+
+## Avant la mise en ligne : textes juridiques
+
+Complétez **`src/config/legal.config.ts`** (éditeur, adresse, e-mail de contact, directeur de la publication, adresses des hébergeurs). Tant qu'une information manque, les pages légales l'affichent « À compléter » avec un bandeau d'avertissement. Les textes de `src/content/legal/fr.tsx` sont des modèles : faites-les relire par un professionnel du droit.
+
+Quand vous modifiez les conditions, changez `TERMS_VERSION` : chaque joueur devra les accepter de nouveau à sa prochaine visite.
 
 ## Personnaliser le jeu
 

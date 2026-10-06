@@ -7,7 +7,7 @@ Chaque entrée : la décision, puis la raison.
 
 - **Achats réservés aux 18 ans et plus.** Date de naissance demandée à la première visite de la boutique, puis non modifiable par le joueur. Choix du propriétaire.
 - **Lancement mondial.** Prix en euros, affichage en devise locale par Stripe, boutique désactivée en Belgique par défaut (`PAID_BOOSTERS_BLOCKED_COUNTRIES`). Choix du propriétaire.
-- **Aucun âge minimum pour créer un compte.** Clé `MIN_ACCOUNT_AGE` (null) prévue pour en ajouter un sans refonte. À faire valider juridiquement (COPPA, RGPD art. 8). Choix du propriétaire.
+- ~~Aucun âge minimum pour créer un compte.~~ Remplacé en revue de phase 1 : voir ci-dessous.
 
 ## Phase 1
 
@@ -32,3 +32,18 @@ Chaque entrée : la décision, puis la raison.
 - **Limitation de débit qui échoue « fermé ».** Si la base est indisponible, les tentatives de connexion sont refusées plutôt que laissées sans limite.
 - **Huit cartes de démonstration dans le code** (`sample-cards.ts`) pour l'accueil et `/raretes`. Le jeu de 40 cartes arrivera par le seed SQL en phase 2 ; ces huit cartes y seront reprises.
 - **Script `scripts/check-sql.sh`.** Valide les migrations et lance les tests pgTAP sur un PostgreSQL ordinaire, sans Docker. La voie normale reste `npx supabase db reset && npx supabase test db`.
+
+## Revue de la phase 1
+
+- **Comptes réservés aux 18 ans et plus** (demande du propriétaire), par une case d'attestation à l'inscription. `MIN_ACCOUNT_AGE = 18`. La date de naissance prévue à la boutique (phase 5) devient un second contrôle, à confirmer ou supprimer à ce moment-là.
+- **Inscription en une seule étape.** Pseudo, e-mail, mot de passe, confirmation, majorité, conditions ; le profil est créé dès l'inscription avec les consentements horodatés (`age_confirmed_at`, `terms_accepted_at`, `terms_version`). `/bienvenue` ne sert plus qu'aux comptes Google et aux mises à jour des conditions.
+- **Mot de passe : 10 caractères minimum, minuscule, majuscule, chiffre et caractère spécial.** Règles définies une seule fois (`PASSWORD_RULES`), utilisées par la liste affichée en direct et par le serveur.
+- **Boutons d'envoi désactivés tant que le formulaire est invalide.** Le serveur revalide tout de toute façon. Le remplissage automatique du navigateur est détecté pour ne pas bloquer la connexion.
+- **Vérification de pseudo accessible sans compte**, limitée par adresse IP (les pseudos sont publics).
+- **Bouton Connexion en couleur, Inscription en blanc** sur l'accueil (demande du propriétaire).
+- **Raretés de la plus rare à la plus courante** dans la vitrine latérale : la Godlevel attire l'œil en premier. Carrousel horizontal sur mobile.
+- **Fiche de carte dans un `<dialog>` natif**, rendu dans `<body>` : le reste du site (`#mm-app`) est flouté directement, car `backdrop-filter` seul ne s'affichait pas partout.
+- **Illustration de carte au format 3:2** (au lieu de 5:4) : la face de la carte ne coupait plus la dernière ligne de texte en grand format.
+- **Textes juridiques en modèles**, dans `src/content/legal/fr.tsx`, avec les informations de l'éditeur dans `src/config/legal.config.ts`. Bandeau « à compléter » tant qu'il manque une information. Aucun cookie autre que la session : pas de bandeau de consentement.
+- **`TERMS_VERSION`** : changer cette date redemande l'acceptation des conditions à tous les joueurs.
+- **Fil d'Ariane** calculé depuis l'adresse ; « Profil » n'est pas cliquable car il n'a pas de page propre.

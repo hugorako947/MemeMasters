@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { Logo } from "@/components/brand/Logo";
-import { MemeCard } from "@/components/card/MemeCard";
+import { InteractiveCard } from "@/components/card/InteractiveCard";
 import { SAMPLE_CARDS } from "@/components/card/sample-cards";
+import { PublicShell } from "@/components/layout/PublicShell";
 import { GAME_CONFIG } from "@/config/game.config";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -16,27 +16,22 @@ export default async function RaritiesPage() {
   const tr = await getTranslations("rarity");
   const fmt = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 });
   return (
-    <div className="safe-top mx-auto max-w-6xl px-5 pb-16 pt-6 md:px-8">
-      <header>
-        <Logo />
-      </header>
-      <main id="contenu" className="pt-8">
-        <h1 className="font-display text-5xl leading-none md:text-6xl">{t("title")}</h1>
-        <p className="mt-3 max-w-prose text-ink-soft">{t("lead")}</p>
-        <ol className="mt-10 grid grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
-          {SAMPLE_CARDS.map((card) => (
-            <li key={card.id} className="mx-auto w-full max-w-[18.5rem]">
-              <MemeCard card={card} />
-              <p className="mt-4 flex items-baseline justify-between gap-2">
-                <span className="font-bold">{tr(card.rarity)}</span>
-                <span className="text-sm text-ink-soft">
-                  {t("dropRate", { rate: fmt.format(GAME_CONFIG.DROP_RATES[card.rarity]) })}
-                </span>
-              </p>
-            </li>
-          ))}
-        </ol>
-      </main>
-    </div>
+    <PublicShell>
+      <h1 className="font-display text-5xl leading-none md:text-6xl">{t("title")}</h1>
+      <p className="mt-3 max-w-prose text-ink-soft">{t("lead")}</p>
+      <ol className="mt-10 grid grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+        {SAMPLE_CARDS.map((card) => (
+          <li key={card.id} className="mx-auto w-full max-w-[18.5rem]">
+            <InteractiveCard card={card} />
+            <p className="mt-4 flex items-baseline justify-between gap-2">
+              <span className="font-bold">{tr(card.rarity)}</span>
+              <span className="text-sm text-ink-soft">
+                {t("dropRate", { rate: fmt.format(GAME_CONFIG.DROP_RATES[card.rarity]) })}
+              </span>
+            </p>
+          </li>
+        ))}
+      </ol>
+    </PublicShell>
   );
 }

@@ -92,7 +92,7 @@ const gameConfigSchema = z
         .min(1),
     }),
 
-    /** Âge minimum pour créer un compte. null = aucun minimum (décision de la phase 0). */
+    /** Âge minimum pour créer un compte (attestation par case à cocher). null = aucun minimum. */
     MIN_ACCOUNT_AGE: z.number().int().min(1).nullable(),
 
     /** Popularité, XP et niveaux (phases 2 à 4). */
@@ -128,7 +128,7 @@ export type GameConfig = z.infer<typeof gameConfigSchema>;
 export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
   GAME_NAME: "MemeMasters",
   GAME_SHORT_NAME: "MemeMasters",
-  GAME_TAGLINE: "Ouvre des boosters, collectionne les memes, affronte le monde.",
+  GAME_TAGLINE: "Ouvre des boosters, complète ta collection et affronte des joueurs du monde entier.",
 
   DROP_RATES: {
     commune: 55,
@@ -202,7 +202,7 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
     ],
   },
 
-  MIN_ACCOUNT_AGE: null,
+  MIN_ACCOUNT_AGE: 18,
 
   XP: {
     WIN: 60,

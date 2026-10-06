@@ -40,11 +40,14 @@ export async function requireUser(): Promise<AuthUser> {
   return user;
 }
 
-/** Pages : exige une session ET un profil créé, sinon /bienvenue. */
+/**
+ * Pages : exige une session, un profil créé et des conditions acceptées
+ * dans leur version actuelle ; sinon /bienvenue.
+ */
 export async function requirePlayer(): Promise<{ user: AuthUser; player: Player }> {
   const user = await requireUser();
   const player = await getPlayer(user.id);
-  if (!player) redirect("/bienvenue");
+  if (!player || !player.consentUpToDate) redirect("/bienvenue");
   return { user, player };
 }
 
@@ -55,10 +58,11 @@ export async function apiUser(): Promise<AuthUser> {
   return user;
 }
 
-/** Routes API : exige un profil créé, sinon 403. */
+/** Routes API : exige un profil créé et des conditions à jour, sinon 403. */
 export async function apiPlayer(): Promise<{ user: AuthUser; player: Player }> {
   const user = await apiUser();
   const player = await getPlayer(user.id);
   if (!player) throw new ApiError(403, "profile_required");
+  if (!player.consentUpToDate) throw new ApiError(403, "consent_required");
   return { user, player };
 }

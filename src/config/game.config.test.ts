@@ -34,9 +34,9 @@ describe("configuration du jeu", () => {
     }
   });
 
-  it("réserve les achats aux 18 ans et plus, sans âge minimum de compte", () => {
+  it("réserve les comptes et les achats aux 18 ans et plus", () => {
     expect(GAME_CONFIG.PURCHASES.MIN_AGE).toBe(18);
-    expect(GAME_CONFIG.MIN_ACCOUNT_AGE).toBeNull();
+    expect(GAME_CONFIG.MIN_ACCOUNT_AGE).toBe(18);
   });
 });
 

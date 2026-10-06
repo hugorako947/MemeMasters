@@ -14,6 +14,10 @@ export interface MemeCardProps {
   size?: MemeCardSize;
   /** Désactive l'inclinaison et les reflets au pointeur (listes longues, impression). */
   static?: boolean;
+  /** false : carte non possédée, en niveaux de gris et floutée (seul le nom reste lisible). */
+  owned?: boolean;
+  /** Si fourni, la carte devient cliquable et ouvre sa fiche détaillée. */
+  onOpen?: () => void;
   className?: string;
 }
 
@@ -27,7 +31,14 @@ function maxTilt(tier: number): number {
  * visuelle vient de globals.css (attribut data-rarity). Le pointeur pilote
  * des variables CSS directement sur l'élément : aucun re-rendu React.
  */
-export function MemeCard({ card, size = "full", static: isStatic = false, className }: MemeCardProps) {
+export function MemeCard({
+  card,
+  size = "full",
+  static: isStatic = false,
+  owned = true,
+  onOpen,
+  className,
+}: MemeCardProps) {
   const t = useTranslations();
   const ref = useRef<HTMLElement>(null);
   const tier = rarityTier(card.rarity);
@@ -73,6 +84,7 @@ export function MemeCard({ card, size = "full", static: isStatic = false, classN
       className={`mm-card ${className ?? ""}`}
       data-rarity={card.rarity}
       data-size={size}
+      data-owned={owned ? "true" : "false"}
       data-active="false"
       aria-label={t("card.ariaLabel", { name: card.name, rarity: rarityLabel, vibe: vibeLabel, hp: card.hp })}
       onPointerMove={onMove}
@@ -157,6 +169,15 @@ export function MemeCard({ card, size = "full", static: isStatic = false, classN
           <div className="mm-card__glare" aria-hidden="true" />
         </div>
       </div>
+      {onOpen ? (
+        <button
+          type="button"
+          className="mm-card__hit"
+          aria-haspopup="dialog"
+          aria-label={t("card.open", { name: card.name })}
+          onClick={onOpen}
+        />
+      ) : null}
     </article>
   );
 }

@@ -3,19 +3,9 @@ import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 type Variant = "primary" | "secondary" | "ghost";
 
-const BASE =
-  "inline-flex min-h-12 items-center justify-center gap-2 rounded-[var(--radius-sticker)] px-5 text-base font-bold transition-[transform,box-shadow] duration-100 disabled:cursor-not-allowed disabled:opacity-60";
-
-const VARIANTS: Record<Variant, string> = {
-  primary:
-    "bg-candy text-ink border-2 border-ink shadow-[var(--shadow-sticker)] active:translate-y-[3px] active:shadow-none",
-  secondary:
-    "bg-surface text-ink border-2 border-ink shadow-[var(--shadow-sticker)] active:translate-y-[3px] active:shadow-none",
-  ghost: "text-ink underline-offset-4 hover:underline",
-};
-
+/** Classes des boutons (styles dans globals.css, section « Boutons autocollant »). */
 export function buttonClass(variant: Variant = "primary", extra = ""): string {
-  return `${BASE} ${VARIANTS[variant]} ${extra}`;
+  return `mm-btn mm-btn--${variant} ${extra}`.trim();
 }
 
 export function Button({

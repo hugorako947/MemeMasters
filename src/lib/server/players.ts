@@ -1,6 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { GAME_CONFIG } from "@/config/game.config";
+import { LEGAL } from "@/config/legal.config";
 import { daysBetween } from "@/lib/time/game-day";
 import { ApiError } from "./http";
 import { isPgError, PG_UNIQUE_VIOLATION, sql } from "./db";
@@ -19,6 +20,8 @@ export interface Player {
   timezone: string;
   timezoneChangedAt: Date | null;
   createdAt: Date;
+  /** Vrai si le joueur a attesté sa majorité et accepté la version actuelle des conditions. */
+  consentUpToDate: boolean;
 }
 
 interface PlayerRow {
@@ -35,6 +38,8 @@ interface PlayerRow {
   timezone: string;
   timezone_changed_at: Date | null;
   created_at: Date;
+  age_confirmed_at: Date | null;
+  terms_version: string | null;
 }
 
 function toPlayer(r: PlayerRow): Player {
@@ -52,6 +57,7 @@ function toPlayer(r: PlayerRow): Player {
     timezone: r.timezone,
     timezoneChangedAt: r.timezone_changed_at,
     createdAt: r.created_at,
+    consentUpToDate: r.age_confirmed_at !== null && r.terms_version === LEGAL.TERMS_VERSION,
   };
 }
 
@@ -59,7 +65,8 @@ function toPlayer(r: PlayerRow): Player {
 export const getPlayer = cache(async (userId: string): Promise<Player | null> => {
   const rows = await sql()<PlayerRow[]>`
     select p.id, p.username::text as username, p.level, p.xp, p.elo, p.wins, p.losses, p.draws,
-           p.ranked_games, p.avatar_card_id, p.created_at, pp.timezone, pp.timezone_changed_at
+           p.ranked_games, p.avatar_card_id, p.created_at, pp.timezone, pp.timezone_changed_at,
+           pp.age_confirmed_at, pp.terms_version
     from public.profiles p
     join public.player_private pp on pp.player_id = p.id
     where p.id = ${userId}
@@ -96,7 +103,9 @@ export async function isUsernameTaken(username: string): Promise<boolean> {
 }
 
 /**
- * Crée le profil, les données privées et le portefeuille en une transaction.
+ * Crée le profil, les données privées (avec les consentements horodatés) et
+ * le portefeuille en une transaction.
+ * Appelée seulement après validation : majorité attestée et conditions acceptées.
  * Erreurs : 409 username_taken, 409 profile_exists.
  */
 export async function createPlayer(userId: string, username: string, timezone: string): Promise<void> {
@@ -105,7 +114,10 @@ export async function createPlayer(userId: string, username: string, timezone: s
       const existing = await tx`select 1 from public.profiles where id = ${userId} for update`;
       if (existing.length > 0) throw new ApiError(409, "profile_exists");
       await tx`insert into public.profiles (id, username, elo) values (${userId}, ${username}, ${GAME_CONFIG.ELO.START})`;
-      await tx`insert into public.player_private (player_id, timezone) values (${userId}, ${timezone})`;
+      await tx`
+        insert into public.player_private (player_id, timezone, age_confirmed_at, terms_accepted_at, terms_version)
+        values (${userId}, ${timezone}, now(), now(), ${LEGAL.TERMS_VERSION})
+      `;
       await tx`insert into public.player_wallets (player_id) values (${userId})`;
     });
   } catch (error) {
@@ -116,6 +128,19 @@ export async function createPlayer(userId: string, username: string, timezone: s
     }
     throw error;
   }
+}
+
+/** Enregistre une nouvelle acceptation des conditions (version actuelle). */
+export async function recordConsent(userId: string): Promise<void> {
+  const rows = await sql()`
+    update public.player_private
+    set age_confirmed_at = coalesce(age_confirmed_at, now()),
+        terms_accepted_at = now(),
+        terms_version = ${LEGAL.TERMS_VERSION}
+    where player_id = ${userId}
+    returning player_id
+  `;
+  if (rows.length === 0) throw new ApiError(403, "profile_required");
 }
 
 /** Date à partir de laquelle le fuseau pourra de nouveau être changé (null = maintenant). */
