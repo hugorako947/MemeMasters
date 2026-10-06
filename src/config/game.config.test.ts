@@ -34,6 +34,17 @@ describe("configuration du jeu", () => {
     }
   });
 
+  it("donne 3 boosters gratuits par jour, de 10 cartes", () => {
+    expect(GAME_CONFIG.DAILY_FREE_BOOSTERS).toBe(3);
+    expect(GAME_CONFIG.BOOSTER_SIZE).toBe(10);
+  });
+
+  it("garde une taille de booster compatible avec la base de données", () => {
+    const sql = readFileSync("supabase/migrations/20261006000200_tables.sql", "utf8");
+    const max = Number(sql.match(/cardinality\(card_ids\) between 1 and (\d+)\)/)?.[1]);
+    expect(GAME_CONFIG.BOOSTER_SIZE).toBeLessThanOrEqual(max);
+  });
+
   it("réserve les comptes et les achats aux 18 ans et plus", () => {
     expect(GAME_CONFIG.PURCHASES.MIN_AGE).toBe(18);
     expect(GAME_CONFIG.MIN_ACCOUNT_AGE).toBe(18);

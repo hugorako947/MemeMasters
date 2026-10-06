@@ -47,3 +47,9 @@ Chaque entrée : la décision, puis la raison.
 - **Textes juridiques en modèles**, dans `src/content/legal/fr.tsx`, avec les informations de l'éditeur dans `src/config/legal.config.ts`. Bandeau « à compléter » tant qu'il manque une information. Aucun cookie autre que la session : pas de bandeau de consentement.
 - **`TERMS_VERSION`** : changer cette date redemande l'acceptation des conditions à tous les joueurs.
 - **Fil d'Ariane** calculé depuis l'adresse ; « Profil » n'est pas cliquable car il n'a pas de page propre.
+
+## Économie des boosters (demande du propriétaire)
+
+- **3 boosters gratuits par jour, 10 cartes par booster** (au lieu de 2 et 5). Le 10e emplacement reste garanti « rare ou mieux ».
+- Conséquences, recalculées : une légendaire ou mieux sort dans 29 % des boosters (une fois tous les 3,4 boosters en moyenne) ; le pity à 10 boosters ne se déclenche plus que dans 4,6 % des séries ; une Godlevel apparaît dans 0,56 % des boosters.
+- 10 est aussi le maximum accepté par la base (`booster_openings.card_ids`) et par la validation de la config. Aller au-delà demandera une migration ; un test le vérifie.
