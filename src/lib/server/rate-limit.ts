@@ -19,13 +19,20 @@ export const RATE_LIMITS = {
 } as const satisfies Record<string, RateLimitRule>;
 
 /**
+ * En développement, les limites sont 20 fois plus larges : on teste souvent
+ * l'inscription depuis la même adresse. En production, elles s'appliquent telles quelles.
+ */
+export const RATE_LIMIT_MULTIPLIER = process.env.NODE_ENV === "production" ? 1 : 20;
+
+/**
  * Renvoie vrai si la requête est autorisée. `subject` identifie l'appelant
  * (identifiant de joueur ou adresse IP).
  */
 export async function consumeRateLimit(rule: RateLimitRule, subject: string): Promise<boolean> {
   const key = `${rule.scope}:${subject}`.slice(0, 200);
+  const limit = rule.limit * RATE_LIMIT_MULTIPLIER;
   const [row] = await sql()<{ allowed: boolean }[]>`
-    select public.check_rate_limit(${key}, ${rule.limit}, ${rule.windowSeconds}) as allowed
+    select public.check_rate_limit(${key}, ${limit}, ${rule.windowSeconds}) as allowed
   `;
   return row?.allowed === true;
 }

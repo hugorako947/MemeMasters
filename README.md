@@ -39,6 +39,17 @@ Jeu web multijoueur de cartes à collectionner sur le thème des memes : booster
 
 Si une variable est mal remplie, le site affiche un message qui la nomme.
 
+## En cas de problème : `npm run doctor`
+
+```bash
+npm run doctor                    # vérifie .env.local, Supabase Auth et la base de données
+npm run doctor -- --reset-limits  # efface aussi les compteurs de « Trop de tentatives »
+```
+
+Le diagnostic indique notamment si « Confirm email » est activé et si la dernière migration est appliquée. Le terminal où tourne `npm run dev` affiche aussi la vraie cause de chaque refus de Supabase, avec la marche à suivre.
+
+**Inscription et e-mails de confirmation.** Sans serveur d'envoi personnel (SMTP), Supabase n'envoie que quelques e-mails par heure, et seulement aux adresses des membres de l'équipe du projet. Pour tester, désactivez « Confirm email » (Authentication → Sign In / Providers → Email) : l'inscription connecte alors directement. Avant la mise en ligne, configurez un SMTP (Resend, Brevo…) dans Authentication → SMTP Settings et réactivez la confirmation. L'e-mail contient un **lien** à cliquer, pas un code.
+
 ## Installation, option B : Supabase en local avec Docker
 
 ```bash
@@ -65,6 +76,8 @@ npm run dev                 # http://localhost:3000
 
 En local, les e-mails de confirmation ne partent pas vraiment : ils arrivent dans Mailpit, à l'adresse affichée par `supabase start` (en général http://127.0.0.1:54324).
 
+À l'installation, npm signale « 5 high severity vulnerabilities » : elles concernent uniquement l'outil ESLint sur votre poste, pas le site. **Ne lancez pas `npm audit fix --force`**, qui casserait la configuration (voir DECISIONS.md).
+
 ## Commandes utiles
 
 | Commande | Rôle |
@@ -77,6 +90,7 @@ En local, les e-mails de confirmation ne partent pas vraiment : ils arrivent dan
 | `npm run db:check-local` | Mêmes tests SQL sur un PostgreSQL ordinaire, sans Docker |
 | `npm run db:types` | Régénère les types TypeScript de la base |
 | `npm run assets:pwa` | Régénère les icônes de l'application |
+| `npm run doctor` | Diagnostic de l'installation (voir plus haut) |
 
 ## Configurer Supabase en production
 

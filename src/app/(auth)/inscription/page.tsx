@@ -10,8 +10,8 @@ export default async function SignUpPage() {
   const t = await getTranslations("auth");
   return (
     <>
-      <h1 className="font-display text-5xl leading-none">{t("signUpTitle")}</h1>
-      <p className="mb-8 mt-2 text-ink-soft">{t("signUpLead")}</p>
+      <h1 className="text-center font-display text-5xl leading-none">{t("signUpTitle")}</h1>
+      <p className="mb-8 mt-2 text-center text-ink-soft">{t("signUpLead")}</p>
       <SignUpForm />
     </>
   );

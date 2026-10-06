@@ -99,7 +99,7 @@ export function SignInForm({ next, notice }: { next: string; notice?: string | n
           {pending ? t("pending") : t("submitSignIn")}
         </Button>
       </form>
-      <div className="flex flex-col gap-2 text-sm">
+      <div className="flex flex-col items-center gap-2 text-center text-sm">
         <Link href="/mot-de-passe-oublie" className={linkClass}>
           {t("forgot")}
         </Link>
@@ -288,7 +288,7 @@ export function SignUpForm() {
           {pending ? t("pending") : t("submitSignUp")}
         </Button>
       </form>
-      <p className="text-sm">
+      <p className="text-center text-sm">
         {t("haveAccount")}{" "}
         <Link href="/connexion" className={linkClass}>
           {t("signInLink")}

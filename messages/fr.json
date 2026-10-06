@@ -101,8 +101,8 @@
     "signOut": "Me déconnecter",
     "confirmFailed": "Ce lien n'est plus valable. Connecte-toi ou demande un nouveau lien.",
     "oauthFailed": "La connexion avec Google n'a pas abouti. Réessaie.",
-    "signUpLink": "Inscription",
-    "signInLink": "Connexion",
+    "signUpLink": "S'inscrire",
+    "signInLink": "Se connecter",
     "username": "Pseudo",
     "usernameHint": "3 à 20 caractères : lettres sans accent, chiffres et _",
     "checking": "Vérification…",
@@ -164,7 +164,7 @@
     "email_taken": "Un compte existe déjà avec cette adresse.",
     "weak_password": "Le mot de passe ne respecte pas toutes les règles.",
     "password_mismatch": "Les deux mots de passe sont différents.",
-    "rate_limited": "Trop de tentatives. Attends un peu avant de réessayer.",
+    "rate_limited": "Trop de tentatives depuis ta connexion. Réessaie un peu plus tard.",
     "unauthenticated": "Ta session a expiré. Reconnecte-toi.",
     "profile_required": "Termine d'abord la création de ton profil.",
     "profile_exists": "Ton profil existe déjà.",
@@ -184,7 +184,12 @@
     "invalid_email": "Cette adresse e-mail n'est pas valide.",
     "adult_required": "Le jeu est réservé aux personnes de 18 ans et plus.",
     "terms_required": "Tu dois accepter les conditions pour créer ton compte.",
-    "consent_required": "Accepte d'abord les conditions mises à jour."
+    "consent_required": "Accepte d'abord les conditions mises à jour.",
+    "service_unavailable": "Le serveur est momentanément indisponible. Réessaie dans un instant.",
+    "auth_rate_limited": "Trop de demandes en peu de temps. Patiente quelques minutes avant de réessayer.",
+    "email_rate_limited": "Impossible d'envoyer l'e-mail de confirmation pour le moment. Réessaie plus tard.",
+    "email_not_authorized": "Impossible d'envoyer l'e-mail de confirmation à cette adresse pour le moment.",
+    "signup_disabled": "Les inscriptions sont fermées pour le moment."
   },
   "statName": {
     "hp": "Points de vie",
@@ -282,5 +287,16 @@
   "legalPage": {
     "updated": "Dernière mise à jour : {date}",
     "draftWarning": "Version de travail : informations à compléter ({fields}) dans src/config/legal.config.ts. Faites relire ces textes par un professionnel avant la mise en ligne."
+  },
+  "back": {
+    "home": "Retour à l'accueil",
+    "signIn": "Retour à la connexion",
+    "signUp": "Retour à l'inscription",
+    "forgot": "Retour au mot de passe oublié",
+    "rarities": "Retour aux raretés",
+    "legal": "Retour aux mentions légales",
+    "terms": "Retour aux conditions d'utilisation",
+    "privacy": "Retour à la confidentialité",
+    "community": "Retour aux règles de la communauté"
   }
 }

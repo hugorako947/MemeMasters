@@ -7,6 +7,7 @@ import "@fontsource-variable/bricolage-grotesque/index.css";
 import "./globals.css";
 import { GAME_CONFIG } from "@/config/game.config";
 import { publicEnv } from "@/lib/env.public";
+import { NavigationTracker } from "@/components/layout/NavigationTracker";
 import { PwaProvider } from "@/components/pwa/PwaProvider";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -46,6 +47,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <MotionConfig reducedMotion="user">
             <PwaProvider>
               {/* Tout le site est dans #mm-app : flouté quand une fiche de carte est ouverte. */}
+              <NavigationTracker />
               <div id="mm-app">{children}</div>
             </PwaProvider>
           </MotionConfig>

@@ -16,7 +16,8 @@
     "db:test": "supabase test db",
     "db:types": "supabase gen types typescript --local > src/lib/supabase/database.types.ts",
     "db:check-local": "bash scripts/check-sql.sh",
-    "assets:pwa": "tsx scripts/generate-pwa-assets.mts"
+    "assets:pwa": "tsx scripts/generate-pwa-assets.mts",
+    "doctor": "tsx scripts/doctor.mts"
   },
   "dependencies": {
     "@fontsource-variable/bricolage-grotesque": "^5.3.0",
@@ -56,5 +57,11 @@
   },
   "engines": {
     "node": ">=20.9.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "@swc/core@1.16.13": true,
+    "@parcel/watcher@2.6.0": true,
+    "unrs-resolver@1.12.2": true
   }
 }

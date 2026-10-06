@@ -24,13 +24,20 @@ export type AuthFormState =
   | { status: "sent" }
   | { status: "done" };
 
-async function allowed(rule: RateLimitRule): Promise<boolean> {
+/**
+ * Vérifie la limite de débit. Renvoie null si la requête peut continuer,
+ * sinon le code d'erreur à afficher. Si la base ne répond pas, on refuse
+ * (plutôt que d'ouvrir la porte au bourrage), avec un message distinct.
+ */
+async function rateLimitError(rule: RateLimitRule): Promise<string | null> {
   try {
-    return await consumeRateLimit(rule, clientIp(await headers()));
+    return (await consumeRateLimit(rule, clientIp(await headers()))) ? null : "rate_limited";
   } catch (error) {
-    // En cas de panne de la base, on refuse plutôt que d'ouvrir la porte au bourrage.
-    console.error("[auth] limitation de débit indisponible", error);
-    return false;
+    console.error(
+      "[auth] Base de données injoignable : vérifiez DATABASE_URL dans .env.local (lancez `npm run doctor`).",
+      error,
+    );
+    return "service_unavailable";
   }
 }
 
@@ -47,21 +54,45 @@ function authErrorCode(error: { code?: string; message?: string }): string {
     case "weak_password":
       return "weak_password";
     case "over_request_rate_limit":
+      return "auth_rate_limited";
     case "over_email_send_rate_limit":
-      return "rate_limited";
+      return "email_rate_limited";
+    case "email_address_not_authorized":
+      return "email_not_authorized";
+    case "signup_disabled":
+    case "email_provider_disabled":
+      return "signup_disabled";
     default:
       return "server_error";
   }
 }
 
+/** Journalise côté serveur la vraie cause d'un refus de Supabase Auth, avec la piste de correction. */
+function logAuthError(context: string, error: { code?: string; message?: string; status?: number }): void {
+  const hints: Record<string, string> = {
+    over_email_send_rate_limit:
+      "Limite d'envoi d'e-mails de Supabase atteinte (quelques e-mails par heure sans SMTP personnel). Désactivez temporairement « Confirm email » ou configurez un SMTP (Authentication → SMTP Settings).",
+    email_address_not_authorized:
+      "Sans SMTP personnel, Supabase n'envoie qu'aux adresses des membres de l'équipe du projet. Utilisez l'e-mail de votre compte Supabase, désactivez « Confirm email », ou configurez un SMTP.",
+    over_request_rate_limit: "Limite de requêtes de Supabase Auth atteinte. Patientez quelques minutes.",
+    signup_disabled: "Les inscriptions sont désactivées dans Supabase (Authentication → Sign In / Providers).",
+  };
+  console.warn(`[auth] ${context} refusée par Supabase : ${error.code ?? "?"} (${error.message ?? ""})`);
+  if (error.code && hints[error.code]) console.warn(`[auth] → ${hints[error.code]}`);
+}
+
 export async function signInAction(_prev: AuthFormState, formData: FormData): Promise<AuthFormState> {
   const parsed = signInSchema.safeParse({ email: formData.get("email"), password: formData.get("password") });
   if (!parsed.success) return { status: "error", code: "invalid_credentials" };
-  if (!(await allowed(RATE_LIMITS.signIn))) return { status: "error", code: "rate_limited" };
+  const limited = await rateLimitError(RATE_LIMITS.signIn);
+  if (limited) return { status: "error", code: limited };
 
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
-  if (error) return { status: "error", code: authErrorCode(error) };
+  if (error) {
+    if (error.code !== "invalid_credentials") logAuthError("Connexion", error);
+    return { status: "error", code: authErrorCode(error) };
+  }
   redirect(safeNextPath(formData.get("suivant")));
 }
 
@@ -104,11 +135,17 @@ export async function signUpAction(_prev: AuthFormState, formData: FormData): Pr
     timezone: formData.get("timezone") ?? "",
   });
   if (!parsed.success) return { status: "error", code: signUpErrorCode(parsed.error.issues[0]?.path[0], username) };
-  if (!(await allowed(RATE_LIMITS.signUp))) return { status: "error", code: "rate_limited" };
+  const limited = await rateLimitError(RATE_LIMITS.signUp);
+  if (limited) return { status: "error", code: limited };
 
   const { email, password, timezone: rawTimezone } = parsed.data;
   const timezone = isValidTimeZone(rawTimezone) ? rawTimezone : "Europe/Paris";
-  if (await isUsernameTaken(parsed.data.username)) return { status: "error", code: "username_taken" };
+  try {
+    if (await isUsernameTaken(parsed.data.username)) return { status: "error", code: "username_taken" };
+  } catch (error) {
+    console.error("[auth] Base de données injoignable (lancez `npm run doctor`).", error);
+    return { status: "error", code: "service_unavailable" };
+  }
 
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.auth.signUp({
@@ -119,7 +156,10 @@ export async function signUpAction(_prev: AuthFormState, formData: FormData): Pr
       data: { username: parsed.data.username },
     },
   });
-  if (error) return { status: "error", code: authErrorCode(error) };
+  if (error) {
+    logAuthError("Inscription", error);
+    return { status: "error", code: authErrorCode(error) };
+  }
 
   // Si l'adresse est déjà utilisée, Supabase renvoie un utilisateur sans identité
   // (pour ne pas révéler qui a un compte) : on ne crée alors rien.
@@ -140,12 +180,14 @@ export async function signUpAction(_prev: AuthFormState, formData: FormData): Pr
 export async function forgotPasswordAction(_prev: AuthFormState, formData: FormData): Promise<AuthFormState> {
   const parsed = resetRequestSchema.safeParse({ email: formData.get("email") });
   if (!parsed.success) return { status: "error", code: "invalid_input" };
-  if (!(await allowed(RATE_LIMITS.passwordReset))) return { status: "error", code: "rate_limited" };
+  const limited = await rateLimitError(RATE_LIMITS.passwordReset);
+  if (limited) return { status: "error", code: limited };
 
   const supabase = await createSupabaseServerClient();
-  await supabase.auth.resetPasswordForEmail(parsed.data.email, {
+  const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
     redirectTo: `${publicEnv.siteUrl}/auth/confirm?suivant=/nouveau-mot-de-passe`,
   });
+  if (error) logAuthError("Réinitialisation du mot de passe", error);
   // Même réponse que l'adresse existe ou non : on ne révèle pas qui a un compte.
   return { status: "sent" };
 }

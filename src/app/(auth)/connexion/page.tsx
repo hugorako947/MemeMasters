@@ -15,8 +15,8 @@ export default async function SignInPage({ searchParams }: PageProps<"/connexion
     params.erreur === "lien" ? t("confirmFailed") : params.erreur === "oauth" ? t("oauthFailed") : null;
   return (
     <>
-      <h1 className="font-display text-5xl leading-none">{t("signInTitle")}</h1>
-      <p className="mb-8 mt-2 text-ink-soft">{t("signInLead")}</p>
+      <h1 className="text-center font-display text-5xl leading-none">{t("signInTitle")}</h1>
+      <p className="mb-8 mt-2 text-center text-ink-soft">{t("signInLead")}</p>
       <SignInForm next={next} notice={notice} />
     </>
   );

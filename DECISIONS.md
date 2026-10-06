@@ -53,3 +53,17 @@ Chaque entrée : la décision, puis la raison.
 - **3 boosters gratuits par jour, 10 cartes par booster** (au lieu de 2 et 5). Le 10e emplacement reste garanti « rare ou mieux ».
 - Conséquences, recalculées : une légendaire ou mieux sort dans 29 % des boosters (une fois tous les 3,4 boosters en moyenne) ; le pity à 10 boosters ne se déclenche plus que dans 4,6 % des séries ; une Godlevel apparaît dans 0,56 % des boosters.
 - 10 est aussi le maximum accepté par la base (`booster_openings.card_ids`) et par la validation de la config. Aller au-delà demandera une migration ; un test le vérifie.
+
+## Installation
+
+- **Scripts d'installation autorisés dans `package.json` (`allowScripts`).** Les versions récentes de npm bloquent les scripts d'installation non approuvés. Quatre paquets en ont besoin pour leur moteur natif : esbuild et @swc/core (service worker), @parcel/watcher (traductions en développement), unrs-resolver (ESLint). Les autorisations visent une version précise : après une mise à jour de ces paquets, npm peut redemander l'approbation (`npm install-scripts approve <paquet>`).
+- **Alerte `npm audit` sur `braces` ignorée.** Elle ne concerne qu'ESLint, sur le poste de développement, jamais le site en ligne. `npm audit fix --force` casserait la configuration ESLint de Next.js 16. À revoir quand Next.js mettra sa dépendance à jour.
+
+## Revue de la phase 1 (suite)
+
+- **Un message par cause de refus.** « Trop de tentatives » ne désigne plus que notre propre limite. Limite d'envoi d'e-mails de Supabase, adresse non autorisée par l'envoi intégré, inscriptions désactivées et base injoignable ont chacune leur message. La vraie cause et la solution sont écrites dans le terminal du serveur.
+- **Limites de débit 20 fois plus larges hors production** (`RATE_LIMIT_MULTIPLIER`), pour pouvoir tester l'inscription à répétition.
+- **`npm run doctor`** : diagnostic de l'installation, avec `--reset-limits` pour effacer les compteurs.
+- **Pages de connexion et d'inscription centrées, sans la vitrine des raretés** (demande du propriétaire). Elle reste sur l'accueil.
+- **« ← Retour à … » au lieu du fil d'Ariane sur ces pages.** La cible est la page visitée juste avant, mémorisée dans une pile propre à l'onglet (stockage de session, rien n'est envoyé au serveur) ; revenir en arrière dépile. Sans historique, le lien mène au parent logique (ex. mot de passe oublié → connexion). Le fil d'Ariane reste sur les autres pages.
+- **Liens d'action à l'infinitif** : « Déjà un compte ? Se connecter » et, par cohérence, « Pas encore de compte ? S'inscrire ».

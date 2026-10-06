@@ -13,7 +13,7 @@ export default async function NewPasswordPage() {
   const t = await getTranslations("auth");
   return (
     <>
-      <h1 className="mb-8 font-display text-5xl leading-none">{t("resetTitle")}</h1>
+      <h1 className="mb-8 text-center font-display text-5xl leading-none">{t("resetTitle")}</h1>
       <NewPasswordForm />
     </>
   );
