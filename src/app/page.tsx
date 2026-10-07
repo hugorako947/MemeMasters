@@ -7,8 +7,8 @@ import { FeatureShowcase } from "@/components/home/FeatureShowcase";
 import { PublicShell } from "@/components/layout/PublicShell";
 import { GAME_CONFIG } from "@/config/game.config";
 import { AppShell } from "@/components/layout/AppShell";
+import { PlayerFeatures } from "@/components/player/PlayerFeatures";
 import { ButtonLink } from "@/components/ui/Button";
-import { Panel } from "@/components/ui/Panel";
 import { getAuthUser } from "@/lib/server/auth";
 import { getPlayer, type Player } from "@/lib/server/players";
 
@@ -18,7 +18,7 @@ export default async function HomePage() {
   const player = await getPlayer(user.id);
   if (!player || !player.consentUpToDate) redirect("/bienvenue");
   return (
-    <AppShell username={player.username}>
+    <AppShell player={player}>
       <PlayerHome player={player} />
     </AppShell>
   );
@@ -34,7 +34,7 @@ async function GuestHome() {
   const t = await getTranslations("home");
   const fan = [byRarity("epique"), byRarity("godlevel"), byRarity("legendaire")];
   return (
-    <PublicShell hideLogo>
+    <PublicShell hideLogo back={false}>
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-10">
         <div className="grid content-start gap-14">
           <section>
@@ -82,33 +82,14 @@ async function GuestHome() {
 }
 
 async function PlayerHome({ player }: { player: Player }) {
-  const t = await getTranslations("home");
+  const t = await getTranslations("playerHome");
   return (
     <div className="grid gap-6">
       <div>
-        <h1 className="font-display text-4xl leading-none md:text-5xl">{t("playerTitle", { username: player.username })}</h1>
-        <p className="mt-3 max-w-prose text-ink-soft">{t("playerLead")}</p>
+        <h1 className="font-display text-4xl leading-none md:text-5xl">{t("title", { username: player.username })}</h1>
+        <p className="mt-2 text-ink-soft">{t("lead")}</p>
       </div>
-      <Panel className="grid grid-cols-3 gap-2 text-center">
-        <Stat label={t("statLevel")} value={player.level} />
-        <Stat label={t("statElo")} value={player.elo} />
-        <Stat label={t("statRecord")} value={player.wins} />
-      </Panel>
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <ButtonLink href="/raretes">{t("openRarities")}</ButtonLink>
-        <ButtonLink href={`/profil/${encodeURIComponent(player.username)}`} variant="secondary">
-          {t("openProfile")}
-        </ButtonLink>
-      </div>
-    </div>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: number }) {
-  return (
-    <div>
-      <p className="font-display text-3xl leading-none">{value}</p>
-      <p className="mt-1 text-sm font-semibold text-ink-soft">{label}</p>
+      <PlayerFeatures player={player} />
     </div>
   );
 }

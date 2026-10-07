@@ -61,14 +61,7 @@
     "guestTitle": "Les memes ont enfin leurs cartes.",
     "guestLead": "Ouvre des boosters, complète ta collection et affronte des joueurs du monde entier.",
     "createAccount": "Inscription",
-    "signIn": "Connexion",
-    "playerTitle": "Salut {username} !",
-    "playerLead": "Ton compte est prêt. Les boosters, la collection et les combats arrivent très bientôt.",
-    "statLevel": "Niveau",
-    "statElo": "ELO",
-    "statRecord": "Victoires",
-    "openRarities": "Découvrir les raretés",
-    "openProfile": "Voir mon profil"
+    "signIn": "Connexion"
   },
   "auth": {
     "signInTitle": "Connexion",
@@ -98,7 +91,6 @@
     "checkEmailTitle": "Vérifie tes e-mails",
     "checkEmailLead": "On a envoyé un lien de confirmation à {email}. Clique dessus pour activer ton compte, puis connecte-toi.",
     "backToSignIn": "Retour à la connexion",
-    "signOut": "Me déconnecter",
     "confirmFailed": "Ce lien n'est plus valable. Connecte-toi ou demande un nouveau lien.",
     "oauthFailed": "La connexion avec Google n'a pas abouti. Réessaie.",
     "signUpLink": "S'inscrire",
@@ -124,14 +116,36 @@
   },
   "profile": {
     "title": "Profil de {username}",
-    "level": "Niveau {level}",
-    "elo": "ELO",
     "wins": "Victoires",
     "losses": "Défaites",
     "draws": "Nuls",
-    "memberSince": "Joue depuis {date}",
+    "memberSince": "Joue depuis le {date}",
     "notFound": "Aucun joueur ne porte ce pseudo.",
-    "you": "C'est toi"
+    "you": "C'est toi",
+    "rank": "Rang actuel",
+    "toNext": "Encore {left} trophées pour atteindre {rank}",
+    "highest": "Meilleur rang atteint : {rank}",
+    "memeMoney": "{amount} MemeMoney",
+    "battles": "Batailles classées",
+    "games": "Batailles jouées",
+    "ratio": "Ratio victoires / défaites",
+    "currentStreak": "Série en cours",
+    "bestStreak": "Meilleure série",
+    "chart": {
+      "title": "Progression des trophées",
+      "periodLabel": "Période affichée",
+      "period": {
+        "7d": "7 jours",
+        "30d": "30 jours",
+        "90d": "3 mois",
+        "365d": "1 an",
+        "all": "Tout"
+      },
+      "summary": "Trophées : de {from} à {to} sur la période",
+      "now": "Aujourd'hui",
+      "empty": "Joue tes premières batailles classées pour voir ta courbe grimper.",
+      "legend": "Les pastilles jaunes marquent chaque nouveau rang atteint."
+    }
   },
   "settings": {
     "title": "Réglages",
@@ -145,7 +159,34 @@
     "timezoneSelect": "Choisir un fuseau",
     "timezoneSave": "Enregistrer le fuseau",
     "timezoneSaved": "Fuseau enregistré.",
-    "timezoneSame": "C'est déjà ton fuseau."
+    "timezoneSame": "C'est déjà ton fuseau.",
+    "languageTitle": "Langue",
+    "languageLead": "Par défaut, le jeu s'affiche dans la langue de ton appareil ou de ton pays.",
+    "languageSoon": "Bientôt",
+    "themeTitle": "Thème",
+    "themeLead": "Les cartes gardent toujours leurs vraies couleurs.",
+    "theme": {
+      "light": "Clair",
+      "dark": "Obscur",
+      "inverted": "Inversé",
+      "custom": "Personnalisé"
+    },
+    "accentTitle": "Couleur principale",
+    "baseTitle": "Fond",
+    "signOut": "Déconnexion",
+    "dangerTitle": "Zone sensible",
+    "dangerLead": "La suppression du compte est immédiate et définitive.",
+    "delete": {
+      "button": "Supprimer mon compte",
+      "title": "Supprimer ton compte ?",
+      "lead": "Cette action est définitive : rien ne pourra être récupéré.",
+      "item1": "Ta collection, tes boosters, ta MemeMoney et tes trophées seront effacés.",
+      "item2": "Ton pseudo sera libéré et pourra être pris par un autre joueur.",
+      "item3": "La MemeMoney achetée ne sera pas remboursée.",
+      "confirmLabel": "Pour confirmer, tape ton pseudo : {username}",
+      "cancel": "Annuler",
+      "confirm": "Supprimer définitivement"
+    }
   },
   "rarities": {
     "title": "Les 8 raretés",
@@ -189,7 +230,9 @@
     "auth_rate_limited": "Trop de demandes en peu de temps. Patiente quelques minutes avant de réessayer.",
     "email_rate_limited": "Impossible d'envoyer l'e-mail de confirmation pour le moment. Réessaie plus tard.",
     "email_not_authorized": "Impossible d'envoyer l'e-mail de confirmation à cette adresse pour le moment.",
-    "signup_disabled": "Les inscriptions sont fermées pour le moment."
+    "signup_disabled": "Les inscriptions sont fermées pour le moment.",
+    "locale_unavailable": "Cette langue n'est pas encore disponible.",
+    "delete_confirmation": "Le pseudo saisi ne correspond pas."
   },
   "statName": {
     "hp": "Points de vie",
@@ -241,9 +284,9 @@
     },
     "battle": {
       "title": "Affronte le monde",
-      "text": "Compose une équipe de {team} cartes et défie en temps réel des joueurs de ton niveau, partout sur la planète. {seconds} secondes par tour, et chaque victoire fait grimper ton ELO.",
+      "text": "Compose une équipe de {team} cartes et défie en temps réel des joueurs de ton niveau, partout sur la planète. {seconds} secondes par tour : chaque victoire te rapporte des trophées et de la MemeMoney.",
       "timer": "{seconds} s",
-      "elo": "ELO 1 240"
+      "trophies": "1 240"
     }
   },
   "password": {
@@ -254,23 +297,6 @@
     "symbol": "Un caractère spécial (! ? # @…)",
     "ok": "(fait)",
     "missing": "(manquant)"
-  },
-  "breadcrumb": {
-    "label": "Fil d'Ariane",
-    "home": "Accueil",
-    "connexion": "Connexion",
-    "inscription": "Inscription",
-    "mot-de-passe-oublie": "Mot de passe oublié",
-    "nouveau-mot-de-passe": "Nouveau mot de passe",
-    "bienvenue": "Bienvenue",
-    "profil": "Profil",
-    "parametres": "Réglages",
-    "raretes": "Raretés",
-    "mentions-legales": "Mentions légales",
-    "conditions-utilisation": "Conditions d'utilisation",
-    "confidentialite": "Confidentialité",
-    "regles-communaute": "Règles de la communauté",
-    "hors-ligne": "Hors ligne"
   },
   "footer": {
     "label": "Informations légales",
@@ -286,7 +312,8 @@
   },
   "legalPage": {
     "updated": "Dernière mise à jour : {date}",
-    "draftWarning": "Version de travail : informations à compléter ({fields}) dans src/config/legal.config.ts. Faites relire ces textes par un professionnel avant la mise en ligne."
+    "draftWarning": "Version de travail : informations à compléter ({fields}) dans src/config/legal.config.ts. Faites relire ces textes par un professionnel avant la mise en ligne.",
+    "frenchOnly": "Ce texte n'existe qu'en français."
   },
   "back": {
     "home": "Retour à l'accueil",
@@ -298,5 +325,52 @@
     "terms": "Retour aux conditions d'utilisation",
     "privacy": "Retour à la confidentialité",
     "community": "Retour aux règles de la communauté"
+  },
+  "rank": {
+    "bronze": "Bronze",
+    "argent": "Argent",
+    "fer": "Fer",
+    "or": "Or",
+    "platine": "Platine",
+    "diamant": "Diamant",
+    "maitre": "Maître",
+    "grand_maitre": "Grand maître",
+    "super_grand_maitre": "Super grand maître",
+    "immortel": "Immortel"
+  },
+  "hud": {
+    "rankLabel": "Rang {rank}, {count, plural, one {# trophée} other {# trophées}}. Voir mon profil",
+    "memeMoneyLabel": "{amount} MemeMoney"
+  },
+  "playerHome": {
+    "title": "Salut {username} !",
+    "lead": "Ouvre tes boosters, complète ta collection et grimpe dans les rangs.",
+    "soon": "Bientôt",
+    "boosters": {
+      "title": "Tes boosters du jour",
+      "lead": "{count} boosters gratuits de {size} cartes t'attendent chaque jour. Ils reviennent à minuit, sans s'accumuler : ouvre-les avant !",
+      "ready": "{count} boosters prêts à ouvrir",
+      "cards": "{count} cartes",
+      "shop": "Boutique MemeMoney",
+      "extra": "Booster en plus",
+      "special": "Booster spécial",
+      "verySpecial": "Booster très spécial"
+    },
+    "battles": {
+      "title": "Batailles",
+      "lead": "Affronte des joueurs de ton rang avec une équipe de {team} cartes. Tous les 1 000 trophées, tu montes d'un rang.",
+      "toNext": "Encore {left} trophées pour {rank}",
+      "top": "Tu as atteint le rang le plus haut. Respect.",
+      "nextReward": "Rang {rank} : {boosters} boosters et {money} MemeMoney offerts",
+      "win": "Victoire",
+      "draw": "Nul",
+      "loss": "Défaite"
+    },
+    "collection": {
+      "title": "Ta collection",
+      "lead": "Chaque carte trouvée sort du flou. Filtre, trie et compare-les toutes dans le classement.",
+      "progress": "{owned, plural, =0 {Aucune carte pour l'instant} one {# carte} other {# cartes}}",
+      "hint": "Touche une carte floutée pour découvrir sa rareté."
+    }
   }
 }

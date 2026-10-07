@@ -70,8 +70,8 @@ select throws_ok(
   '42501', null, 'joueur : ne peut pas créer de portefeuille');
 select throws_ok($$update public.player_wallets set dust = 999999$$, '42501', null,
   'joueur : ne peut pas modifier son portefeuille');
-select throws_ok($$update public.profiles set elo = 3000$$, '42501', null,
-  'joueur : ne peut pas modifier son ELO');
+select throws_ok($$update public.profiles set trophies = 9999$$, '42501', null,
+  'joueur : ne peut pas modifier ses trophées');
 select throws_ok($$delete from public.cards$$, '42501', null, 'joueur : ne peut pas supprimer de carte');
 select throws_ok($$select public.check_rate_limit('x', 1, 60)$$, '42501', null,
   'joueur : ne peut pas appeler la limitation de débit');

@@ -1,16 +1,19 @@
 import type { ReactNode } from "react";
 import { Logo } from "@/components/brand/Logo";
-import { Breadcrumbs } from "./Breadcrumbs";
+import { BackLink } from "./BackLink";
 import { SiteFooter } from "./SiteFooter";
 
-/** Cadre des pages publiques : logo, fil d'Ariane, contenu, pied de page. */
+/** Cadre des pages publiques : retour à l'accueil, logo, contenu, pied de page. */
 export function PublicShell({
   children,
   hideLogo = false,
+  back = true,
   width = "max-w-6xl",
 }: {
   children: ReactNode;
   hideLogo?: boolean;
+  /** Affiche « ← Retour à l'accueil » (pas sur l'accueil lui-même). */
+  back?: boolean;
   width?: string;
 }) {
   return (
@@ -21,7 +24,11 @@ export function PublicShell({
             <Logo />
           </header>
         )}
-        <Breadcrumbs className="mb-6" />
+        {back ? (
+          <div className="mb-4">
+            <BackLink to="/" />
+          </div>
+        ) : null}
         <main id="contenu">{children}</main>
       </div>
       <SiteFooter />

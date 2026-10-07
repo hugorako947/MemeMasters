@@ -17,8 +17,11 @@ function readPrevious(pathname: string): string | null {
   }
 }
 
-/** Lien discret « ← Retour à la page précédente ». */
-export function BackLink() {
+/**
+ * Lien discret « ← Retour à … ». Sans `to`, il vise la page visitée juste
+ * avant ; avec `to`, il vise toujours cette page (ex. pages légales → accueil).
+ */
+export function BackLink({ to }: { to?: string }) {
   const t = useTranslations("back");
   const pathname = usePathname();
   const previous = useSyncExternalStore(
@@ -26,7 +29,7 @@ export function BackLink() {
     () => readPrevious(pathname),
     () => null,
   );
-  const target = resolveBackTarget(pathname, previous);
+  const target = to ? resolveBackTarget(pathname, to) : resolveBackTarget(pathname, previous);
   return (
     <Link
       href={target.href}

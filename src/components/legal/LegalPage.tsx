@@ -1,5 +1,5 @@
-import { getFormatter, getTranslations } from "next-intl/server";
-import { PublicShell } from "@/components/layout/PublicShell";
+import { getFormatter, getLocale, getTranslations } from "next-intl/server";
+import { AdaptiveShell } from "@/components/layout/AdaptiveShell";
 import { missingLegalFields } from "@/config/legal.config";
 import type { LegalDocument } from "@/content/legal/fr";
 
@@ -8,8 +8,9 @@ export async function LegalPage({ doc }: { doc: LegalDocument }) {
   const t = await getTranslations("legalPage");
   const format = await getFormatter();
   const missing = missingLegalFields();
+  const locale = await getLocale();
   return (
-    <PublicShell width="max-w-4xl">
+    <AdaptiveShell backToHome publicWidth="max-w-4xl">
       {missing.length > 0 ? (
         <p role="note" className="mb-6 rounded-xl border-2 border-dashed border-candy-ink bg-surface p-4 text-sm font-semibold">
           {t("draftWarning", { fields: missing.join(", ") })}
@@ -19,7 +20,10 @@ export async function LegalPage({ doc }: { doc: LegalDocument }) {
       <p className="mt-2 text-sm text-ink-soft">
         {t("updated", { date: format.dateTime(new Date(`${doc.updated}T12:00:00Z`), { day: "numeric", month: "long", year: "numeric" }) })}
       </p>
-      <div className="mm-prose mt-4">{doc.body}</div>
-    </PublicShell>
+      {locale !== "fr" ? <p className="mt-4 rounded-xl bg-surface p-3 text-sm font-semibold">{t("frenchOnly")}</p> : null}
+      <div className="mm-prose mt-4" lang="fr">
+        {doc.body}
+      </div>
+    </AdaptiveShell>
   );
 }

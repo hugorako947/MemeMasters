@@ -1,32 +1,80 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
-import { getTranslations } from "next-intl/server";
+import { getFormatter, getTranslations } from "next-intl/server";
 import { Logo } from "@/components/brand/Logo";
-import { Breadcrumbs } from "./Breadcrumbs";
-import { MainNav } from "./MainNav";
+import { MemeCoin, RankShield, TrophyIcon } from "@/components/player/RankBadge";
+import { rankFor } from "@/config/ranks";
+import type { Player } from "@/lib/server/players";
+import { BackLink } from "./BackLink";
+import { BottomNav } from "./BottomNav";
+import { PreferenceSync } from "./PreferenceSync";
 import { SiteFooter } from "./SiteFooter";
 
-/** Cadre des pages de jeu : en-tête, contenu, navigation. */
-export async function AppShell({ username, children }: { username: string; children: ReactNode }) {
-  const t = await getTranslations("nav");
+/**
+ * Cadre des pages du joueur :
+ * en haut, le rang et les trophées (gauche), le titre (centre), la MemeMoney (droite) ;
+ * en bas, la navigation, au-dessus du pied de page. Pas de fil d'Ariane.
+ */
+export async function AppShell({ player, back, children }: { player: Player; back?: string; children: ReactNode }) {
+  const t = await getTranslations();
+  const format = await getFormatter();
+  const rank = rankFor(player.trophies);
+  const rankName = t(`rank.${rank}`);
+  const profileHref = `/profil/${encodeURIComponent(player.username)}`;
+
   return (
-    <div className="flex min-h-dvh flex-col pb-20 md:pb-0">
-      <a href="#contenu" className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-50 focus:rounded-lg focus:bg-surface focus:px-3 focus:py-2">
-        {t("skipToContent")}
+    <div className="flex min-h-dvh flex-col">
+      <PreferenceSync locale={player.locale} appearance={player.appearance} />
+      <a
+        href="#contenu"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-50 focus:rounded-lg focus:bg-surface focus:px-3 focus:py-2"
+      >
+        {t("nav.skipToContent")}
       </a>
-      <header className="safe-top mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-4 pt-4 md:px-6">
-        <Logo />
-        <div className="hidden md:block">
-          <MainNav username={username} />
+
+      <header className="safe-top mx-auto grid w-full max-w-5xl grid-cols-[1fr_auto_1fr] items-center gap-2 px-3 pt-3 md:px-6">
+        <Link
+          href={profileHref}
+          className="flex items-center gap-2 justify-self-start rounded-full border-2 border-ink bg-surface py-1 pl-1.5 pr-3 shadow-[0_3px_0_0_var(--mm-shadow)] transition-transform hover:-translate-y-0.5"
+          aria-label={t("hud.rankLabel", { rank: rankName, count: player.trophies })}
+        >
+          <RankShield rank={rank} size={24} />
+          <span className="flex flex-col leading-none">
+            <span className="hidden text-[0.7rem] font-bold text-ink-soft sm:block">{rankName}</span>
+            <span className="flex items-center gap-1 font-display text-lg">
+              <TrophyIcon size={15} />
+              {format.number(player.trophies)}
+            </span>
+          </span>
+        </Link>
+
+        <div className="justify-self-center">
+          <Logo />
+        </div>
+
+        <div
+          className="flex items-center gap-2 justify-self-end rounded-full border-2 border-ink bg-surface py-1 pl-1.5 pr-3 shadow-[0_3px_0_0_var(--mm-shadow)]"
+          aria-label={t("hud.memeMoneyLabel", { amount: player.memeMoney })}
+          role="img"
+        >
+          <MemeCoin />
+          <span className="font-display text-lg leading-none">{format.number(player.memeMoney)}</span>
         </div>
       </header>
+
       <div className="mx-auto w-full max-w-5xl flex-1 px-4 pt-5 md:px-6">
-        <Breadcrumbs className="mb-5" />
-        <main id="contenu">{children}</main>
+        {back ? (
+          <div className="mb-3">
+            <BackLink to={back} />
+          </div>
+        ) : null}
+        <main id="contenu" className="pb-6">
+          {children}
+        </main>
       </div>
+
+      <BottomNav username={player.username} />
       <SiteFooter />
-      <div className="md:hidden">
-        <MainNav username={username} />
-      </div>
     </div>
   );
 }

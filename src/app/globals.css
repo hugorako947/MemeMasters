@@ -32,7 +32,7 @@
   --color-r-godlevel: #ffc83d;
 
   --radius-sticker: 1.25rem;
-  --shadow-sticker: 0 3px 0 0 var(--color-ink);
+  --shadow-sticker: 0 3px 0 0 var(--mm-shadow);
 }
 
 @layer base {
@@ -640,6 +640,7 @@ input:-webkit-autofill {
 .mm-card[data-owned="false"] .mm-card__art img {
   filter: grayscale(1) blur(3px);
   transform: scale(1.06);
+  animation: none !important;
 }
 .mm-card[data-owned="false"] .mm-card__frame {
   filter: grayscale(1);
@@ -796,4 +797,127 @@ body:has(> dialog.mm-detail[open]) #mm-app {
   body:has(> dialog.mm-detail[open]) #mm-app {
     scale: none;
   }
+}
+
+/* ==========================================================================
+   Thèmes : clair (défaut), obscur, inversé, personnalisé.
+   Les cartes redéfinissent leurs propres couleurs : elles ne changent jamais.
+   ========================================================================== */
+
+:root {
+  --mm-shadow: var(--color-ink);
+  --mm-accent-ink: var(--color-ink);
+  --mm-night: #1a1238;
+  color-scheme: light;
+}
+
+[data-theme="dark"],
+[data-theme="custom"][data-base="dark"] {
+  --color-ink: #f1edff;
+  --color-ink-soft: #b9b2dc;
+  --color-paper: #120d26;
+  --color-surface: #1d1640;
+  --color-line: #3a3163;
+  --color-link: #93abff;
+  --color-candy-ink: #ff8fb1;
+  --color-success: #4ade80;
+  --color-danger: #ff6b7a;
+  --mm-shadow: #000000;
+  --mm-accent-ink: #1a1238;
+  --mm-night: #0a0718;
+  color-scheme: dark;
+}
+[data-theme="custom"][data-base="dark"] {
+  --mm-accent-ink: inherit;
+}
+
+/* Inversé : négatif photo de l'interface ; cartes et illustrations retrouvent leurs couleurs. */
+[data-theme="inverted"] body {
+  background: #0c0f00;
+}
+[data-theme="inverted"] #mm-app,
+[data-theme="inverted"] dialog.mm-detail {
+  filter: invert(1) hue-rotate(180deg);
+}
+[data-theme="inverted"] body:has(> dialog.mm-detail[open]) #mm-app {
+  filter: invert(1) hue-rotate(180deg) blur(10px);
+}
+/* Seul l'élément protégé le plus haut est ré-inversé (sinon une carte dans un
+   panneau protégé serait inversée deux fois). */
+[data-theme="inverted"] :is(.mm-card, .mm-pack, .mm-keep-colors):not(:is(.mm-card, .mm-pack, .mm-keep-colors) *) {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* Les cartes, les légendes de meme et les panneaux « nuit » ne suivent pas le thème. */
+.mm-card {
+  --color-ink: #1a1238;
+  --color-ink-soft: #4a4270;
+  --color-paper: #f3f0ff;
+  --color-line: #d9d3f5;
+}
+.meme-caption {
+  -webkit-text-stroke-color: #1a1238;
+}
+.mm-btn--primary {
+  --btn-bg: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-candy), white 22%),
+    var(--color-candy) 55%,
+    color-mix(in srgb, var(--color-candy), black 8%)
+  );
+  color: var(--mm-accent-ink);
+  background: var(--btn-bg);
+}
+.mm-btn {
+  box-shadow: 0 var(--btn-shadow) 0 0 var(--mm-shadow);
+}
+.mm-btn:disabled {
+  background: color-mix(in srgb, var(--color-surface), var(--color-ink) 10%);
+  border-color: color-mix(in srgb, var(--color-surface), var(--color-ink) 30%);
+  color: color-mix(in srgb, var(--color-surface), var(--color-ink) 50%);
+}
+.mm-btn--secondary:hover:not(:disabled) {
+  --btn-bg: color-mix(in srgb, var(--color-surface), var(--color-sticker) 22%);
+  background: var(--btn-bg);
+}
+
+/* MemeMoney : pièce autocollant. */
+.mm-coin {
+  display: inline-grid;
+  place-items: center;
+  width: 1.6em;
+  height: 1.6em;
+  border-radius: 50%;
+  border: 2px solid #1a1238;
+  background: radial-gradient(circle at 35% 30%, #fff3b0, #ffd23f 45%, #e0a800);
+  color: #1a1238;
+  font-family: var(--font-display);
+  font-size: 0.85em;
+  line-height: 1;
+}
+
+/* Sachets spéciaux (boutique MemeMoney). */
+.mm-pack--special {
+  background:
+    linear-gradient(115deg, transparent 35%, rgb(255 255 255 / 0.6) 48%, transparent 60%),
+    conic-gradient(from 200deg at 50% 40%, #fff1b0, #f5b400, #b87800, #ffe27a, #fff1b0);
+}
+.mm-pack--ultra {
+  background:
+    linear-gradient(115deg, transparent 35%, rgb(255 255 255 / 0.35) 48%, transparent 60%),
+    radial-gradient(circle at 30% 25%, rgb(255 95 210 / 0.65), transparent 45%),
+    radial-gradient(circle at 75% 70%, rgb(95 208 255 / 0.6), transparent 45%),
+    #1a1238;
+}
+.mm-pack--ultra .mm-pack__count {
+  color: #fff;
+}
+.mm-btn--danger {
+  --btn-bg: #c8102e;
+  background: var(--btn-bg);
+  color: #ffffff;
+}
+.mm-btn.mm-btn--ghost {
+  box-shadow: none;
+  min-height: 2.75rem;
 }

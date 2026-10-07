@@ -1,0 +1,376 @@
+{
+  "meta": {
+    "description": "A collectible card game about memes: open boosters, complete your collection and battle players from all over the world."
+  },
+  "nav": {
+    "label": "Main navigation",
+    "home": "Home",
+    "rarities": "Rarities",
+    "profile": "Profile",
+    "settings": "Settings",
+    "skipToContent": "Skip to content"
+  },
+  "rarity": {
+    "commune": "Common",
+    "rare": "Rare",
+    "epique": "Epic",
+    "mystique": "Mythic",
+    "legendaire": "Legendary",
+    "omniversal": "Omniversal",
+    "superbrainrot": "Superbrainrot",
+    "godlevel": "Godlevel"
+  },
+  "vibe": {
+    "chaos": "Chaos",
+    "wholesome": "Wholesome",
+    "rage": "Rage",
+    "ironique": "Ironic",
+    "cringe": "Cringe",
+    "absurde": "Absurd"
+  },
+  "card": {
+    "hp": "HP",
+    "atk": "ATK",
+    "def": "DEF",
+    "spd": "SPD",
+    "attack": "Attack",
+    "special": "Special",
+    "defense": "Defense",
+    "power": "{power} power",
+    "energyCost": "{count, plural, one {# energy} other {# energy}}",
+    "ariaLabel": "{name}, {rarity} card, {vibe} vibe, {hp} HP",
+    "tiltHint": "Move your finger or mouse over the card to make it shine.",
+    "open": "Open the card sheet of {name}"
+  },
+  "effect": {
+    "none": "No effect",
+    "dot": "Awkward: {percent}% of max HP for {turns, plural, one {# turn} other {# turns}}",
+    "stun": "Glitch: {chance}% chance to make a slower target skip its turn",
+    "debuff": "Ratio: −1 {stat} stage to the target",
+    "buff": "Hype: +1 {stat} stage",
+    "pierce": "Armor break: ignores {percent}% of defense",
+    "drain": "Lifesteal: heals {percent}% of the damage dealt",
+    "multi": "Combo: {hits} hits at {percent}% power",
+    "reflect": "Bounce back: {percent}% of blocked damage",
+    "dodge": "Dodge: {chance}% chance to avoid the attack",
+    "heal": "Heal: +{percent}% of max HP",
+    "recharge": "Recharge: +1 energy",
+    "cleanse": "Immunity: cancels negative effects this turn"
+  },
+  "home": {
+    "guestTitle": "Memes finally have their own cards.",
+    "guestLead": "Open boosters, complete your collection and battle players from all over the world.",
+    "createAccount": "Sign up",
+    "signIn": "Log in"
+  },
+  "auth": {
+    "signInTitle": "Log in",
+    "signInLead": "Good to see you again.",
+    "signUpTitle": "Sign up",
+    "signUpLead": "Create your account in a minute. Playing is free.",
+    "email": "Email address",
+    "password": "Password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "submitSignIn": "Log in",
+    "submitSignUp": "Sign up",
+    "pending": "One moment…",
+    "google": "Continue with Google",
+    "or": "or",
+    "noAccount": "No account yet?",
+    "haveAccount": "Already have an account?",
+    "forgot": "Forgot your password?",
+    "forgotTitle": "Forgot password",
+    "forgotLead": "Enter your address and we'll send you a link to choose a new one.",
+    "forgotSubmit": "Send the link",
+    "forgotSent": "If an account exists for this address, an email is on its way. Remember to check your spam folder.",
+    "resetTitle": "New password",
+    "resetSubmit": "Save password",
+    "resetDone": "Password updated.",
+    "continue": "Continue",
+    "checkEmailTitle": "Check your inbox",
+    "checkEmailLead": "We sent a confirmation link to {email}. Click it to activate your account, then log in.",
+    "backToSignIn": "Back to log in",
+    "confirmFailed": "This link is no longer valid. Log in or request a new link.",
+    "oauthFailed": "Signing in with Google didn't work. Please try again.",
+    "signUpLink": "Sign up",
+    "signInLink": "Log in",
+    "username": "Username",
+    "usernameHint": "3 to 20 characters: letters without accents, digits and _",
+    "checking": "Checking…",
+    "available": "Available",
+    "passwordsMatch": "Passwords match",
+    "requiredNote": "Required fields",
+    "adultLabel": "I confirm I am at least 18 years old. Some memes may be offensive, and the game offers purchases.",
+    "termsLabel": "I accept the <terms>terms of use</terms>, the <community>community rules</community>, the <legal>legal notice</legal> and the <privacy>privacy policy</privacy>."
+  },
+  "onboarding": {
+    "title": "One more step",
+    "lead": "Choose the username other players will see, then accept the terms.",
+    "timezone": "Your time zone: {timezone}",
+    "timezoneHint": "Your free boosters come back at midnight in this time zone. You can change it in the settings.",
+    "submit": "Let's go",
+    "consentTitle": "Updated terms",
+    "consentLead": "Our terms have changed. To keep playing, confirm you are an adult and accept the new version.",
+    "consentSubmit": "Continue"
+  },
+  "profile": {
+    "title": "{username}'s profile",
+    "wins": "Wins",
+    "losses": "Losses",
+    "draws": "Draws",
+    "memberSince": "Playing since {date}",
+    "notFound": "No player has this username.",
+    "you": "That's you",
+    "rank": "Current rank",
+    "toNext": "{left} more trophies to reach {rank}",
+    "highest": "Highest rank reached: {rank}",
+    "memeMoney": "{amount} MemeMoney",
+    "battles": "Ranked battles",
+    "games": "Battles played",
+    "ratio": "Win / loss ratio",
+    "currentStreak": "Current streak",
+    "bestStreak": "Best streak",
+    "chart": {
+      "title": "Trophy progress",
+      "periodLabel": "Time range",
+      "period": {
+        "7d": "7 days",
+        "30d": "30 days",
+        "90d": "3 months",
+        "365d": "1 year",
+        "all": "All time"
+      },
+      "summary": "Trophies: from {from} to {to} over this period",
+      "now": "Today",
+      "empty": "Play your first ranked battles to see your curve climb.",
+      "legend": "Yellow dots mark each new rank reached."
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "account": "Account",
+    "signedInAs": "Signed in as {email}",
+    "timezoneTitle": "Time zone",
+    "timezoneLead": "Your daily limits reset at midnight in this time zone. You can change it once every {days} days.",
+    "timezoneCurrent": "Current time zone: {timezone}",
+    "timezoneLockedUntil": "Next change possible on {date}.",
+    "timezoneUseDevice": "Use this device's time zone ({timezone})",
+    "timezoneSelect": "Choose a time zone",
+    "timezoneSave": "Save time zone",
+    "timezoneSaved": "Time zone saved.",
+    "timezoneSame": "That's already your time zone.",
+    "languageTitle": "Language",
+    "languageLead": "By default, the game uses the language of your device or your country.",
+    "languageSoon": "Soon",
+    "themeTitle": "Theme",
+    "themeLead": "Cards always keep their true colors.",
+    "theme": {
+      "light": "Light",
+      "dark": "Dark",
+      "inverted": "Inverted",
+      "custom": "Custom"
+    },
+    "accentTitle": "Main color",
+    "baseTitle": "Background",
+    "signOut": "Log out",
+    "dangerTitle": "Danger zone",
+    "dangerLead": "Deleting your account is immediate and permanent.",
+    "delete": {
+      "button": "Delete my account",
+      "title": "Delete your account?",
+      "lead": "This is permanent: nothing can be recovered.",
+      "item1": "Your collection, boosters, MemeMoney and trophies will be erased.",
+      "item2": "Your username will be released and another player may take it.",
+      "item3": "Purchased MemeMoney will not be refunded.",
+      "confirmLabel": "To confirm, type your username: {username}",
+      "cancel": "Cancel",
+      "confirm": "Delete permanently"
+    }
+  },
+  "rarities": {
+    "title": "The 8 rarities",
+    "lead": "The rarer a card, the more it shines. Hover over or tap a card to see its effects.",
+    "dropRate": "{rate}% per slot"
+  },
+  "offline": {
+    "title": "No connection",
+    "lead": "You're offline. Pages you've already visited are still available; everything else comes back as soon as you're online.",
+    "retry": "Try again"
+  },
+  "errors": {
+    "invalid_input": "Some fields are not valid.",
+    "invalid_credentials": "Incorrect email or password.",
+    "email_not_confirmed": "Please confirm your email address first using the link you received.",
+    "email_taken": "An account already exists with this address.",
+    "weak_password": "The password doesn't meet all the rules.",
+    "password_mismatch": "The two passwords don't match.",
+    "rate_limited": "Too many attempts from your connection. Please try again a little later.",
+    "unauthenticated": "Your session has expired. Please log in again.",
+    "profile_required": "Please finish creating your profile first.",
+    "profile_exists": "Your profile already exists.",
+    "username_taken": "This username is already taken.",
+    "username_length": "Usernames must be 3 to 20 characters long.",
+    "username_characters": "Only letters without accents, digits and _ are allowed.",
+    "username_reserved": "This username is reserved.",
+    "username_inappropriate": "This username is not allowed.",
+    "timezone": "This time zone is not recognized.",
+    "timezone_cooldown": "You changed your time zone recently.",
+    "forbidden_origin": "Request refused.",
+    "server_error": "The server couldn't process the request. Please try again in a moment.",
+    "network": "Can't connect. Check your network.",
+    "notFoundTitle": "Page not found",
+    "notFoundLead": "This page doesn't exist or no longer exists.",
+    "backHome": "Back to home",
+    "invalid_email": "This email address is not valid.",
+    "adult_required": "The game is for people aged 18 and over.",
+    "terms_required": "You must accept the terms to create your account.",
+    "consent_required": "Please accept the updated terms first.",
+    "service_unavailable": "The server is temporarily unavailable. Please try again in a moment.",
+    "auth_rate_limited": "Too many requests in a short time. Wait a few minutes before trying again.",
+    "email_rate_limited": "We can't send the confirmation email right now. Please try again later.",
+    "email_not_authorized": "We can't send the confirmation email to this address right now.",
+    "signup_disabled": "Sign-ups are closed for now.",
+    "locale_unavailable": "This language isn't available yet.",
+    "delete_confirmation": "The username you typed doesn't match."
+  },
+  "statName": {
+    "hp": "Hit points",
+    "atk": "Attack",
+    "def": "Defense",
+    "spd": "Speed"
+  },
+  "statLower": {
+    "atk": "attack",
+    "def": "defense",
+    "spd": "speed"
+  },
+  "detail": {
+    "close": "Close",
+    "stats": "Stats",
+    "moves": "Attacks and defense",
+    "attack": "Attack",
+    "special": "Special attack",
+    "defense": "Defense",
+    "power": "Power {power}",
+    "vibeTitle": "Vibe",
+    "strongAgainst": "Strong against {vibe}",
+    "weakAgainst": "Weak against {vibe}",
+    "dropRate": "{rate}% chance per booster slot",
+    "notOwned": "This card isn't in your collection yet. Open boosters to find it!"
+  },
+  "showcase": {
+    "title": "The 8 rarities",
+    "lead": "From the rarest to the most common. Tap a card to see its sheet.",
+    "rate": "{rate}% per slot"
+  },
+  "features": {
+    "title": "What awaits you",
+    "boosters": {
+      "title": "Open boosters",
+      "text": "{free} free boosters every day, and more to win through challenges. Tear the pack open, flip the {size} cards one by one… and cross your fingers for a Godlevel.",
+      "pack": "{size} cards"
+    },
+    "collection": {
+      "title": "Complete your collection",
+      "text": "Filter by rarity or vibe, sort, search and track your progress. The cards you're missing stay blurred until you find them. The ranking compares every card in the game: popularity, attack, win rate…",
+      "progress": "87 / 240 cards",
+      "chipRarity": "Rarity",
+      "chipVibe": "Vibe",
+      "chipOwned": "Owned",
+      "chipSort": "Sort: popularity",
+      "filtersLabel": "Example filters",
+      "rankingHint": "🏆 Ranking: popularity · rarity · HP · attack · speed · win rate"
+    },
+    "battle": {
+      "title": "Take on the world",
+      "text": "Build a team of {team} cards and challenge players of your level in real time, all over the planet. {seconds} seconds per turn: every win earns you trophies and MemeMoney.",
+      "timer": "{seconds} s",
+      "trophies": "1,240"
+    }
+  },
+  "password": {
+    "length": "At least {min} characters",
+    "lower": "A lowercase letter",
+    "upper": "An uppercase letter",
+    "digit": "A digit",
+    "symbol": "A special character (! ? # @…)",
+    "ok": "(done)",
+    "missing": "(missing)"
+  },
+  "footer": {
+    "label": "Legal information",
+    "legal": "Legal notice",
+    "terms": "Terms of use",
+    "privacy": "Privacy",
+    "community": "Community rules",
+    "contact": "Contact",
+    "copyright": "© {years} {name}. All rights reserved.",
+    "adults": "For people aged 18 and over. Playing is free: no purchase is necessary.",
+    "independent": "{name} is an independent game, not affiliated with Instagram, TikTok, X, Reddit or any other social network. All illustrations are original creations.",
+    "trademarks": "Trademarks mentioned belong to their respective owners."
+  },
+  "legalPage": {
+    "updated": "Last updated: {date}",
+    "draftWarning": "Draft version: information to complete ({fields}) in src/config/legal.config.ts. Have these texts reviewed by a professional before going live.",
+    "frenchOnly": "This text is only available in French. The French version is the one that applies."
+  },
+  "back": {
+    "home": "Back to home",
+    "signIn": "Back to log in",
+    "signUp": "Back to sign up",
+    "forgot": "Back to forgot password",
+    "rarities": "Back to rarities",
+    "legal": "Back to the legal notice",
+    "terms": "Back to the terms of use",
+    "privacy": "Back to privacy",
+    "community": "Back to the community rules"
+  },
+  "rank": {
+    "bronze": "Bronze",
+    "argent": "Silver",
+    "fer": "Iron",
+    "or": "Gold",
+    "platine": "Platinum",
+    "diamant": "Diamond",
+    "maitre": "Master",
+    "grand_maitre": "Grandmaster",
+    "super_grand_maitre": "Super Grandmaster",
+    "immortel": "Immortal"
+  },
+  "hud": {
+    "rankLabel": "{rank} rank, {count, plural, one {# trophy} other {# trophies}}. See my profile",
+    "memeMoneyLabel": "{amount} MemeMoney"
+  },
+  "playerHome": {
+    "title": "Hi {username}!",
+    "lead": "Open your boosters, complete your collection and climb the ranks.",
+    "soon": "Soon",
+    "boosters": {
+      "title": "Today's boosters",
+      "lead": "{count} free boosters of {size} cards are waiting for you every day. They come back at midnight and don't stack up: open them before then!",
+      "ready": "{count} boosters ready to open",
+      "cards": "{count} cards",
+      "shop": "MemeMoney shop",
+      "extra": "Extra booster",
+      "special": "Special booster",
+      "verySpecial": "Very special booster"
+    },
+    "battles": {
+      "title": "Battles",
+      "lead": "Face players of your rank with a team of {team} cards. Every 1,000 trophies, you move up a rank.",
+      "toNext": "{left} more trophies to {rank}",
+      "top": "You've reached the highest rank. Respect.",
+      "nextReward": "{rank} rank: {boosters} boosters and {money} MemeMoney as a gift",
+      "win": "Win",
+      "draw": "Draw",
+      "loss": "Loss"
+    },
+    "collection": {
+      "title": "Your collection",
+      "lead": "Every card you find comes out of the blur. Filter, sort and compare them all in the ranking.",
+      "progress": "{owned, plural, =0 {No cards yet} one {# card} other {# cards}}",
+      "hint": "Tap a blurred card to discover its rarity."
+    }
+  }
+}

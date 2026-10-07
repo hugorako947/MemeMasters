@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useRef, type MouseEvent } from "react";
 import { createPortal } from "react-dom";
 import { GAME_CONFIG } from "@/config/game.config";
@@ -35,7 +35,7 @@ export function CardDetailDialog({ card, owned = true, onClose }: { card: Card; 
     if (event.target === event.currentTarget) ref.current?.close();
   }
 
-  const fmt = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 });
+  const format = useFormatter();
   const statLabel = (s: "atk" | "def" | "spd") => t(`statLower.${s}`);
 
   const describeSpecial = (e: SpecialEffect) => {
@@ -79,7 +79,7 @@ export function CardDetailDialog({ card, owned = true, onClose }: { card: Card; 
   // être flouté sans flouter la fenêtre elle-même (voir globals.css).
   return createPortal(
     <dialog ref={ref} className="mm-detail" aria-labelledby={titleId} onClick={onBackdropClick}>
-      <div className="relative max-h-[inherit] overflow-y-auto rounded-[1.75rem] border-[3px] border-ink bg-paper p-4 shadow-[0_8px_0_0_var(--color-ink)] sm:p-6">
+      <div className="relative max-h-[inherit] overflow-y-auto rounded-[1.75rem] border-[3px] border-ink bg-paper p-4 shadow-[0_8px_0_0_var(--mm-shadow)] sm:p-6">
         <div className="sticky top-0 z-20 mb-3 flex justify-end md:-mb-12">
           <button type="button" onClick={() => ref.current?.close()} className="mm-btn mm-btn--secondary min-h-11 px-3 text-sm">
             <span aria-hidden="true">✕</span> {t("detail.close")}
@@ -107,7 +107,7 @@ export function CardDetailDialog({ card, owned = true, onClose }: { card: Card; 
                 </span>
               </p>
               <p className="mt-2 text-sm text-ink-soft">
-                {t("detail.dropRate", { rate: fmt.format(GAME_CONFIG.DROP_RATES[card.rarity]) })}
+                {t("detail.dropRate", { rate: format.number(GAME_CONFIG.DROP_RATES[card.rarity], { maximumFractionDigits: 2 }) })}
               </p>
             </header>
 

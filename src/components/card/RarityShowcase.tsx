@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server";
+import { getFormatter, getTranslations } from "next-intl/server";
 import { GAME_CONFIG } from "@/config/game.config";
 import { RARITIES, RARITY_GLYPH } from "@/config/rarities";
 import { InteractiveCard } from "./InteractiveCard";
@@ -12,13 +12,13 @@ import { SAMPLE_CARDS } from "./sample-cards";
 export async function RarityShowcase({ className = "" }: { className?: string }) {
   const t = await getTranslations("showcase");
   const tr = await getTranslations("rarity");
-  const fmt = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 });
+  const format = await getFormatter();
   const cards = [...RARITIES].reverse().map((r) => SAMPLE_CARDS.find((c) => c.rarity === r)!);
 
   return (
     <aside
       aria-labelledby="raretes-titre"
-      className={`relative overflow-hidden rounded-[1.75rem] border-[3px] border-ink bg-ink p-5 text-surface shadow-[0_6px_0_0_var(--color-candy)] ${className}`}
+      className={`relative overflow-hidden rounded-[1.75rem] border-[3px] border-ink bg-[var(--mm-night)] p-5 text-white shadow-[0_6px_0_0_var(--color-candy)] ${className}`}
     >
       {/* Halo décoratif derrière les cartes */}
       <div
@@ -39,7 +39,7 @@ export async function RarityShowcase({ className = "" }: { className?: string })
               {tr(card.rarity)}
             </p>
             <p className="text-center text-xs text-[#d9d3f5]">
-              {t("rate", { rate: fmt.format(GAME_CONFIG.DROP_RATES[card.rarity]) })}
+              {t("rate", { rate: format.number(GAME_CONFIG.DROP_RATES[card.rarity], { maximumFractionDigits: 2 }) })}
             </p>
           </li>
         ))}

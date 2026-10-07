@@ -5,7 +5,10 @@ import { MotionConfig } from "motion/react";
 import "@fontsource/anton/400.css";
 import "@fontsource-variable/bricolage-grotesque/index.css";
 import "./globals.css";
+import { cookies } from "next/headers";
 import { GAME_CONFIG } from "@/config/game.config";
+import { isLocale, localeDir } from "@/lib/i18n/locales";
+import { parseAppearance, THEME_COOKIES, themeAttributes } from "@/lib/theme/theme";
 import { publicEnv } from "@/lib/env.public";
 import { NavigationTracker } from "@/components/layout/NavigationTracker";
 import { PwaProvider } from "@/components/pwa/PwaProvider";
@@ -34,13 +37,20 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   themeColor: "#f3f0ff",
-  colorScheme: "light",
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale();
+  const cookieStore = await cookies();
+  // Thème lu dans les cookies : appliqué dès le premier affichage, sans clignotement.
+  const appearance = parseAppearance({
+    theme: cookieStore.get(THEME_COOKIES.theme)?.value,
+    accent: cookieStore.get(THEME_COOKIES.accent)?.value,
+    base: cookieStore.get(THEME_COOKIES.base)?.value,
+  });
+  const { style, ...themeAttrs } = themeAttributes(appearance);
   return (
-    <html lang={locale}>
+    <html lang={locale} dir={isLocale(locale) ? localeDir(locale) : "ltr"} {...themeAttrs} style={style}>
       <body className="min-h-dvh antialiased">
         <NextIntlClientProvider>
           {/* Respecte prefers-reduced-motion pour toutes les animations Motion. */}

@@ -67,3 +67,30 @@ Chaque entrée : la décision, puis la raison.
 - **Pages de connexion et d'inscription centrées, sans la vitrine des raretés** (demande du propriétaire). Elle reste sur l'accueil.
 - **« ← Retour à … » au lieu du fil d'Ariane sur ces pages.** La cible est la page visitée juste avant, mémorisée dans une pile propre à l'onglet (stockage de session, rien n'est envoyé au serveur) ; revenir en arrière dépile. Sans historique, le lien mène au parent logique (ex. mot de passe oublié → connexion). Le fil d'Ariane reste sur les autres pages.
 - **Liens d'action à l'infinitif** : « Déjà un compte ? Se connecter » et, par cohérence, « Pas encore de compte ? S'inscrire ».
+
+## Rangs, trophées et MemeMoney (demande du propriétaire)
+
+- **Les trophées remplacent l'ELO, les rangs remplacent les niveaux (XP supprimée).** +25 par victoire, −25 par défaite, 0 pour un nul, jamais sous 0. Un rang tous les 1 000 trophées : bronze, argent, fer, or, platine, diamant, maître, grand maître, super grand maître, immortel (l'ordre demandé, fer après argent, est conservé). Immortel n'a pas de plafond.
+- **Le rang suit les trophées** : un joueur qui perd peut redescendre. Les **récompenses** d'un rang ne sont données **qu'une fois** (`profiles.highest_rank`), sinon on pourrait les cumuler en descendant puis remontant.
+- **Récompenses de rang proposées** (`RANK_REWARDS`) : argent 3 boosters + 10 MemeMoney, puis de plus en plus généreuses jusqu'à immortel (10 boosters + 150). Les boosters offerts vont dans la réserve « bonus », qui se cumule, contrairement aux 3 boosters gratuits du jour.
+- **MemeMoney** : +1 par victoire classée ; booster en plus 20, spécial 40, très spécial 80. Les achats en argent réel portent désormais sur des packs de MemeMoney (prix provisoires : 20 pour 0,99 €, 110 pour 4,99 €, 240 pour 9,99 €). La colonne `purchases.boosters` devient `meme_money`.
+- **Contenu des boosters spéciaux et très spéciaux à définir en phase 2.** Proposition : spécial = 10e carte épique ou mieux ; très spécial = 10e carte légendaire ou mieux. Leurs probabilités seront publiées comme les autres.
+- **Matchmaking par trophées** : adversaire à ±150 trophées, fenêtre élargie de 100 toutes les 5 s (phase 4).
+- **Historique des trophées** (`trophy_history`) : un point par changement, pour le graphique du profil. Lisible par les joueurs connectés, comme le profil.
+
+## Interface du joueur (demande du propriétaire)
+
+- **Barre du haut** : rang et trophées à gauche (lien vers le profil), titre au centre, MemeMoney à droite. **Navigation en bas, au centre**, qui reste visible pendant le défilement puis se pose au-dessus du pied de page.
+- **Plus de fil d'Ariane dans l'espace joueur.** Seules les pages légales affichent « ← Retour à l'accueil » (joueur ou visiteur). Les pages Raretés et légales gardent la barre du joueur s'il est connecté.
+- **Déconnexion et suppression du compte dans les Réglages**, pas dans le Profil : le profil est la vitrine publique du joueur, les réglages concernent son compte.
+- **Suppression du compte** : fenêtre de confirmation où le joueur retape son pseudo, vérifié aussi par le serveur. Tout ce qui lui appartient est effacé (cascade depuis `auth.users`) ; ses achats restent pour la comptabilité et ses combats pour ses adversaires, sans lien avec lui. Testé en pgTAP.
+- **Profil** : date d'arrivée, rang, victoires / nuls / défaites en nombres et pourcentages, ratio, séries, graphique des trophées avec choix de la période. L'heure de référence du graphique vient du serveur, pour éviter un décalage à l'hydratation.
+
+## Langues et thèmes (demande du propriétaire)
+
+- **Ordre des langues** : anglais, chinois mandarin, espagnol, arabe, français, portugais, allemand (nombre total de locuteurs ; les sources divergent pour l'arabe et le français). Chaque langue est affichée dans sa propre langue.
+- **Détection** : choix du joueur, puis langue du navigateur, puis pays, puis anglais si la langue détectée n'est pas encore traduite, sinon français. La langue du navigateur passe avant le pays : elle reflète mieux la langue parlée (un francophone en voyage reste en français).
+- **Traductions livrées : français et anglais.** Chinois, arabe (avec mise en page de droite à gauche), espagnol, portugais et allemand : prochaine livraison ; ils apparaissent « Bientôt » dans les réglages. Un test vérifie qu'une langue disponible traduit toutes les clés. Les textes juridiques restent en français (version qui fait foi), avec une mention dans les autres langues.
+- **Thème inversé** : l'interface en négatif photo ; cartes, sachets et illustrations gardent leurs vraies couleurs. **Personnalisé** : couleur principale parmi 8 et fond clair ou obscur ; la couleur du texte sur l'accent est choisie automatiquement pour rester lisible.
+- **Préférences enregistrées dans le compte et dans des cookies** (appliquées dès le premier affichage, sans clignotement), recopiées automatiquement sur un nouvel appareil.
+- **Page `/apercu`** (développement uniquement, 404 en production) pour travailler le design des pages joueur sans compte.

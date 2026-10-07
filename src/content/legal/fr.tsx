@@ -99,7 +99,8 @@ export const TERMS: LegalDocument = {
 
       <h2>3. Contenus virtuels</h2>
       <p>
-        Les cartes, boosters, la poussière de meme et les autres éléments du jeu sont des contenus virtuels. Ils n&apos;ont
+        Les cartes, boosters, la MemeMoney, la poussière de meme, les trophées et les autres éléments du jeu sont des
+        contenus virtuels. Ils n&apos;ont
         aucune valeur monétaire, ne sont ni remboursables, ni échangeables contre de l&apos;argent, ni cessibles à un
         tiers. Leur vente ou leur échange en dehors du jeu est interdit.
       </p>
@@ -108,12 +109,16 @@ export const TERMS: LegalDocument = {
       <ul>
         <li>Jouer est gratuit : des boosters gratuits sont offerts chaque jour, et aucun achat n&apos;est nécessaire.</li>
         <li>
-          Des boosters peuvent être achetés. Leur contenu est aléatoire ; les probabilités de chaque rareté sont affichées
-          avant tout achat.
+          La MemeMoney, monnaie du jeu, se gagne en jouant (victoires, nouveaux rangs) et peut aussi être achetée. Elle
+          sert à obtenir des boosters supplémentaires, spéciaux ou très spéciaux.
         </li>
         <li>
-          Les achats sont plafonnés à {(GAME_CONFIG.PURCHASES.MONTHLY_SPEND_CAP_CENTS / 100).toLocaleString("fr-FR")} € par
-          période de 30 jours, plafond que tu peux abaisser. Ils peuvent être indisponibles dans certains pays.
+          Le contenu des boosters est aléatoire ; les probabilités de chaque rareté sont affichées avant toute dépense.
+        </li>
+        <li>
+          Les achats sont réservés aux personnes majeures et plafonnés à{" "}
+          {(GAME_CONFIG.PURCHASES.MONTHLY_SPEND_CAP_CENTS / 100).toLocaleString("fr-FR")} € par période de 30 jours,
+          plafond que tu peux abaisser. Ils peuvent être indisponibles dans certains pays.
         </li>
         <li>
           Les contenus numériques étant fournis immédiatement, tu renonces à ton droit de rétractation dès l&apos;ouverture
@@ -169,7 +174,8 @@ export const PRIVACY: LegalDocument = {
         <li>Compte : adresse e-mail, pseudo, mot de passe (stocké chiffré, jamais lisible), fuseau horaire.</li>
         <li>Attestation de majorité et acceptation des conditions, horodatées.</li>
         <li>Connexion avec Google : ton adresse e-mail et ton identifiant Google, rien d&apos;autre.</li>
-        <li>Jeu : collection, decks, combats, défis, classements.</li>
+        <li>Jeu : collection, decks, combats, trophées et leur historique, MemeMoney, défis, classements.</li>
+        <li>Préférences : langue et thème choisis.</li>
         <li>Sécurité : adresse IP, utilisée pour limiter les abus (tentatives de connexion répétées).</li>
         <li>Achats : historique des achats. Les données de paiement sont traitées par Stripe et ne nous sont jamais transmises.</li>
       </ul>

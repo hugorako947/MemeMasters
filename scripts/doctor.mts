@@ -37,7 +37,17 @@ let dbUrlOk = false;
 try {
   const u = new URL(dbUrl);
   dbUrlOk = u.protocol.startsWith("postgres");
-  if (dbUrlOk) ok(`DATABASE_URL vers ${u.hostname}:${u.port || "5432"} (utilisateur ${decodeURIComponent(u.username)})`);
+  try {
+    decodeURIComponent(u.password);
+  } catch {
+    dbUrlOk = false;
+    bad(
+      "Le mot de passe de DATABASE_URL contient un caractère spécial mal écrit (souvent « % »). " +
+        "Le plus simple : réinitialisez le mot de passe de la base avec uniquement des lettres et des chiffres " +
+        "(Project Settings → Database → Reset database password). Sinon, encodez-le : % → %25, @ → %40, # → %23, / → %2F, : → %3A, ? → %3F, & → %26.",
+    );
+  }
+  if (dbUrlOk || u.protocol.startsWith("postgres")) ok(`DATABASE_URL vers ${u.hostname}:${u.port || "5432"} (utilisateur ${decodeURIComponent(u.username)})`);
   if (dbUrl.includes("[YOUR-PASSWORD]")) bad("DATABASE_URL contient encore [YOUR-PASSWORD] : remplacez-le par le mot de passe de la base.");
   if (u.port && u.port !== "6543" && u.hostname.includes("pooler")) warn("Le pooler Supabase en mode transaction utilise le port 6543.");
 } catch {

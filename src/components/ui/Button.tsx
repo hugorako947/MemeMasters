@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
-type Variant = "primary" | "secondary" | "ghost";
+type Variant = "primary" | "secondary" | "ghost" | "danger";
 
 /** Classes des boutons (styles dans globals.css, section « Boutons autocollant »). */
 export function buttonClass(variant: Variant = "primary", extra = ""): string {

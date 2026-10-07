@@ -53,15 +53,24 @@ const gameConfigSchema = z
     MAX_TURNS: positiveInt,
     AFK_TIMEOUTS_BEFORE_LOSS: positiveInt,
 
-    ELO: z.object({
-      START: positiveInt,
-      FLOOR: positiveInt,
-      K_PROVISIONAL: positiveInt,
-      K_STANDARD: positiveInt,
-      PROVISIONAL_GAMES: nonNegativeInt,
+    /** Trophées : gagnés ou perdus en bataille classée ; un rang tous les TROPHIES_PER_RANK. */
+    TROPHIES: z.object({
+      WIN: nonNegativeInt,
+      LOSS: nonNegativeInt,
+      DRAW: nonNegativeInt,
+      PER_RANK: positiveInt,
+      /** Matchmaking : écart de trophées accepté au départ, élargi à intervalles réguliers. */
       MATCH_WINDOW_START: positiveInt,
       MATCH_WINDOW_STEP: positiveInt,
       MATCH_WINDOW_STEP_SECONDS: positiveInt,
+    }),
+
+    /** MemeMoney : monnaie du jeu. Prix en MemeMoney. */
+    MEME_MONEY: z.object({
+      WIN_REWARD: nonNegativeInt,
+      EXTRA_DAILY_BOOSTER_PRICE: positiveInt,
+      SPECIAL_BOOSTER_PRICE: positiveInt,
+      VERY_SPECIAL_BOOSTER_PRICE: positiveInt,
     }),
 
     /** Classement : doit rester aligné avec la migration 20261006000400_classements.sql. */
@@ -81,11 +90,12 @@ const gameConfigSchema = z
       CAP_RAISE_DELAY_DAYS: nonNegativeInt,
       /** Codes pays ISO 3166-1 alpha-2 où la boutique est désactivée. */
       BLOCKED_COUNTRIES: z.array(z.string().regex(/^[A-Z]{2}$/)),
+      /** Packs de MemeMoney achetables en argent réel (phase 5). */
       PRODUCTS: z
         .array(
           z.object({
             code: z.string().regex(/^[a-z0-9_]+$/),
-            boosters: positiveInt,
+            memeMoney: positiveInt,
             priceCents: positiveInt,
           }),
         )
@@ -95,17 +105,6 @@ const gameConfigSchema = z
     /** Âge minimum pour créer un compte (attestation par case à cocher). null = aucun minimum. */
     MIN_ACCOUNT_AGE: z.number().int().min(1).nullable(),
 
-    /** Popularité, XP et niveaux (phases 2 à 4). */
-    XP: z.object({
-      WIN: nonNegativeInt,
-      DRAW: nonNegativeInt,
-      LOSS: nonNegativeInt,
-      BOT_MULTIPLIER: z.number().min(0).max(1),
-      BOOSTER_OPENED: nonNegativeInt,
-      CHALLENGE_CLAIMED: nonNegativeInt,
-      LEVEL_BASE: positiveInt,
-      LEVEL_STEP: nonNegativeInt,
-    }),
   })
   .superRefine((cfg, ctx) => {
     const total = RARITIES.reduce((sum, r) => sum + cfg.DROP_RATES[r], 0);
@@ -170,15 +169,21 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
   MAX_TURNS: 30,
   AFK_TIMEOUTS_BEFORE_LOSS: 3,
 
-  ELO: {
-    START: 1000,
-    FLOOR: 100,
-    K_PROVISIONAL: 40,
-    K_STANDARD: 24,
-    PROVISIONAL_GAMES: 20,
-    MATCH_WINDOW_START: 100,
-    MATCH_WINDOW_STEP: 50,
+  TROPHIES: {
+    WIN: 25,
+    LOSS: 25,
+    DRAW: 0,
+    PER_RANK: 1000,
+    MATCH_WINDOW_START: 150,
+    MATCH_WINDOW_STEP: 100,
     MATCH_WINDOW_STEP_SECONDS: 5,
+  },
+
+  MEME_MONEY: {
+    WIN_REWARD: 1,
+    EXTRA_DAILY_BOOSTER_PRICE: 20,
+    SPECIAL_BOOSTER_PRICE: 40,
+    VERY_SPECIAL_BOOSTER_PRICE: 80,
   },
 
   RANKING: {
@@ -195,25 +200,16 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
     MONTHLY_SPEND_CAP_CENTS: 5000,
     CAP_RAISE_DELAY_DAYS: 7,
     BLOCKED_COUNTRIES: ["BE"],
+    // Prix provisoires : 20 MemeMoney ≈ 1 booster supplémentaire.
     PRODUCTS: [
-      { code: "pack_1", boosters: 1, priceCents: 99 },
-      { code: "pack_5", boosters: 5, priceCents: 399 },
-      { code: "pack_12", boosters: 12, priceCents: 799 },
+      { code: "mm_20", memeMoney: 20, priceCents: 99 },
+      { code: "mm_110", memeMoney: 110, priceCents: 499 },
+      { code: "mm_240", memeMoney: 240, priceCents: 999 },
     ],
   },
 
   MIN_ACCOUNT_AGE: 18,
 
-  XP: {
-    WIN: 60,
-    DRAW: 40,
-    LOSS: 25,
-    BOT_MULTIPLIER: 0.5,
-    BOOSTER_OPENED: 10,
-    CHALLENGE_CLAIMED: 30,
-    LEVEL_BASE: 100,
-    LEVEL_STEP: 50,
-  },
 });
 
 export { gameConfigSchema };

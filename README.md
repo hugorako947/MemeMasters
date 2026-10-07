@@ -121,6 +121,21 @@ Complétez **`src/config/legal.config.ts`** (éditeur, adresse, e-mail de contac
 
 Quand vous modifiez les conditions, changez `TERMS_VERSION` : chaque joueur devra les accepter de nouveau à sa prochaine visite.
 
+## Aperçu des pages joueur (développement)
+
+Pour travailler le design sans compte ni base de données, lancez `npm run dev` puis ouvrez :
+
+- http://localhost:3000/apercu (accueil du joueur)
+- http://localhost:3000/apercu?vue=profil (profil, statistiques, graphique)
+- http://localhost:3000/apercu?vue=reglages (réglages)
+
+Ajoutez `&trophees=4200` pour simuler un autre rang. Cette page utilise des données fictives et n'existe pas en production.
+
+## Langues et thèmes
+
+- **Langues** : 7 langues proposées dans les réglages, dans l'ordre des plus parlées. Le français et l'anglais sont traduits ; les autres s'activent dès que leur fichier `messages/<code>.json` est complet (ajoutez le code dans `AVAILABLE_LOCALES`, `src/lib/i18n/locales.ts`). Sans choix du joueur, la langue suit celle du navigateur, puis celle du pays (en-tête Vercel), sinon l'anglais pour une langue pas encore traduite, sinon le français.
+- **Thèmes** : clair (par défaut), obscur, inversé, personnalisé (couleur principale et fond au choix). Le choix est enregistré dans le compte et sur l'appareil.
+
 ## Personnaliser le jeu
 
 Tout se règle dans **`src/config/game.config.ts`**, validé au démarrage (une erreur, par exemple des taux dont la somme n'est pas 100 %, empêche l'application de démarrer).
@@ -133,7 +148,10 @@ Tout se règle dans **`src/config/game.config.ts`**, validé au démarrage (une 
 | Les boosters gratuits par jour | `DAILY_FREE_BOOSTERS` |
 | Les défis quotidiens | `DAILY_CHALLENGES`, `CHALLENGE_REWARD_BOOSTERS` |
 | La taille des équipes et les minuteurs | `TEAM_SIZE`, `TURN_SECONDS`, `RECONNECT_SECONDS` |
-| Les prix et le plafond de dépenses | `PURCHASES` |
+| Les trophées gagnés ou perdus, le nombre de trophées par rang | `TROPHIES` |
+| Les prix en MemeMoney et le gain par victoire | `MEME_MONEY` |
+| Les rangs et leurs récompenses | `src/config/ranks.ts` (`RANK_REWARDS`) |
+| Les packs de MemeMoney, leurs prix et le plafond de dépenses | `PURCHASES` |
 
 Deux exceptions, vérifiées par les tests : les poids de popularité (`RANKING`) sont aussi écrits dans la migration `20261006000400_classements.sql`, et l'ordre des raretés et des vibes doit rester identique aux types SQL. Si vous les modifiez, ajoutez une migration ; `npm test` vous signale tout décalage.
 
