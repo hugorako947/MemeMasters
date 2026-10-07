@@ -70,8 +70,8 @@ export function generateCardArtSvg({ seed, vibe, rarity }: CardArtInput): string
     `<rect width="${ART_WIDTH}" height="${ART_HEIGHT}" fill="url(#bg)"/>`,
     backgroundPattern(vibe, rand, pal.pattern),
   );
-  if (tier >= 7) parts.push(rays(cx, cy));
-  if (tier >= 5) parts.push(stars(rand, tier >= 6 ? 14 : 9));
+  if (tier >= 6) parts.push(rays(cx, cy));
+  if (tier >= 4) parts.push(stars(rand, tier >= 5 ? 14 : 9));
 
   const head = headPath(rand, cx, cy, rx, ry);
   // Contour blanc épais puis trait d'encre : l'effet « sticker ».
@@ -87,9 +87,9 @@ export function generateCardArtSvg({ seed, vibe, rarity }: CardArtInput): string
   parts.push(drawMouth(mouthKind, rand, cx, cy + ry * between(rand, 0.32, 0.46), rx * between(rand, 0.28, 0.42)));
 
   parts.push(vibeExtras(vibe, rand, cx, cy, rx, ry, eyeY, eyeGap));
-  if (tier >= 6) parts.push(thirdEye(cx, cy - ry * 0.62));
-  if (tier >= 3) parts.push(sparkles(rand, tier >= 4 ? 5 : 3));
-  if (tier >= 7) parts.push(halo(cx, cy - ry - 18, rx));
+  if (tier >= 5) parts.push(thirdEye(cx, cy - ry * 0.62));
+  if (tier >= 2) parts.push(sparkles(rand, tier >= 3 ? 5 : 3));
+  if (tier >= 6) parts.push(halo(cx, cy - ry - 18, rx));
 
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${ART_WIDTH} ${ART_HEIGHT}" preserveAspectRatio="xMidYMid slice">${parts.join("")}</svg>`;
 }

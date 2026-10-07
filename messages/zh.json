@@ -1,0 +1,400 @@
+{
+  "meta": {
+    "description": "以表情包为主题的集换式卡牌游戏：开卡包、完成收藏，与全世界的玩家对战。"
+  },
+  "nav": {
+    "label": "主导航",
+    "home": "首页",
+    "rarities": "稀有度",
+    "profile": "个人资料",
+    "settings": "设置",
+    "skipToContent": "跳到正文",
+    "shop": "商店"
+  },
+  "rarity": {
+    "commune": "普通",
+    "rare": "稀有",
+    "epique": "史诗",
+    "legendaire": "传说",
+    "brainrot": "Brainrot",
+    "superbrainrot": "SuperBrainrot",
+    "godlevel": "Godlevel"
+  },
+  "vibe": {
+    "chaos": "混乱",
+    "wholesome": "治愈",
+    "rage": "暴怒",
+    "ironique": "反讽",
+    "cringe": "尴尬",
+    "absurde": "荒诞"
+  },
+  "card": {
+    "hp": "生命",
+    "atk": "攻击",
+    "def": "防御",
+    "spd": "速度",
+    "attack": "攻击",
+    "special": "特技",
+    "defense": "防御",
+    "power": "威力 {power}",
+    "energyCost": "{count, plural, other {# 点能量}}",
+    "ariaLabel": "{name}，{rarity}卡牌，氛围 {vibe}，{hp} 生命",
+    "tiltHint": "在卡牌上移动手指或鼠标，让它闪闪发光。",
+    "open": "查看 {name} 的详情"
+  },
+  "effect": {
+    "none": "无效果",
+    "dot": "尴尬：{turns, plural, other {# 回合}}内每回合损失最大生命的 {percent}%",
+    "stun": "卡顿：{chance}% 概率让速度更慢的目标跳过回合",
+    "debuff": "拉踩：目标的{stat}降低 1 级",
+    "buff": "热度：{stat}提升 1 级",
+    "pierce": "破防：无视 {percent}% 的防御",
+    "drain": "吸血：回复造成伤害的 {percent}%",
+    "multi": "连击：{hits} 次攻击，每次 {percent}% 威力",
+    "reflect": "反弹：被格挡伤害的 {percent}%",
+    "dodge": "闪避：{chance}% 概率躲开攻击",
+    "heal": "治疗：回复最大生命的 {percent}%",
+    "recharge": "充能：+1 能量",
+    "cleanse": "免疫：抵消本回合的负面效果"
+  },
+  "home": {
+    "guestTitle": "表情包终于有了自己的卡牌。",
+    "guestLead": "开卡包、完成收藏，与全世界的玩家对战。",
+    "createAccount": "注册",
+    "signIn": "登录"
+  },
+  "auth": {
+    "signInTitle": "登录",
+    "signInLead": "欢迎回来。",
+    "signUpTitle": "注册",
+    "signUpLead": "一分钟创建账号。游戏免费。",
+    "email": "电子邮箱",
+    "password": "密码",
+    "newPassword": "新密码",
+    "confirmPassword": "确认密码",
+    "submitSignIn": "登录",
+    "submitSignUp": "注册",
+    "pending": "请稍候…",
+    "google": "使用 Google 继续",
+    "or": "或",
+    "noAccount": "还没有账号？",
+    "haveAccount": "已有账号？",
+    "forgot": "忘记密码？",
+    "forgotTitle": "忘记密码",
+    "forgotLead": "输入你的邮箱，我们会发送一个设置新密码的链接。",
+    "forgotSubmit": "发送链接",
+    "forgotSent": "如果该邮箱存在账号，邮件已发出。记得查看垃圾邮件文件夹。",
+    "resetTitle": "新密码",
+    "resetSubmit": "保存密码",
+    "resetDone": "密码已修改。",
+    "continue": "继续",
+    "checkEmailTitle": "请查收邮件",
+    "checkEmailLead": "我们已向 {email} 发送确认链接。点击链接激活账号，然后登录。",
+    "backToSignIn": "返回登录",
+    "confirmFailed": "此链接已失效。请登录或重新申请链接。",
+    "oauthFailed": "Google 登录未成功，请重试。",
+    "signUpLink": "注册",
+    "signInLink": "登录",
+    "username": "用户名",
+    "usernameHint": "3 到 20 个字符：不带重音的字母、数字和 _",
+    "checking": "检查中…",
+    "available": "可用",
+    "passwordsMatch": "两次密码一致",
+    "requiredNote": "必填项",
+    "adultLabel": "我确认已年满 18 岁。部分表情包可能令人不适，且游戏提供付费购买。",
+    "termsLabel": "我接受<terms>使用条款</terms>、<community>社区规则</community>、<legal>法律声明</legal>和<privacy>隐私政策</privacy>。"
+  },
+  "onboarding": {
+    "title": "还差一步",
+    "lead": "选择其他玩家将看到的用户名，然后接受条款。",
+    "timezone": "你的时区：{timezone}",
+    "timezoneHint": "免费卡包会在此时区的午夜刷新。可以在设置中修改。",
+    "submit": "出发！",
+    "consentTitle": "条款已更新",
+    "consentLead": "我们的条款有变化。要继续游戏，请确认你已成年并接受新版本。",
+    "consentSubmit": "继续"
+  },
+  "profile": {
+    "title": "{username} 的个人资料",
+    "wins": "胜",
+    "losses": "负",
+    "draws": "平",
+    "memberSince": "从 {date} 开始游戏",
+    "notFound": "没有玩家使用这个用户名。",
+    "toNext": "还差 {left} 个奖杯达到{rank}",
+    "highest": "最高段位：{rank}",
+    "games": "对战场次",
+    "ratio": "胜负比",
+    "currentStreak": "当前连胜",
+    "bestStreak": "最佳连胜",
+    "chart": {
+      "periodLabel": "显示时段",
+      "period": {
+        "7d": "7 天",
+        "30d": "30 天",
+        "90d": "3 个月",
+        "365d": "1 年",
+        "all": "全部"
+      },
+      "summary": "奖杯：此时段内从 {from} 到 {to}",
+      "legend": "黄色圆点标记每次达到的新段位。",
+      "axisY": "奖杯",
+      "axis": {
+        "7d": "最近 7 天",
+        "30d": "最近 30 天",
+        "90d": "最近 3 个月",
+        "365d": "最近 12 个月",
+        "all": "自注册以来"
+      }
+    }
+  },
+  "settings": {
+    "title": "设置",
+    "account": "账号",
+    "signedInAs": "当前登录：{email}",
+    "timezoneTitle": "时区",
+    "timezoneLead": "每日限制会在此时区的午夜重置。每 {days} 天可以修改一次。",
+    "timezoneCurrent": "当前时区：{timezone}",
+    "timezoneLockedUntil": "下次可修改日期：{date}。",
+    "timezoneUseDevice": "使用此设备的时区（{timezone}）",
+    "timezoneSelect": "选择时区",
+    "timezoneSave": "保存时区",
+    "timezoneSaved": "时区已保存。",
+    "timezoneSame": "这已经是你的时区。",
+    "languageTitle": "语言",
+    "languageSoon": "即将推出",
+    "themeTitle": "主题",
+    "theme": {
+      "light": "浅色",
+      "dark": "深色",
+      "inverted": "反色",
+      "custom": "自定义"
+    },
+    "accentTitle": "主色",
+    "baseTitle": "背景",
+    "signOut": "退出登录",
+    "dangerTitle": "危险操作",
+    "dangerLead": "删除账号会立即生效且无法撤销。",
+    "delete": {
+      "button": "删除我的账号",
+      "title": "删除你的账号？",
+      "lead": "此操作不可撤销：所有内容都无法恢复。",
+      "item1": "你的收藏、卡包、MemeMoney 和奖杯都将被删除。",
+      "item2": "你的用户名将被释放，其他玩家可以使用。",
+      "item3": "已购买的 MemeMoney 不予退款。",
+      "confirmLabel": "请输入你的用户名以确认：{username}",
+      "cancel": "取消",
+      "confirm": "永久删除"
+    }
+  },
+  "rarities": {
+    "title": "7 种稀有度"
+  },
+  "offline": {
+    "title": "无网络连接",
+    "lead": "你已离线。访问过的页面仍可查看，其余内容会在恢复网络后回来。",
+    "retry": "重试"
+  },
+  "errors": {
+    "invalid_input": "部分字段无效。",
+    "invalid_credentials": "邮箱或密码错误。",
+    "email_not_confirmed": "请先通过收到的链接确认邮箱。",
+    "email_taken": "该邮箱已注册账号。",
+    "weak_password": "密码不符合全部规则。",
+    "password_mismatch": "两次输入的密码不一致。",
+    "rate_limited": "你的网络尝试次数过多，请稍后再试。",
+    "unauthenticated": "登录已过期，请重新登录。",
+    "profile_required": "请先完成个人资料创建。",
+    "profile_exists": "你的个人资料已存在。",
+    "username_taken": "该用户名已被使用。",
+    "username_length": "用户名长度须为 3 到 20 个字符。",
+    "username_characters": "只允许不带重音的字母、数字和 _。",
+    "username_reserved": "该用户名为保留名称。",
+    "username_inappropriate": "该用户名不被允许。",
+    "timezone": "无法识别该时区。",
+    "timezone_cooldown": "你最近已修改过时区。",
+    "forbidden_origin": "请求被拒绝。",
+    "server_error": "服务器无法处理请求，请稍后再试。",
+    "network": "无法连接，请检查网络。",
+    "notFoundTitle": "页面不存在",
+    "notFoundLead": "该页面不存在或已被删除。",
+    "backHome": "返回首页",
+    "invalid_email": "邮箱地址无效。",
+    "adult_required": "本游戏仅限 18 岁及以上人士。",
+    "terms_required": "创建账号前必须接受条款。",
+    "consent_required": "请先接受更新后的条款。",
+    "service_unavailable": "服务器暂时不可用，请稍后再试。",
+    "auth_rate_limited": "短时间内请求过多，请等几分钟再试。",
+    "email_rate_limited": "暂时无法发送确认邮件，请稍后再试。",
+    "email_not_authorized": "暂时无法向该地址发送确认邮件。",
+    "signup_disabled": "暂停注册。",
+    "locale_unavailable": "该语言暂不可用。",
+    "delete_confirmation": "输入的用户名不一致。"
+  },
+  "statName": {
+    "hp": "生命值",
+    "atk": "攻击",
+    "def": "防御",
+    "spd": "速度"
+  },
+  "statLower": {
+    "atk": "攻击",
+    "def": "防御",
+    "spd": "速度"
+  },
+  "detail": {
+    "close": "关闭",
+    "stats": "属性",
+    "moves": "攻击与防御",
+    "attack": "普通攻击",
+    "special": "特技攻击",
+    "defense": "防御",
+    "power": "威力 {power}",
+    "vibeTitle": "氛围",
+    "strongAgainst": "克制{vibe}",
+    "weakAgainst": "被{vibe}克制",
+    "notOwned": "这张卡牌还不在你的收藏中。开卡包去找它吧！"
+  },
+  "showcase": {
+    "title": "7 种稀有度",
+    "lead": "从最稀有到最常见。点一张卡牌查看详情。"
+  },
+  "features": {
+    "title": "等你来玩",
+    "boosters": {
+      "title": "开卡包",
+      "text": "每天 {free} 个免费卡包，完成挑战还能赢更多。撕开卡包，逐一翻开 {size} 张卡牌……祈祷出一张 Godlevel。",
+      "pack": "{size} 张卡牌"
+    },
+    "collection": {
+      "title": "完成你的收藏",
+      "text": "按稀有度或氛围筛选、排序、搜索并追踪进度。缺少的卡牌会一直模糊，直到你找到它们。排行榜比较游戏中所有卡牌：人气、攻击、胜率……",
+      "progress": "87 / 240 张卡牌",
+      "chipRarity": "稀有度",
+      "chipVibe": "氛围",
+      "chipOwned": "已拥有",
+      "chipSort": "排序：人气",
+      "filtersLabel": "筛选示例",
+      "rankingHint": "🏆 排行：人气 · 稀有度 · 生命 · 攻击 · 速度 · 胜率"
+    },
+    "battle": {
+      "title": "挑战全世界",
+      "text": "组建一支 {team} 张卡牌的队伍，实时挑战全球与你水平相当的玩家。每回合 {seconds} 秒：每次胜利都能赢得奖杯和 MemeMoney。",
+      "timer": "{seconds} 秒",
+      "trophies": "1,240"
+    }
+  },
+  "password": {
+    "length": "至少 {min} 个字符",
+    "lower": "一个小写字母",
+    "upper": "一个大写字母",
+    "digit": "一个数字",
+    "symbol": "一个特殊字符（! ? # @…）",
+    "ok": "（已满足）",
+    "missing": "（缺少）"
+  },
+  "footer": {
+    "label": "法律信息",
+    "legal": "法律声明",
+    "terms": "使用条款",
+    "privacy": "隐私",
+    "community": "社区规则",
+    "contact": "联系我们",
+    "copyright": "© {years} {name}。保留所有权利。",
+    "adults": "仅限 18 岁及以上人士。游戏免费：无需任何购买。",
+    "independent": "{name} 是一款独立游戏，与 Instagram、TikTok、X、Reddit 或任何其他社交网络无关。",
+    "trademarks": "表情包图片及提及的商标归各自的作者和所有者所有。如需删除某项内容，请联系我们。"
+  },
+  "legalPage": {
+    "updated": "最后更新：{date}",
+    "draftWarning": "草稿版本：需在 src/config/legal.config.ts 中补充信息（{fields}）。上线前请让专业人士审阅这些文本。",
+    "frenchOnly": "此文本仅提供法语版本，以法语版本为准。"
+  },
+  "back": {
+    "home": "返回首页",
+    "signIn": "返回登录",
+    "signUp": "返回注册",
+    "forgot": "返回忘记密码",
+    "rarities": "返回稀有度",
+    "legal": "返回法律声明",
+    "terms": "返回使用条款",
+    "privacy": "返回隐私",
+    "community": "返回社区规则"
+  },
+  "rank": {
+    "bronze": "青铜",
+    "argent": "白银",
+    "fer": "黑铁",
+    "or": "黄金",
+    "platine": "铂金",
+    "diamant": "钻石",
+    "maitre": "大师",
+    "grand_maitre": "宗师",
+    "super_grand_maitre": "超级宗师",
+    "immortel": "不朽"
+  },
+  "hud": {
+    "rankLabel": "段位 {rank}，{count, plural, other {# 个奖杯}}。查看我的个人资料",
+    "memeMoneyLabel": "{amount} MemeMoney。打开商店"
+  },
+  "playerHome": {
+    "title": "你好，{username}！",
+    "soon": "即将推出",
+    "boosters": {
+      "title": "卡包",
+      "lead": "每天有 {count} 个包含 {size} 张卡牌的免费卡包等你来开。",
+      "cards": "{count} 张卡牌",
+      "extra": "额外卡包",
+      "special": "特别卡包",
+      "verySpecial": "超特别卡包"
+    },
+    "battles": {
+      "title": "对战",
+      "lead": "用 {team} 张卡牌组成的队伍，挑战与你同段位的玩家。",
+      "nextReward": "达到下一段位 → 赠送 {boosters} 个卡包和 {money} MemeMoney"
+    },
+    "collection": {
+      "title": "收藏",
+      "lead": "收集、筛选、排序并比较你找到的表情包卡牌。",
+      "progress": "{owned, plural, =0 {还没有卡牌} other {# 张卡牌}}"
+    },
+    "shop": {
+      "title": "商店",
+      "lead": "为你的 MemeMoney 充值，享受当前优惠。",
+      "teaser": "首次充值：MemeMoney ×2",
+      "cta": "前往商店"
+    }
+  },
+  "odds": {
+    "perBooster": "每个{kind, select, daily {每日} special {特别} other {超特别}}卡包 {chance}%"
+  },
+  "shop": {
+    "title": "商店",
+    "blocked": "你所在的国家或地区暂不支持购买。你可以继续免费游戏，并在对战中赢取 MemeMoney。",
+    "buy": "购买",
+    "soon": "支付功能即将上线。",
+    "bonus": "赠送 +{amount}",
+    "tags": {
+      "popular": "热门",
+      "best_value": "最超值"
+    },
+    "offers": {
+      "firstDouble": {
+        "title": "首次充值：MemeMoney ×2",
+        "text": "你的第一次充值可获得双倍 MemeMoney，任意礼包均可。"
+      },
+      "discount": {
+        "title": "上线优惠：−{percent}%",
+        "until": "{amount} 礼包，截至 {date}。",
+        "limited": "限时优惠。"
+      }
+    },
+    "notes": {
+      "adults": "购买仅限 18 岁及以上人士。",
+      "cap": "每 30 天消费上限为 {amount}。",
+      "value": "MemeMoney 不具备现实货币价值：不可转售，也不可退款。",
+      "boosters": "额外卡包、特别卡包和超特别卡包可在首页的“卡包”区域用 MemeMoney 购买。详情请见",
+      "terms": "使用条款"
+    }
+  }
+}

@@ -7,7 +7,7 @@
  */
 export const THEMES = ["light", "dark", "inverted", "custom"] as const;
 export type Theme = (typeof THEMES)[number];
-export const BASES = ["light", "dark"] as const;
+export const BASES = ["light", "dark", "inverted"] as const;
 export type ThemeBase = (typeof BASES)[number];
 
 /** Couleurs d'accent proposées pour le thème personnalisé. */

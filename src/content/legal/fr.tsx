@@ -62,9 +62,13 @@ export const LEGAL_NOTICE: LegalDocument = {
 
       <h2>Propriété intellectuelle</h2>
       <p>
-        Le nom {NAME}, le logo, les textes, le code et les illustrations des cartes sont protégés. Les illustrations sont
-        des créations originales : elles ne reproduisent aucun meme existant ni aucune personne réelle. Toute
-        reproduction sans autorisation est interdite.
+        Le nom {NAME}, le logo, les textes et le code sont protégés ; leur reproduction sans autorisation est interdite.
+      </p>
+      <p>
+        Les illustrations des cartes sont soit des créations originales, soit des images de memes dont les droits
+        appartiennent à leurs auteurs ou ayants droit. Leur source et leur licence sont indiquées lorsqu&apos;elles sont
+        connues. Tout auteur, ayant droit ou personne représentée peut demander le retrait d&apos;une image : elle sera
+        retirée rapidement après vérification.
       </p>
       <p>
         {NAME} est un projet indépendant, sans lien avec Instagram, TikTok, X, Reddit ou tout autre réseau social. Les
@@ -72,7 +76,10 @@ export const LEGAL_NOTICE: LegalDocument = {
       </p>
 
       <h2>Signaler un contenu</h2>
-      <p>Pour signaler un contenu illicite ou un comportement contraire aux règles, écrivez à {contact}.</p>
+      <p>
+        Pour signaler un contenu illicite, une atteinte à vos droits ou à votre image, ou un comportement contraire aux
+        règles, écrivez à {contact} en précisant la carte ou la page concernée.
+      </p>
     </>
   ),
 };

@@ -1,5 +1,10 @@
+/** Première carte de démonstration de chaque rareté (vitrines). */
+export function sampleOf(rarity: Card["rarity"]): Card {
+  return SAMPLE_CARDS.find((c) => c.rarity === rarity)!;
+}
+
 /**
- * Huit cartes de démonstration, une par rareté, pour l'accueil et la page
+ * Cartes de démonstration (au moins une par rareté), pour l'accueil et la page
  * /raretes. Elles respectent le budget de stats (test : sample-cards.test.ts).
  * Le vrai jeu de 40 cartes est livré par le seed SQL (phase 2).
  */
@@ -36,9 +41,9 @@ export const SAMPLE_CARDS: readonly Card[] = [
     artSeed: 90210, imageUrl: null,
   },
   {
-    id: id(4), slug: "le-stagiaire-en-pls", name: "Le Stagiaire en PLS", rarity: "mystique", vibe: "cringe",
+    id: id(4), slug: "le-stagiaire-en-pls", name: "Le Stagiaire en PLS", rarity: "rare", vibe: "cringe",
     description: "A cliqué sur « Répondre à tous ». Deux fois.",
-    hp: 110, atk: 44, def: 45, spd: 80,
+    hp: 96, atk: 40, def: 40, spd: 80,
     normalAttack: { name: "Réponse à tous", power: 29 },
     specialAttack: { name: "Mail de 3 h du matin", power: 70, energyCost: 3, effect: { kind: "dot", percent: 8, turns: 2 } },
     defenseAbility: { name: "Excuses en boucle", effect: { kind: "cleanse" } },
@@ -47,16 +52,16 @@ export const SAMPLE_CARDS: readonly Card[] = [
   {
     id: id(5), slug: "le-chat-qui-juge", name: "Le Chat Qui Juge", rarity: "legendaire", vibe: "ironique",
     description: "T'a vu. N'a rien dit. N'en pense pas moins.",
-    hp: 116, atk: 52, def: 40, spd: 84,
+    hp: 116, atk: 48, def: 38, spd: 80,
     normalAttack: { name: "Regard en coin", power: 31 },
     specialAttack: { name: "Clignement lent", power: 75, energyCost: 3, effect: { kind: "debuff", stat: "def", stages: 1 } },
     defenseAbility: { name: "Indifférence totale", effect: { kind: "reflect", percent: 30 } },
     artSeed: 1337, imageUrl: null,
   },
   {
-    id: id(6), slug: "spirale-du-scroll-infini", name: "Spirale du Scroll Infini", rarity: "omniversal", vibe: "chaos",
+    id: id(6), slug: "spirale-du-scroll-infini", name: "Spirale du Scroll Infini", rarity: "brainrot", vibe: "chaos",
     description: "« Encore une vidéo » depuis 2019.",
-    hp: 120, atk: 50, def: 48, spd: 84,
+    hp: 116, atk: 50, def: 44, spd: 80,
     normalAttack: { name: "Swipe", power: 32 },
     specialAttack: { name: "Encore une vidéo", power: 80, energyCost: 4, effect: { kind: "drain", percent: 40 } },
     defenseAbility: { name: "Algorithme protecteur", effect: { kind: "recharge", amount: 1 } },
@@ -65,7 +70,7 @@ export const SAMPLE_CARDS: readonly Card[] = [
   {
     id: id(7), slug: "cerveau-en-puree-cosmique", name: "Cerveau en Purée Cosmique", rarity: "superbrainrot", vibe: "absurde",
     description: "Pense en sons de vidéos. Parle en sous-titres.",
-    hp: 124, atk: 58, def: 44, spd: 88,
+    hp: 120, atk: 56, def: 42, spd: 84,
     normalAttack: { name: "Bruit de fond", power: 32 },
     specialAttack: { name: "Court-circuit total", power: 82, energyCost: 4, effect: { kind: "pierce", percent: 40 } },
     defenseAbility: { name: "Bug d'affichage", effect: { kind: "dodge", chance: 25 } },
@@ -74,7 +79,7 @@ export const SAMPLE_CARDS: readonly Card[] = [
   {
     id: id(8), slug: "l-algorithme-supreme", name: "L'Algorithme Suprême", rarity: "godlevel", vibe: "chaos",
     description: "Il sait ce que tu vas regarder avant toi.",
-    hp: 130, atk: 58, def: 45, spd: 96,
+    hp: 126, atk: 56, def: 43, spd: 92,
     normalAttack: { name: "Notification", power: 33 },
     specialAttack: { name: "Tendance mondiale", power: 88, energyCost: 4, effect: { kind: "buff", stat: "atk", stages: 1 } },
     defenseAbility: { name: "Mise à jour divine", effect: { kind: "heal", percent: 15 } },

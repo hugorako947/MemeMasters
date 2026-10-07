@@ -35,7 +35,7 @@ export function BackLink({ to }: { to?: string }) {
       href={target.href}
       className="inline-flex min-h-11 items-center gap-1.5 text-sm text-ink-soft underline-offset-4 hover:text-ink hover:underline"
     >
-      <span aria-hidden="true">←</span>
+      <span aria-hidden="true" className="inline-block rtl:rotate-180">←</span>
       {t(target.labelKey as "home")}
     </Link>
   );

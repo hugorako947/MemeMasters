@@ -94,3 +94,41 @@ Chaque entrée : la décision, puis la raison.
 - **Thème inversé** : l'interface en négatif photo ; cartes, sachets et illustrations gardent leurs vraies couleurs. **Personnalisé** : couleur principale parmi 8 et fond clair ou obscur ; la couleur du texte sur l'accent est choisie automatiquement pour rester lisible.
 - **Préférences enregistrées dans le compte et dans des cookies** (appliquées dès le premier affichage, sans clignotement), recopiées automatiquement sur un nouvel appareil.
 - **Page `/apercu`** (développement uniquement, 404 en production) pour travailler le design des pages joueur sans compte.
+
+## Raretés et boosters (refonte demandée par le propriétaire)
+
+- **7 raretés** : commune, rare, épique, légendaire, brainrot, superbrainrot, godlevel. Mystique et omniversal disparaissent ; la migration convertit mystique → épique et omniversal → brainrot (aucune carte n'existait encore).
+- **Boosters à composition fixe** au lieu de taux par emplacement. Chacun a des cartes garanties et un emplacement « au choix », orienté vers la rareté habituelle :
+  - journalier : 5 communes, 3 rares, 1 épique + 1 épique (85 %) ou 1 légendaire (15 %) ;
+  - spécial : 3 communes, 3 rares, 2 épiques, 1 légendaire + 1 légendaire (88 %) ou 1 brainrot (12 %) ;
+  - très spécial : 2 communes, 2 rares, 2 épiques, 2 légendaires, 1 brainrot + 1 brainrot (90 %) ou 1 superbrainrot (10 %).
+- **Godlevel uniquement par chance**, dans tous les boosters : elle remplace une commune, avec 0,05 % (journalier), 0,1 % (spécial) ou 0,25 % (très spécial) de chance par booster. Pourcentages proposés, modifiables dans `BOOSTERS`.
+- **Pity conservé** pour le booster journalier : la légendaire est garantie au 10e booster d'affilée sans elle.
+- **Probabilités publiées** calculées depuis la même config que le tirage (`src/lib/economy/boosters.ts`, testé, y compris statistiquement). La page Raretés affiche, pour chaque rareté, la chance d'en obtenir au moins une dans le booster le plus accessible.
+- **Budget de stats** : 7 rangs, de 160 (commune) à 208 (godlevel).
+
+## Boutique et navigation (demande du propriétaire)
+
+- **La Boutique ne vend que de la MemeMoney** en argent réel. Les boosters en plus, spéciaux et très spéciaux s'achètent en MemeMoney depuis la case Boosters de l'accueil.
+- **Accès à la Boutique** : compteur de MemeMoney (en haut à droite), bouton de la barre de navigation, case de l'accueil.
+- **Packs** : 20, 110 (100 + 10), 240 (200 + 40), 650 (500 + 150) MemeMoney ; le bonus grandit avec le pack. Prix provisoires.
+- **Prix locaux par paliers ronds**, comme les boutiques d'applications (pas de conversion au taux du jour), dans 13 devises choisies selon le pays (`src/config/shop.ts`). Le paiement réel (Stripe) arrive en phase 5 : les boutons « Acheter » sont désactivés d'ici là.
+- **Offres honnêtes** : « première recharge ×2 » et une réduction de lancement datée. Les dates sont réelles : aucun faux compte à rebours ni pression artificielle.
+- **Barre de navigation** : Boutique, Raretés, Accueil (au centre, rond, surélevé), Profil, Réglages.
+- **Logo** : petit dandinement périodique, rebond au survol, « boing » et confettis au clic avant de revenir à l'accueil (sauf si le joueur préfère réduire les animations).
+
+## Thèmes (demande du propriétaire)
+
+- **Obscur** : noir et gris neutres, plus aucun bleu.
+- **Inversé** : tout est inversé, cartes et boosters compris. Une blague assumée.
+- **Personnalisé** : fond clair, obscur ou inversé.
+
+## Traductions
+
+- **7 langues complètes** : anglais, chinois mandarin (simplifié), espagnol, arabe (mise en page de droite à gauche), français, portugais, allemand. Tutoiement dans chaque langue qui le distingue. Les marges utilisent des propriétés logiques (début / fin) pour se retourner en arabe ; le graphique des trophées reste de gauche à droite (le temps).
+- Ces traductions ont été écrites sans relecture par des locuteurs natifs : à faire relire avant le lancement, surtout le chinois et l'arabe.
+
+## Images de memes (à trancher avant la phase 2)
+
+- Le propriétaire prévoit d'utiliser des images de memes venues d'internet. **La plupart ne sont pas libres de droits** (droit d'auteur de l'image d'origine, droit à l'image des personnes photographiées, parfois des marques déposées). Mentions légales et pied de page sont rédigés pour couvrir les deux cas et prévoir le retrait sur demande.
+- À prévoir en phase 2 : pour chaque carte, la source, l'auteur et la licence de l'image (champs dans l'administration) et une procédure de retrait rapide.

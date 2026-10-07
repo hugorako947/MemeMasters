@@ -4,28 +4,8 @@ import { GAME_CONFIG, gameConfigSchema } from "./game.config";
 import { RARITIES, isAtLeast, rarityTier } from "./rarities";
 
 describe("configuration du jeu", () => {
-  it("est valide et ses taux font 100 %", () => {
-    const total = RARITIES.reduce((sum, r) => sum + GAME_CONFIG.DROP_RATES[r], 0);
-    expect(total).toBeCloseTo(100, 10);
-  });
-
-  it("refuse des taux dont la somme n'est pas 100 %", () => {
-    const broken = { ...GAME_CONFIG, DROP_RATES: { ...GAME_CONFIG.DROP_RATES, commune: 50 } };
-    expect(gameConfigSchema.safeParse(broken).success).toBe(false);
-  });
-
-  it("refuse un taux nul (une rareté deviendrait introuvable)", () => {
-    const broken = {
-      ...GAME_CONFIG,
-      DROP_RATES: { ...GAME_CONFIG.DROP_RATES, godlevel: 0, commune: 55.05 },
-    };
-    expect(gameConfigSchema.safeParse(broken).success).toBe(false);
-  });
-
-  it("garde des taux décroissants avec la rareté", () => {
-    for (let i = 1; i < RARITIES.length; i++) {
-      expect(GAME_CONFIG.DROP_RATES[RARITIES[i]]).toBeLessThan(GAME_CONFIG.DROP_RATES[RARITIES[i - 1]]);
-    }
+  it("est valide", () => {
+    expect(gameConfigSchema.safeParse(GAME_CONFIG).success).toBe(true);
   });
 
   it("donne plus de poussière pour les cartes plus rares", () => {
@@ -54,13 +34,13 @@ describe("configuration du jeu", () => {
 describe("raretés", () => {
   it("ordonne les raretés de commune à godlevel", () => {
     expect(rarityTier("commune")).toBe(0);
-    expect(rarityTier("godlevel")).toBe(7);
+    expect(rarityTier("godlevel")).toBe(6);
     expect(isAtLeast("legendaire", "rare")).toBe(true);
     expect(isAtLeast("rare", "legendaire")).toBe(false);
   });
 
-  it("reste alignée avec l'enum SQL public.rarity", () => {
-    const sql = readFileSync("supabase/migrations/20261006000100_types_et_extensions.sql", "utf8");
+  it("reste alignée avec l'enum SQL public.rarity (dernière définition)", () => {
+    const sql = readFileSync("supabase/migrations/20261008000700_nouvelles_raretes.sql", "utf8");
     const match = sql.match(/create type public\.rarity as enum \(([\s\S]*?)\);/);
     const values = match?.[1].match(/'([a-z]+)'/g)?.map((v) => v.slice(1, -1));
     expect(values).toEqual([...RARITIES]);

@@ -1,13 +1,13 @@
 "use client";
 
-import { useFormatter, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, type MouseEvent } from "react";
 import { createPortal } from "react-dom";
-import { GAME_CONFIG } from "@/config/game.config";
 import { RARITY_GLYPH } from "@/config/rarities";
 import { VIBE_EMOJI, beatenBy, beats } from "@/config/vibes";
 import type { Card, DefenseEffect, SpecialEffect } from "@/lib/validation/card";
 import { MemeCard } from "./MemeCard";
+import { RarityOdds } from "./RarityOdds";
 
 const STAT_MAX = { hp: 140, atk: 65, def: 65, spd: 100 } as const;
 const STAT_COLOR = { hp: "#127a4b", atk: "#ff3d7f", def: "#2d5bff", spd: "#f5a400" } as const;
@@ -35,7 +35,6 @@ export function CardDetailDialog({ card, owned = true, onClose }: { card: Card; 
     if (event.target === event.currentTarget) ref.current?.close();
   }
 
-  const format = useFormatter();
   const statLabel = (s: "atk" | "def" | "spd") => t(`statLower.${s}`);
 
   const describeSpecial = (e: SpecialEffect) => {
@@ -92,7 +91,7 @@ export function CardDetailDialog({ card, owned = true, onClose }: { card: Card; 
           </div>
 
           <div className="grid gap-5">
-            <header className="md:pr-32">
+            <header className="md:pe-32">
               <h2 id={titleId} className="font-display text-4xl leading-none sm:text-5xl">
                 {card.name}
               </h2>
@@ -107,7 +106,7 @@ export function CardDetailDialog({ card, owned = true, onClose }: { card: Card; 
                 </span>
               </p>
               <p className="mt-2 text-sm text-ink-soft">
-                {t("detail.dropRate", { rate: format.number(GAME_CONFIG.DROP_RATES[card.rarity], { maximumFractionDigits: 2 }) })}
+                <RarityOdds rarity={card.rarity} />
               </p>
             </header>
 
@@ -126,7 +125,7 @@ export function CardDetailDialog({ card, owned = true, onClose }: { card: Card; 
                   {(["hp", "atk", "def", "spd"] as const).map((key) => (
                     <div key={key} className="grid grid-cols-[6.5rem_2.5rem_1fr] items-center gap-3 text-sm">
                       <span className="font-semibold">{t(`statName.${key}`)}</span>
-                      <span className="text-right font-display text-xl">{card[key]}</span>
+                      <span className="text-end font-display text-xl">{card[key]}</span>
                       <span className="mm-stat-bar" aria-hidden="true">
                         <span
                           style={{

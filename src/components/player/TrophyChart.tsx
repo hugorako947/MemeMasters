@@ -4,11 +4,11 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { RANK_COLORS, RANKS } from "@/config/ranks";
 import type { TrophyPoint } from "@/lib/server/players";
-import { buildTrophySeries, PERIODS, type Period } from "@/lib/player/trophy-series";
+import { buildTrophySeries, PERIODS, timeTicks, type Period } from "@/lib/player/trophy-series";
 
 const W = 640;
 const H = 280;
-const M = { top: 12, right: 12, bottom: 30, left: 52 };
+const M = { top: 14, right: 12, bottom: 50, left: 70 };
 
 /**
  * Courbe des trophées dans le temps, sur fond des bandes de rang.
@@ -43,7 +43,12 @@ export function TrophyChart({
     .map((p, i) => (i === 0 ? `M${x(p.at)} ${y(p.trophies)}` : `H${x(p.at)} V${y(p.trophies)}`))
     .join(" ");
   const bands = Array.from({ length: series.yMax / 1000 }, (_, i) => i);
-  const dateFmt = (ms: number) => format.dateTime(new Date(ms), { day: "numeric", month: "short" });
+  const ticks = timeTicks(series.from, series.to);
+  const tickLabel = (at: number, unit: "day" | "month" | "year") =>
+    format.dateTime(
+      new Date(at),
+      unit === "day" ? { day: "numeric", month: "short" } : unit === "month" ? { month: "short" } : { month: "short", year: "numeric" },
+    );
   const first = series.points[0]?.trophies ?? trophies;
   const last = series.points.at(-1)?.trophies ?? trophies;
 
@@ -66,7 +71,8 @@ export function TrophyChart({
         ))}
       </div>
 
-      <div className="mm-keep-colors overflow-hidden rounded-2xl border-2 border-[#1a1238] bg-white">
+      {/* Le temps s'écoule toujours de gauche à droite, même en arabe. */}
+      <div dir="ltr" className="overflow-hidden rounded-2xl border-2 border-[#1a1238] bg-white">
         <svg viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full" role="img" aria-label={t("summary", { from: first, to: last })}>
           {bands.map((i) => {
             const rank = RANKS[Math.min(i, RANKS.length - 1)];
@@ -88,15 +94,31 @@ export function TrophyChart({
           {series.rankUps.map((p) => (
             <circle key={p.at} cx={x(p.at)} cy={y(p.trophies)} r="6" fill="#ffd23f" stroke="#1a1238" strokeWidth="2" />
           ))}
-          <text x={M.left} y={H - 8} fontSize="11" fill="#4a4270">
-            {dateFmt(series.from)}
+          {ticks.map((tick) => (
+            <g key={tick.at}>
+              <line x1={x(tick.at)} x2={x(tick.at)} y1={M.top + plotH} y2={M.top + plotH + 5} stroke="#1a1238" strokeWidth="1.5" />
+              <text x={x(tick.at)} y={M.top + plotH + 18} textAnchor="middle" fontSize="11" fill="#4a4270">
+                {tickLabel(tick.at, tick.unit)}
+              </text>
+            </g>
+          ))}
+          <text x={M.left + plotW / 2} y={H - 6} textAnchor="middle" fontSize="12" fontWeight="700" fill="#1a1238">
+            {t(`axis.${period}`)}
           </text>
-          <text x={M.left + plotW} y={H - 8} textAnchor="end" fontSize="11" fill="#4a4270">
-            {t("now")}
+          <text
+            x={16}
+            y={M.top + plotH / 2}
+            textAnchor="middle"
+            fontSize="12"
+            fontWeight="700"
+            fill="#1a1238"
+            transform={`rotate(-90 16 ${M.top + plotH / 2})`}
+          >
+            {t("axisY")}
           </text>
         </svg>
       </div>
-      <p className="text-sm text-ink-soft">{series.changes === 0 ? t("empty") : t("legend")}</p>
+      {series.rankUps.length > 0 ? <p className="text-sm text-ink-soft">{t("legend")}</p> : null}
     </div>
   );
 }

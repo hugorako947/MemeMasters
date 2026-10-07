@@ -40,3 +40,23 @@ describe("séries de victoires", () => {
     expect(winStreaks([])).toEqual({ current: 0, best: 0 });
   });
 });
+
+import { timeTicks } from "./trophy-series";
+
+describe("graduations du temps", () => {
+  const to = Date.parse("2026-10-07T12:00:00Z");
+  it("gradue en jours sur 7 jours", () => {
+    const ticks = timeTicks(to - 7 * day, to);
+    expect(ticks.length).toBeGreaterThanOrEqual(6);
+    expect(ticks.every((t) => t.unit === "day")).toBe(true);
+  });
+  it("gradue en semaines sur 30 jours", () => {
+    const ticks = timeTicks(to - 30 * day, to);
+    expect(ticks).toHaveLength(5);
+  });
+  it("gradue en mois sur un an", () => {
+    const ticks = timeTicks(to - 365 * day, to);
+    expect(ticks.every((t) => t.unit === "month")).toBe(true);
+    expect(ticks.length).toBeGreaterThanOrEqual(5);
+  });
+});

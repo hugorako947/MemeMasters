@@ -8,16 +8,16 @@
     "rarities": "Rarities",
     "profile": "Profile",
     "settings": "Settings",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "shop": "Shop"
   },
   "rarity": {
     "commune": "Common",
     "rare": "Rare",
     "epique": "Epic",
-    "mystique": "Mythic",
     "legendaire": "Legendary",
-    "omniversal": "Omniversal",
-    "superbrainrot": "Superbrainrot",
+    "brainrot": "Brainrot",
+    "superbrainrot": "SuperBrainrot",
     "godlevel": "Godlevel"
   },
   "vibe": {
@@ -121,18 +121,13 @@
     "draws": "Draws",
     "memberSince": "Playing since {date}",
     "notFound": "No player has this username.",
-    "you": "That's you",
-    "rank": "Current rank",
     "toNext": "{left} more trophies to reach {rank}",
     "highest": "Highest rank reached: {rank}",
-    "memeMoney": "{amount} MemeMoney",
-    "battles": "Ranked battles",
     "games": "Battles played",
     "ratio": "Win / loss ratio",
     "currentStreak": "Current streak",
     "bestStreak": "Best streak",
     "chart": {
-      "title": "Trophy progress",
       "periodLabel": "Time range",
       "period": {
         "7d": "7 days",
@@ -142,9 +137,15 @@
         "all": "All time"
       },
       "summary": "Trophies: from {from} to {to} over this period",
-      "now": "Today",
-      "empty": "Play your first ranked battles to see your curve climb.",
-      "legend": "Yellow dots mark each new rank reached."
+      "legend": "Yellow dots mark each new rank reached.",
+      "axisY": "Trophies",
+      "axis": {
+        "7d": "Last 7 days",
+        "30d": "Last 30 days",
+        "90d": "Last 3 months",
+        "365d": "Last 12 months",
+        "all": "Since you joined"
+      }
     }
   },
   "settings": {
@@ -161,10 +162,8 @@
     "timezoneSaved": "Time zone saved.",
     "timezoneSame": "That's already your time zone.",
     "languageTitle": "Language",
-    "languageLead": "By default, the game uses the language of your device or your country.",
     "languageSoon": "Soon",
     "themeTitle": "Theme",
-    "themeLead": "Cards always keep their true colors.",
     "theme": {
       "light": "Light",
       "dark": "Dark",
@@ -189,9 +188,7 @@
     }
   },
   "rarities": {
-    "title": "The 8 rarities",
-    "lead": "The rarer a card, the more it shines. Hover over or tap a card to see its effects.",
-    "dropRate": "{rate}% per slot"
+    "title": "The 7 rarities"
   },
   "offline": {
     "title": "No connection",
@@ -256,13 +253,11 @@
     "vibeTitle": "Vibe",
     "strongAgainst": "Strong against {vibe}",
     "weakAgainst": "Weak against {vibe}",
-    "dropRate": "{rate}% chance per booster slot",
     "notOwned": "This card isn't in your collection yet. Open boosters to find it!"
   },
   "showcase": {
-    "title": "The 8 rarities",
-    "lead": "From the rarest to the most common. Tap a card to see its sheet.",
-    "rate": "{rate}% per slot"
+    "title": "The 7 rarities",
+    "lead": "From the rarest to the most common. Tap a card to see its sheet."
   },
   "features": {
     "title": "What awaits you",
@@ -307,8 +302,8 @@
     "contact": "Contact",
     "copyright": "© {years} {name}. All rights reserved.",
     "adults": "For people aged 18 and over. Playing is free: no purchase is necessary.",
-    "independent": "{name} is an independent game, not affiliated with Instagram, TikTok, X, Reddit or any other social network. All illustrations are original creations.",
-    "trademarks": "Trademarks mentioned belong to their respective owners."
+    "independent": "{name} is an independent game, not affiliated with Instagram, TikTok, X, Reddit or any other social network.",
+    "trademarks": "Meme images and trademarks mentioned belong to their respective authors and owners. To request the removal of content, contact us."
   },
   "legalPage": {
     "updated": "Last updated: {date}",
@@ -340,37 +335,66 @@
   },
   "hud": {
     "rankLabel": "{rank} rank, {count, plural, one {# trophy} other {# trophies}}. See my profile",
-    "memeMoneyLabel": "{amount} MemeMoney"
+    "memeMoneyLabel": "{amount} MemeMoney. Open the shop"
   },
   "playerHome": {
     "title": "Hi {username}!",
-    "lead": "Open your boosters, complete your collection and climb the ranks.",
     "soon": "Soon",
     "boosters": {
-      "title": "Today's boosters",
-      "lead": "{count} free boosters of {size} cards are waiting for you every day. They come back at midnight and don't stack up: open them before then!",
-      "ready": "{count} boosters ready to open",
+      "title": "Boosters",
+      "lead": "{count} free boosters of {size} cards are waiting for you every day.",
       "cards": "{count} cards",
-      "shop": "MemeMoney shop",
       "extra": "Extra booster",
       "special": "Special booster",
       "verySpecial": "Very special booster"
     },
     "battles": {
       "title": "Battles",
-      "lead": "Face players of your rank with a team of {team} cards. Every 1,000 trophies, you move up a rank.",
-      "toNext": "{left} more trophies to {rank}",
-      "top": "You've reached the highest rank. Respect.",
-      "nextReward": "{rank} rank: {boosters} boosters and {money} MemeMoney as a gift",
-      "win": "Win",
-      "draw": "Draw",
-      "loss": "Loss"
+      "lead": "Face players of your rank with a team of {team} cards.",
+      "nextReward": "Next rank reached → {boosters} boosters and {money} MemeMoney as a gift"
     },
     "collection": {
-      "title": "Your collection",
-      "lead": "Every card you find comes out of the blur. Filter, sort and compare them all in the ranking.",
-      "progress": "{owned, plural, =0 {No cards yet} one {# card} other {# cards}}",
-      "hint": "Tap a blurred card to discover its rarity."
+      "title": "Collection",
+      "lead": "Collect, filter, sort and compare the meme cards you've found.",
+      "progress": "{owned, plural, =0 {No cards yet} one {# card} other {# cards}}"
+    },
+    "shop": {
+      "title": "Shop",
+      "lead": "Top up your MemeMoney and enjoy the current offers.",
+      "teaser": "First top-up: MemeMoney ×2",
+      "cta": "Go to the shop"
+    }
+  },
+  "odds": {
+    "perBooster": "{chance}% per {kind, select, daily {daily} special {special} other {very special}} booster"
+  },
+  "shop": {
+    "title": "Shop",
+    "blocked": "Purchases aren't available in your country. You can keep playing for free and earn MemeMoney in battles.",
+    "buy": "Buy",
+    "soon": "Payment will be available very soon.",
+    "bonus": "+{amount} free",
+    "tags": {
+      "popular": "Popular",
+      "best_value": "Best value"
+    },
+    "offers": {
+      "firstDouble": {
+        "title": "First top-up: MemeMoney ×2",
+        "text": "Your very first top-up gives you twice as much MemeMoney, whichever pack you choose."
+      },
+      "discount": {
+        "title": "Launch offer: −{percent}%",
+        "until": "On the {amount} pack, until {date}.",
+        "limited": "Limited offer."
+      }
+    },
+    "notes": {
+      "adults": "Purchases are reserved for people aged 18 and over.",
+      "cap": "Spending is capped at {amount} per 30-day period.",
+      "value": "MemeMoney has no real-money value: it cannot be resold or refunded.",
+      "boosters": "Extra, special and very special boosters are bought with MemeMoney from the Boosters box on the home page. Details in the",
+      "terms": "terms of use"
     }
   }
 }

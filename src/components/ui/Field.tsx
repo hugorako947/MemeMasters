@@ -11,7 +11,7 @@ interface FieldProps extends InputHTMLAttributes<HTMLInputElement> {
 function RequiredMark({ required }: { required?: boolean }) {
   if (!required) return null;
   return (
-    <span aria-hidden="true" className="ml-0.5 text-candy-ink">
+    <span aria-hidden="true" className="ms-0.5 text-candy-ink">
       *
     </span>
   );

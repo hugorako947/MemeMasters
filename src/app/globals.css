@@ -25,9 +25,8 @@
   --color-r-commune: #8c93a8;
   --color-r-rare: #2f7bff;
   --color-r-epique: #8b3dff;
-  --color-r-mystique: #0fb5b1;
   --color-r-legendaire: #f5b400;
-  --color-r-omniversal: #ff5fd2;
+  --color-r-brainrot: #ff5fd2;
   --color-r-superbrainrot: #00d8e6;
   --color-r-godlevel: #ffc83d;
 
@@ -356,18 +355,6 @@
   animation: mm-sweep 3.6s ease-in-out infinite;
 }
 
-/* Mystique : turquoise, lueur pulsante, filigrane. */
-.mm-card[data-rarity="mystique"] {
-  --frame:
-    repeating-radial-gradient(circle at 50% 50%, rgb(255 255 255 / 0.18) 0 2px, transparent 2px 9px),
-    linear-gradient(150deg, #7af2ea, #0fb5b1 55%, #087a83);
-  --strip: #087a83;
-  --glow: 0 0 5cqw 0.5cqw rgb(15 181 177 / 0.55);
-}
-.mm-card[data-rarity="mystique"] .mm-card__frame {
-  animation: mm-pulse 2.8s ease-in-out infinite;
-}
-
 /* Légendaire : or, holographique piloté par le pointeur. */
 .mm-card[data-rarity="legendaire"] {
   --frame: linear-gradient(150deg, #fff1b0, #f5b400 35%, #b87800 60%, #ffe27a 85%, #c98a00);
@@ -375,7 +362,7 @@
   --glow: 0 0 6cqw 0.6cqw rgb(245 180 0 / 0.45);
 }
 .mm-card[data-rarity="legendaire"] .mm-card__fx,
-.mm-card[data-rarity="omniversal"] .mm-card__fx {
+.mm-card[data-rarity="brainrot"] .mm-card__fx {
   background:
     conic-gradient(
       from calc(var(--px) * 360deg) at calc(var(--px) * 100%) calc(var(--py) * 100%),
@@ -385,17 +372,20 @@
   opacity: 0.32;
 }
 
-/* Omniversal : bordure arc-en-ciel cosmique tournante, étoiles en parallaxe. */
-.mm-card[data-rarity="omniversal"] {
+/* Brainrot : bordure arc-en-ciel qui tourne, étoiles en parallaxe, illustration qui « fond ». */
+.mm-card[data-rarity="brainrot"] {
   --frame: conic-gradient(from var(--mm-angle), #ff5fd2, #ffd23f, #5fffb0, #5fd0ff, #b36bff, #ff5fd2);
   --panel: #fbf7ff;
   --strip: linear-gradient(90deg, #7b2ff7, #ff2e88);
   --glow: 0 0 7cqw 0.8cqw rgb(179 107 255 / 0.5);
 }
-.mm-card[data-rarity="omniversal"] .mm-card__frame {
+.mm-card[data-rarity="brainrot"] .mm-card__frame {
   animation: mm-spin 6s linear infinite;
 }
-.mm-card[data-rarity="omniversal"] .mm-card__art::after {
+.mm-card[data-rarity="brainrot"] .mm-card__art img {
+  animation: mm-melt 5s ease-in-out infinite;
+}
+.mm-card[data-rarity="brainrot"] .mm-card__art::after {
   content: "";
   position: absolute;
   inset: -10%;
@@ -468,6 +458,10 @@
 @keyframes mm-sweep {
   0%, 30% { background-position: 130% 0; }
   70%, 100% { background-position: -30% 0; }
+}
+@keyframes mm-melt {
+  0%, 100% { filter: none; transform: none; }
+  50% { filter: hue-rotate(45deg) saturate(1.3); transform: scale(1.04) skewX(-2deg); }
 }
 @keyframes mm-pulse {
   0%, 100% { box-shadow: 0 1.6cqw 0 -0.2cqw rgb(26 18 56 / 0.85), 0 0 3cqw 0 rgb(15 181 177 / 0.35); }
@@ -768,7 +762,7 @@ body:has(> dialog.mm-detail[open]) #mm-app {
 }
 .mm-prose ul {
   list-style: disc;
-  padding-left: 1.25rem;
+  padding-inline-start: 1.25rem;
 }
 .mm-prose a {
   color: var(--color-link);
@@ -813,39 +807,39 @@ body:has(> dialog.mm-detail[open]) #mm-app {
 
 [data-theme="dark"],
 [data-theme="custom"][data-base="dark"] {
-  --color-ink: #f1edff;
-  --color-ink-soft: #b9b2dc;
-  --color-paper: #120d26;
-  --color-surface: #1d1640;
-  --color-line: #3a3163;
-  --color-link: #93abff;
+  --color-ink: #f2f2f2;
+  --color-ink-soft: #b5b5b5;
+  --color-paper: #000000;
+  --color-surface: #141414;
+  --color-line: #333333;
+  --color-link: #9db4ff;
   --color-candy-ink: #ff8fb1;
   --color-success: #4ade80;
   --color-danger: #ff6b7a;
   --mm-shadow: #000000;
   --mm-accent-ink: #1a1238;
-  --mm-night: #0a0718;
+  --mm-night: #0a0a0a;
   color-scheme: dark;
 }
 [data-theme="custom"][data-base="dark"] {
   --mm-accent-ink: inherit;
 }
 
-/* Inversé : négatif photo de l'interface ; cartes et illustrations retrouvent leurs couleurs. */
-[data-theme="inverted"] body {
+/* Inversé (thème, ou fond du thème personnalisé) : tout le site en négatif
+   photo, cartes, boosters et illustrations compris. Une blague assumée. */
+[data-theme="inverted"] body,
+[data-theme="custom"][data-base="inverted"] body {
   background: #0c0f00;
 }
 [data-theme="inverted"] #mm-app,
-[data-theme="inverted"] dialog.mm-detail {
+[data-theme="inverted"] dialog.mm-detail,
+[data-theme="custom"][data-base="inverted"] #mm-app,
+[data-theme="custom"][data-base="inverted"] dialog.mm-detail {
   filter: invert(1) hue-rotate(180deg);
 }
-[data-theme="inverted"] body:has(> dialog.mm-detail[open]) #mm-app {
+[data-theme="inverted"] body:has(> dialog.mm-detail[open]) #mm-app,
+[data-theme="custom"][data-base="inverted"] body:has(> dialog.mm-detail[open]) #mm-app {
   filter: invert(1) hue-rotate(180deg) blur(10px);
-}
-/* Seul l'élément protégé le plus haut est ré-inversé (sinon une carte dans un
-   panneau protégé serait inversée deux fois). */
-[data-theme="inverted"] :is(.mm-card, .mm-pack, .mm-keep-colors):not(:is(.mm-card, .mm-pack, .mm-keep-colors) *) {
-  filter: invert(1) hue-rotate(180deg);
 }
 
 /* Les cartes, les légendes de meme et les panneaux « nuit » ne suivent pas le thème. */
@@ -920,4 +914,163 @@ body:has(> dialog.mm-detail[open]) #mm-app {
 .mm-btn.mm-btn--ghost {
   box-shadow: none;
   min-height: 2.75rem;
+}
+
+/* ==========================================================================
+   Booster journalier en vedette : il flotte, brille et ses bords scintillent.
+   ========================================================================== */
+.mm-pack-stage {
+  perspective: 700px;
+}
+.mm-pack--hero {
+  animation:
+    mm-float 4s ease-in-out infinite,
+    mm-pack-sway 6s ease-in-out infinite;
+  transform-style: preserve-3d;
+  box-shadow:
+    0 6px 0 0 #1a1238,
+    0 0 0 3px #ffffff,
+    0 0 24px 6px rgb(255 61 127 / 0.45);
+}
+.mm-pack--hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.75) 48%, transparent 60%) no-repeat;
+  background-size: 250% 100%;
+  animation: mm-sweep 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
+.mm-pack--hero::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border: 3px solid transparent;
+  border-radius: inherit;
+  background: conic-gradient(from var(--mm-angle), #ff3d7f, #ffd23f, #5fd0ff, #b36bff, #ff3d7f) border-box;
+  -webkit-mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: mm-spin 4s linear infinite;
+  pointer-events: none;
+}
+@keyframes mm-pack-sway {
+  0%, 100% { rotate: -4deg; }
+  50% { rotate: 4deg; }
+}
+
+/* Pile de pièces de MemeMoney. */
+.mm-coin-stack {
+  display: inline-flex;
+  font-size: 1.6rem;
+}
+.mm-coin-stack > * + * {
+  margin-inline-start: -0.7em;
+}
+
+/* ==========================================================================
+   Logo : il se dandine au survol, rebondit et lance des confettis au clic.
+   ========================================================================== */
+.mm-logo {
+  position: relative;
+  display: inline-block;
+  transition: transform 0.2s cubic-bezier(0.3, 1.8, 0.5, 1);
+}
+.mm-logo:hover {
+  transform: rotate(-5deg) scale(1.08);
+}
+.mm-logo:hover .mm-logo__text {
+  animation: mm-logo-wiggle 0.6s ease-in-out;
+}
+.mm-logo__text {
+  display: inline-block;
+  /* Petit dandinement de temps en temps, pour attirer l'œil sans gêner. */
+  animation: mm-logo-idle 8s ease-in-out infinite;
+}
+.mm-logo[data-boing="true"] .mm-logo__text {
+  animation: mm-logo-boing 0.45s cubic-bezier(0.3, 1.8, 0.5, 1);
+}
+.mm-logo__burst {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  pointer-events: none;
+  font-size: 1.1rem;
+  opacity: 0;
+}
+.mm-logo[data-boing="true"] .mm-logo__burst {
+  animation: mm-burst 0.6s ease-out forwards;
+}
+@keyframes mm-logo-wiggle {
+  0%, 100% { rotate: 0deg; }
+  25% { rotate: -4deg; }
+  75% { rotate: 4deg; }
+}
+@keyframes mm-logo-idle {
+  0%, 90%, 100% { transform: none; }
+  93% { transform: rotate(-4deg) scale(1.06); }
+  96% { transform: rotate(3deg) scale(1.06); }
+}
+@keyframes mm-logo-boing {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.25, 0.8); }
+  65% { transform: scale(0.9, 1.15); }
+  100% { transform: scale(1); }
+}
+@keyframes mm-burst {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(0.4); }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.2) rotate(var(--rot)); }
+}
+
+/* ==========================================================================
+   Barre de navigation : bouton Accueil central, rond et mis en avant.
+   ========================================================================== */
+.mm-nav-home {
+  position: relative;
+  margin-top: -1.4rem;
+  display: grid;
+  place-items: center;
+  width: 4.6rem;
+  height: 4.6rem;
+  border-radius: 9999px;
+  border: 3px solid var(--color-ink);
+  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--color-candy), white 35%), var(--color-candy) 60%);
+  color: var(--mm-accent-ink);
+  box-shadow:
+    0 5px 0 0 var(--mm-shadow),
+    0 0 0 5px var(--color-paper);
+  transition: transform 0.18s cubic-bezier(0.3, 1.8, 0.5, 1);
+}
+.mm-nav-home:hover {
+  transform: translateY(-3px) scale(1.06);
+}
+.mm-nav-home:active {
+  transform: translateY(3px);
+}
+.mm-nav-home[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  inset: -9px;
+  border-radius: inherit;
+  border: 2px dashed var(--color-candy);
+  animation: mm-spin-ring 12s linear infinite;
+}
+@keyframes mm-spin-ring {
+  to { rotate: 360deg; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mm-pack--hero,
+  .mm-pack--hero::before,
+  .mm-pack--hero::after,
+  .mm-logo__text,
+  .mm-logo[data-boing="true"] .mm-logo__text,
+  .mm-logo[data-boing="true"] .mm-logo__burst,
+  .mm-nav-home[aria-current="page"]::after {
+    animation: none;
+  }
+  .mm-logo:hover,
+  .mm-nav-home:hover {
+    transform: none;
+  }
 }

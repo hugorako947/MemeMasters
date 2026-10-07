@@ -1,7 +1,7 @@
 /**
  * Budget de statistiques par rareté (conception, section 7) :
  *   PV/2 + ATK + DEF + VIT/2 = 160 × (1 + 0,05 × rang)
- * Le rang va de 0 (commune, budget 160) à 7 (godlevel, budget 216).
+ * Le rang va de 0 (commune, budget 160) à 6 (godlevel, budget 208).
  */
 import { rarityTier, type Rarity } from "@/config/rarities";
 

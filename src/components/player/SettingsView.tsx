@@ -25,13 +25,11 @@ export async function SettingsView({ player, email }: { player: Player; email: s
 
       <Panel className="grid gap-3">
         <h2 className="text-xl font-extrabold">{t("languageTitle")}</h2>
-        <p className="text-ink-soft">{t("languageLead")}</p>
         <LanguageForm />
       </Panel>
 
       <Panel className="grid gap-3">
         <h2 className="text-xl font-extrabold">{t("themeTitle")}</h2>
-        <p className="text-ink-soft">{t("themeLead")}</p>
         <AppearanceForm initial={parseAppearance(player.appearance)} />
       </Panel>
 

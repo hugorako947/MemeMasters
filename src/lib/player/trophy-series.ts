@@ -58,3 +58,31 @@ export function buildTrophySeries(
   const changes = points.slice(1).filter((p, i) => p.trophies !== points[i].trophies).length;
   return { from, to: now, points, rankUps, yMax, changes };
 }
+
+export type TickUnit = "day" | "month" | "year";
+
+/**
+ * Graduations de l'axe du temps, adaptées à la durée affichée :
+ * jours (≤ 10 j), semaines (≤ 2 mois), mois (≤ 13 mois), puis trimestres.
+ */
+export function timeTicks(from: number, to: number): Array<{ at: number; unit: TickUnit }> {
+  const days = (to - from) / DAY;
+  const ticks: Array<{ at: number; unit: TickUnit }> = [];
+  if (days <= 60) {
+    const step = days <= 10 ? Math.max(1, Math.ceil(days / 7)) : 7;
+    const start = new Date(from);
+    start.setUTCHours(0, 0, 0, 0);
+    for (let t = start.getTime() + DAY; t < to; t += step * DAY) ticks.push({ at: t, unit: "day" });
+    return ticks;
+  }
+  const monthsStep = days <= 400 ? (days <= 120 ? 1 : 2) : 3;
+  const d = new Date(from);
+  d.setUTCDate(1);
+  d.setUTCHours(0, 0, 0, 0);
+  d.setUTCMonth(d.getUTCMonth() + 1);
+  while (d.getTime() < to) {
+    ticks.push({ at: d.getTime(), unit: days > 400 && d.getUTCMonth() === 0 ? "year" : "month" });
+    d.setUTCMonth(d.getUTCMonth() + monthsStep);
+  }
+  return ticks;
+}

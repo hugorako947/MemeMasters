@@ -2,17 +2,14 @@ import "server-only";
 import { cache } from "react";
 import { GAME_CONFIG } from "@/config/game.config";
 import { LEGAL } from "@/config/legal.config";
+import type { Appearance, ThemeBase } from "@/lib/theme/theme";
 import { daysBetween } from "@/lib/time/game-day";
 import { ApiError } from "./http";
 import { isPgError, PG_UNIQUE_VIOLATION, sql } from "./db";
 
 export type ThemeName = "light" | "dark" | "inverted" | "custom";
 
-export interface ThemePreference {
-  theme: ThemeName;
-  accent: string | null;
-  base: "light" | "dark" | null;
-}
+export type ThemePreference = Appearance;
 
 export interface Player {
   id: string;
@@ -51,7 +48,7 @@ interface PlayerRow {
   locale: string | null;
   theme: ThemeName;
   theme_accent: string | null;
-  theme_base: "light" | "dark" | null;
+  theme_base: ThemeBase | null;
   created_at: Date;
   age_confirmed_at: Date | null;
   terms_version: string | null;
@@ -278,4 +275,10 @@ export async function saveAppearance(userId: string, pref: ThemePreference): Pro
  */
 export async function deleteAccount(userId: string): Promise<void> {
   await sql()`delete from auth.users where id = ${userId}`;
+}
+
+/** Vrai si le joueur a déjà fait au moins un achat payé (offre « première recharge »). */
+export async function hasPaidPurchase(userId: string): Promise<boolean> {
+  const rows = await sql()`select 1 from public.purchases where player_id = ${userId} and status = 'paid' limit 1`;
+  return rows.length > 0;
 }

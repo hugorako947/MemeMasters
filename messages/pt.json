@@ -1,0 +1,400 @@
+{
+  "meta": {
+    "description": "Jogo de cartas colecionáveis sobre memes: abra pacotes, complete sua coleção e enfrente jogadores do mundo todo."
+  },
+  "nav": {
+    "label": "Navegação principal",
+    "home": "Início",
+    "rarities": "Raridades",
+    "profile": "Perfil",
+    "settings": "Configurações",
+    "skipToContent": "Ir para o conteúdo",
+    "shop": "Loja"
+  },
+  "rarity": {
+    "commune": "Comum",
+    "rare": "Rara",
+    "epique": "Épica",
+    "legendaire": "Lendária",
+    "brainrot": "Brainrot",
+    "superbrainrot": "SuperBrainrot",
+    "godlevel": "Godlevel"
+  },
+  "vibe": {
+    "chaos": "Caos",
+    "wholesome": "Wholesome",
+    "rage": "Raiva",
+    "ironique": "Irônica",
+    "cringe": "Cringe",
+    "absurde": "Absurda"
+  },
+  "card": {
+    "hp": "PV",
+    "atk": "ATQ",
+    "def": "DEF",
+    "spd": "VEL",
+    "attack": "Ataque",
+    "special": "Especial",
+    "defense": "Defesa",
+    "power": "{power} de poder",
+    "energyCost": "{count, plural, one {# energia} other {# energias}}",
+    "ariaLabel": "{name}, carta {rarity}, vibe {vibe}, {hp} PV",
+    "tiltHint": "Mova o dedo ou o mouse sobre a carta para fazê-la brilhar.",
+    "open": "Ver a ficha de {name}"
+  },
+  "effect": {
+    "none": "Sem efeito",
+    "dot": "Vergonha alheia: {percent} % dos PV máx. por {turns, plural, one {# turno} other {# turnos}}",
+    "stun": "Bug: {chance} % de chance de um alvo mais lento perder a vez",
+    "debuff": "Ratio: −1 nível de {stat} no alvo",
+    "buff": "Hype: +1 nível de {stat}",
+    "pierce": "Quebra-defesa: ignora {percent} % da defesa",
+    "drain": "Roubo de vida: cura {percent} % do dano",
+    "multi": "Combo: {hits} golpes a {percent} % de poder",
+    "reflect": "Rebote: {percent} % do dano bloqueado",
+    "dodge": "Esquiva: {chance} % de chance de evitar o ataque",
+    "heal": "Cura: +{percent} % dos PV máx.",
+    "recharge": "Recarga: +1 energia",
+    "cleanse": "Imunidade: anula os efeitos negativos do turno"
+  },
+  "home": {
+    "guestTitle": "Os memes finalmente têm suas cartas.",
+    "guestLead": "Abra pacotes, complete sua coleção e enfrente jogadores do mundo todo.",
+    "createAccount": "Cadastrar-se",
+    "signIn": "Entrar"
+  },
+  "auth": {
+    "signInTitle": "Entrar",
+    "signInLead": "Que bom te ver de novo.",
+    "signUpTitle": "Cadastrar-se",
+    "signUpLead": "Crie sua conta em um minuto. Jogar é grátis.",
+    "email": "E-mail",
+    "password": "Senha",
+    "newPassword": "Nova senha",
+    "confirmPassword": "Confirme a senha",
+    "submitSignIn": "Entrar",
+    "submitSignUp": "Cadastrar-se",
+    "pending": "Um instante…",
+    "google": "Continuar com o Google",
+    "or": "ou",
+    "noAccount": "Ainda não tem conta?",
+    "haveAccount": "Já tem uma conta?",
+    "forgot": "Esqueceu a senha?",
+    "forgotTitle": "Senha esquecida",
+    "forgotLead": "Digite seu e-mail e enviaremos um link para escolher uma nova.",
+    "forgotSubmit": "Enviar o link",
+    "forgotSent": "Se existir uma conta com este e-mail, uma mensagem acabou de ser enviada. Confira também a pasta de spam.",
+    "resetTitle": "Nova senha",
+    "resetSubmit": "Salvar a senha",
+    "resetDone": "Senha alterada.",
+    "continue": "Continuar",
+    "checkEmailTitle": "Confira seu e-mail",
+    "checkEmailLead": "Enviamos um link de confirmação para {email}. Clique nele para ativar sua conta e depois entre.",
+    "backToSignIn": "Voltar para entrar",
+    "confirmFailed": "Este link não é mais válido. Entre ou peça um novo link.",
+    "oauthFailed": "Não foi possível entrar com o Google. Tente de novo.",
+    "signUpLink": "Cadastrar-se",
+    "signInLink": "Entrar",
+    "username": "Nome de usuário",
+    "usernameHint": "De 3 a 20 caracteres: letras sem acento, números e _",
+    "checking": "Verificando…",
+    "available": "Disponível",
+    "passwordsMatch": "As senhas coincidem",
+    "requiredNote": "Campos obrigatórios",
+    "adultLabel": "Declaro ter pelo menos 18 anos. Alguns memes podem ser ofensivos, e o jogo oferece compras.",
+    "termsLabel": "Aceito os <terms>termos de uso</terms>, as <community>regras da comunidade</community>, o <legal>aviso legal</legal> e a <privacy>política de privacidade</privacy>."
+  },
+  "onboarding": {
+    "title": "Só mais um passo",
+    "lead": "Escolha o nome que os outros jogadores vão ver e aceite os termos.",
+    "timezone": "Seu fuso horário: {timezone}",
+    "timezoneHint": "Seus pacotes grátis voltam à meia-noite neste fuso. Você pode mudar nas configurações.",
+    "submit": "Bora!",
+    "consentTitle": "Termos atualizados",
+    "consentLead": "Nossos termos mudaram. Para continuar jogando, confirme que é maior de idade e aceite a nova versão.",
+    "consentSubmit": "Continuar"
+  },
+  "profile": {
+    "title": "Perfil de {username}",
+    "wins": "Vitórias",
+    "losses": "Derrotas",
+    "draws": "Empates",
+    "memberSince": "Joga desde {date}",
+    "notFound": "Nenhum jogador tem este nome.",
+    "toNext": "Faltam {left} troféus para chegar a {rank}",
+    "highest": "Melhor ranque alcançado: {rank}",
+    "games": "Batalhas jogadas",
+    "ratio": "Razão vitórias / derrotas",
+    "currentStreak": "Sequência atual",
+    "bestStreak": "Melhor sequência",
+    "chart": {
+      "periodLabel": "Período exibido",
+      "period": {
+        "7d": "7 dias",
+        "30d": "30 dias",
+        "90d": "3 meses",
+        "365d": "1 ano",
+        "all": "Tudo"
+      },
+      "summary": "Troféus: de {from} a {to} no período",
+      "legend": "Os pontos amarelos marcam cada novo ranque alcançado.",
+      "axisY": "Troféus",
+      "axis": {
+        "7d": "Últimos 7 dias",
+        "30d": "Últimos 30 dias",
+        "90d": "Últimos 3 meses",
+        "365d": "Últimos 12 meses",
+        "all": "Desde o seu cadastro"
+      }
+    }
+  },
+  "settings": {
+    "title": "Configurações",
+    "account": "Conta",
+    "signedInAs": "Conectado como {email}",
+    "timezoneTitle": "Fuso horário",
+    "timezoneLead": "Seus limites diários são reiniciados à meia-noite neste fuso. Você pode mudá-lo uma vez a cada {days} dias.",
+    "timezoneCurrent": "Fuso atual: {timezone}",
+    "timezoneLockedUntil": "Próxima mudança possível em {date}.",
+    "timezoneUseDevice": "Usar o deste aparelho ({timezone})",
+    "timezoneSelect": "Escolher um fuso horário",
+    "timezoneSave": "Salvar o fuso horário",
+    "timezoneSaved": "Fuso horário salvo.",
+    "timezoneSame": "Este já é o seu fuso horário.",
+    "languageTitle": "Idioma",
+    "languageSoon": "Em breve",
+    "themeTitle": "Tema",
+    "theme": {
+      "light": "Claro",
+      "dark": "Escuro",
+      "inverted": "Invertido",
+      "custom": "Personalizado"
+    },
+    "accentTitle": "Cor principal",
+    "baseTitle": "Fundo",
+    "signOut": "Sair",
+    "dangerTitle": "Zona de perigo",
+    "dangerLead": "Excluir a conta é imediato e definitivo.",
+    "delete": {
+      "button": "Excluir minha conta",
+      "title": "Excluir sua conta?",
+      "lead": "Esta ação é definitiva: nada poderá ser recuperado.",
+      "item1": "Sua coleção, seus pacotes, sua MemeMoney e seus troféus serão apagados.",
+      "item2": "Seu nome de usuário ficará livre e outro jogador poderá usá-lo.",
+      "item3": "A MemeMoney comprada não será reembolsada.",
+      "confirmLabel": "Para confirmar, digite seu nome de usuário: {username}",
+      "cancel": "Cancelar",
+      "confirm": "Excluir definitivamente"
+    }
+  },
+  "rarities": {
+    "title": "As 7 raridades"
+  },
+  "offline": {
+    "title": "Sem conexão",
+    "lead": "Você está offline. As páginas já visitadas continuam disponíveis; o resto volta assim que a conexão voltar.",
+    "retry": "Tentar de novo"
+  },
+  "errors": {
+    "invalid_input": "Alguns campos não são válidos.",
+    "invalid_credentials": "E-mail ou senha incorretos.",
+    "email_not_confirmed": "Primeiro confirme seu e-mail pelo link recebido.",
+    "email_taken": "Já existe uma conta com este e-mail.",
+    "weak_password": "A senha não cumpre todas as regras.",
+    "password_mismatch": "As duas senhas são diferentes.",
+    "rate_limited": "Tentativas demais a partir da sua conexão. Tente de novo um pouco mais tarde.",
+    "unauthenticated": "Sua sessão expirou. Entre de novo.",
+    "profile_required": "Primeiro termine de criar seu perfil.",
+    "profile_exists": "Seu perfil já existe.",
+    "username_taken": "Este nome já está em uso.",
+    "username_length": "O nome deve ter entre 3 e 20 caracteres.",
+    "username_characters": "Apenas letras sem acento, números e _ são permitidos.",
+    "username_reserved": "Este nome é reservado.",
+    "username_inappropriate": "Este nome não é permitido.",
+    "timezone": "Este fuso horário não é reconhecido.",
+    "timezone_cooldown": "Você mudou de fuso horário recentemente.",
+    "forbidden_origin": "Solicitação recusada.",
+    "server_error": "O servidor não conseguiu processar o pedido. Tente de novo em instantes.",
+    "network": "Sem conexão. Verifique sua rede.",
+    "notFoundTitle": "Página não encontrada",
+    "notFoundLead": "Esta página não existe ou não existe mais.",
+    "backHome": "Voltar ao início",
+    "invalid_email": "Este e-mail não é válido.",
+    "adult_required": "O jogo é reservado a maiores de 18 anos.",
+    "terms_required": "Você precisa aceitar os termos para criar sua conta.",
+    "consent_required": "Primeiro aceite os termos atualizados.",
+    "service_unavailable": "O servidor está temporariamente indisponível. Tente de novo em instantes.",
+    "auth_rate_limited": "Pedidos demais em pouco tempo. Aguarde alguns minutos antes de tentar de novo.",
+    "email_rate_limited": "Não conseguimos enviar o e-mail de confirmação agora. Tente mais tarde.",
+    "email_not_authorized": "Não conseguimos enviar o e-mail de confirmação para este endereço no momento.",
+    "signup_disabled": "Os cadastros estão fechados no momento.",
+    "locale_unavailable": "Este idioma ainda não está disponível.",
+    "delete_confirmation": "O nome digitado não corresponde."
+  },
+  "statName": {
+    "hp": "Pontos de vida",
+    "atk": "Ataque",
+    "def": "Defesa",
+    "spd": "Velocidade"
+  },
+  "statLower": {
+    "atk": "ataque",
+    "def": "defesa",
+    "spd": "velocidade"
+  },
+  "detail": {
+    "close": "Fechar",
+    "stats": "Estatísticas",
+    "moves": "Ataques e defesa",
+    "attack": "Ataque",
+    "special": "Ataque especial",
+    "defense": "Defesa",
+    "power": "Poder {power}",
+    "vibeTitle": "Vibe",
+    "strongAgainst": "Forte contra {vibe}",
+    "weakAgainst": "Fraca contra {vibe}",
+    "notOwned": "Esta carta ainda não está na sua coleção. Abra pacotes para encontrá-la!"
+  },
+  "showcase": {
+    "title": "As 7 raridades",
+    "lead": "Da mais rara à mais comum. Toque em uma carta para ver a ficha."
+  },
+  "features": {
+    "title": "O que te espera",
+    "boosters": {
+      "title": "Abra pacotes",
+      "text": "{free} pacotes grátis por dia, e mais para ganhar com os desafios. Rasgue o pacote, vire as {size} cartas uma a uma… e cruze os dedos por uma Godlevel.",
+      "pack": "{size} cartas"
+    },
+    "collection": {
+      "title": "Complete sua coleção",
+      "text": "Filtre por raridade ou por vibe, ordene, pesquise e acompanhe seu progresso. As cartas que faltam ficam borradas até você encontrá-las. O ranking compara todas as cartas do jogo: popularidade, ataque, taxa de vitória…",
+      "progress": "87 / 240 cartas",
+      "chipRarity": "Raridade",
+      "chipVibe": "Vibe",
+      "chipOwned": "Obtidas",
+      "chipSort": "Ordem: popularidade",
+      "filtersLabel": "Exemplos de filtros",
+      "rankingHint": "🏆 Ranking: popularidade · raridade · PV · ataque · velocidade · taxa de vitória"
+    },
+    "battle": {
+      "title": "Enfrente o mundo",
+      "text": "Monte um time de {team} cartas e desafie em tempo real jogadores do seu nível no planeta inteiro. {seconds} segundos por turno: cada vitória rende troféus e MemeMoney.",
+      "timer": "{seconds} s",
+      "trophies": "1.240"
+    }
+  },
+  "password": {
+    "length": "Pelo menos {min} caracteres",
+    "lower": "Uma letra minúscula",
+    "upper": "Uma letra maiúscula",
+    "digit": "Um número",
+    "symbol": "Um caractere especial (! ? # @…)",
+    "ok": "(ok)",
+    "missing": "(falta)"
+  },
+  "footer": {
+    "label": "Informações legais",
+    "legal": "Aviso legal",
+    "terms": "Termos de uso",
+    "privacy": "Privacidade",
+    "community": "Regras da comunidade",
+    "contact": "Contato",
+    "copyright": "© {years} {name}. Todos os direitos reservados.",
+    "adults": "Reservado a maiores de 18 anos. Jogar é grátis: nenhuma compra é necessária.",
+    "independent": "{name} é um jogo independente, sem vínculo com Instagram, TikTok, X, Reddit ou qualquer outra rede social.",
+    "trademarks": "As imagens de memes e as marcas citadas pertencem aos respectivos autores e proprietários. Para pedir a remoção de um conteúdo, fale conosco."
+  },
+  "legalPage": {
+    "updated": "Última atualização: {date}",
+    "draftWarning": "Versão de trabalho: informações a completar ({fields}) em src/config/legal.config.ts. Peça a um profissional para revisar estes textos antes da publicação.",
+    "frenchOnly": "Este texto só está disponível em francês. A versão em francês é a que vale."
+  },
+  "back": {
+    "home": "Voltar ao início",
+    "signIn": "Voltar para entrar",
+    "signUp": "Voltar ao cadastro",
+    "forgot": "Voltar para senha esquecida",
+    "rarities": "Voltar às raridades",
+    "legal": "Voltar ao aviso legal",
+    "terms": "Voltar aos termos de uso",
+    "privacy": "Voltar à privacidade",
+    "community": "Voltar às regras da comunidade"
+  },
+  "rank": {
+    "bronze": "Bronze",
+    "argent": "Prata",
+    "fer": "Ferro",
+    "or": "Ouro",
+    "platine": "Platina",
+    "diamant": "Diamante",
+    "maitre": "Mestre",
+    "grand_maitre": "Grão-mestre",
+    "super_grand_maitre": "Supergrão-mestre",
+    "immortel": "Imortal"
+  },
+  "hud": {
+    "rankLabel": "Ranque {rank}, {count, plural, one {# troféu} other {# troféus}}. Ver meu perfil",
+    "memeMoneyLabel": "{amount} MemeMoney. Abrir a loja"
+  },
+  "playerHome": {
+    "title": "Oi, {username}!",
+    "soon": "Em breve",
+    "boosters": {
+      "title": "Pacotes",
+      "lead": "{count} pacotes grátis de {size} cartas te esperam todos os dias.",
+      "cards": "{count} cartas",
+      "extra": "Pacote extra",
+      "special": "Pacote especial",
+      "verySpecial": "Pacote muito especial"
+    },
+    "battles": {
+      "title": "Batalhas",
+      "lead": "Enfrente jogadores do seu ranque com um time de {team} cartas.",
+      "nextReward": "Próximo ranque alcançado → {boosters} pacotes e {money} MemeMoney de presente"
+    },
+    "collection": {
+      "title": "Coleção",
+      "lead": "Colecione, filtre, ordene e compare as cartas de memes que encontrar.",
+      "progress": "{owned, plural, =0 {Nenhuma carta ainda} one {# carta} other {# cartas}}"
+    },
+    "shop": {
+      "title": "Loja",
+      "lead": "Recarregue sua MemeMoney e aproveite as ofertas do momento.",
+      "teaser": "Primeira recarga: MemeMoney ×2",
+      "cta": "Ver a loja"
+    }
+  },
+  "odds": {
+    "perBooster": "{chance} % por pacote {kind, select, daily {diário} special {especial} other {muito especial}}"
+  },
+  "shop": {
+    "title": "Loja",
+    "blocked": "As compras não estão disponíveis no seu país. Você pode continuar jogando de graça e ganhar MemeMoney nas batalhas.",
+    "buy": "Comprar",
+    "soon": "O pagamento estará disponível muito em breve.",
+    "bonus": "+{amount} de presente",
+    "tags": {
+      "popular": "Popular",
+      "best_value": "Melhor oferta"
+    },
+    "offers": {
+      "firstDouble": {
+        "title": "Primeira recarga: MemeMoney ×2",
+        "text": "Sua primeira recarga rende o dobro de MemeMoney, seja qual for o pacote."
+      },
+      "discount": {
+        "title": "Oferta de lançamento: −{percent} %",
+        "until": "No pacote de {amount}, até {date}.",
+        "limited": "Oferta limitada."
+      }
+    },
+    "notes": {
+      "adults": "Compras reservadas a maiores de 18 anos.",
+      "cap": "Gastos limitados a {amount} por período de 30 dias.",
+      "value": "A MemeMoney não tem valor em dinheiro real: não pode ser revendida nem reembolsada.",
+      "boosters": "Os pacotes extra, especiais e muito especiais são comprados com MemeMoney na caixa Pacotes do início. Detalhes nos",
+      "terms": "termos de uso"
+    }
+  }
+}

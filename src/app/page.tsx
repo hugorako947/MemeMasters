@@ -85,10 +85,7 @@ async function PlayerHome({ player }: { player: Player }) {
   const t = await getTranslations("playerHome");
   return (
     <div className="grid gap-6">
-      <div>
-        <h1 className="font-display text-4xl leading-none md:text-5xl">{t("title", { username: player.username })}</h1>
-        <p className="mt-2 text-ink-soft">{t("lead")}</p>
-      </div>
+      <h1 className="font-display text-4xl leading-none md:text-5xl">{t("title", { username: player.username })}</h1>
       <PlayerFeatures player={player} />
     </div>
   );

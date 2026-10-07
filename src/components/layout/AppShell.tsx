@@ -35,7 +35,7 @@ export async function AppShell({ player, back, children }: { player: Player; bac
       <header className="safe-top mx-auto grid w-full max-w-5xl grid-cols-[1fr_auto_1fr] items-center gap-2 px-3 pt-3 md:px-6">
         <Link
           href={profileHref}
-          className="flex items-center gap-2 justify-self-start rounded-full border-2 border-ink bg-surface py-1 pl-1.5 pr-3 shadow-[0_3px_0_0_var(--mm-shadow)] transition-transform hover:-translate-y-0.5"
+          className="flex items-center gap-2 justify-self-start rounded-full border-2 border-ink bg-surface py-1 ps-1.5 pe-3 shadow-[0_3px_0_0_var(--mm-shadow)] transition-transform hover:-translate-y-0.5"
           aria-label={t("hud.rankLabel", { rank: rankName, count: player.trophies })}
         >
           <RankShield rank={rank} size={24} />
@@ -52,14 +52,17 @@ export async function AppShell({ player, back, children }: { player: Player; bac
           <Logo />
         </div>
 
-        <div
-          className="flex items-center gap-2 justify-self-end rounded-full border-2 border-ink bg-surface py-1 pl-1.5 pr-3 shadow-[0_3px_0_0_var(--mm-shadow)]"
+        <Link
+          href="/boutique"
+          className="flex items-center gap-2 justify-self-end rounded-full border-2 border-ink bg-surface py-1 ps-1.5 pe-2 shadow-[0_3px_0_0_var(--mm-shadow)] transition-transform hover:-translate-y-0.5"
           aria-label={t("hud.memeMoneyLabel", { amount: player.memeMoney })}
-          role="img"
         >
           <MemeCoin />
           <span className="font-display text-lg leading-none">{format.number(player.memeMoney)}</span>
-        </div>
+          <span aria-hidden="true" className="grid size-5 place-items-center rounded-full bg-candy text-sm font-extrabold leading-none text-[var(--mm-accent-ink)]">
+            +
+          </span>
+        </Link>
       </header>
 
       <div className="mx-auto w-full max-w-5xl flex-1 px-4 pt-5 md:px-6">

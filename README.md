@@ -129,12 +129,14 @@ Pour travailler le design sans compte ni base de données, lancez `npm run dev` 
 - http://localhost:3000/apercu?vue=profil (profil, statistiques, graphique)
 - http://localhost:3000/apercu?vue=reglages (réglages)
 
+- http://localhost:3000/apercu?vue=boutique&pays=BR (boutique, prix dans la devise d'un pays)
+
 Ajoutez `&trophees=4200` pour simuler un autre rang. Cette page utilise des données fictives et n'existe pas en production.
 
 ## Langues et thèmes
 
-- **Langues** : 7 langues proposées dans les réglages, dans l'ordre des plus parlées. Le français et l'anglais sont traduits ; les autres s'activent dès que leur fichier `messages/<code>.json` est complet (ajoutez le code dans `AVAILABLE_LOCALES`, `src/lib/i18n/locales.ts`). Sans choix du joueur, la langue suit celle du navigateur, puis celle du pays (en-tête Vercel), sinon l'anglais pour une langue pas encore traduite, sinon le français.
-- **Thèmes** : clair (par défaut), obscur, inversé, personnalisé (couleur principale et fond au choix). Le choix est enregistré dans le compte et sur l'appareil.
+- **Langues** : anglais, chinois mandarin, espagnol, arabe (de droite à gauche), français, portugais, allemand. Textes dans `messages/<code>.json` ; un test vérifie que chaque langue traduit toutes les clés du français. Sans choix du joueur, la langue suit celle du navigateur, puis celle du pays (en-tête Vercel), sinon le français.
+- **Thèmes** : clair (par défaut), obscur (noir), inversé (tout le site en négatif, cartes comprises), personnalisé (couleur principale, fond clair, obscur ou inversé).
 
 ## Personnaliser le jeu
 
@@ -143,15 +145,16 @@ Tout se règle dans **`src/config/game.config.ts`**, validé au démarrage (une 
 | Pour changer… | Modifier |
 | --- | --- |
 | Le nom du jeu (titre, manifest, logo) | `GAME_NAME` et `GAME_SHORT_NAME` |
-| Les taux de drop | `DROP_RATES` (somme = 100) |
-| La garantie et le pity | `GUARANTEED_MIN_RARITY`, `PITY_THRESHOLD` |
+| La composition des 3 boosters (journalier, spécial, très spécial), la chance de la rareté supérieure et de la Godlevel | `BOOSTERS` |
+| Le pity (légendaire garantie dans le booster journalier) | `PITY_THRESHOLD` |
 | Les boosters gratuits par jour | `DAILY_FREE_BOOSTERS` |
 | Les défis quotidiens | `DAILY_CHALLENGES`, `CHALLENGE_REWARD_BOOSTERS` |
 | La taille des équipes et les minuteurs | `TEAM_SIZE`, `TURN_SECONDS`, `RECONNECT_SECONDS` |
 | Les trophées gagnés ou perdus, le nombre de trophées par rang | `TROPHIES` |
 | Les prix en MemeMoney et le gain par victoire | `MEME_MONEY` |
 | Les rangs et leurs récompenses | `src/config/ranks.ts` (`RANK_REWARDS`) |
-| Les packs de MemeMoney, leurs prix et le plafond de dépenses | `PURCHASES` |
+| Les packs de MemeMoney, leurs bonus, leurs prix et le plafond de dépenses | `PURCHASES` |
+| Les prix locaux par devise, les offres et promotions (avec leurs dates) | `src/config/shop.ts` |
 
 Deux exceptions, vérifiées par les tests : les poids de popularité (`RANKING`) sont aussi écrits dans la migration `20261006000400_classements.sql`, et l'ordre des raretés et des vibes doit rester identique aux types SQL. Si vous les modifiez, ajoutez une migration ; `npm test` vous signale tout décalage.
 

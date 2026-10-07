@@ -5,9 +5,9 @@ import { cardSchema } from "@/lib/validation/card";
 import { checkBudget, statBudget, statIndex } from "./balance";
 
 describe("budget de stats", () => {
-  it("vaut 160 pour une commune et 216 pour une godlevel", () => {
+  it("vaut 160 pour une commune et 208 pour une godlevel", () => {
     expect(statBudget("commune")).toBe(160);
-    expect(statBudget("godlevel")).toBeCloseTo(216, 10);
+    expect(statBudget("godlevel")).toBeCloseTo(208, 10);
   });
 
   it("augmente de 5 % du budget de base à chaque rang", () => {
@@ -27,8 +27,8 @@ describe("budget de stats", () => {
 });
 
 describe("cartes de démonstration", () => {
-  it("couvrent les 8 raretés", () => {
-    expect(SAMPLE_CARDS.map((c) => c.rarity)).toEqual([...RARITIES]);
+  it("couvrent les 7 raretés", () => {
+    expect(new Set(SAMPLE_CARDS.map((c) => c.rarity))).toEqual(new Set(RARITIES));
   });
 
   it.each(SAMPLE_CARDS.map((c) => [c.name, c] as const))("%s respecte le schéma et le budget", (_, card) => {

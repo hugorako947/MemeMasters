@@ -8,7 +8,7 @@
  * au lieu de produire un jeu bancal en production.
  */
 import { z } from "zod";
-import { RARITIES, type Rarity } from "./rarities";
+import { RARITIES, rarityTier as rarityTierOf, type Rarity } from "./rarities";
 
 const rarityRecord = <T extends z.ZodType>(schema: T) =>
   z.object(Object.fromEntries(RARITIES.map((r) => [r, schema])) as Record<Rarity, T>);
@@ -16,6 +16,19 @@ const rarityRecord = <T extends z.ZodType>(schema: T) =>
 const percent = z.number().min(0).max(100);
 const positiveInt = z.number().int().positive();
 const nonNegativeInt = z.number().int().nonnegative();
+
+const boosterSchema = z.object({
+  /** Cartes garanties, par rareté. */
+  fixed: z.partialRecord(z.enum(RARITIES), z.number().int().positive()),
+  /** Emplacement au choix : rareté habituelle, rareté plus forte et sa chance (en %). */
+  flex: z.object({
+    usual: z.enum(RARITIES),
+    upgrade: z.enum(RARITIES),
+    upgradeChance: percent,
+  }),
+  /** Chance (en %) qu'une Godlevel remplace une commune dans ce booster. */
+  godlevelChance: percent,
+});
 
 const gameConfigSchema = z
   .object({
@@ -25,14 +38,20 @@ const gameConfigSchema = z
     GAME_SHORT_NAME: z.string().min(1).max(12),
     GAME_TAGLINE: z.string().min(1).max(120),
 
-    /** Taux de drop par emplacement de booster, en pourcentage. Somme = 100. */
-    DROP_RATES: rarityRecord(percent),
     BOOSTER_SIZE: z.number().int().min(1).max(10),
-    /** Le dernier emplacement de chaque booster est au moins de cette rareté. */
-    GUARANTEED_MIN_RARITY: z.enum(RARITIES),
-    /** Une légendaire ou mieux est garantie au plus tard au N-ième booster sans en avoir eu. */
+    /**
+     * Composition des trois boosters. Chaque booster a des cartes fixes, plus un
+     * emplacement « au choix » : la rareté habituelle, ou (plus rarement) la
+     * rareté supérieure. Une Godlevel peut remplacer une commune, avec une
+     * chance très faible, dans tous les boosters.
+     */
+    BOOSTERS: z.object({
+      daily: boosterSchema,
+      special: boosterSchema,
+      very_special: boosterSchema,
+    }),
+    /** Booster journalier : la rareté supérieure de l'emplacement au choix est garantie au N-ième booster sans l'avoir eue. */
     PITY_THRESHOLD: z.number().int().min(2),
-    PITY_MIN_RARITY: z.enum(RARITIES),
 
     DAILY_FREE_BOOSTERS: nonNegativeInt,
     DAILY_CHALLENGES: z.number().int().min(0).max(10),
@@ -95,8 +114,12 @@ const gameConfigSchema = z
         .array(
           z.object({
             code: z.string().regex(/^[a-z0-9_]+$/),
+            /** MemeMoney de base, et bonus offert en plus. */
             memeMoney: positiveInt,
+            bonus: nonNegativeInt,
+            /** Prix de référence, en centimes d'euro (prix locaux : src/config/shop.ts). */
             priceCents: positiveInt,
+            tag: z.enum(["popular", "best_value"]).nullable(),
           }),
         )
         .min(1),
@@ -107,18 +130,21 @@ const gameConfigSchema = z
 
   })
   .superRefine((cfg, ctx) => {
-    const total = RARITIES.reduce((sum, r) => sum + cfg.DROP_RATES[r], 0);
-    if (Math.abs(total - 100) > 1e-9) {
-      ctx.addIssue({ code: "custom", path: ["DROP_RATES"], message: `La somme des taux doit faire 100 % (actuellement ${total} %).` });
+    for (const [kind, booster] of Object.entries(cfg.BOOSTERS)) {
+      const fixed = Object.values(booster.fixed).reduce((n, c) => n + (c ?? 0), 0);
+      if (fixed + 1 !== cfg.BOOSTER_SIZE) {
+        ctx.addIssue({ code: "custom", path: ["BOOSTERS", kind], message: `${fixed} cartes fixes + 1 au choix ≠ ${cfg.BOOSTER_SIZE}.` });
+      }
+      if (booster.godlevelChance > 0 && !booster.fixed.commune) {
+        ctx.addIssue({ code: "custom", path: ["BOOSTERS", kind], message: "La Godlevel remplace une commune : il en faut au moins une." });
+      }
+      if (rarityTierOf(booster.flex.upgrade) <= rarityTierOf(booster.flex.usual)) {
+        ctx.addIssue({ code: "custom", path: ["BOOSTERS", kind, "flex"], message: "La rareté supérieure doit être plus rare que l'habituelle." });
+      }
     }
     const w = cfg.RANKING.POPULARITY_LIKES_WEIGHT + cfg.RANKING.POPULARITY_USAGE_WEIGHT;
     if (Math.abs(w - 1) > 1e-9) {
       ctx.addIssue({ code: "custom", path: ["RANKING"], message: "Les poids de popularité doivent faire 1." });
-    }
-    for (const r of RARITIES) {
-      if (cfg.DROP_RATES[r] === 0) {
-        ctx.addIssue({ code: "custom", path: ["DROP_RATES", r], message: `Le taux de « ${r} » ne peut pas être nul.` });
-      }
     }
   });
 
@@ -129,20 +155,28 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
   GAME_SHORT_NAME: "MemeMasters",
   GAME_TAGLINE: "Ouvre des boosters, complète ta collection et affronte des joueurs du monde entier.",
 
-  DROP_RATES: {
-    commune: 55,
-    rare: 25,
-    epique: 12,
-    mystique: 5,
-    legendaire: 2,
-    omniversal: 0.7,
-    superbrainrot: 0.25,
-    godlevel: 0.05,
-  },
   BOOSTER_SIZE: 10,
-  GUARANTEED_MIN_RARITY: "rare",
+  BOOSTERS: {
+    // 5 communes, 3 rares, 1 épique + 1 épique (85 %) ou 1 légendaire (15 %).
+    daily: {
+      fixed: { commune: 5, rare: 3, epique: 1 },
+      flex: { usual: "epique", upgrade: "legendaire", upgradeChance: 15 },
+      godlevelChance: 0.05,
+    },
+    // 3 communes, 3 rares, 2 épiques, 1 légendaire + 1 légendaire (88 %) ou 1 brainrot (12 %).
+    special: {
+      fixed: { commune: 3, rare: 3, epique: 2, legendaire: 1 },
+      flex: { usual: "legendaire", upgrade: "brainrot", upgradeChance: 12 },
+      godlevelChance: 0.1,
+    },
+    // 2 communes, 2 rares, 2 épiques, 2 légendaires, 1 brainrot + 1 brainrot (90 %) ou 1 superbrainrot (10 %).
+    very_special: {
+      fixed: { commune: 2, rare: 2, epique: 2, legendaire: 2, brainrot: 1 },
+      flex: { usual: "brainrot", upgrade: "superbrainrot", upgradeChance: 10 },
+      godlevelChance: 0.25,
+    },
+  },
   PITY_THRESHOLD: 10,
-  PITY_MIN_RARITY: "legendaire",
 
   DAILY_FREE_BOOSTERS: 3,
   DAILY_CHALLENGES: 3,
@@ -153,9 +187,8 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
     commune: 5,
     rare: 10,
     epique: 25,
-    mystique: 50,
     legendaire: 100,
-    omniversal: 250,
+    brainrot: 250,
     superbrainrot: 600,
     godlevel: 1500,
   },
@@ -200,11 +233,12 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
     MONTHLY_SPEND_CAP_CENTS: 5000,
     CAP_RAISE_DELAY_DAYS: 7,
     BLOCKED_COUNTRIES: ["BE"],
-    // Prix provisoires : 20 MemeMoney ≈ 1 booster supplémentaire.
+    // Prix provisoires : 20 MemeMoney ≈ 1 booster en plus. Plus le pack est gros, plus le bonus l'est.
     PRODUCTS: [
-      { code: "mm_20", memeMoney: 20, priceCents: 99 },
-      { code: "mm_110", memeMoney: 110, priceCents: 499 },
-      { code: "mm_240", memeMoney: 240, priceCents: 999 },
+      { code: "mm_20", memeMoney: 20, bonus: 0, priceCents: 99, tag: null },
+      { code: "mm_100", memeMoney: 100, bonus: 10, priceCents: 499, tag: "popular" },
+      { code: "mm_200", memeMoney: 200, bonus: 40, priceCents: 999, tag: null },
+      { code: "mm_500", memeMoney: 500, bonus: 150, priceCents: 2499, tag: "best_value" },
     ],
   },
 

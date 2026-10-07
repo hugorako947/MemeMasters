@@ -7,16 +7,15 @@ export const RARITIES = [
   "commune",
   "rare",
   "epique",
-  "mystique",
   "legendaire",
-  "omniversal",
+  "brainrot",
   "superbrainrot",
   "godlevel",
 ] as const;
 
 export type Rarity = (typeof RARITIES)[number];
 
-/** Rang de 0 (commune) à 7 (godlevel). */
+/** Rang de 0 (commune) à 6 (godlevel). */
 export function rarityTier(rarity: Rarity): number {
   return RARITIES.indexOf(rarity);
 }
@@ -38,9 +37,8 @@ export const RARITY_GLYPH: Record<Rarity, string> = {
   commune: "●",
   rare: "◆",
   epique: "▲",
-  mystique: "✦",
   legendaire: "★",
-  omniversal: "✺",
+  brainrot: "✺",
   superbrainrot: "⌘",
   godlevel: "♛",
 };

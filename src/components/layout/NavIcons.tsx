@@ -38,3 +38,11 @@ export const SettingsIcon = () => (
     <circle cx="8" cy="17" r="2.2" />
   </svg>
 );
+
+export const ShopIcon = () => (
+  <svg {...common}>
+    <path d="M5 8h14l-1.2 11.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8z" />
+    <path d="M9 8V6.5a3 3 0 0 1 6 0V8" />
+    <circle cx="12" cy="14" r="2.2" />
+  </svg>
+);

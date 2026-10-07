@@ -1,8 +1,8 @@
-import { getFormatter, getTranslations } from "next-intl/server";
-import { GAME_CONFIG } from "@/config/game.config";
+import { getTranslations } from "next-intl/server";
 import { RARITIES, RARITY_GLYPH } from "@/config/rarities";
 import { InteractiveCard } from "./InteractiveCard";
-import { SAMPLE_CARDS } from "./sample-cards";
+import { RarityOdds } from "./RarityOdds";
+import { sampleOf } from "./sample-cards";
 
 /**
  * Les 8 raretés sur un panneau sombre où les cartes brillent.
@@ -12,8 +12,7 @@ import { SAMPLE_CARDS } from "./sample-cards";
 export async function RarityShowcase({ className = "" }: { className?: string }) {
   const t = await getTranslations("showcase");
   const tr = await getTranslations("rarity");
-  const format = await getFormatter();
-  const cards = [...RARITIES].reverse().map((r) => SAMPLE_CARDS.find((c) => c.rarity === r)!);
+  const cards = [...RARITIES].reverse().map(sampleOf);
 
   return (
     <aside
@@ -39,7 +38,7 @@ export async function RarityShowcase({ className = "" }: { className?: string })
               {tr(card.rarity)}
             </p>
             <p className="text-center text-xs text-[#d9d3f5]">
-              {t("rate", { rate: format.number(GAME_CONFIG.DROP_RATES[card.rarity], { maximumFractionDigits: 2 }) })}
+              <RarityOdds rarity={card.rarity} />
             </p>
           </li>
         ))}

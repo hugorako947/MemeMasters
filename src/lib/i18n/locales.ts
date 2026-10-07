@@ -15,7 +15,7 @@ export const LOCALES = [
 export type Locale = (typeof LOCALES)[number]["code"];
 
 /** Langues dont la traduction est terminée (fichier messages/<code>.json complet). */
-export const AVAILABLE_LOCALES: readonly Locale[] = ["fr", "en"];
+export const AVAILABLE_LOCALES: readonly Locale[] = ["en", "zh", "es", "ar", "fr", "pt", "de"];
 
 /** Langue d'origine du jeu, utilisée quand on ne sait rien du joueur. */
 export const DEFAULT_LOCALE: Locale = "fr";

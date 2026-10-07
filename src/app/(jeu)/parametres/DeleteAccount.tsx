@@ -69,7 +69,7 @@ function DeleteDialog({ username, onClose }: { username: string; onClose: () => 
           {t("title")}
         </h2>
         <p>{t("lead")}</p>
-        <ul className="grid list-disc gap-1 pl-5 text-sm text-ink-soft">
+        <ul className="grid list-disc gap-1 ps-5 text-sm text-ink-soft">
           <li>{t("item1")}</li>
           <li>{t("item2")}</li>
           <li>{t("item3")}</li>

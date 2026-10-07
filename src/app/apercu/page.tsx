@@ -1,16 +1,18 @@
 import { cookies } from "next/headers";
+import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { AppShell } from "@/components/layout/AppShell";
 import { PlayerFeatures } from "@/components/player/PlayerFeatures";
 import { ProfileView } from "@/components/player/ProfileView";
 import { SettingsView } from "@/components/player/SettingsView";
+import { ShopView } from "@/components/player/ShopView";
 import type { Player, PublicProfile } from "@/lib/server/players";
 import { parseAppearance, THEME_COOKIES } from "@/lib/theme/theme";
 
 /**
  * Aperçu des pages joueur avec des données fictives, pour travailler le design
  * sans compte ni base de données. DÉVELOPPEMENT UNIQUEMENT : introuvable en production.
- *   /apercu?vue=accueil | profil | reglages&trophees=1240
+ *   /apercu?vue=accueil | profil | reglages | boutique&trophees=1240&pays=FR
  */
 export default async function PreviewPage({ searchParams }: PageProps<"/apercu">) {
   if (process.env.NODE_ENV === "production") notFound();
@@ -69,13 +71,13 @@ export default async function PreviewPage({ searchParams }: PageProps<"/apercu">
     <AppShell player={player}>
       {view === "profil" ? (
         <ProfileView profile={profile} viewer={player} />
+      ) : view === "boutique" ? (
+        <ShopView player={player} country={typeof params.pays === "string" ? params.pays : "FR"} hasPurchased={false} />
       ) : view === "reglages" ? (
         <SettingsView player={player} email="joueur@exemple.fr" />
       ) : (
         <div className="grid gap-6">
-          <div>
-            <h1 className="font-display text-4xl leading-none md:text-5xl">Salut {player.username} !</h1>
-          </div>
+          <h1 className="font-display text-4xl leading-none md:text-5xl">{(await getTranslations("playerHome"))("title", { username: player.username })}</h1>
           <PlayerFeatures player={player} />
         </div>
       )}
