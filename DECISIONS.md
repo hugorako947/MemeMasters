@@ -136,7 +136,7 @@ Chaque entrée : la décision, puis la raison.
 ## Ajustements (demande du propriétaire)
 
 - **Boosters renommés** : « Booster en plus » (inchangé), « Super Booster » (ex-spécial, 40 MemeMoney), « Ultra Booster » (ex-très spécial, 80 MemeMoney). Les clés techniques restent `special` et `very_special`. Noms adaptés dans chaque langue (Súper Sobre, Super Pacote, Super-Booster, 超级卡包, حزمة سوبر…).
-- **Pièce de MemeMoney** : un « M » barré d'un trait vertical, sur le modèle du « $ ».
+- **Pièce de MemeMoney** : un « M » traversé de deux barres horizontales, sur le modèle du peso (₱).
 - **Bouton Accueil** : l'anneau de pointillés animé est retiré, pour ne pas distraire le joueur.
 - **Boutique** : plus de second compteur de MemeMoney ; celui de la barre du haut suffit.
 - **Pied de page (français)** : « contactez-nous », au vouvoiement, pour la demande de retrait d'un contenu.

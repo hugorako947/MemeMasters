@@ -890,16 +890,19 @@ body:has(> dialog.mm-detail[open]) #mm-app {
   line-height: 1;
   position: relative;
 }
+/* Symbole de la MemeMoney : un « M » traversé de deux barres horizontales,
+   sur le modèle du peso (₱). Les barres dépassent de part et d'autre de la lettre. */
 .mm-coin::after {
   content: "";
   position: absolute;
-  left: 50%;
-  top: 7%;
-  bottom: 7%;
-  width: 0.1em;
-  border-radius: 1px;
-  background: #1a1238;
-  transform: translateX(-50%);
+  left: 13%;
+  right: 13%;
+  top: 37%;
+  height: 22%;
+  background:
+    linear-gradient(#1a1238 0 0) top / 100% 0.085em no-repeat,
+    linear-gradient(#1a1238 0 0) bottom / 100% 0.085em no-repeat;
+  pointer-events: none;
 }
 
 /* Sachets spéciaux (boutique MemeMoney). */
