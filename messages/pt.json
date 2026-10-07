@@ -345,8 +345,8 @@
       "lead": "{count} pacotes grátis de {size} cartas te esperam todos os dias.",
       "cards": "{count} cartas",
       "extra": "Pacote extra",
-      "special": "Pacote especial",
-      "verySpecial": "Pacote muito especial"
+      "special": "Super Pacote",
+      "verySpecial": "Ultra Pacote"
     },
     "battles": {
       "title": "Batalhas",
@@ -366,7 +366,7 @@
     }
   },
   "odds": {
-    "perBooster": "{chance} % por pacote {kind, select, daily {diário} special {especial} other {muito especial}}"
+    "perBooster": "{chance} % por {kind, select, daily {pacote diário} special {Super Pacote} other {Ultra Pacote}}"
   },
   "shop": {
     "title": "Loja",
@@ -393,7 +393,7 @@
       "adults": "Compras reservadas a maiores de 18 anos.",
       "cap": "Gastos limitados a {amount} por período de 30 dias.",
       "value": "A MemeMoney não tem valor em dinheiro real: não pode ser revendida nem reembolsada.",
-      "boosters": "Os pacotes extra, especiais e muito especiais são comprados com MemeMoney na caixa Pacotes do início. Detalhes nos",
+      "boosters": "Os pacotes extra, Super Pacotes e Ultra Pacotes são comprados com MemeMoney na caixa Pacotes do início. Detalhes nos",
       "terms": "termos de uso"
     }
   }

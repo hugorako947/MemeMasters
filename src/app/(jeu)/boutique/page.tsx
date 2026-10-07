@@ -12,5 +12,5 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ShopPage() {
   const { player } = await requirePlayer();
   const country = (await headers()).get("x-vercel-ip-country");
-  return <ShopView player={player} country={country} hasPurchased={await hasPaidPurchase(player.id)} />;
+  return <ShopView country={country} hasPurchased={await hasPaidPurchase(player.id)} />;
 }

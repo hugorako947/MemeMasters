@@ -117,7 +117,7 @@ export const TERMS: LegalDocument = {
         <li>Jouer est gratuit : des boosters gratuits sont offerts chaque jour, et aucun achat n&apos;est nécessaire.</li>
         <li>
           La MemeMoney, monnaie du jeu, se gagne en jouant (victoires, nouveaux rangs) et peut aussi être achetée. Elle
-          sert à obtenir des boosters supplémentaires, spéciaux ou très spéciaux.
+          sert à obtenir des boosters en plus, des Super Boosters ou des Ultra Boosters.
         </li>
         <li>
           Le contenu des boosters est aléatoire ; les probabilités de chaque rareté sont affichées avant toute dépense.

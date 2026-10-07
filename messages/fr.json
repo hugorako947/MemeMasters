@@ -303,7 +303,7 @@
     "copyright": "© {years} {name}. Tous droits réservés.",
     "adults": "Réservé aux personnes de 18 ans et plus. Jouer est gratuit : aucun achat n'est nécessaire.",
     "independent": "{name} est un jeu indépendant, sans lien avec Instagram, TikTok, X, Reddit ni aucun autre réseau social.",
-    "trademarks": "Les images de memes et les marques citées appartiennent à leurs auteurs et propriétaires respectifs. Pour demander le retrait d'un contenu, contacte-nous."
+    "trademarks": "Les images de memes et les marques citées appartiennent à leurs auteurs et propriétaires respectifs. Pour demander le retrait d'un contenu, contactez-nous."
   },
   "legalPage": {
     "updated": "Dernière mise à jour : {date}",
@@ -345,8 +345,8 @@
       "lead": "{count} boosters gratuits de {size} cartes t'attendent chaque jour.",
       "cards": "{count} cartes",
       "extra": "Booster en plus",
-      "special": "Booster spécial",
-      "verySpecial": "Booster très spécial"
+      "special": "Super Booster",
+      "verySpecial": "Ultra Booster"
     },
     "battles": {
       "title": "Batailles",
@@ -366,7 +366,7 @@
     }
   },
   "odds": {
-    "perBooster": "{chance} % par booster {kind, select, daily {journalier} special {spécial} other {très spécial}}"
+    "perBooster": "{chance} % par {kind, select, daily {booster journalier} special {Super Booster} other {Ultra Booster}}"
   },
   "shop": {
     "title": "Boutique",
@@ -393,7 +393,7 @@
       "adults": "Achats réservés aux personnes de 18 ans et plus.",
       "cap": "Dépenses plafonnées à {amount} par période de 30 jours.",
       "value": "La MemeMoney n'a aucune valeur en argent réel : elle ne se revend pas et ne se rembourse pas.",
-      "boosters": "Les boosters en plus, spéciaux et très spéciaux s'achètent en MemeMoney depuis la case Boosters de l'accueil. Détails dans les",
+      "boosters": "Les boosters en plus, Super Boosters et Ultra Boosters s'achètent en MemeMoney depuis la case Boosters de l'accueil. Détails dans les",
       "terms": "conditions d'utilisation"
     }
   }

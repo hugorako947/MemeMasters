@@ -13,14 +13,14 @@ describe("composition des boosters", () => {
     expect(usual).toHaveLength(10);
   });
 
-  it("spécial : 3 communes, 3 rares, 2 épiques, 1 ou 2 légendaires, 1 ou 0 brainrot", () => {
+  it("Super Booster : 3 communes, 3 rares, 2 épiques, 1 ou 2 légendaires, 1 ou 0 brainrot", () => {
     const usual = composition(GAME_CONFIG.BOOSTERS.special, false, false);
     expect([count(usual, "commune"), count(usual, "rare"), count(usual, "epique"), count(usual, "legendaire"), count(usual, "brainrot")]).toEqual([3, 3, 2, 2, 0]);
     const lucky = composition(GAME_CONFIG.BOOSTERS.special, true, false);
     expect([count(lucky, "legendaire"), count(lucky, "brainrot")]).toEqual([1, 1]);
   });
 
-  it("très spécial : 2 communes, 2 rares, 2 épiques, 2 légendaires, 1 ou 2 brainrots, 1 ou 0 superbrainrot", () => {
+  it("Ultra Booster : 2 communes, 2 rares, 2 épiques, 2 légendaires, 1 ou 2 brainrots, 1 ou 0 superbrainrot", () => {
     const usual = composition(GAME_CONFIG.BOOSTERS.very_special, false, false);
     expect([count(usual, "commune"), count(usual, "rare"), count(usual, "epique"), count(usual, "legendaire"), count(usual, "brainrot"), count(usual, "superbrainrot")]).toEqual([2, 2, 2, 2, 2, 0]);
     const lucky = composition(GAME_CONFIG.BOOSTERS.very_special, true, false);

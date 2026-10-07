@@ -345,8 +345,8 @@
       "lead": "Jeden Tag warten {count} Gratis-Booster mit je {size} Karten auf dich.",
       "cards": "{count} Karten",
       "extra": "Zusatz-Booster",
-      "special": "Spezial-Booster",
-      "verySpecial": "Super-Spezial-Booster"
+      "special": "Super-Booster",
+      "verySpecial": "Ultra-Booster"
     },
     "battles": {
       "title": "Kämpfe",
@@ -366,7 +366,7 @@
     }
   },
   "odds": {
-    "perBooster": "{chance} % pro {kind, select, daily {Tages-} special {Spezial-} other {Super-Spezial-}}Booster"
+    "perBooster": "{chance} % pro {kind, select, daily {Tages-Booster} special {Super-Booster} other {Ultra-Booster}}"
   },
   "shop": {
     "title": "Shop",
@@ -393,7 +393,7 @@
       "adults": "Käufe nur für Personen ab 18 Jahren.",
       "cap": "Ausgaben begrenzt auf {amount} pro 30-Tage-Zeitraum.",
       "value": "MemeMoney hat keinen Echtgeldwert: Sie kann weder weiterverkauft noch erstattet werden.",
-      "boosters": "Zusatz-, Spezial- und Super-Spezial-Booster kaufst du mit MemeMoney im Feld „Booster“ auf der Startseite. Details in den",
+      "boosters": "Zusatz-, Super- und Ultra-Booster kaufst du mit MemeMoney im Feld „Booster“ auf der Startseite. Details in den",
       "terms": "Nutzungsbedingungen"
     }
   }

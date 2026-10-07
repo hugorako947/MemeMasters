@@ -345,8 +345,8 @@
       "lead": "每天有 {count} 个包含 {size} 张卡牌的免费卡包等你来开。",
       "cards": "{count} 张卡牌",
       "extra": "额外卡包",
-      "special": "特别卡包",
-      "verySpecial": "超特别卡包"
+      "special": "超级卡包",
+      "verySpecial": "究极卡包"
     },
     "battles": {
       "title": "对战",
@@ -366,7 +366,7 @@
     }
   },
   "odds": {
-    "perBooster": "每个{kind, select, daily {每日} special {特别} other {超特别}}卡包 {chance}%"
+    "perBooster": "每个{kind, select, daily {每日卡包} special {超级卡包} other {究极卡包}} {chance}%"
   },
   "shop": {
     "title": "商店",
@@ -393,7 +393,7 @@
       "adults": "购买仅限 18 岁及以上人士。",
       "cap": "每 30 天消费上限为 {amount}。",
       "value": "MemeMoney 不具备现实货币价值：不可转售，也不可退款。",
-      "boosters": "额外卡包、特别卡包和超特别卡包可在首页的“卡包”区域用 MemeMoney 购买。详情请见",
+      "boosters": "额外卡包、超级卡包和究极卡包可在首页的“卡包”区域用 MemeMoney 购买。详情请见",
       "terms": "使用条款"
     }
   }

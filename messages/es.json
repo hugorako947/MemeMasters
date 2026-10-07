@@ -345,8 +345,8 @@
       "lead": "{count} sobres gratis de {size} cartas te esperan cada día.",
       "cards": "{count} cartas",
       "extra": "Sobre extra",
-      "special": "Sobre especial",
-      "verySpecial": "Sobre muy especial"
+      "special": "Súper Sobre",
+      "verySpecial": "Ultra Sobre"
     },
     "battles": {
       "title": "Batallas",
@@ -366,7 +366,7 @@
     }
   },
   "odds": {
-    "perBooster": "{chance} % por sobre {kind, select, daily {diario} special {especial} other {muy especial}}"
+    "perBooster": "{chance} % por {kind, select, daily {sobre diario} special {Súper Sobre} other {Ultra Sobre}}"
   },
   "shop": {
     "title": "Tienda",
@@ -393,7 +393,7 @@
       "adults": "Compras reservadas a mayores de 18 años.",
       "cap": "Gasto limitado a {amount} por periodo de 30 días.",
       "value": "La MemeMoney no tiene valor en dinero real: no se revende ni se reembolsa.",
-      "boosters": "Los sobres extra, especiales y muy especiales se compran con MemeMoney desde la casilla Sobres del inicio. Detalles en las",
+      "boosters": "Los sobres extra, los Súper Sobres y los Ultra Sobres se compran con MemeMoney desde la casilla Sobres del inicio. Detalles en las",
       "terms": "condiciones de uso"
     }
   }

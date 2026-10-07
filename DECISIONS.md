@@ -132,3 +132,11 @@ Chaque entrée : la décision, puis la raison.
 
 - Le propriétaire prévoit d'utiliser des images de memes venues d'internet. **La plupart ne sont pas libres de droits** (droit d'auteur de l'image d'origine, droit à l'image des personnes photographiées, parfois des marques déposées). Mentions légales et pied de page sont rédigés pour couvrir les deux cas et prévoir le retrait sur demande.
 - À prévoir en phase 2 : pour chaque carte, la source, l'auteur et la licence de l'image (champs dans l'administration) et une procédure de retrait rapide.
+
+## Ajustements (demande du propriétaire)
+
+- **Boosters renommés** : « Booster en plus » (inchangé), « Super Booster » (ex-spécial, 40 MemeMoney), « Ultra Booster » (ex-très spécial, 80 MemeMoney). Les clés techniques restent `special` et `very_special`. Noms adaptés dans chaque langue (Súper Sobre, Super Pacote, Super-Booster, 超级卡包, حزمة سوبر…).
+- **Pièce de MemeMoney** : un « M » barré d'un trait vertical, sur le modèle du « $ ».
+- **Bouton Accueil** : l'anneau de pointillés animé est retiré, pour ne pas distraire le joueur.
+- **Boutique** : plus de second compteur de MemeMoney ; celui de la barre du haut suffit.
+- **Pied de page (français)** : « contactez-nous », au vouvoiement, pour la demande de retrait d'un contenu.

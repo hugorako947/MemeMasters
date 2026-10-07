@@ -72,7 +72,7 @@ export default async function PreviewPage({ searchParams }: PageProps<"/apercu">
       {view === "profil" ? (
         <ProfileView profile={profile} viewer={player} />
       ) : view === "boutique" ? (
-        <ShopView player={player} country={typeof params.pays === "string" ? params.pays : "FR"} hasPurchased={false} />
+        <ShopView country={typeof params.pays === "string" ? params.pays : "FR"} hasPurchased={false} />
       ) : view === "reglages" ? (
         <SettingsView player={player} email="joueur@exemple.fr" />
       ) : (

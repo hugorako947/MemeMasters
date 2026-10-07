@@ -888,6 +888,18 @@ body:has(> dialog.mm-detail[open]) #mm-app {
   font-family: var(--font-display);
   font-size: 0.85em;
   line-height: 1;
+  position: relative;
+}
+.mm-coin::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 7%;
+  bottom: 7%;
+  width: 0.1em;
+  border-radius: 1px;
+  background: #1a1238;
+  transform: translateX(-50%);
 }
 
 /* Sachets spéciaux (boutique MemeMoney). */
@@ -1047,17 +1059,6 @@ body:has(> dialog.mm-detail[open]) #mm-app {
 .mm-nav-home:active {
   transform: translateY(3px);
 }
-.mm-nav-home[aria-current="page"]::after {
-  content: "";
-  position: absolute;
-  inset: -9px;
-  border-radius: inherit;
-  border: 2px dashed var(--color-candy);
-  animation: mm-spin-ring 12s linear infinite;
-}
-@keyframes mm-spin-ring {
-  to { rotate: 360deg; }
-}
 
 @media (prefers-reduced-motion: reduce) {
   .mm-pack--hero,
@@ -1065,8 +1066,7 @@ body:has(> dialog.mm-detail[open]) #mm-app {
   .mm-pack--hero::after,
   .mm-logo__text,
   .mm-logo[data-boing="true"] .mm-logo__text,
-  .mm-logo[data-boing="true"] .mm-logo__burst,
-  .mm-nav-home[aria-current="page"]::after {
+  .mm-logo[data-boing="true"] .mm-logo__burst {
     animation: none;
   }
   .mm-logo:hover,

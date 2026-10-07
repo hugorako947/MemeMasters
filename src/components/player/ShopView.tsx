@@ -4,7 +4,6 @@ import { MemeCoin } from "@/components/player/RankBadge";
 import { Panel } from "@/components/ui/Panel";
 import { GAME_CONFIG } from "@/config/game.config";
 import { currencyForCountry, discountedPrice, isOfferActive, OFFERS, PRICE_POINTS } from "@/config/shop";
-import type { Player } from "@/lib/server/players";
 
 /** MemeMoney du premier pack concerné par une réduction (affiché dans le texte de l'offre). */
 function discountedPackAmount(codes: readonly string[]): number {
@@ -14,11 +13,11 @@ function discountedPackAmount(codes: readonly string[]): number {
 
 /**
  * Boutique : uniquement des packs de MemeMoney en argent réel, avec leurs
- * offres. Les boosters en plus, spéciaux et très spéciaux s'achètent en
+ * offres. Les boosters en plus, Super Boosters et Ultra Boosters s'achètent en
  * MemeMoney depuis la case Boosters de l'accueil, pas ici.
  * Le paiement (Stripe) arrive en phase 5 : les boutons sont désactivés.
  */
-export async function ShopView({ player, country, hasPurchased }: { player: Player; country: string | null; hasPurchased: boolean }) {
+export async function ShopView({ country, hasPurchased }: { country: string | null; hasPurchased: boolean }) {
   const t = await getTranslations("shop");
   const format = await getFormatter();
   const blocked = country ? GAME_CONFIG.PURCHASES.BLOCKED_COUNTRIES.includes(country.toUpperCase()) : false;
@@ -31,13 +30,7 @@ export async function ShopView({ player, country, hasPurchased }: { player: Play
 
   return (
     <div className="grid gap-6">
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <h1 className="font-display text-5xl leading-none">{t("title")}</h1>
-        <p className="flex items-center gap-2 rounded-full border-2 border-ink bg-surface px-4 py-2 font-display text-2xl shadow-[0_3px_0_0_var(--mm-shadow)]">
-          <MemeCoin />
-          {format.number(player.memeMoney)}
-        </p>
-      </header>
+      <h1 className="font-display text-5xl leading-none">{t("title")}</h1>
 
       {blocked ? (
         <Panel>

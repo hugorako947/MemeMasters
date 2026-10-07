@@ -345,8 +345,8 @@
       "lead": "{count} free boosters of {size} cards are waiting for you every day.",
       "cards": "{count} cards",
       "extra": "Extra booster",
-      "special": "Special booster",
-      "verySpecial": "Very special booster"
+      "special": "Super Booster",
+      "verySpecial": "Ultra Booster"
     },
     "battles": {
       "title": "Battles",
@@ -366,7 +366,7 @@
     }
   },
   "odds": {
-    "perBooster": "{chance}% per {kind, select, daily {daily} special {special} other {very special}} booster"
+    "perBooster": "{chance}% per {kind, select, daily {daily booster} special {Super Booster} other {Ultra Booster}}"
   },
   "shop": {
     "title": "Shop",
@@ -393,7 +393,7 @@
       "adults": "Purchases are reserved for people aged 18 and over.",
       "cap": "Spending is capped at {amount} per 30-day period.",
       "value": "MemeMoney has no real-money value: it cannot be resold or refunded.",
-      "boosters": "Extra, special and very special boosters are bought with MemeMoney from the Boosters box on the home page. Details in the",
+      "boosters": "Extra boosters, Super Boosters and Ultra Boosters are bought with MemeMoney from the Boosters box on the home page. Details in the",
       "terms": "terms of use"
     }
   }
