@@ -236,12 +236,14 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
     MONTHLY_SPEND_CAP_CENTS: 5000,
     CAP_RAISE_DELAY_DAYS: 7,
     BLOCKED_COUNTRIES: ["BE"],
-    // Prix provisoires : 20 MemeMoney ≈ 1 booster en plus. Plus le pack est gros, plus le bonus l'est.
+    // 20 MemeMoney = 1 booster en plus. Plus le pack est gros, plus le bonus l'est.
+    // ⚠️ Stripe n'accepte pas de paiement par carte sous 0,50 € : le pack à 0,25 € ne pourra
+    // pas être vendu seul en phase 5 (voir DECISIONS.md).
     PRODUCTS: [
-      { code: "mm_20", memeMoney: 20, bonus: 0, priceCents: 99, tag: null },
-      { code: "mm_100", memeMoney: 100, bonus: 10, priceCents: 499, tag: "popular" },
-      { code: "mm_200", memeMoney: 200, bonus: 40, priceCents: 999, tag: null },
-      { code: "mm_500", memeMoney: 500, bonus: 150, priceCents: 2499, tag: "best_value" },
+      { code: "mm_20", memeMoney: 20, bonus: 0, priceCents: 25, tag: null },
+      { code: "mm_100", memeMoney: 100, bonus: 10, priceCents: 100, tag: "popular" },
+      { code: "mm_200", memeMoney: 200, bonus: 40, priceCents: 200, tag: null },
+      { code: "mm_500", memeMoney: 500, bonus: 150, priceCents: 500, tag: "best_value" },
     ],
   },
 

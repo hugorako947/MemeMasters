@@ -424,9 +424,7 @@
     "direct": "你也可以直接发邮件至"
   },
   "slides": {
-    "label": "栏目",
-    "previous": "上一栏",
-    "next": "下一栏"
+    "label": "栏目"
   },
   "infos": {
     "title": "信息",

@@ -21,8 +21,12 @@ describe("boutique", () => {
   });
 
   it("arrondit les réductions selon la devise", () => {
-    expect(discountedPrice(9.99, 20, "EUR")).toBe(7.99);
-    expect(discountedPrice(1600, 20, "JPY")).toBe(1280);
+    expect(discountedPrice(2, 20, "EUR")).toBe(1.6);
+    expect(discountedPrice(340, 20, "JPY")).toBe(272);
+  });
+
+  it("applique les prix demandés : 0,25 €, 1 €, 2 € et 5 €", () => {
+    expect(PRICE_POINTS.EUR).toEqual([0.25, 1, 2, 5]);
   });
 
   it("respecte les dates des offres", () => {

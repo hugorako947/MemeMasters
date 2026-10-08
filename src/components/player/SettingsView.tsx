@@ -52,7 +52,7 @@ export async function SettingsView({ player, email }: { player: Player; email: s
         <p className="text-ink-soft">{t("helpLead")}</p>
         <div>
           <ButtonLink href="/contact" variant="secondary">
-            <span aria-hidden="true">✉️</span> {t("helpButton")}
+            {t("helpButton")}
           </ButtonLink>
         </div>
       </Panel>

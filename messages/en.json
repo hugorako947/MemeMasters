@@ -424,9 +424,7 @@
     "direct": "You can also write to us directly at"
   },
   "slides": {
-    "label": "Sections",
-    "previous": "Previous section",
-    "next": "Next section"
+    "label": "Sections"
   },
   "infos": {
     "title": "Info",

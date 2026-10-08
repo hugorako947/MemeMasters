@@ -20,7 +20,7 @@ export async function AuthShell({ children }: { children: ReactNode }) {
         <main id="contenu">{children}</main>
         <p className="mt-8 text-center">
           <ButtonLink href="/contact" variant="ghost" className="text-sm">
-            <span aria-hidden="true">✉️</span> {t("contact")}
+            {t("contact")}
           </ButtonLink>
         </p>
       </div>

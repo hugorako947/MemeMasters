@@ -150,4 +150,10 @@ Chaque entrée : la décision, puis la raison.
 - **Classement à trois portées** : « Autour de moi » (±250 trophées, positions mondiales), « Mon rang » (positions dans le rang), « Monde » (50 meilleurs). Égalité départagée par l'ancienneté d'inscription. Calculé directement sur `profiles` ; la vue matérialisée `player_rankings` prendra le relais quand le nombre de joueurs le demandera.
 - **News** dans `src/content/news.ts` (français obligatoire, autres langues facultatives avec repli sur le français), en attendant une gestion depuis l'administration.
 - **Accueil du joueur en pages glissantes** : Collection, Boosters (au milieu, ouvert par défaut), Batailles. La case Boutique disparaît ; un lien discret dans la page Boosters rappelle l'offre de première recharge.
-- **Pages glissantes** : onglets, glissement au doigt, flèches sur grand écran, flèches du clavier, hauteur ajustée à la page affichée, onglet actif dans l'adresse (`?vue=`), mise en miroir en arabe, animations coupées si le joueur préfère réduire les mouvements.
+- **Pages glissantes** : onglets du bandeau, glissement au doigt, flèches du clavier (pas de boutons fléchés sur les côtés, à la demande du propriétaire), hauteur ajustée à la page affichée, onglet actif dans l'adresse (`?vue=`), mise en miroir en arabe, animations coupées si le joueur préfère réduire les mouvements.
+
+## Prix de la Boutique (demande du propriétaire)
+
+- **Packs** : 20 MemeMoney à 0,25 €, 110 à 1 €, 240 à 2 €, 650 à 5 € (prix locaux recalculés dans les 13 devises, `src/config/shop.ts`). Les plus gros packs restent les plus avantageux.
+- **À trancher avant la phase 5 (paiements)** : Stripe refuse les paiements par carte sous 0,50 € ; le pack à 0,25 € ne pourra donc pas être payé seul. Et sur les petits montants, les frais de carte (de l'ordre de 0,25 € fixes + un pourcentage en Europe, à vérifier sur le site de Stripe) absorbent l'essentiel du prix : un achat à 0,25 € ne rapporterait rien, un achat à 1 € environ 0,75 €.
+- **Libellé du bouton de contact** : « Contactez-nous » (sans icône), sur l'accueil, sous la connexion et l'inscription, et dans les Réglages.

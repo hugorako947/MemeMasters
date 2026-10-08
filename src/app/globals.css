@@ -1092,32 +1092,6 @@ body:has(> dialog.mm-detail[open]) #mm-app {
 [dir="rtl"] .mm-slides__track {
   translate: calc(var(--i) * 100%) 0;
 }
-.mm-slides__arrow {
-  position: absolute;
-  top: 9rem;
-  display: none;
-  width: 2.75rem;
-  height: 2.75rem;
-  place-items: center;
-  margin-inline: -1.6rem;
-  border-radius: 9999px;
-  border: 2.5px solid var(--color-ink);
-  background: var(--color-surface);
-  color: var(--color-ink);
-  font-size: 1.8rem;
-  line-height: 1;
-  box-shadow: 0 3px 0 0 var(--mm-shadow);
-  z-index: 5;
-  transition: transform 0.15s;
-}
-.mm-slides__arrow:hover {
-  transform: scale(1.08);
-}
-@media (min-width: 768px) {
-  .mm-slides__arrow {
-    display: grid;
-  }
-}
 @media (prefers-reduced-motion: reduce) {
   .mm-slides,
   .mm-slides__track {

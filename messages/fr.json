@@ -62,7 +62,7 @@
     "guestLead": "Ouvre des boosters, complète ta collection et affronte des joueurs du monde entier.",
     "createAccount": "Inscription",
     "signIn": "Connexion",
-    "contact": "Nous contacter"
+    "contact": "Contactez-nous"
   },
   "auth": {
     "signInTitle": "Connexion",
@@ -189,7 +189,7 @@
     },
     "helpTitle": "Aide et contact",
     "helpLead": "Une question, un bug ou un souci avec ton compte ? Écris-nous.",
-    "helpButton": "Nous contacter"
+    "helpButton": "Contactez-nous"
   },
   "rarities": {
     "title": "Les 7 raretés"
@@ -424,9 +424,7 @@
     "direct": "Tu peux aussi nous écrire directement à"
   },
   "slides": {
-    "label": "Sections",
-    "previous": "Section précédente",
-    "next": "Section suivante"
+    "label": "Sections"
   },
   "infos": {
     "title": "Infos",

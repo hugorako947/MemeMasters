@@ -54,7 +54,7 @@ async function GuestHome() {
                   </ButtonLink>
                 </div>
                 <ButtonLink href="/contact" variant="ghost" className="mt-3">
-                  <span aria-hidden="true">✉️</span> {t("contact")}
+                  {t("contact")}
                 </ButtonLink>
               </div>
 

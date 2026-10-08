@@ -12,8 +12,8 @@ export interface Slide {
 
 /**
  * Pages glissantes côte à côte, avec onglets en haut.
+ * - en touchant ou cliquant un onglet du bandeau ;
  * - au doigt : glisser à gauche / à droite ;
- * - à la souris : flèches sur les côtés (grand écran) ;
  * - au clavier : flèches gauche / droite sur les onglets.
  * La hauteur suit la page affichée. L'onglet actif est reflété dans l'adresse
  * (?vue=…) pour pouvoir partager ou recharger sans perdre sa place.
@@ -133,16 +133,6 @@ export function SlideDeck({ slides, initial, param = "vue" }: { slides: Slide[];
             ))}
           </div>
         </div>
-        {index > 0 ? (
-          <button type="button" onClick={() => go(index - 1)} aria-label={t("previous")} className="mm-slides__arrow start-0">
-            <span aria-hidden="true" className="inline-block rtl:rotate-180">‹</span>
-          </button>
-        ) : null}
-        {index < slides.length - 1 ? (
-          <button type="button" onClick={() => go(index + 1)} aria-label={t("next")} className="mm-slides__arrow end-0">
-            <span aria-hidden="true" className="inline-block rtl:rotate-180">›</span>
-          </button>
-        ) : null}
       </div>
     </div>
   );
