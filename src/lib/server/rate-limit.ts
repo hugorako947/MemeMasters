@@ -18,6 +18,7 @@ export const RATE_LIMITS = {
   timezone: { scope: "timezone", limit: 5, windowSeconds: 3600 },
   preferences: { scope: "preferences", limit: 30, windowSeconds: 600 },
   accountDeletion: { scope: "account_deletion", limit: 5, windowSeconds: 3600 },
+  contact: { scope: "contact", limit: 5, windowSeconds: 3600 },
 } as const satisfies Record<string, RateLimitRule>;
 
 /**

@@ -1,5 +1,5 @@
 import { getFormatter, getTranslations } from "next-intl/server";
-import { Button } from "@/components/ui/Button";
+import { Button, ButtonLink } from "@/components/ui/Button";
 import { Panel } from "@/components/ui/Panel";
 import { GAME_CONFIG } from "@/config/game.config";
 import { timezoneUnlockDate, type Player } from "@/lib/server/players";
@@ -44,6 +44,17 @@ export async function SettingsView({ player, email }: { player: Player; email: s
         ) : (
           <TimezoneForm current={player.timezone} />
         )}
+      </Panel>
+
+      {/* Aide : dans les réglages, là où l'on cherche naturellement du support. */}
+      <Panel className="grid gap-3">
+        <h2 className="text-xl font-extrabold">{t("helpTitle")}</h2>
+        <p className="text-ink-soft">{t("helpLead")}</p>
+        <div>
+          <ButtonLink href="/contact" variant="secondary">
+            <span aria-hidden="true">✉️</span> {t("helpButton")}
+          </ButtonLink>
+        </div>
       </Panel>
 
       <Panel className="grid gap-4">

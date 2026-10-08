@@ -6,13 +6,15 @@ import { PlayerFeatures } from "@/components/player/PlayerFeatures";
 import { ProfileView } from "@/components/player/ProfileView";
 import { SettingsView } from "@/components/player/SettingsView";
 import { ShopView } from "@/components/player/ShopView";
+import { InfosView } from "@/components/infos/InfosView";
+import type { Leaderboard, LeaderboardScope } from "@/lib/server/leaderboard";
 import type { Player, PublicProfile } from "@/lib/server/players";
 import { parseAppearance, THEME_COOKIES } from "@/lib/theme/theme";
 
 /**
  * Aperçu des pages joueur avec des données fictives, pour travailler le design
  * sans compte ni base de données. DÉVELOPPEMENT UNIQUEMENT : introuvable en production.
- *   /apercu?vue=accueil | profil | reglages | boutique&trophees=1240&pays=FR
+ *   /apercu?vue=accueil | profil | reglages | boutique | infos&onglet=…&trophees=1240&pays=FR
  */
 export default async function PreviewPage({ searchParams }: PageProps<"/apercu">) {
   if (process.env.NODE_ENV === "production") notFound();
@@ -71,6 +73,8 @@ export default async function PreviewPage({ searchParams }: PageProps<"/apercu">
     <AppShell player={player}>
       {view === "profil" ? (
         <ProfileView profile={profile} viewer={player} />
+      ) : view === "infos" ? (
+        <InfosView boards={fakeBoards(player.trophies)} trophies={player.trophies} initial={typeof params.onglet === "string" ? params.onglet : undefined} param="onglet" />
       ) : view === "boutique" ? (
         <ShopView country={typeof params.pays === "string" ? params.pays : "FR"} hasPurchased={false} />
       ) : view === "reglages" ? (
@@ -78,9 +82,25 @@ export default async function PreviewPage({ searchParams }: PageProps<"/apercu">
       ) : (
         <div className="grid gap-6">
           <h1 className="font-display text-4xl leading-none md:text-5xl">{(await getTranslations("playerHome"))("title", { username: player.username })}</h1>
-          <PlayerFeatures player={player} />
+          <PlayerFeatures player={player} initial={typeof params.onglet === "string" ? params.onglet : undefined} param="onglet" />
         </div>
       )}
     </AppShell>
   );
+}
+
+/** Classement fictif pour l'aperçu. */
+function fakeBoards(trophies: number): Record<LeaderboardScope, Leaderboard> {
+  const names = ["MemeLord", "PixelCat", "Brainrotix", "LeChatQuiJuge", "Mamie_WiFi", "NPC_42", "Tralala", "SkibidiFan", "PigeonPensif"];
+  const make = (top: number, start: number, me: number) => ({
+    rows: Array.from({ length: 9 }, (_, i) => ({
+      position: start + i,
+      username: i === me ? "HugoTest" : names[i],
+      trophies: i === me ? trophies : Math.max(0, top - i * 37),
+      isMe: i === me,
+    })),
+    position: start + me,
+    total: 1200,
+  });
+  return { around: make(trophies + 150, 410, 4), rank: make(1980, 1, 6), world: make(9840, 1, 99) };
 }

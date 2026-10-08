@@ -5,11 +5,11 @@
   "nav": {
     "label": "Hauptnavigation",
     "home": "Start",
-    "rarities": "Seltenheiten",
     "profile": "Profil",
     "settings": "Einstellungen",
     "skipToContent": "Zum Inhalt springen",
-    "shop": "Shop"
+    "shop": "Shop",
+    "infos": "Infos"
   },
   "rarity": {
     "commune": "Gewöhnlich",
@@ -61,7 +61,8 @@
     "guestTitle": "Memes haben endlich ihre eigenen Karten.",
     "guestLead": "Öffne Booster, vervollständige deine Sammlung und tritt gegen Spieler aus aller Welt an.",
     "createAccount": "Registrieren",
-    "signIn": "Anmelden"
+    "signIn": "Anmelden",
+    "contact": "Kontakt"
   },
   "auth": {
     "signInTitle": "Anmelden",
@@ -185,7 +186,10 @@
       "confirmLabel": "Gib zur Bestätigung deinen Benutzernamen ein: {username}",
       "cancel": "Abbrechen",
       "confirm": "Endgültig löschen"
-    }
+    },
+    "helpTitle": "Hilfe und Kontakt",
+    "helpLead": "Eine Frage, ein Fehler oder ein Problem mit deinem Konto? Schreib uns.",
+    "helpButton": "Kontakt"
   },
   "rarities": {
     "title": "Die 7 Seltenheiten"
@@ -291,7 +295,9 @@
     "digit": "Eine Ziffer",
     "symbol": "Ein Sonderzeichen (! ? # @ …)",
     "ok": "(erfüllt)",
-    "missing": "(fehlt)"
+    "missing": "(fehlt)",
+    "show": "Passwort anzeigen",
+    "hide": "Passwort verbergen"
   },
   "footer": {
     "label": "Rechtliche Informationen",
@@ -303,7 +309,7 @@
     "copyright": "© {years} {name}. Alle Rechte vorbehalten.",
     "adults": "Für Personen ab 18 Jahren. Spielen ist kostenlos: Kein Kauf ist erforderlich.",
     "independent": "{name} ist ein unabhängiges Spiel ohne Verbindung zu Instagram, TikTok, X, Reddit oder einem anderen sozialen Netzwerk.",
-    "trademarks": "Meme-Bilder und genannte Marken gehören ihren jeweiligen Urhebern und Inhabern. Um die Entfernung eines Inhalts zu beantragen, kontaktiere uns."
+    "trademarks": "Meme-Bilder und genannte Marken gehören ihren jeweiligen Urhebern und Inhabern. Um die Entfernung eines Inhalts zu beantragen, <contact>kontaktiere uns</contact>."
   },
   "legalPage": {
     "updated": "Zuletzt aktualisiert: {date}",
@@ -359,10 +365,9 @@
       "progress": "{owned, plural, =0 {Noch keine Karten} one {# Karte} other {# Karten}}"
     },
     "shop": {
-      "title": "Shop",
-      "lead": "Lade deine MemeMoney auf und nutze die aktuellen Angebote.",
-      "teaser": "Erste Aufladung: MemeMoney ×2",
-      "cta": "Zum Shop"
+      "cta": "Shop",
+      "subtle": "Nicht genug MemeMoney?",
+      "subtleDouble": "Nicht genug MemeMoney? Deine erste Aufladung wird verdoppelt."
     }
   },
   "odds": {
@@ -395,6 +400,62 @@
       "value": "MemeMoney hat keinen Echtgeldwert: Sie kann weder weiterverkauft noch erstattet werden.",
       "boosters": "Zusatz-, Super- und Ultra-Booster kaufst du mit MemeMoney im Feld „Booster“ auf der Startseite. Details in den",
       "terms": "Nutzungsbedingungen"
+    }
+  },
+  "contact": {
+    "title": "Kontakt",
+    "lead": "Eine Frage, ein Fehler, ein Problem mit einem Kauf oder ein Inhalt zum Melden? Schreib uns, wir antworten per E-Mail.",
+    "required": "Pflichtfelder",
+    "email": "Deine E-Mail-Adresse",
+    "category": "Thema",
+    "choose": "Wähle ein Thema",
+    "categories": {
+      "question": "Frage",
+      "bug": "Technisches Problem",
+      "purchase": "Kauf oder MemeMoney",
+      "report": "Inhalt melden",
+      "account": "Mein Konto",
+      "other": "Sonstiges"
+    },
+    "message": "Deine Nachricht",
+    "count": "{count} / {max} Zeichen (mindestens {min})",
+    "submit": "Senden",
+    "sent": "Nachricht gesendet! Wir antworten dir so schnell wie möglich per E-Mail.",
+    "direct": "Du kannst uns auch direkt schreiben an"
+  },
+  "slides": {
+    "label": "Bereiche",
+    "previous": "Vorheriger Bereich",
+    "next": "Nächster Bereich"
+  },
+  "infos": {
+    "title": "Infos",
+    "tabs": {
+      "rarities": "Seltenheiten",
+      "leaderboard": "Rangliste",
+      "news": "News"
+    },
+    "leaderboard": {
+      "scopeLabel": "Umfang der Rangliste",
+      "scopes": {
+        "around": "Um mich herum",
+        "rank": "Mein Rang",
+        "world": "Welt"
+      },
+      "around": "Spieler im Bereich von ±{window} Trophäen um dich",
+      "rank": "Spieler im Rang {rank}",
+      "world": "Die besten Spieler der Welt",
+      "position": "Deine Position: {position} von {total}",
+      "you": "Du",
+      "empty": "Noch niemand sonst hier … lade deine Freunde ein!"
+    },
+    "news": {
+      "kinds": {
+        "news": "Neu",
+        "update": "Update",
+        "upcoming": "Demnächst",
+        "change": "Änderung"
+      }
     }
   }
 }

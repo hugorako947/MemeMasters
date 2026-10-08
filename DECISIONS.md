@@ -140,3 +140,14 @@ Chaque entrée : la décision, puis la raison.
 - **Bouton Accueil** : l'anneau de pointillés animé est retiré, pour ne pas distraire le joueur.
 - **Boutique** : plus de second compteur de MemeMoney ; celui de la barre du haut suffit.
 - **Pied de page (français)** : « contactez-nous », au vouvoiement, pour la demande de retrait d'un contenu.
+
+## Navigation, Infos et contact (demande du propriétaire)
+
+- **Œil sur les champs mot de passe** (connexion, inscription, nouveau mot de passe) : bouton accessible au clavier et aux lecteurs d'écran.
+- **Page `/contact`** avec formulaire (e-mail, sujet, message). Les messages sont enregistrés dans `contact_messages` (aucun accès client, lecture depuis Supabase) en attendant l'adresse e-mail dédiée ; quand `LEGAL.PUBLISHER.email` est renseignée, elle s'affiche aussi. Champ piège contre les robots, 5 messages par heure et par adresse IP.
+- **Accès au contact** : bouton « Nous contacter » sur l'accueil visiteur, sous les formulaires de connexion et d'inscription, lien « contactez-nous » et entrée « Contact » du pied de page. Pour le joueur connecté : section **« Aide et contact » dans les Réglages**, l'endroit où l'on cherche naturellement de l'aide, sans encombrer la navigation de jeu ; le pied de page reste aussi disponible.
+- **« Infos » plutôt que « Informations »** : un mot court, qui tient dans la barre de navigation à 5 boutons sur un téléphone de 375 px. Infos regroupe trois pages glissantes : Raretés, Classement (ouvert par défaut) et News.
+- **Classement à trois portées** : « Autour de moi » (±250 trophées, positions mondiales), « Mon rang » (positions dans le rang), « Monde » (50 meilleurs). Égalité départagée par l'ancienneté d'inscription. Calculé directement sur `profiles` ; la vue matérialisée `player_rankings` prendra le relais quand le nombre de joueurs le demandera.
+- **News** dans `src/content/news.ts` (français obligatoire, autres langues facultatives avec repli sur le français), en attendant une gestion depuis l'administration.
+- **Accueil du joueur en pages glissantes** : Collection, Boosters (au milieu, ouvert par défaut), Batailles. La case Boutique disparaît ; un lien discret dans la page Boosters rappelle l'offre de première recharge.
+- **Pages glissantes** : onglets, glissement au doigt, flèches sur grand écran, flèches du clavier, hauteur ajustée à la page affichée, onglet actif dans l'adresse (`?vue=`), mise en miroir en arabe, animations coupées si le joueur préfère réduire les mouvements.

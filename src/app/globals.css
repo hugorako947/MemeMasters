@@ -1077,3 +1077,50 @@ body:has(> dialog.mm-detail[open]) #mm-app {
     transform: none;
   }
 }
+
+/* ==========================================================================
+   Pages glissantes (accueil du joueur, Infos)
+   ========================================================================== */
+.mm-slides {
+  transition: height 0.3s ease;
+  touch-action: pan-y;
+}
+.mm-slides__track {
+  translate: calc(var(--i) * -100%) 0;
+  transition: translate 0.42s cubic-bezier(0.2, 0.9, 0.25, 1);
+}
+[dir="rtl"] .mm-slides__track {
+  translate: calc(var(--i) * 100%) 0;
+}
+.mm-slides__arrow {
+  position: absolute;
+  top: 9rem;
+  display: none;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  margin-inline: -1.6rem;
+  border-radius: 9999px;
+  border: 2.5px solid var(--color-ink);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-size: 1.8rem;
+  line-height: 1;
+  box-shadow: 0 3px 0 0 var(--mm-shadow);
+  z-index: 5;
+  transition: transform 0.15s;
+}
+.mm-slides__arrow:hover {
+  transform: scale(1.08);
+}
+@media (min-width: 768px) {
+  .mm-slides__arrow {
+    display: grid;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mm-slides,
+  .mm-slides__track {
+    transition: none;
+  }
+}

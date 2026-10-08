@@ -82,6 +82,8 @@ const gameConfigSchema = z
       MATCH_WINDOW_START: positiveInt,
       MATCH_WINDOW_STEP: positiveInt,
       MATCH_WINDOW_STEP_SECONDS: positiveInt,
+      /** Classement « autour de moi » : joueurs à ± ce nombre de trophées. */
+      LEADERBOARD_AROUND: positiveInt,
     }),
 
     /** MemeMoney : monnaie du jeu. Prix en MemeMoney. */
@@ -210,6 +212,7 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
     MATCH_WINDOW_START: 150,
     MATCH_WINDOW_STEP: 100,
     MATCH_WINDOW_STEP_SECONDS: 5,
+    LEADERBOARD_AROUND: 250,
   },
 
   MEME_MONEY: {

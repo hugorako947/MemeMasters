@@ -46,3 +46,11 @@ export const ShopIcon = () => (
     <circle cx="12" cy="14" r="2.2" />
   </svg>
 );
+
+export const InfoIcon = () => (
+  <svg {...common}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 11v5.5" />
+    <circle cx="12" cy="7.6" r="0.6" fill="currentColor" />
+  </svg>
+);

@@ -5,11 +5,11 @@
   "nav": {
     "label": "主导航",
     "home": "首页",
-    "rarities": "稀有度",
     "profile": "个人资料",
     "settings": "设置",
     "skipToContent": "跳到正文",
-    "shop": "商店"
+    "shop": "商店",
+    "infos": "信息"
   },
   "rarity": {
     "commune": "普通",
@@ -61,7 +61,8 @@
     "guestTitle": "表情包终于有了自己的卡牌。",
     "guestLead": "开卡包、完成收藏，与全世界的玩家对战。",
     "createAccount": "注册",
-    "signIn": "登录"
+    "signIn": "登录",
+    "contact": "联系我们"
   },
   "auth": {
     "signInTitle": "登录",
@@ -185,7 +186,10 @@
       "confirmLabel": "请输入你的用户名以确认：{username}",
       "cancel": "取消",
       "confirm": "永久删除"
-    }
+    },
+    "helpTitle": "帮助与联系",
+    "helpLead": "有问题、遇到错误或账号出了状况？给我们留言。",
+    "helpButton": "联系我们"
   },
   "rarities": {
     "title": "7 种稀有度"
@@ -291,7 +295,9 @@
     "digit": "一个数字",
     "symbol": "一个特殊字符（! ? # @…）",
     "ok": "（已满足）",
-    "missing": "（缺少）"
+    "missing": "（缺少）",
+    "show": "显示密码",
+    "hide": "隐藏密码"
   },
   "footer": {
     "label": "法律信息",
@@ -303,7 +309,7 @@
     "copyright": "© {years} {name}。保留所有权利。",
     "adults": "仅限 18 岁及以上人士。游戏免费：无需任何购买。",
     "independent": "{name} 是一款独立游戏，与 Instagram、TikTok、X、Reddit 或任何其他社交网络无关。",
-    "trademarks": "表情包图片及提及的商标归各自的作者和所有者所有。如需删除某项内容，请联系我们。"
+    "trademarks": "表情包图片及提及的商标归各自的作者和所有者所有。如需删除某项内容，请<contact>联系我们</contact>。"
   },
   "legalPage": {
     "updated": "最后更新：{date}",
@@ -359,10 +365,9 @@
       "progress": "{owned, plural, =0 {还没有卡牌} other {# 张卡牌}}"
     },
     "shop": {
-      "title": "商店",
-      "lead": "为你的 MemeMoney 充值，享受当前优惠。",
-      "teaser": "首次充值：MemeMoney ×2",
-      "cta": "前往商店"
+      "cta": "商店",
+      "subtle": "MemeMoney 不够？",
+      "subtleDouble": "MemeMoney 不够？首次充值翻倍。"
     }
   },
   "odds": {
@@ -395,6 +400,62 @@
       "value": "MemeMoney 不具备现实货币价值：不可转售，也不可退款。",
       "boosters": "额外卡包、超级卡包和究极卡包可在首页的“卡包”区域用 MemeMoney 购买。详情请见",
       "terms": "使用条款"
+    }
+  },
+  "contact": {
+    "title": "联系我们",
+    "lead": "有问题、遇到错误、购买出了状况，或想举报内容？给我们留言，我们会通过邮件回复你。",
+    "required": "必填项",
+    "email": "你的电子邮箱",
+    "category": "主题",
+    "choose": "选择一个主题",
+    "categories": {
+      "question": "提问",
+      "bug": "技术问题",
+      "purchase": "购买或 MemeMoney",
+      "report": "举报内容",
+      "account": "我的账号",
+      "other": "其他"
+    },
+    "message": "你的留言",
+    "count": "{count} / {max} 个字符（至少 {min} 个）",
+    "submit": "发送",
+    "sent": "留言已发送！我们会尽快通过邮件回复你。",
+    "direct": "你也可以直接发邮件至"
+  },
+  "slides": {
+    "label": "栏目",
+    "previous": "上一栏",
+    "next": "下一栏"
+  },
+  "infos": {
+    "title": "信息",
+    "tabs": {
+      "rarities": "稀有度",
+      "leaderboard": "排行榜",
+      "news": "新闻"
+    },
+    "leaderboard": {
+      "scopeLabel": "排行榜范围",
+      "scopes": {
+        "around": "我的附近",
+        "rank": "我的段位",
+        "world": "全球"
+      },
+      "around": "与你相差 ±{window} 个奖杯的玩家",
+      "rank": "{rank}段位的玩家",
+      "world": "全球最佳玩家",
+      "position": "你的排名：第 {position} 名，共 {total} 名",
+      "you": "你",
+      "empty": "这里暂时只有你……邀请朋友来玩吧！"
+    },
+    "news": {
+      "kinds": {
+        "news": "新功能",
+        "update": "更新",
+        "upcoming": "即将推出",
+        "change": "变更"
+      }
     }
   }
 }

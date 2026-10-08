@@ -18,7 +18,7 @@ function RequiredMark({ required }: { required?: boolean }) {
 }
 
 /** Champ de formulaire accessible : libellé, aide et erreur reliés à l'input. */
-export function Field({ label, name, hint, error, id, required, ...input }: FieldProps) {
+export function Field({ label, name, hint, error, id, required, className = "", ...input }: FieldProps) {
   const inputId = id ?? `f-${name}`;
   const hintId = hint ? `${inputId}-hint` : undefined;
   const errorId = error ? `${inputId}-error` : undefined;
@@ -34,7 +34,7 @@ export function Field({ label, name, hint, error, id, required, ...input }: Fiel
         required={required}
         aria-invalid={error ? true : undefined}
         aria-describedby={[hintId, errorId].filter(Boolean).join(" ") || undefined}
-        className="min-h-12 rounded-xl border-2 border-ink bg-surface px-4 text-base outline-none transition-shadow placeholder:text-ink-soft/70 focus-visible:border-link focus-visible:shadow-[0_0_0_4px_rgb(45_91_255_/_0.18)] aria-[invalid=true]:border-danger"
+        className={`min-h-12 w-full rounded-xl border-2 border-ink bg-surface px-4 text-base outline-none transition-shadow placeholder:text-ink-soft/70 focus-visible:border-link focus-visible:shadow-[0_0_0_4px_rgb(45_91_255_/_0.18)] aria-[invalid=true]:border-danger ${className}`}
         {...input}
       />
       {hint ? (

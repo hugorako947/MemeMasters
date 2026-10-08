@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
-import { HomeIcon, ProfileIcon, SettingsIcon, ShopIcon, SparkleIcon } from "./NavIcons";
+import { HomeIcon, InfoIcon, ProfileIcon, SettingsIcon, ShopIcon } from "./NavIcons";
 
 interface NavItem {
   href: string;
@@ -14,7 +14,7 @@ interface NavItem {
 }
 
 /**
- * Navigation du joueur, en bas au centre : Boutique, Raretés, Accueil (au
+ * Navigation du joueur, en bas au centre : Boutique, Infos, Accueil (au
  * milieu, plus grand, rond et mis en avant), Profil, Réglages. Elle reste
  * visible pendant le défilement puis se pose au-dessus du pied de page.
  */
@@ -40,7 +40,7 @@ export function BottomNav({ username }: { username: string }) {
   };
   const left: NavItem[] = [
     { href: "/boutique", label: t("shop"), icon: <ShopIcon />, match: (p) => p.startsWith("/boutique") },
-    { href: "/raretes", label: t("rarities"), icon: <SparkleIcon />, match: (p) => p.startsWith("/raretes") },
+    { href: "/infos", label: t("infos"), icon: <InfoIcon />, match: (p) => p.startsWith("/infos") || p.startsWith("/raretes") },
   ];
   const right: NavItem[] = [
     {

@@ -94,3 +94,9 @@ export function newRankRewards(highestRank: number, newTrophies: number): { rank
   );
   return { ranks: [...ranks], total };
 }
+
+/** Bornes de trophées d'un rang (la dernière n'a pas de maximum). */
+export function rankBounds(index: number): { min: number; max: number | null } {
+  const i = Math.max(0, Math.min(RANKS.length - 1, index));
+  return { min: i * PER_RANK, max: i === RANKS.length - 1 ? null : (i + 1) * PER_RANK - 1 };
+}

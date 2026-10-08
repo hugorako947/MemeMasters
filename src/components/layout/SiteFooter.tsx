@@ -28,20 +28,26 @@ export async function SiteFooter() {
                 </Link>
               </li>
             ))}
-            {LEGAL.PUBLISHER.email ? (
-              <li>
-                <a href={`mailto:${LEGAL.PUBLISHER.email}`} className="underline-offset-4 hover:text-candy-ink hover:underline">
-                  {t("contact")}
-                </a>
-              </li>
-            ) : null}
+            <li>
+              <Link href="/contact" className="underline-offset-4 hover:text-candy-ink hover:underline">
+                {t("contact")}
+              </Link>
+            </li>
           </ul>
         </nav>
         <div className="grid gap-1.5 text-ink-soft">
           <p className="font-bold text-ink">{t("copyright", { years, name })}</p>
           <p>{t("adults")}</p>
           <p>{t("independent", { name })}</p>
-          <p>{t("trademarks")}</p>
+          <p>
+            {t.rich("trademarks", {
+              contact: (chunks) => (
+                <Link href="/contact" className="font-semibold text-link underline underline-offset-4">
+                  {chunks}
+                </Link>
+              ),
+            })}
+          </p>
         </div>
       </div>
     </footer>

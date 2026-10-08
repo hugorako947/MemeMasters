@@ -5,11 +5,11 @@
   "nav": {
     "label": "Navegação principal",
     "home": "Início",
-    "rarities": "Raridades",
     "profile": "Perfil",
     "settings": "Configurações",
     "skipToContent": "Ir para o conteúdo",
-    "shop": "Loja"
+    "shop": "Loja",
+    "infos": "Info"
   },
   "rarity": {
     "commune": "Comum",
@@ -61,7 +61,8 @@
     "guestTitle": "Os memes finalmente têm suas cartas.",
     "guestLead": "Abra pacotes, complete sua coleção e enfrente jogadores do mundo todo.",
     "createAccount": "Cadastrar-se",
-    "signIn": "Entrar"
+    "signIn": "Entrar",
+    "contact": "Fale conosco"
   },
   "auth": {
     "signInTitle": "Entrar",
@@ -185,7 +186,10 @@
       "confirmLabel": "Para confirmar, digite seu nome de usuário: {username}",
       "cancel": "Cancelar",
       "confirm": "Excluir definitivamente"
-    }
+    },
+    "helpTitle": "Ajuda e contato",
+    "helpLead": "Uma pergunta, um bug ou um problema com sua conta? Escreva para nós.",
+    "helpButton": "Fale conosco"
   },
   "rarities": {
     "title": "As 7 raridades"
@@ -291,7 +295,9 @@
     "digit": "Um número",
     "symbol": "Um caractere especial (! ? # @…)",
     "ok": "(ok)",
-    "missing": "(falta)"
+    "missing": "(falta)",
+    "show": "Mostrar a senha",
+    "hide": "Ocultar a senha"
   },
   "footer": {
     "label": "Informações legais",
@@ -303,7 +309,7 @@
     "copyright": "© {years} {name}. Todos os direitos reservados.",
     "adults": "Reservado a maiores de 18 anos. Jogar é grátis: nenhuma compra é necessária.",
     "independent": "{name} é um jogo independente, sem vínculo com Instagram, TikTok, X, Reddit ou qualquer outra rede social.",
-    "trademarks": "As imagens de memes e as marcas citadas pertencem aos respectivos autores e proprietários. Para pedir a remoção de um conteúdo, fale conosco."
+    "trademarks": "As imagens de memes e as marcas citadas pertencem aos respectivos autores e proprietários. Para pedir a remoção de um conteúdo, <contact>fale conosco</contact>."
   },
   "legalPage": {
     "updated": "Última atualização: {date}",
@@ -359,10 +365,9 @@
       "progress": "{owned, plural, =0 {Nenhuma carta ainda} one {# carta} other {# cartas}}"
     },
     "shop": {
-      "title": "Loja",
-      "lead": "Recarregue sua MemeMoney e aproveite as ofertas do momento.",
-      "teaser": "Primeira recarga: MemeMoney ×2",
-      "cta": "Ver a loja"
+      "cta": "Loja",
+      "subtle": "Sem MemeMoney suficiente?",
+      "subtleDouble": "Sem MemeMoney suficiente? Sua primeira recarga é dobrada."
     }
   },
   "odds": {
@@ -395,6 +400,62 @@
       "value": "A MemeMoney não tem valor em dinheiro real: não pode ser revendida nem reembolsada.",
       "boosters": "Os pacotes extra, Super Pacotes e Ultra Pacotes são comprados com MemeMoney na caixa Pacotes do início. Detalhes nos",
       "terms": "termos de uso"
+    }
+  },
+  "contact": {
+    "title": "Fale conosco",
+    "lead": "Uma pergunta, um bug, um problema com uma compra ou um conteúdo para denunciar? Escreva para nós e responderemos por e-mail.",
+    "required": "Campos obrigatórios",
+    "email": "Seu e-mail",
+    "category": "Assunto",
+    "choose": "Escolha um assunto",
+    "categories": {
+      "question": "Pergunta",
+      "bug": "Problema técnico",
+      "purchase": "Compra ou MemeMoney",
+      "report": "Denunciar um conteúdo",
+      "account": "Minha conta",
+      "other": "Outro"
+    },
+    "message": "Sua mensagem",
+    "count": "{count} / {max} caracteres (mínimo {min})",
+    "submit": "Enviar",
+    "sent": "Mensagem enviada! Responderemos por e-mail o quanto antes.",
+    "direct": "Você também pode escrever diretamente para"
+  },
+  "slides": {
+    "label": "Seções",
+    "previous": "Seção anterior",
+    "next": "Próxima seção"
+  },
+  "infos": {
+    "title": "Info",
+    "tabs": {
+      "rarities": "Raridades",
+      "leaderboard": "Ranking",
+      "news": "Notícias"
+    },
+    "leaderboard": {
+      "scopeLabel": "Alcance do ranking",
+      "scopes": {
+        "around": "Perto de mim",
+        "rank": "Meu ranque",
+        "world": "Mundo"
+      },
+      "around": "Jogadores a ±{window} troféus de você",
+      "rank": "Jogadores do ranque {rank}",
+      "world": "Melhores jogadores do mundo",
+      "position": "Sua posição: {position} de {total}",
+      "you": "Você",
+      "empty": "Ainda não há mais ninguém aqui… convide seus amigos!"
+    },
+    "news": {
+      "kinds": {
+        "news": "Novidade",
+        "update": "Atualização",
+        "upcoming": "Em breve",
+        "change": "Mudança"
+      }
     }
   }
 }

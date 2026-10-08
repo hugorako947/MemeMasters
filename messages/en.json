@@ -5,11 +5,11 @@
   "nav": {
     "label": "Main navigation",
     "home": "Home",
-    "rarities": "Rarities",
     "profile": "Profile",
     "settings": "Settings",
     "skipToContent": "Skip to content",
-    "shop": "Shop"
+    "shop": "Shop",
+    "infos": "Info"
   },
   "rarity": {
     "commune": "Common",
@@ -61,7 +61,8 @@
     "guestTitle": "Memes finally have their own cards.",
     "guestLead": "Open boosters, complete your collection and battle players from all over the world.",
     "createAccount": "Sign up",
-    "signIn": "Log in"
+    "signIn": "Log in",
+    "contact": "Contact us"
   },
   "auth": {
     "signInTitle": "Log in",
@@ -185,7 +186,10 @@
       "confirmLabel": "To confirm, type your username: {username}",
       "cancel": "Cancel",
       "confirm": "Delete permanently"
-    }
+    },
+    "helpTitle": "Help and contact",
+    "helpLead": "A question, a bug or an issue with your account? Write to us.",
+    "helpButton": "Contact us"
   },
   "rarities": {
     "title": "The 7 rarities"
@@ -291,7 +295,9 @@
     "digit": "A digit",
     "symbol": "A special character (! ? # @…)",
     "ok": "(done)",
-    "missing": "(missing)"
+    "missing": "(missing)",
+    "show": "Show password",
+    "hide": "Hide password"
   },
   "footer": {
     "label": "Legal information",
@@ -303,7 +309,7 @@
     "copyright": "© {years} {name}. All rights reserved.",
     "adults": "For people aged 18 and over. Playing is free: no purchase is necessary.",
     "independent": "{name} is an independent game, not affiliated with Instagram, TikTok, X, Reddit or any other social network.",
-    "trademarks": "Meme images and trademarks mentioned belong to their respective authors and owners. To request the removal of content, contact us."
+    "trademarks": "Meme images and trademarks mentioned belong to their respective authors and owners. To request the removal of content, <contact>contact us</contact>."
   },
   "legalPage": {
     "updated": "Last updated: {date}",
@@ -359,10 +365,9 @@
       "progress": "{owned, plural, =0 {No cards yet} one {# card} other {# cards}}"
     },
     "shop": {
-      "title": "Shop",
-      "lead": "Top up your MemeMoney and enjoy the current offers.",
-      "teaser": "First top-up: MemeMoney ×2",
-      "cta": "Go to the shop"
+      "cta": "Shop",
+      "subtle": "Not enough MemeMoney?",
+      "subtleDouble": "Not enough MemeMoney? Your first top-up is doubled."
     }
   },
   "odds": {
@@ -395,6 +400,62 @@
       "value": "MemeMoney has no real-money value: it cannot be resold or refunded.",
       "boosters": "Extra boosters, Super Boosters and Ultra Boosters are bought with MemeMoney from the Boosters box on the home page. Details in the",
       "terms": "terms of use"
+    }
+  },
+  "contact": {
+    "title": "Contact us",
+    "lead": "A question, a bug, a purchase issue or content to report? Write to us and we'll reply by email.",
+    "required": "Required fields",
+    "email": "Your email address",
+    "category": "Subject",
+    "choose": "Choose a subject",
+    "categories": {
+      "question": "Question",
+      "bug": "Technical problem",
+      "purchase": "Purchase or MemeMoney",
+      "report": "Report content",
+      "account": "My account",
+      "other": "Other"
+    },
+    "message": "Your message",
+    "count": "{count} / {max} characters (minimum {min})",
+    "submit": "Send",
+    "sent": "Message sent! We'll reply by email as soon as possible.",
+    "direct": "You can also write to us directly at"
+  },
+  "slides": {
+    "label": "Sections",
+    "previous": "Previous section",
+    "next": "Next section"
+  },
+  "infos": {
+    "title": "Info",
+    "tabs": {
+      "rarities": "Rarities",
+      "leaderboard": "Ranking",
+      "news": "News"
+    },
+    "leaderboard": {
+      "scopeLabel": "Ranking scope",
+      "scopes": {
+        "around": "Around me",
+        "rank": "My rank",
+        "world": "World"
+      },
+      "around": "Players within ±{window} trophies of you",
+      "rank": "{rank} rank players",
+      "world": "Best players in the world",
+      "position": "Your position: {position} of {total}",
+      "you": "You",
+      "empty": "Nobody else here yet… invite your friends!"
+    },
+    "news": {
+      "kinds": {
+        "news": "New",
+        "update": "Update",
+        "upcoming": "Coming soon",
+        "change": "Change"
+      }
     }
   }
 }

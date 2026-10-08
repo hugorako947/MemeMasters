@@ -12,14 +12,15 @@ import { ButtonLink } from "@/components/ui/Button";
 import { getAuthUser } from "@/lib/server/auth";
 import { getPlayer, type Player } from "@/lib/server/players";
 
-export default async function HomePage() {
+export default async function HomePage({ searchParams }: PageProps<"/">) {
   const user = await getAuthUser();
   if (!user) return <GuestHome />;
   const player = await getPlayer(user.id);
   if (!player || !player.consentUpToDate) redirect("/bienvenue");
+  const { vue } = await searchParams;
   return (
     <AppShell player={player}>
-      <PlayerHome player={player} />
+      <PlayerHome player={player} initial={typeof vue === "string" ? vue : undefined} />
     </AppShell>
   );
 }
@@ -52,6 +53,9 @@ async function GuestHome() {
                     {t("createAccount")}
                   </ButtonLink>
                 </div>
+                <ButtonLink href="/contact" variant="ghost" className="mt-3">
+                  <span aria-hidden="true">✉️</span> {t("contact")}
+                </ButtonLink>
               </div>
 
               {/* L'éventail : touche une carte pour ouvrir sa fiche. */}
@@ -81,12 +85,12 @@ async function GuestHome() {
   );
 }
 
-async function PlayerHome({ player }: { player: Player }) {
+async function PlayerHome({ player, initial }: { player: Player; initial?: string }) {
   const t = await getTranslations("playerHome");
   return (
     <div className="grid gap-6">
       <h1 className="font-display text-4xl leading-none md:text-5xl">{t("title", { username: player.username })}</h1>
-      <PlayerFeatures player={player} />
+      <PlayerFeatures player={player} initial={initial} />
     </div>
   );
 }

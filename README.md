@@ -130,6 +130,7 @@ Pour travailler le design sans compte ni base de données, lancez `npm run dev` 
 - http://localhost:3000/apercu?vue=reglages (réglages)
 
 - http://localhost:3000/apercu?vue=boutique&pays=BR (boutique, prix dans la devise d'un pays)
+- http://localhost:3000/apercu?vue=infos&onglet=news (Infos : raretes, classement ou news)
 
 Ajoutez `&trophees=4200` pour simuler un autre rang. Cette page utilise des données fictives et n'existe pas en production.
 
@@ -137,6 +138,14 @@ Ajoutez `&trophees=4200` pour simuler un autre rang. Cette page utilise des donn
 
 - **Langues** : anglais, chinois mandarin, espagnol, arabe (de droite à gauche), français, portugais, allemand. Textes dans `messages/<code>.json` ; un test vérifie que chaque langue traduit toutes les clés du français. Sans choix du joueur, la langue suit celle du navigateur, puis celle du pays (en-tête Vercel), sinon le français.
 - **Thèmes** : clair (par défaut), obscur (noir), inversé (tout le site en négatif, cartes comprises), personnalisé (couleur principale, fond clair, obscur ou inversé).
+
+## Publier une news
+
+Ajoutez une entrée en haut de `src/content/news.ts` (date, type, titre et texte en français, autres langues facultatives). Elle apparaît dans Infos → News.
+
+## Messages de contact
+
+Les messages envoyés depuis `/contact` sont dans la table `contact_messages` (tableau de bord Supabase → Table Editor). Passez `status` à `handled` une fois traités.
 
 ## Personnaliser le jeu
 

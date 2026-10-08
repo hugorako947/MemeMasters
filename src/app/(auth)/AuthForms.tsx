@@ -6,6 +6,7 @@ import { useActionState, useEffect, useState, type AnimationEvent, type ReactNod
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { CheckboxField, Field, FormMessage, RequiredNote } from "@/components/ui/Field";
 import { PasswordChecklist } from "@/components/ui/PasswordChecklist";
+import { PasswordField } from "@/components/ui/PasswordField";
 import { useDeviceTimeZone } from "@/lib/client/use-device-timezone";
 import { looksLikeEmail, PASSWORD_MAX, passwordIsStrong } from "@/lib/validation/auth";
 import { usernameProblem } from "@/lib/validation/username";
@@ -84,10 +85,9 @@ export function SignInForm({ next, notice }: { next: string; notice?: string | n
           onAnimationStart={onAutofill}
           required
         />
-        <Field
+        <PasswordField
           label={t("password")}
           name="password"
-          type="password"
           autoComplete="current-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -259,10 +259,9 @@ export function SignUpForm() {
           error={email && !looksLikeEmail(email) ? te("invalid_email") : null}
           required
         />
-        <Field
+        <PasswordField
           label={t("password")}
           name="password"
-          type="password"
           autoComplete="new-password"
           maxLength={PASSWORD_MAX}
           value={password}
@@ -270,10 +269,9 @@ export function SignUpForm() {
           hint={<PasswordChecklist password={password} />}
           required
         />
-        <Field
+        <PasswordField
           label={t("confirmPassword")}
           name="confirm"
-          type="password"
           autoComplete="new-password"
           maxLength={PASSWORD_MAX}
           value={confirm}
@@ -355,10 +353,9 @@ export function NewPasswordForm() {
   return (
     <form action={action} className="grid gap-4" noValidate>
       <RequiredNote>{t("requiredNote")}</RequiredNote>
-      <Field
+      <PasswordField
         label={t("newPassword")}
         name="password"
-        type="password"
         autoComplete="new-password"
         maxLength={PASSWORD_MAX}
         value={password}
@@ -366,10 +363,9 @@ export function NewPasswordForm() {
         hint={<PasswordChecklist password={password} />}
         required
       />
-      <Field
+      <PasswordField
         label={t("confirmPassword")}
         name="confirm"
-        type="password"
         autoComplete="new-password"
         maxLength={PASSWORD_MAX}
         value={confirm}
