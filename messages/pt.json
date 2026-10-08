@@ -147,7 +147,8 @@
         "365d": "Últimos 12 meses",
         "all": "Desde o seu cadastro"
       }
-    }
+    },
+    "seeRanks": "Ver todos os ranques"
   },
   "settings": {
     "title": "Configurações",
@@ -431,7 +432,8 @@
     "tabs": {
       "rarities": "Raridades",
       "leaderboard": "Ranking",
-      "news": "Notícias"
+      "news": "Notícias",
+      "ranks": "Ranques"
     },
     "leaderboard": {
       "scopeLabel": "Alcance do ranking",
@@ -454,6 +456,27 @@
         "upcoming": "Em breve",
         "change": "Mudança"
       }
+    },
+    "ranks": {
+      "status": "{rank} · {trophies} troféus",
+      "toNext": "Faltam {left} troféus para chegar a {rank}.",
+      "top": "Você chegou ao ranque mais alto. Respeito.",
+      "howTitle": "Como funciona",
+      "rules": {
+        "win": "Vitória: +{win} troféus e +{money} MemeMoney.",
+        "loss": "Derrota: −{loss} troféus, nunca abaixo de 0.",
+        "draw": "Empate: seus troféus não mudam.",
+        "perRank": "A cada {per} troféus você sobe de ranque.",
+        "drop": "Seu ranque acompanha seus troféus: você pode descer, mas cada recompensa de ranque só é dada uma vez.",
+        "matchmaking": "Seus adversários têm um número de troféus próximo do seu.",
+        "bots": "Batalhas contra um bot não dão troféus nem MemeMoney."
+      },
+      "yours": "Seu ranque",
+      "range": "De {min} a {max} troféus",
+      "rangeOpen": "{min} troféus ou mais",
+      "start": "Ranque inicial",
+      "rewardBoosters": "{count, plural, one {# pacote} other {# pacotes}}",
+      "obtained": "Recompensa recebida"
     }
   }
 }

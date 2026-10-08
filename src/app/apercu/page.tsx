@@ -74,7 +74,7 @@ export default async function PreviewPage({ searchParams }: PageProps<"/apercu">
       {view === "profil" ? (
         <ProfileView profile={profile} viewer={player} />
       ) : view === "infos" ? (
-        <InfosView boards={fakeBoards(player.trophies)} trophies={player.trophies} initial={typeof params.onglet === "string" ? params.onglet : undefined} param="onglet" />
+        <InfosView boards={fakeBoards(player.trophies)} trophies={player.trophies} highestRank={player.highestRank} initial={typeof params.onglet === "string" ? params.onglet : undefined} param="onglet" />
       ) : view === "boutique" ? (
         <ShopView country={typeof params.pays === "string" ? params.pays : "FR"} hasPurchased={false} />
       ) : view === "reglages" ? (

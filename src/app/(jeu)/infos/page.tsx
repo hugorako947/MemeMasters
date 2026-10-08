@@ -12,5 +12,5 @@ export default async function InfosPage({ searchParams }: PageProps<"/infos">) {
   const { player } = await requirePlayer();
   const { vue } = await searchParams;
   const boards = await getLeaderboards(player.id, player.trophies);
-  return <InfosView boards={boards} trophies={player.trophies} initial={typeof vue === "string" ? vue : undefined} />;
+  return <InfosView boards={boards} trophies={player.trophies} highestRank={player.highestRank} initial={typeof vue === "string" ? vue : undefined} />;
 }

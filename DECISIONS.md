@@ -157,3 +157,10 @@ Chaque entrée : la décision, puis la raison.
 - **Packs** : 20 MemeMoney à 0,25 €, 110 à 1 €, 240 à 2 €, 650 à 5 € (prix locaux recalculés dans les 13 devises, `src/config/shop.ts`). Les plus gros packs restent les plus avantageux.
 - **À trancher avant la phase 5 (paiements)** : Stripe refuse les paiements par carte sous 0,50 € ; le pack à 0,25 € ne pourra donc pas être payé seul. Et sur les petits montants, les frais de carte (de l'ordre de 0,25 € fixes + un pourcentage en Europe, à vérifier sur le site de Stripe) absorbent l'essentiel du prix : un achat à 0,25 € ne rapporterait rien, un achat à 1 € environ 0,75 €.
 - **Libellé du bouton de contact** : « Contactez-nous » (sans icône), sur l'accueil, sous la connexion et l'inscription, et dans les Réglages.
+
+## Page Rangs (demande du propriétaire)
+
+- **Infos compte 4 pages** : Raretés, **Rangs**, Classement (toujours ouvert par défaut), News.
+- **Rangs** : la situation du joueur (rang, trophées, trophées restants), les règles (victoire, défaite, nul, un rang tous les 1 000 trophées, redescente possible, récompense une seule fois, adversaires de niveau proche, pas de trophées contre un bot), puis les 10 rangs du plus haut au plus bas, avec leurs bornes de trophées, leur récompense et la mention « Récompense obtenue ». Le rang actuel est mis en évidence.
+- **Profil** : l'écusson de rang est cliquable et ouvre directement Infos → Rangs (`/infos?vue=rangs`).
+- Onglets en texte plus petit sur téléphone, pour que les 4 tiennent même en allemand.

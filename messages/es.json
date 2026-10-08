@@ -147,7 +147,8 @@
         "365d": "Últimos 12 meses",
         "all": "Desde tu registro"
       }
-    }
+    },
+    "seeRanks": "Ver todos los rangos"
   },
   "settings": {
     "title": "Ajustes",
@@ -431,7 +432,8 @@
     "tabs": {
       "rarities": "Rarezas",
       "leaderboard": "Clasificación",
-      "news": "Noticias"
+      "news": "Noticias",
+      "ranks": "Rangos"
     },
     "leaderboard": {
       "scopeLabel": "Alcance de la clasificación",
@@ -454,6 +456,27 @@
         "upcoming": "Próximamente",
         "change": "Cambio"
       }
+    },
+    "ranks": {
+      "status": "{rank} · {trophies} trofeos",
+      "toNext": "Faltan {left} trofeos para llegar a {rank}.",
+      "top": "Has alcanzado el rango más alto. Respeto.",
+      "howTitle": "Cómo funciona",
+      "rules": {
+        "win": "Victoria: +{win} trofeos y +{money} MemeMoney.",
+        "loss": "Derrota: −{loss} trofeos, nunca por debajo de 0.",
+        "draw": "Empate: tus trofeos no cambian.",
+        "perRank": "Cada {per} trofeos subes de rango.",
+        "drop": "Tu rango sigue a tus trofeos: puedes bajar, pero cada recompensa de rango solo se da una vez.",
+        "matchmaking": "Tus rivales tienen un número de trofeos parecido al tuyo.",
+        "bots": "Las batallas contra un bot no dan trofeos ni MemeMoney."
+      },
+      "yours": "Tu rango",
+      "range": "De {min} a {max} trofeos",
+      "rangeOpen": "{min} trofeos o más",
+      "start": "Rango inicial",
+      "rewardBoosters": "{count, plural, one {# sobre} other {# sobres}}",
+      "obtained": "Recompensa obtenida"
     }
   }
 }

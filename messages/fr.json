@@ -147,7 +147,8 @@
         "365d": "12 derniers mois",
         "all": "Depuis ton inscription"
       }
-    }
+    },
+    "seeRanks": "Voir tous les rangs"
   },
   "settings": {
     "title": "Réglages",
@@ -431,7 +432,8 @@
     "tabs": {
       "rarities": "Raretés",
       "leaderboard": "Classement",
-      "news": "News"
+      "news": "News",
+      "ranks": "Rangs"
     },
     "leaderboard": {
       "scopeLabel": "Portée du classement",
@@ -454,6 +456,27 @@
         "upcoming": "Bientôt",
         "change": "Changement"
       }
+    },
+    "ranks": {
+      "status": "{rank} · {trophies} trophées",
+      "toNext": "Encore {left} trophées pour atteindre {rank}.",
+      "top": "Tu as atteint le rang le plus haut. Respect.",
+      "howTitle": "Comment ça marche",
+      "rules": {
+        "win": "Victoire : +{win} trophées et +{money} MemeMoney.",
+        "loss": "Défaite : −{loss} trophées, sans jamais descendre sous 0.",
+        "draw": "Match nul : tes trophées ne bougent pas.",
+        "perRank": "Tous les {per} trophées, tu passes au rang suivant.",
+        "drop": "Ton rang suit tes trophées : tu peux redescendre, mais chaque récompense de rang n'est offerte qu'une fois.",
+        "matchmaking": "Tes adversaires ont un nombre de trophées proche du tien.",
+        "bots": "Les batailles contre un bot ne rapportent ni trophées ni MemeMoney."
+      },
+      "yours": "Ton rang",
+      "range": "{min} à {max} trophées",
+      "rangeOpen": "{min} trophées et plus",
+      "start": "Rang de départ",
+      "rewardBoosters": "{count, plural, one {# booster} other {# boosters}}",
+      "obtained": "Récompense obtenue"
     }
   }
 }

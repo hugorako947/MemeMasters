@@ -83,7 +83,7 @@ export function SlideDeck({ slides, initial, param = "vue" }: { slides: Slide[];
 
   return (
     <div className="grid min-w-0 gap-4">
-      <div role="tablist" aria-label={t("label")} onKeyDown={onTabKey} className="mx-auto flex w-full max-w-md rounded-full border-2 border-ink bg-surface p-1 shadow-[0_3px_0_0_var(--mm-shadow)]">
+      <div role="tablist" aria-label={t("label")} onKeyDown={onTabKey} className="mx-auto flex w-full max-w-lg rounded-full border-2 border-ink bg-surface p-1 shadow-[0_3px_0_0_var(--mm-shadow)]">
         {slides.map((slide, i) => (
           <button
             key={slide.key}
@@ -97,7 +97,7 @@ export function SlideDeck({ slides, initial, param = "vue" }: { slides: Slide[];
             aria-controls={`${baseId}-panel-${i}`}
             tabIndex={i === index ? 0 : -1}
             onClick={() => go(i)}
-            className={`flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-full px-2 text-sm font-extrabold transition-colors ${
+            className={`flex min-h-11 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-full px-1.5 text-xs font-extrabold transition-colors sm:px-2 sm:text-sm ${
               i === index ? "bg-candy text-[var(--mm-accent-ink)]" : "text-ink-soft hover:text-ink"
             }`}
           >

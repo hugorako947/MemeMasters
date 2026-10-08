@@ -147,7 +147,8 @@
         "365d": "Last 12 months",
         "all": "Since you joined"
       }
-    }
+    },
+    "seeRanks": "See all ranks"
   },
   "settings": {
     "title": "Settings",
@@ -431,7 +432,8 @@
     "tabs": {
       "rarities": "Rarities",
       "leaderboard": "Ranking",
-      "news": "News"
+      "news": "News",
+      "ranks": "Ranks"
     },
     "leaderboard": {
       "scopeLabel": "Ranking scope",
@@ -454,6 +456,27 @@
         "upcoming": "Coming soon",
         "change": "Change"
       }
+    },
+    "ranks": {
+      "status": "{rank} · {trophies} trophies",
+      "toNext": "{left} more trophies to reach {rank}.",
+      "top": "You've reached the highest rank. Respect.",
+      "howTitle": "How it works",
+      "rules": {
+        "win": "Win: +{win} trophies and +{money} MemeMoney.",
+        "loss": "Loss: −{loss} trophies, never below 0.",
+        "draw": "Draw: your trophies don't change.",
+        "perRank": "Every {per} trophies, you move up a rank.",
+        "drop": "Your rank follows your trophies: you can drop down, but each rank reward is only given once.",
+        "matchmaking": "Your opponents have a trophy count close to yours.",
+        "bots": "Battles against a bot give neither trophies nor MemeMoney."
+      },
+      "yours": "Your rank",
+      "range": "{min} to {max} trophies",
+      "rangeOpen": "{min} trophies and more",
+      "start": "Starting rank",
+      "rewardBoosters": "{count, plural, one {# booster} other {# boosters}}",
+      "obtained": "Reward claimed"
     }
   }
 }

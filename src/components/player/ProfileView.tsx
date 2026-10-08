@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { RankShield, TrophyIcon } from "@/components/player/RankBadge";
 import { TrophyChart } from "@/components/player/TrophyChart";
@@ -31,7 +32,14 @@ export async function ProfileView({ profile }: { profile: PublicProfile; viewer:
       </header>
 
       <Panel className="grid gap-4 sm:grid-cols-[auto_1fr] sm:items-center">
-        <RankShield rank={rank} size={64} />
+        <Link
+          href="/infos?vue=rangs"
+          aria-label={t("seeRanks")}
+          title={t("seeRanks")}
+          className="justify-self-start rounded-2xl p-1 transition-transform hover:-translate-y-0.5 hover:rotate-[-4deg]"
+        >
+          <RankShield rank={rank} size={64} />
+        </Link>
         <div>
           <p className="flex flex-wrap items-baseline gap-x-3 font-display text-4xl leading-none">
             {tr(rank)}

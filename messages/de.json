@@ -147,7 +147,8 @@
         "365d": "Letzte 12 Monate",
         "all": "Seit deiner Anmeldung"
       }
-    }
+    },
+    "seeRanks": "Alle Ränge ansehen"
   },
   "settings": {
     "title": "Einstellungen",
@@ -431,7 +432,8 @@
     "tabs": {
       "rarities": "Seltenheiten",
       "leaderboard": "Rangliste",
-      "news": "News"
+      "news": "News",
+      "ranks": "Ränge"
     },
     "leaderboard": {
       "scopeLabel": "Umfang der Rangliste",
@@ -454,6 +456,27 @@
         "upcoming": "Demnächst",
         "change": "Änderung"
       }
+    },
+    "ranks": {
+      "status": "{rank} · {trophies} Trophäen",
+      "toNext": "Noch {left} Trophäen bis {rank}.",
+      "top": "Du hast den höchsten Rang erreicht. Respekt.",
+      "howTitle": "So funktioniert's",
+      "rules": {
+        "win": "Sieg: +{win} Trophäen und +{money} MemeMoney.",
+        "loss": "Niederlage: −{loss} Trophäen, nie unter 0.",
+        "draw": "Unentschieden: Deine Trophäen bleiben gleich.",
+        "perRank": "Alle {per} Trophäen steigst du einen Rang auf.",
+        "drop": "Dein Rang folgt deinen Trophäen: Du kannst absteigen, aber jede Rangbelohnung gibt es nur einmal.",
+        "matchmaking": "Deine Gegner haben ähnlich viele Trophäen wie du.",
+        "bots": "Kämpfe gegen einen Bot bringen weder Trophäen noch MemeMoney."
+      },
+      "yours": "Dein Rang",
+      "range": "{min} bis {max} Trophäen",
+      "rangeOpen": "Ab {min} Trophäen",
+      "start": "Startrang",
+      "rewardBoosters": "{count, plural, one {# Booster} other {# Booster}}",
+      "obtained": "Belohnung erhalten"
     }
   }
 }
