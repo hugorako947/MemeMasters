@@ -48,9 +48,9 @@ export const RANK_COLORS: Record<Rank, { fill: string; ink: string }> = {
   or: { fill: "#f5b400", ink: "#1a1238" },
   platine: { fill: "#7fd6d0", ink: "#1a1238" },
   diamant: { fill: "#5fb8ff", ink: "#1a1238" },
-  maitre: { fill: "#8b3dff", ink: "#ffffff" },
+  maitre: { fill: "#ff5a36", ink: "#ffffff" },
   grand_maitre: { fill: "#ff3d7f", ink: "#ffffff" },
-  super_grand_maitre: { fill: "#ff5a36", ink: "#ffffff" },
+  super_grand_maitre: { fill: "#8b3dff", ink: "#ffffff" },
   immortel: { fill: "#1a1238", ink: "#ffd23f" },
 };
 

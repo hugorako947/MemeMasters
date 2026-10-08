@@ -234,7 +234,10 @@
     "email_not_authorized": "暂时无法向该地址发送确认邮件。",
     "signup_disabled": "暂停注册。",
     "locale_unavailable": "该语言暂不可用。",
-    "delete_confirmation": "输入的用户名不一致。"
+    "delete_confirmation": "输入的用户名不一致。",
+    "no_booster": "暂时没有这种卡包了。",
+    "not_enough_meme_money": "MemeMoney 不足。",
+    "no_cards": "暂时还没有可用的卡牌。"
   },
   "statName": {
     "hp": "生命值",
@@ -478,5 +481,51 @@
       "rewardBoosters": "{count, plural, other {# 个卡包}}",
       "obtained": "奖励已领取"
     }
+  },
+  "collection": {
+    "progress": "{owned} / {total} 张卡牌",
+    "showLabel": "显示的卡牌",
+    "show": {
+      "all": "全部",
+      "owned": "已拥有",
+      "missing": "未拥有"
+    },
+    "search": "搜索卡牌",
+    "rarityLabel": "稀有度",
+    "rarityAll": "稀有度",
+    "vibeLabel": "氛围",
+    "vibeAll": "氛围",
+    "sortLabel": "排序方式",
+    "sort": {
+      "rarity": "稀有度",
+      "name": "名称",
+      "recent": "最新获得",
+      "quantity": "数量"
+    },
+    "empty": "没有符合条件的卡牌。",
+    "firstBooster": "你的收藏还是空的：去“卡包”页打开你的第一个卡包吧！",
+    "quantity": "×{count}"
+  },
+  "boostersPanel": {
+    "openDaily": "打开每日卡包",
+    "freeToday": "今日免费 {left} / {total}",
+    "reserve": "+ 库存 {count} 个",
+    "open": "打开",
+    "owned": "× {count}",
+    "nextFree": "免费卡包将在午夜刷新。",
+    "bought": "卡包已加入你的库存！",
+    "buyLabel": "用 {price} MemeMoney 购买{item}"
+  },
+  "opening": {
+    "title": "开卡包",
+    "cards": "{count} 张卡牌",
+    "tapToOpen": "点击卡包将其打开",
+    "opening": "正在打开…",
+    "tapToReveal": "点击卡牌将其翻开",
+    "revealAll": "全部翻开",
+    "revealOne": "翻开第 {index} 张卡牌",
+    "summary": "{count, plural, =0 {这次没有新卡牌。} other {获得 # 张新卡牌！}}",
+    "newBadge": "新",
+    "done": "继续"
   }
 }

@@ -164,3 +164,14 @@ Chaque entrée : la décision, puis la raison.
 - **Rangs** : la situation du joueur (rang, trophées, trophées restants), les règles (victoire, défaite, nul, un rang tous les 1 000 trophées, redescente possible, récompense une seule fois, adversaires de niveau proche, pas de trophées contre un bot), puis les 10 rangs du plus haut au plus bas, avec leurs bornes de trophées, leur récompense et la mention « Récompense obtenue ». Le rang actuel est mis en évidence.
 - **Profil** : l'écusson de rang est cliquable et ouvre directement Infos → Rangs (`/infos?vue=rangs`).
 - Onglets en texte plus petit sur téléphone, pour que les 4 tiennent même en allemand.
+
+## Collection et Boosters jouables (début de la phase 2)
+
+- **Rangs** : Maître en orange, Grand maître en rose (inchangé), Super grand maître en violet (demande du propriétaire).
+- **Jeu de départ** : 40 cartes originales dans `src/content/cards/starter-set.ts` (12 communes, 10 rares, 8 épiques, 5 légendaires, 3 brainrots, 1 superbrainrot, 1 godlevel ; au moins 6 par vibe). Statistiques calculées pour tomber sur le budget de chaque rareté ; un test vérifie schéma et budget de chaque carte. La migration `20261010000900_jeu_de_depart.sql` est générée depuis ce fichier (`npm run cards:sql`) et n'écrase jamais une carte existante. Identifiants stables (dérivés du slug), identiques dans le code et en base.
+- **Cartes de vitrine** = jeu de départ (plus de liste séparée).
+- **Ouverture de booster** (`POST /api/boosters/open`) : une seule transaction verrouille le portefeuille, consomme le booster (gratuits du jour, puis offerts, puis achetés), tire les raretés avec un aléatoire cryptographique, choisit les cartes, met à jour collection, pity, usage du jour, historique et journal. Le résultat est enregistré avant l'animation. Testé de bout en bout sur une vraie base PostgreSQL.
+- **Achat de boosters en MemeMoney** (`POST /api/boosters/buy`) : booster en plus (réserve journalière), Super Booster, Ultra Booster ; refusé si la MemeMoney ne suffit pas.
+- **Animation d'ouverture** : sachet qui frémit puis se déchire au toucher, 10 cartes face cachée retournées une à une de la plus courante à la plus rare (dos lumineux pour légendaire et mieux, vibration sur Android), « Tout révéler », badge « Nouveau » et récapitulatif. Coupée si le joueur préfère réduire les animations.
+- **Collection directement dans l'accueil** : progression, Toutes / Possédées / Manquantes, recherche, rareté, vibe, tri (rareté, nom, plus récentes, quantité), quantité « ×n », fiche au clic. Les doublons sont conservés ; leur recyclage en poussière reste à faire.
+- Le script `check-sql.sh` échoue désormais si un test pgTAP échoue (il affichait « OK » malgré un « not ok »).

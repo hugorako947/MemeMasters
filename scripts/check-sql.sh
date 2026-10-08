@@ -19,8 +19,15 @@ for f in "$ROOT"/supabase/migrations/*.sql; do
 done
 psql "$URL" -v ON_ERROR_STOP=1 -q -f "$ROOT/supabase/seed.sql"
 psql "$URL" -v ON_ERROR_STOP=1 -q -c "create extension if not exists pgtap"
+FAILED=0
 for t in "$ROOT"/supabase/tests/database/*.test.sql; do
   echo "→ $(basename "$t")"
-  psql "$URL" -v ON_ERROR_STOP=1 -q -X --no-psqlrc -t -f "$t" | sed '/^\s*$/d'
+  OUT="$(psql "$URL" -v ON_ERROR_STOP=1 -q -X --no-psqlrc -t -f "$t" | sed '/^\s*$/d')"
+  echo "$OUT" | grep -E "^ *(1\.\.|not ok)" || true
+  if echo "$OUT" | grep -qE "^ *not ok"; then FAILED=1; fi
 done
+if [ "$FAILED" -ne 0 ]; then
+  echo "Des tests SQL ont échoué."
+  exit 1
+fi
 echo "Migrations et tests SQL : OK"

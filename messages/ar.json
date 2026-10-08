@@ -234,7 +234,10 @@
     "email_not_authorized": "تعذّر إرسال رسالة التأكيد إلى هذا العنوان حاليًا.",
     "signup_disabled": "التسجيل مغلق حاليًا.",
     "locale_unavailable": "هذه اللغة غير متاحة بعد.",
-    "delete_confirmation": "الاسم المكتوب غير مطابق."
+    "delete_confirmation": "الاسم المكتوب غير مطابق.",
+    "no_booster": "لم يعد لديك حزم من هذا النوع حاليًا.",
+    "not_enough_meme_money": "لا تكفي MemeMoney.",
+    "no_cards": "لا توجد بطاقات متاحة بعد."
   },
   "statName": {
     "hp": "نقاط الصحة",
@@ -478,5 +481,51 @@
       "rewardBoosters": "{count, plural, one {حزمة واحدة} two {حزمتان} few {# حزم} other {# حزمة}}",
       "obtained": "تم الحصول على المكافأة"
     }
+  },
+  "collection": {
+    "progress": "{owned} / {total} بطاقة",
+    "showLabel": "البطاقات المعروضة",
+    "show": {
+      "all": "الكل",
+      "owned": "المملوكة",
+      "missing": "الناقصة"
+    },
+    "search": "ابحث عن بطاقة",
+    "rarityLabel": "الندرة",
+    "rarityAll": "الندرة",
+    "vibeLabel": "الطابع",
+    "vibeAll": "الطابع",
+    "sortLabel": "الترتيب حسب",
+    "sort": {
+      "rarity": "الندرة",
+      "name": "الاسم",
+      "recent": "الأحدث",
+      "quantity": "الكمية"
+    },
+    "empty": "لا توجد بطاقة مطابقة.",
+    "firstBooster": "مجموعتك فارغة: افتح أول حزمة لك في تبويب الحزم!",
+    "quantity": "×{count}"
+  },
+  "boostersPanel": {
+    "openDaily": "فتح حزمة يومية",
+    "freeToday": "{left} / {total} مجانية اليوم",
+    "reserve": "+ {count} في المخزون",
+    "open": "فتح",
+    "owned": "× {count}",
+    "nextFree": "تعود حزمك المجانية عند منتصف الليل.",
+    "bought": "تمت إضافة الحزمة إلى مخزونك!",
+    "buyLabel": "شراء {item} مقابل {price} MemeMoney"
+  },
+  "opening": {
+    "title": "فتح حزمة",
+    "cards": "{count} بطاقات",
+    "tapToOpen": "اضغط على الحزمة لفتحها",
+    "opening": "جارٍ الفتح…",
+    "tapToReveal": "اضغط على بطاقة لقلبها",
+    "revealAll": "كشف الكل",
+    "revealOne": "قلب البطاقة {index}",
+    "summary": "{count, plural, =0 {لا بطاقات جديدة هذه المرة.} one {بطاقة جديدة!} two {بطاقتان جديدتان!} few {# بطاقات جديدة!} other {# بطاقة جديدة!}}",
+    "newBadge": "جديدة",
+    "done": "متابعة"
   }
 }

@@ -234,7 +234,10 @@
     "email_not_authorized": "We can't send the confirmation email to this address right now.",
     "signup_disabled": "Sign-ups are closed for now.",
     "locale_unavailable": "This language isn't available yet.",
-    "delete_confirmation": "The username you typed doesn't match."
+    "delete_confirmation": "The username you typed doesn't match.",
+    "no_booster": "No booster of this type left for now.",
+    "not_enough_meme_money": "Not enough MemeMoney.",
+    "no_cards": "No card is available yet."
   },
   "statName": {
     "hp": "Hit points",
@@ -478,5 +481,51 @@
       "rewardBoosters": "{count, plural, one {# booster} other {# boosters}}",
       "obtained": "Reward claimed"
     }
+  },
+  "collection": {
+    "progress": "{owned} / {total} cards",
+    "showLabel": "Cards shown",
+    "show": {
+      "all": "All",
+      "owned": "Owned",
+      "missing": "Missing"
+    },
+    "search": "Search a card",
+    "rarityLabel": "Rarity",
+    "rarityAll": "Rarities",
+    "vibeLabel": "Vibe",
+    "vibeAll": "Vibes",
+    "sortLabel": "Sort by",
+    "sort": {
+      "rarity": "Rarity",
+      "name": "Name",
+      "recent": "Most recent",
+      "quantity": "Quantity"
+    },
+    "empty": "No card matches.",
+    "firstBooster": "Your collection is empty: open your first booster in the Boosters tab!",
+    "quantity": "×{count}"
+  },
+  "boostersPanel": {
+    "openDaily": "Open a daily booster",
+    "freeToday": "{left} / {total} free today",
+    "reserve": "+ {count} in reserve",
+    "open": "Open",
+    "owned": "× {count}",
+    "nextFree": "Your free boosters come back at midnight.",
+    "bought": "Booster added to your reserve!",
+    "buyLabel": "Buy {item} for {price} MemeMoney"
+  },
+  "opening": {
+    "title": "Opening a booster",
+    "cards": "{count} cards",
+    "tapToOpen": "Tap the booster to open it",
+    "opening": "Opening…",
+    "tapToReveal": "Tap a card to flip it",
+    "revealAll": "Reveal all",
+    "revealOne": "Flip card {index}",
+    "summary": "{count, plural, =0 {No new card this time.} one {# new card!} other {# new cards!}}",
+    "newBadge": "New",
+    "done": "Continue"
   }
 }

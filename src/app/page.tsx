@@ -10,7 +10,9 @@ import { AppShell } from "@/components/layout/AppShell";
 import { PlayerFeatures } from "@/components/player/PlayerFeatures";
 import { ButtonLink } from "@/components/ui/Button";
 import { getAuthUser } from "@/lib/server/auth";
-import { getPlayer, type Player } from "@/lib/server/players";
+import { getBoosterState } from "@/lib/server/boosters";
+import { getCollection } from "@/lib/server/cards";
+import { getPlayer } from "@/lib/server/players";
 
 export default async function HomePage({ searchParams }: PageProps<"/">) {
   const user = await getAuthUser();
@@ -18,9 +20,13 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
   const player = await getPlayer(user.id);
   if (!player || !player.consentUpToDate) redirect("/bienvenue");
   const { vue } = await searchParams;
+  const [collection, boosters] = await Promise.all([getCollection(player.id), getBoosterState(player)]);
   return (
     <AppShell player={player}>
-      <PlayerHome player={player} initial={typeof vue === "string" ? vue : undefined} />
+      <div className="grid gap-6">
+        <h1 className="font-display text-4xl leading-none md:text-5xl">{(await getTranslations("playerHome"))("title", { username: player.username })}</h1>
+        <PlayerFeatures player={player} collection={collection} boosters={boosters} initial={typeof vue === "string" ? vue : undefined} />
+      </div>
     </AppShell>
   );
 }
@@ -85,12 +91,3 @@ async function GuestHome() {
   );
 }
 
-async function PlayerHome({ player, initial }: { player: Player; initial?: string }) {
-  const t = await getTranslations("playerHome");
-  return (
-    <div className="grid gap-6">
-      <h1 className="font-display text-4xl leading-none md:text-5xl">{t("title", { username: player.username })}</h1>
-      <PlayerFeatures player={player} initial={initial} />
-    </div>
-  );
-}

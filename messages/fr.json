@@ -234,7 +234,10 @@
     "email_not_authorized": "Impossible d'envoyer l'e-mail de confirmation à cette adresse pour le moment.",
     "signup_disabled": "Les inscriptions sont fermées pour le moment.",
     "locale_unavailable": "Cette langue n'est pas encore disponible.",
-    "delete_confirmation": "Le pseudo saisi ne correspond pas."
+    "delete_confirmation": "Le pseudo saisi ne correspond pas.",
+    "no_booster": "Plus de booster de ce type pour l'instant.",
+    "not_enough_meme_money": "Pas assez de MemeMoney.",
+    "no_cards": "Aucune carte n'est disponible pour l'instant."
   },
   "statName": {
     "hp": "Points de vie",
@@ -478,5 +481,51 @@
       "rewardBoosters": "{count, plural, one {# booster} other {# boosters}}",
       "obtained": "Récompense obtenue"
     }
+  },
+  "collection": {
+    "progress": "{owned} / {total} cartes",
+    "showLabel": "Cartes affichées",
+    "show": {
+      "all": "Toutes",
+      "owned": "Possédées",
+      "missing": "Manquantes"
+    },
+    "search": "Rechercher une carte",
+    "rarityLabel": "Rareté",
+    "rarityAll": "Raretés",
+    "vibeLabel": "Vibe",
+    "vibeAll": "Vibes",
+    "sortLabel": "Trier par",
+    "sort": {
+      "rarity": "Rareté",
+      "name": "Nom",
+      "recent": "Plus récentes",
+      "quantity": "Quantité"
+    },
+    "empty": "Aucune carte ne correspond.",
+    "firstBooster": "Ta collection est vide : ouvre ton premier booster dans l'onglet Boosters !",
+    "quantity": "×{count}"
+  },
+  "boostersPanel": {
+    "openDaily": "Ouvrir un booster journalier",
+    "freeToday": "{left} / {total} gratuits aujourd'hui",
+    "reserve": "+ {count} en réserve",
+    "open": "Ouvrir",
+    "owned": "× {count}",
+    "nextFree": "Tes boosters gratuits reviennent à minuit.",
+    "bought": "Booster ajouté à ta réserve !",
+    "buyLabel": "Acheter {item} pour {price} MemeMoney"
+  },
+  "opening": {
+    "title": "Ouverture de booster",
+    "cards": "{count} cartes",
+    "tapToOpen": "Touche le booster pour l'ouvrir",
+    "opening": "Ouverture…",
+    "tapToReveal": "Touche une carte pour la retourner",
+    "revealAll": "Tout révéler",
+    "revealOne": "Retourner la carte {index}",
+    "summary": "{count, plural, =0 {Aucune nouvelle carte cette fois.} one {# nouvelle carte !} other {# nouvelles cartes !}}",
+    "newBadge": "Nouveau",
+    "done": "Continuer"
   }
 }

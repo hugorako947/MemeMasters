@@ -234,7 +234,10 @@
     "email_not_authorized": "No podemos enviar el correo de confirmación a esta dirección por ahora.",
     "signup_disabled": "Los registros están cerrados por ahora.",
     "locale_unavailable": "Este idioma aún no está disponible.",
-    "delete_confirmation": "El nombre escrito no coincide."
+    "delete_confirmation": "El nombre escrito no coincide.",
+    "no_booster": "No te quedan sobres de este tipo por ahora.",
+    "not_enough_meme_money": "No tienes suficiente MemeMoney.",
+    "no_cards": "Todavía no hay cartas disponibles."
   },
   "statName": {
     "hp": "Puntos de salud",
@@ -478,5 +481,51 @@
       "rewardBoosters": "{count, plural, one {# sobre} other {# sobres}}",
       "obtained": "Recompensa obtenida"
     }
+  },
+  "collection": {
+    "progress": "{owned} / {total} cartas",
+    "showLabel": "Cartas mostradas",
+    "show": {
+      "all": "Todas",
+      "owned": "Obtenidas",
+      "missing": "Faltan"
+    },
+    "search": "Buscar una carta",
+    "rarityLabel": "Rareza",
+    "rarityAll": "Rarezas",
+    "vibeLabel": "Vibe",
+    "vibeAll": "Vibes",
+    "sortLabel": "Ordenar por",
+    "sort": {
+      "rarity": "Rareza",
+      "name": "Nombre",
+      "recent": "Más recientes",
+      "quantity": "Cantidad"
+    },
+    "empty": "Ninguna carta coincide.",
+    "firstBooster": "Tu colección está vacía: ¡abre tu primer sobre en la pestaña Sobres!",
+    "quantity": "×{count}"
+  },
+  "boostersPanel": {
+    "openDaily": "Abrir un sobre diario",
+    "freeToday": "{left} / {total} gratis hoy",
+    "reserve": "+ {count} en reserva",
+    "open": "Abrir",
+    "owned": "× {count}",
+    "nextFree": "Tus sobres gratis vuelven a medianoche.",
+    "bought": "¡Sobre añadido a tu reserva!",
+    "buyLabel": "Comprar {item} por {price} MemeMoney"
+  },
+  "opening": {
+    "title": "Apertura de sobre",
+    "cards": "{count} cartas",
+    "tapToOpen": "Toca el sobre para abrirlo",
+    "opening": "Abriendo…",
+    "tapToReveal": "Toca una carta para darle la vuelta",
+    "revealAll": "Revelar todo",
+    "revealOne": "Girar la carta {index}",
+    "summary": "{count, plural, =0 {Ninguna carta nueva esta vez.} one {¡# carta nueva!} other {¡# cartas nuevas!}}",
+    "newBadge": "Nueva",
+    "done": "Continuar"
   }
 }

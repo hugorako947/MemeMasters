@@ -234,7 +234,10 @@
     "email_not_authorized": "Die Bestätigungs-E-Mail kann an diese Adresse gerade nicht gesendet werden.",
     "signup_disabled": "Registrierungen sind derzeit geschlossen.",
     "locale_unavailable": "Diese Sprache ist noch nicht verfügbar.",
-    "delete_confirmation": "Der eingegebene Name stimmt nicht überein."
+    "delete_confirmation": "Der eingegebene Name stimmt nicht überein.",
+    "no_booster": "Von diesem Booster-Typ ist gerade keiner mehr übrig.",
+    "not_enough_meme_money": "Nicht genug MemeMoney.",
+    "no_cards": "Noch keine Karten verfügbar."
   },
   "statName": {
     "hp": "Kraftpunkte",
@@ -478,5 +481,51 @@
       "rewardBoosters": "{count, plural, one {# Booster} other {# Booster}}",
       "obtained": "Belohnung erhalten"
     }
+  },
+  "collection": {
+    "progress": "{owned} / {total} Karten",
+    "showLabel": "Angezeigte Karten",
+    "show": {
+      "all": "Alle",
+      "owned": "Im Besitz",
+      "missing": "Fehlend"
+    },
+    "search": "Karte suchen",
+    "rarityLabel": "Seltenheit",
+    "rarityAll": "Seltenheiten",
+    "vibeLabel": "Vibe",
+    "vibeAll": "Vibes",
+    "sortLabel": "Sortieren nach",
+    "sort": {
+      "rarity": "Seltenheit",
+      "name": "Name",
+      "recent": "Neueste",
+      "quantity": "Anzahl"
+    },
+    "empty": "Keine Karte passt.",
+    "firstBooster": "Deine Sammlung ist leer: Öffne deinen ersten Booster im Tab „Booster“!",
+    "quantity": "×{count}"
+  },
+  "boostersPanel": {
+    "openDaily": "Einen Tages-Booster öffnen",
+    "freeToday": "{left} / {total} heute gratis",
+    "reserve": "+ {count} in Reserve",
+    "open": "Öffnen",
+    "owned": "× {count}",
+    "nextFree": "Deine Gratis-Booster kommen um Mitternacht zurück.",
+    "bought": "Booster zu deiner Reserve hinzugefügt!",
+    "buyLabel": "{item} für {price} MemeMoney kaufen"
+  },
+  "opening": {
+    "title": "Booster öffnen",
+    "cards": "{count} Karten",
+    "tapToOpen": "Tippe auf den Booster, um ihn zu öffnen",
+    "opening": "Wird geöffnet …",
+    "tapToReveal": "Tippe auf eine Karte, um sie umzudrehen",
+    "revealAll": "Alle aufdecken",
+    "revealOne": "Karte {index} umdrehen",
+    "summary": "{count, plural, =0 {Diesmal keine neue Karte.} one {# neue Karte!} other {# neue Karten!}}",
+    "newBadge": "Neu",
+    "done": "Weiter"
   }
 }

@@ -7,6 +7,7 @@ import { ProfileView } from "@/components/player/ProfileView";
 import { SettingsView } from "@/components/player/SettingsView";
 import { ShopView } from "@/components/player/ShopView";
 import { InfosView } from "@/components/infos/InfosView";
+import { STARTER_SET } from "@/content/cards/starter-set";
 import type { Leaderboard, LeaderboardScope } from "@/lib/server/leaderboard";
 import type { Player, PublicProfile } from "@/lib/server/players";
 import { parseAppearance, THEME_COOKIES } from "@/lib/theme/theme";
@@ -82,7 +83,13 @@ export default async function PreviewPage({ searchParams }: PageProps<"/apercu">
       ) : (
         <div className="grid gap-6">
           <h1 className="font-display text-4xl leading-none md:text-5xl">{(await getTranslations("playerHome"))("title", { username: player.username })}</h1>
-          <PlayerFeatures player={player} initial={typeof params.onglet === "string" ? params.onglet : undefined} param="onglet" />
+          <PlayerFeatures
+            player={player}
+            collection={STARTER_SET.map((card, i) => ({ card, quantity: i % 3 === 0 ? 0 : (i % 4) + 1, firstObtainedAt: null }))}
+            boosters={{ freeLeft: 2, freePerDay: 3, dailyReserve: 1, special: 1, verySpecial: 0, memeMoney: player.memeMoney }}
+            initial={typeof params.onglet === "string" ? params.onglet : undefined}
+            param="onglet"
+          />
         </div>
       )}
     </AppShell>

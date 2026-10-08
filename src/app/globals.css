@@ -1098,3 +1098,84 @@ body:has(> dialog.mm-detail[open]) #mm-app {
     transition: none;
   }
 }
+
+/* ==========================================================================
+   Ouverture de booster : sachet qui frémit, se déchire, cartes à retourner.
+   ========================================================================== */
+.mm-pack-tease {
+  animation: mm-tease 1.6s ease-in-out infinite;
+}
+@keyframes mm-tease {
+  0%, 70%, 100% { transform: none; }
+  76% { transform: rotate(-3deg) scale(1.03); }
+  82% { transform: rotate(3deg) scale(1.03); }
+  88% { transform: rotate(-2deg); }
+}
+.mm-tearing .mm-pack {
+  animation: mm-tear 0.65s cubic-bezier(0.5, 0, 0.75, 0) forwards;
+}
+@keyframes mm-tear {
+  0% { transform: none; opacity: 1; }
+  30% { transform: scale(1.08) rotate(-4deg); }
+  60% { transform: scale(1.12) rotate(4deg); filter: brightness(1.4); }
+  100% { transform: scale(1.5) translateY(-30px); opacity: 0; filter: brightness(2); }
+}
+.mm-flip {
+  position: relative;
+  aspect-ratio: 5 / 7;
+  perspective: 900px;
+}
+.mm-flip > * {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  transition: transform 0.55s cubic-bezier(0.3, 1.2, 0.5, 1);
+}
+.mm-flip__back {
+  display: grid;
+  place-items: center;
+  border-radius: 6%;
+  border: 3px solid #1a1238;
+  background:
+    repeating-linear-gradient(45deg, rgb(255 255 255 / 0.12) 0 6px, transparent 6px 14px),
+    linear-gradient(160deg, #ff3d7f, #8b3dff);
+  box-shadow: 0 4px 0 0 #1a1238;
+  cursor: pointer;
+  transform: rotateY(0deg);
+}
+.mm-flip__back:hover {
+  transform: translateY(-3px) rotate(-1deg);
+}
+.mm-flip__front {
+  transform: rotateY(180deg);
+}
+.mm-flip.is-revealed .mm-flip__back {
+  transform: rotateY(-180deg);
+  pointer-events: none;
+}
+.mm-flip.is-revealed .mm-flip__front {
+  transform: rotateY(0deg);
+}
+/* Suspense : le dos des cartes rares brille avant d'être retourné. */
+.mm-flip[data-rarity="legendaire"]:not(.is-revealed) .mm-flip__back {
+  box-shadow: 0 4px 0 0 #1a1238, 0 0 18px 4px rgb(245 180 0 / 0.75);
+}
+.mm-flip[data-rarity="brainrot"]:not(.is-revealed) .mm-flip__back,
+.mm-flip[data-rarity="superbrainrot"]:not(.is-revealed) .mm-flip__back {
+  box-shadow: 0 4px 0 0 #1a1238, 0 0 22px 6px rgb(0 216 230 / 0.75);
+  animation: mm-tease 1.2s ease-in-out infinite;
+}
+.mm-flip[data-rarity="godlevel"]:not(.is-revealed) .mm-flip__back {
+  box-shadow: 0 4px 0 0 #1a1238, 0 0 28px 10px rgb(255 200 61 / 0.9);
+  animation: mm-tease 0.9s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mm-pack-tease,
+  .mm-tearing .mm-pack,
+  .mm-flip__back {
+    animation: none !important;
+  }
+  .mm-flip > * {
+    transition: none;
+  }
+}

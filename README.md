@@ -130,7 +130,8 @@ Pour travailler le design sans compte ni base de données, lancez `npm run dev` 
 - http://localhost:3000/apercu?vue=reglages (réglages)
 
 - http://localhost:3000/apercu?vue=boutique&pays=BR (boutique, prix dans la devise d'un pays)
-- http://localhost:3000/apercu?vue=infos&onglet=news (Infos : raretes, classement ou news)
+- http://localhost:3000/apercu?vue=infos&onglet=rangs (Infos : raretes, rangs, classement ou news)
+- http://localhost:3000/apercu?onglet=collection (collection fictive ; l'ouverture de booster demande un vrai compte)
 
 Ajoutez `&trophees=4200` pour simuler un autre rang. Cette page utilise des données fictives et n'existe pas en production.
 
