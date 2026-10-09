@@ -10,22 +10,21 @@ import { PublicShell } from "./PublicShell";
  */
 export async function AdaptiveShell({
   children,
-  backToHome = false,
   publicWidth,
 }: {
   children: ReactNode;
-  /** « ← Retour à l'accueil », aussi pour un joueur connecté. */
+  /** Conservé pour compatibilité : le visiteur a toujours « ← Retour à l'accueil », le joueur jamais. */
   backToHome?: boolean;
   publicWidth?: string;
 }) {
   const user = await getAuthUser();
   const player = user ? await getPlayer(user.id) : null;
-  if (player?.consentUpToDate) {
-    return (
-      <AppShell player={player} back={backToHome ? "/" : undefined}>
-        {children}
-      </AppShell>
-    );
-  }
-  return <PublicShell width={publicWidth}>{children}</PublicShell>;
+  // Joueur connecté : la barre de navigation suffit, pas de lien de retour.
+  if (player?.consentUpToDate) return <AppShell player={player}>{children}</AppShell>;
+  // Visiteur : « ← Retour à l'accueil ».
+  return (
+    <PublicShell width={publicWidth}>
+      {children}
+    </PublicShell>
+  );
 }

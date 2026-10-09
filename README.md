@@ -140,6 +140,10 @@ Ajoutez `&trophees=4200` pour simuler un autre rang. Cette page utilise des donn
 - **Langues** : anglais, chinois mandarin, espagnol, arabe (de droite à gauche), français, portugais, allemand. Textes dans `messages/<code>.json` ; un test vérifie que chaque langue traduit toutes les clés du français. Sans choix du joueur, la langue suit celle du navigateur, puis celle du pays (en-tête Vercel), sinon le français.
 - **Thèmes** : clair (par défaut), obscur (noir), inversé (tout le site en négatif, cartes comprises), personnalisé (couleur principale, fond clair, obscur ou inversé).
 
+## Installer le jeu sur un téléphone
+
+La page `/installer` affiche les instructions adaptées à l'appareil. Le QR code de l'accueil et des réglages pointe vers `NEXT_PUBLIC_SITE_URL/installer` : renseignez l'adresse publique du site (Vercel) pour qu'il fonctionne. En local, un téléphone ne peut pas joindre `localhost` ; pour tester, mettez temporairement l'adresse IP de votre ordinateur sur le réseau Wi-Fi (par exemple `http://192.168.1.20:3000`) et lancez `npm run dev -- -H 0.0.0.0`. L'installation complète (service worker) ne fonctionne qu'en HTTPS, donc une fois déployé.
+
 ## Publier une news
 
 Ajoutez une entrée en haut de `src/content/news.ts` (date, type, titre et texte en français, autres langues facultatives). Elle apparaît dans Infos → News.

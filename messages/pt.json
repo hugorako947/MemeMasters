@@ -190,7 +190,8 @@
     },
     "helpTitle": "Ajuda e contato",
     "helpLead": "Uma pergunta, um bug ou um problema com sua conta? Escreva para nós.",
-    "helpButton": "Fale conosco"
+    "helpButton": "Fale conosco",
+    "appTitle": "Aplicativo"
   },
   "rarities": {
     "title": "As 7 raridades"
@@ -521,11 +522,67 @@
     "cards": "{count} cartas",
     "tapToOpen": "Toque no pacote para abri-lo",
     "opening": "Abrindo…",
-    "tapToReveal": "Toque em uma carta para virá-la",
-    "revealAll": "Revelar tudo",
+    "tapToReveal": "Toque na carta para virá-la",
     "revealOne": "Virar a carta {index}",
     "summary": "{count, plural, =0 {Nenhuma carta nova desta vez.} one {# carta nova!} other {# cartas novas!}}",
     "newBadge": "Nova",
-    "done": "Continuar"
+    "done": "Continuar",
+    "counter": "Carta {index} de {total}",
+    "next": "Próxima carta",
+    "tapForNext": "Toque de novo para a próxima carta",
+    "revealRest": "Revelar o resto"
+  },
+  "installer": {
+    "title": "Instale o {name}",
+    "lead": "Adicione o jogo à sua tela inicial: ele abre em tela cheia, como um app de verdade. Dois toques bastam.",
+    "qrLabel": "QR code para instalar o jogo no seu celular",
+    "installButton": "Instalar o aplicativo",
+    "copyLink": "Copiar o link",
+    "copied": "Link copiado",
+    "installed": {
+      "title": "Já está instalado!",
+      "text": "Você já está usando o aplicativo. Ele está na sua tela inicial."
+    },
+    "android": {
+      "title": "No seu celular Android",
+      "step1": "Toque no menu ⋮ no canto superior direito do navegador.",
+      "step2": "Escolha “Instalar app” ou “Adicionar à tela inicial”."
+    },
+    "desktop": {
+      "title": "No seu computador",
+      "phone": "Prefere jogar no celular? Escaneie este QR code com a câmera."
+    },
+    "ios": {
+      "title": "No seu iPhone",
+      "step1": "Toque no botão Compartilhar, embaixo no Safari.",
+      "step2": "Escolha “Adicionar à Tela de Início”.",
+      "step3": "Toque em “Adicionar” no canto superior direito."
+    },
+    "iosOther": {
+      "title": "No seu iPhone",
+      "step1": "Toque no botão Compartilhar do seu navegador.",
+      "step2": "Escolha “Adicionar à Tela de Início”.",
+      "fallback": "Não encontrou a opção? Copie o link e abra no Safari."
+    },
+    "inApp": {
+      "title": "Abra o jogo no seu navegador",
+      "step1": "Toque no menu ⋯ no topo da tela.",
+      "step2": "Escolha “Abrir no navegador” e siga as instruções."
+    },
+    "other": {
+      "title": "Instale no seu celular",
+      "text": "Escaneie este QR code com a câmera do celular: as instruções para o seu aparelho vão aparecer."
+    },
+    "benefits": {
+      "fullscreen": "📲 Tela cheia, sem barra do navegador",
+      "oneTap": "⚡ Abre com um toque",
+      "updates": "🔄 Atualizações automáticas"
+    },
+    "cta": {
+      "title": "Jogue também no celular",
+      "scan": "Escaneie o QR code com o celular para instalar o jogo em dois toques.",
+      "tap": "Instale o jogo na sua tela inicial em dois toques.",
+      "button": "Instalar o aplicativo"
+    }
   }
 }

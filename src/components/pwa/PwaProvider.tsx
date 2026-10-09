@@ -2,6 +2,8 @@
 
 import { SerwistProvider } from "@serwist/turbopack/react";
 import type { ReactNode } from "react";
+// Importé ici pour capturer l'invite d'installation dès le chargement de l'application.
+import "@/lib/pwa/install-prompt";
 
 /**
  * Enregistre le service worker (servi par src/app/serwist/[path]/route.ts).

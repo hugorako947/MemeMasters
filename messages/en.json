@@ -190,7 +190,8 @@
     },
     "helpTitle": "Help and contact",
     "helpLead": "A question, a bug or an issue with your account? Write to us.",
-    "helpButton": "Contact us"
+    "helpButton": "Contact us",
+    "appTitle": "App"
   },
   "rarities": {
     "title": "The 7 rarities"
@@ -521,11 +522,67 @@
     "cards": "{count} cards",
     "tapToOpen": "Tap the booster to open it",
     "opening": "Opening…",
-    "tapToReveal": "Tap a card to flip it",
-    "revealAll": "Reveal all",
+    "tapToReveal": "Tap the card to flip it",
     "revealOne": "Flip card {index}",
     "summary": "{count, plural, =0 {No new card this time.} one {# new card!} other {# new cards!}}",
     "newBadge": "New",
-    "done": "Continue"
+    "done": "Continue",
+    "counter": "Card {index} of {total}",
+    "next": "Next card",
+    "tapForNext": "Tap again for the next card",
+    "revealRest": "Reveal the rest"
+  },
+  "installer": {
+    "title": "Install {name}",
+    "lead": "Add the game to your home screen: it opens full screen, like a real app. Two taps are enough.",
+    "qrLabel": "QR code to install the game on your phone",
+    "installButton": "Install the app",
+    "copyLink": "Copy the link",
+    "copied": "Link copied",
+    "installed": {
+      "title": "It's already installed!",
+      "text": "You're already using the app. Find it on your home screen."
+    },
+    "android": {
+      "title": "On your Android phone",
+      "step1": "Tap the ⋮ menu at the top right of the browser.",
+      "step2": "Choose “Install app” or “Add to Home screen”."
+    },
+    "desktop": {
+      "title": "On your computer",
+      "phone": "Prefer playing on your phone? Scan this QR code with your camera."
+    },
+    "ios": {
+      "title": "On your iPhone",
+      "step1": "Tap the Share button at the bottom of Safari.",
+      "step2": "Choose “Add to Home Screen”.",
+      "step3": "Tap “Add” at the top right."
+    },
+    "iosOther": {
+      "title": "On your iPhone",
+      "step1": "Tap your browser's Share button.",
+      "step2": "Choose “Add to Home Screen”.",
+      "fallback": "Can't find the option? Copy the link and open it in Safari."
+    },
+    "inApp": {
+      "title": "Open the game in your browser",
+      "step1": "Tap the ⋯ menu at the top of the screen.",
+      "step2": "Choose “Open in browser”, then follow the instructions."
+    },
+    "other": {
+      "title": "Install it on your phone",
+      "text": "Scan this QR code with your phone's camera: instructions for your device will appear."
+    },
+    "benefits": {
+      "fullscreen": "📲 Full screen, no browser bar",
+      "oneTap": "⚡ Opens in one tap",
+      "updates": "🔄 Automatic updates"
+    },
+    "cta": {
+      "title": "Play on your phone too",
+      "scan": "Scan the QR code with your phone to install the game in two taps.",
+      "tap": "Install the game on your home screen in two taps.",
+      "button": "Install the app"
+    }
   }
 }

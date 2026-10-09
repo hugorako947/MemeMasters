@@ -45,7 +45,7 @@ export function Logo({ size = "md" }: { size?: "md" | "lg" }) {
       href="/"
       onClick={onClick}
       data-boing={boing ? "true" : "false"}
-      className={`mm-logo meme-caption ${cls} -rotate-2`}
+      className={`mm-logo meme-caption ${cls} -rotate-2 py-1.5`}
       aria-label={`${GAME_CONFIG.GAME_NAME}, accueil`}
     >
       <span className="mm-logo__text">{GAME_CONFIG.GAME_NAME}</span>

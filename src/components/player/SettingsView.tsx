@@ -1,6 +1,7 @@
 import { getFormatter, getTranslations } from "next-intl/server";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Panel } from "@/components/ui/Panel";
+import { PlayOnPhone } from "@/components/install/PlayOnPhone";
 import { GAME_CONFIG } from "@/config/game.config";
 import { timezoneUnlockDate, type Player } from "@/lib/server/players";
 import { parseAppearance } from "@/lib/theme/theme";
@@ -44,6 +45,12 @@ export async function SettingsView({ player, email }: { player: Player; email: s
         ) : (
           <TimezoneForm current={player.timezone} />
         )}
+      </Panel>
+
+      {/* L'application : avec les autres préférences de l'appareil (langue, thème). */}
+      <Panel className="grid gap-3">
+        <h2 className="text-xl font-extrabold">{t("appTitle")}</h2>
+        <PlayOnPhone compact />
       </Panel>
 
       {/* Aide : dans les réglages, là où l'on cherche naturellement du support. */}

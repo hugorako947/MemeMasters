@@ -190,7 +190,8 @@
     },
     "helpTitle": "Aide et contact",
     "helpLead": "Une question, un bug ou un souci avec ton compte ? Écris-nous.",
-    "helpButton": "Contactez-nous"
+    "helpButton": "Contactez-nous",
+    "appTitle": "Application"
   },
   "rarities": {
     "title": "Les 7 raretés"
@@ -521,11 +522,67 @@
     "cards": "{count} cartes",
     "tapToOpen": "Touche le booster pour l'ouvrir",
     "opening": "Ouverture…",
-    "tapToReveal": "Touche une carte pour la retourner",
-    "revealAll": "Tout révéler",
+    "tapToReveal": "Touche la carte pour la retourner",
     "revealOne": "Retourner la carte {index}",
     "summary": "{count, plural, =0 {Aucune nouvelle carte cette fois.} one {# nouvelle carte !} other {# nouvelles cartes !}}",
     "newBadge": "Nouveau",
-    "done": "Continuer"
+    "done": "Continuer",
+    "counter": "Carte {index} sur {total}",
+    "next": "Carte suivante",
+    "tapForNext": "Touche encore pour la carte suivante",
+    "revealRest": "Révéler la suite"
+  },
+  "installer": {
+    "title": "Installe {name}",
+    "lead": "Ajoute le jeu à ton écran d'accueil : il s'ouvre en plein écran, comme une vraie appli. Deux gestes suffisent.",
+    "qrLabel": "QR code pour installer le jeu sur ton téléphone",
+    "installButton": "Installer l'application",
+    "copyLink": "Copier le lien",
+    "copied": "Lien copié",
+    "installed": {
+      "title": "C'est déjà installé !",
+      "text": "Tu utilises déjà l'application. Retrouve-la sur ton écran d'accueil."
+    },
+    "android": {
+      "title": "Sur ton téléphone Android",
+      "step1": "Touche le menu ⋮ en haut à droite du navigateur.",
+      "step2": "Choisis « Installer l'application » ou « Ajouter à l'écran d'accueil »."
+    },
+    "desktop": {
+      "title": "Sur ton ordinateur",
+      "phone": "Tu préfères jouer sur ton téléphone ? Scanne ce QR code avec l'appareil photo."
+    },
+    "ios": {
+      "title": "Sur ton iPhone",
+      "step1": "Touche le bouton Partager, en bas de Safari.",
+      "step2": "Choisis « Sur l'écran d'accueil ».",
+      "step3": "Touche « Ajouter » en haut à droite."
+    },
+    "iosOther": {
+      "title": "Sur ton iPhone",
+      "step1": "Touche le bouton Partager de ton navigateur.",
+      "step2": "Choisis « Sur l'écran d'accueil ».",
+      "fallback": "Tu ne trouves pas l'option ? Copie le lien et ouvre-le dans Safari."
+    },
+    "inApp": {
+      "title": "Ouvre le jeu dans ton navigateur",
+      "step1": "Touche le menu ⋯ en haut de l'écran.",
+      "step2": "Choisis « Ouvrir dans le navigateur », puis suis les instructions."
+    },
+    "other": {
+      "title": "Installe-le sur ton téléphone",
+      "text": "Scanne ce QR code avec l'appareil photo de ton téléphone : les instructions s'afficheront, adaptées à ton appareil."
+    },
+    "benefits": {
+      "fullscreen": "📲 Plein écran, sans barre de navigateur",
+      "oneTap": "⚡ Lancement en un geste",
+      "updates": "🔄 Mises à jour automatiques"
+    },
+    "cta": {
+      "title": "Joue aussi sur ton téléphone",
+      "scan": "Scanne le QR code avec ton téléphone pour installer le jeu en deux gestes.",
+      "tap": "Installe le jeu sur ton écran d'accueil en deux gestes.",
+      "button": "Installer l'application"
+    }
   }
 }

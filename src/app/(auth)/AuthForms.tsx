@@ -100,7 +100,7 @@ export function SignInForm({ next, notice }: { next: string; notice?: string | n
         </Button>
       </form>
       <div className="flex flex-col items-center gap-2 text-center text-sm">
-        <Link href="/mot-de-passe-oublie" className={linkClass}>
+        <Link href="/mot-de-passe-oublie" className={`${linkClass} inline-flex min-h-11 items-center`}>
           {t("forgot")}
         </Link>
         <p>

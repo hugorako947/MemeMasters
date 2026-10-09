@@ -190,7 +190,8 @@
     },
     "helpTitle": "Hilfe und Kontakt",
     "helpLead": "Eine Frage, ein Fehler oder ein Problem mit deinem Konto? Schreib uns.",
-    "helpButton": "Kontaktiere uns"
+    "helpButton": "Kontaktiere uns",
+    "appTitle": "App"
   },
   "rarities": {
     "title": "Die 7 Seltenheiten"
@@ -521,11 +522,67 @@
     "cards": "{count} Karten",
     "tapToOpen": "Tippe auf den Booster, um ihn zu öffnen",
     "opening": "Wird geöffnet …",
-    "tapToReveal": "Tippe auf eine Karte, um sie umzudrehen",
-    "revealAll": "Alle aufdecken",
+    "tapToReveal": "Tippe auf die Karte, um sie umzudrehen",
     "revealOne": "Karte {index} umdrehen",
     "summary": "{count, plural, =0 {Diesmal keine neue Karte.} one {# neue Karte!} other {# neue Karten!}}",
     "newBadge": "Neu",
-    "done": "Weiter"
+    "done": "Weiter",
+    "counter": "Karte {index} von {total}",
+    "next": "Nächste Karte",
+    "tapForNext": "Tippe noch einmal für die nächste Karte",
+    "revealRest": "Rest aufdecken"
+  },
+  "installer": {
+    "title": "{name} installieren",
+    "lead": "Füge das Spiel deinem Startbildschirm hinzu: Es öffnet sich im Vollbild wie eine echte App. Zwei Handgriffe genügen.",
+    "qrLabel": "QR-Code, um das Spiel auf deinem Handy zu installieren",
+    "installButton": "App installieren",
+    "copyLink": "Link kopieren",
+    "copied": "Link kopiert",
+    "installed": {
+      "title": "Schon installiert!",
+      "text": "Du nutzt die App bereits. Du findest sie auf deinem Startbildschirm."
+    },
+    "android": {
+      "title": "Auf deinem Android-Handy",
+      "step1": "Tippe oben rechts im Browser auf das Menü ⋮.",
+      "step2": "Wähle „App installieren“ oder „Zum Startbildschirm hinzufügen“."
+    },
+    "desktop": {
+      "title": "Auf deinem Computer",
+      "phone": "Lieber auf dem Handy spielen? Scanne diesen QR-Code mit der Kamera."
+    },
+    "ios": {
+      "title": "Auf deinem iPhone",
+      "step1": "Tippe unten in Safari auf „Teilen“.",
+      "step2": "Wähle „Zum Home-Bildschirm“.",
+      "step3": "Tippe oben rechts auf „Hinzufügen“."
+    },
+    "iosOther": {
+      "title": "Auf deinem iPhone",
+      "step1": "Tippe auf die Teilen-Taste deines Browsers.",
+      "step2": "Wähle „Zum Home-Bildschirm“.",
+      "fallback": "Option nicht gefunden? Kopiere den Link und öffne ihn in Safari."
+    },
+    "inApp": {
+      "title": "Öffne das Spiel in deinem Browser",
+      "step1": "Tippe oben auf das Menü ⋯.",
+      "step2": "Wähle „Im Browser öffnen“ und folge den Anweisungen."
+    },
+    "other": {
+      "title": "Installiere es auf deinem Handy",
+      "text": "Scanne diesen QR-Code mit der Kamera deines Handys: Du siehst die passenden Anweisungen für dein Gerät."
+    },
+    "benefits": {
+      "fullscreen": "📲 Vollbild, ohne Browserleiste",
+      "oneTap": "⚡ Start mit einem Tipp",
+      "updates": "🔄 Automatische Updates"
+    },
+    "cta": {
+      "title": "Spiel auch auf dem Handy",
+      "scan": "Scanne den QR-Code mit deinem Handy, um das Spiel mit zwei Handgriffen zu installieren.",
+      "tap": "Installiere das Spiel mit zwei Handgriffen auf deinem Startbildschirm.",
+      "button": "App installieren"
+    }
   }
 }

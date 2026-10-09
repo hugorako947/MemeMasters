@@ -5,6 +5,7 @@ import { RarityShowcase } from "@/components/card/RarityShowcase";
 import { SAMPLE_CARDS } from "@/components/card/sample-cards";
 import { FeatureShowcase } from "@/components/home/FeatureShowcase";
 import { PublicShell } from "@/components/layout/PublicShell";
+import { PlayOnPhone } from "@/components/install/PlayOnPhone";
 import { GAME_CONFIG } from "@/config/game.config";
 import { AppShell } from "@/components/layout/AppShell";
 import { PlayerFeatures } from "@/components/player/PlayerFeatures";
@@ -58,6 +59,9 @@ async function GuestHome() {
                   <ButtonLink href="/inscription" variant="secondary" className="sm:min-w-44">
                     {t("createAccount")}
                   </ButtonLink>
+                </div>
+                <div className="mt-6">
+                  <PlayOnPhone />
                 </div>
                 <ButtonLink href="/contact" variant="ghost" className="mt-3">
                   {t("contact")}

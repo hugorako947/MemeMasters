@@ -20,16 +20,16 @@ export async function SiteFooter() {
     <footer className="mt-16 border-t-2 border-ink bg-surface">
       <div className="mx-auto grid max-w-6xl gap-5 px-5 py-8 text-sm md:px-8">
         <nav aria-label={t("label")}>
-          <ul className="flex flex-wrap gap-x-5 gap-y-2 font-bold">
+          <ul className="flex flex-wrap gap-x-5 font-bold">
             {LEGAL_LINKS.map((link) => (
               <li key={link.href}>
-                <Link href={link.href} className="underline-offset-4 hover:text-candy-ink hover:underline">
+                <Link href={link.href} className="inline-flex min-h-11 items-center underline-offset-4 hover:text-candy-ink hover:underline">
                   {t(link.key)}
                 </Link>
               </li>
             ))}
             <li>
-              <Link href="/contact" className="underline-offset-4 hover:text-candy-ink hover:underline">
+              <Link href="/contact" className="inline-flex min-h-11 items-center underline-offset-4 hover:text-candy-ink hover:underline">
                 {t("contact")}
               </Link>
             </li>

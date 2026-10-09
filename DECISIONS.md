@@ -175,3 +175,12 @@ Chaque entrée : la décision, puis la raison.
 - **Animation d'ouverture** : sachet qui frémit puis se déchire au toucher, 10 cartes face cachée retournées une à une de la plus courante à la plus rare (dos lumineux pour légendaire et mieux, vibration sur Android), « Tout révéler », badge « Nouveau » et récapitulatif. Coupée si le joueur préfère réduire les animations.
 - **Collection directement dans l'accueil** : progression, Toutes / Possédées / Manquantes, recherche, rareté, vibe, tri (rareté, nom, plus récentes, quantité), quantité « ×n », fiche au clic. Les doublons sont conservés ; leur recyclage en poussière reste à faire.
 - Le script `check-sql.sh` échoue désormais si un test pgTAP échoue (il affichait « OK » malgré un « not ok »).
+
+## Ouverture en file, installation sur téléphone, audit mobile
+
+- **Révélation à la file** : une seule carte à la fois, face cachée, de la plus courante à la plus rare (selon le booster). Un toucher la retourne, un second fait venir la suivante ; impossible de sauter à la dernière. « Révéler la suite » enchaîne automatiquement, toujours dans l'ordre. Les cartes vues s'alignent en dessous ; récapitulatif à la fin.
+- **Pages légales pour un joueur connecté** : plus de lien de retour (la navigation du bas suffit). Les visiteurs gardent « ← Retour à l'accueil ».
+- **Page `/installer`** : détection de l'appareil (testée sur 9 cas) et instructions limitées à ce qui marche : bouton d'installation natif (Android, Chrome et Edge sur ordinateur) ou menu ⋮ ; iPhone + Safari : Partager → Sur l'écran d'accueil → Ajouter ; iPhone + autre navigateur : leur bouton Partager, sinon copier le lien pour Safari ; navigateurs intégrés (Instagram, TikTok…) : ouvrir dans le navigateur ; déjà installé : on le dit. L'invite native est capturée dès le chargement de l'application.
+- **QR code** (généré côté serveur, toujours noir sur blanc même en thème inversé) vers `/installer` : sur l'accueil visiteur (grand écran) et dans **Réglages → Application** pour le joueur. Sur téléphone, un bouton « Installer l'application » le remplace (on ne scanne pas son propre écran). Les réglages regroupent déjà ce qui concerne l'appareil (langue, thème) : l'installation y a sa place.
+- **Le QR code pointe vers `NEXT_PUBLIC_SITE_URL`** : en local, il mène à localhost, que le téléphone ne peut pas joindre.
+- **Audit mobile (375 px)** : 18 pages et l'ouverture de booster vérifiées, aucun débordement horizontal. Zones tactiles agrandies à 44 px : liens du pied de page, « Mot de passe oublié ? », logo, pseudos du classement.
