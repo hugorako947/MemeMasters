@@ -85,7 +85,13 @@ export default async function PreviewPage({ searchParams }: PageProps<"/apercu">
           <h1 className="font-display text-4xl leading-none md:text-5xl">{(await getTranslations("playerHome"))("title", { username: player.username })}</h1>
           <PlayerFeatures
             player={player}
-            collection={STARTER_SET.map((card, i) => ({ card, quantity: i % 3 === 0 ? 0 : (i % 4) + 1, firstObtainedAt: null }))}
+            collection={STARTER_SET.map((card, i) => ({
+              card,
+              quantity: i === 0 ? 14 : i % 3 === 0 ? 0 : (i % 4) + 1,
+              variant: i === 0 ? ("gold" as const) : i === 1 ? ("divine" as const) : ("normal" as const),
+              firstObtainedAt: null,
+            }))}
+            resaleLeftCents={1650}
             boosters={{ freeLeft: 2, freePerDay: 3, dailyReserve: 1, special: 1, verySpecial: 0, memeMoney: player.memeMoney }}
             initial={typeof params.onglet === "string" ? params.onglet : undefined}
             param="onglet"

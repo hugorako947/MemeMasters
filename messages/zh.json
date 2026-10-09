@@ -238,7 +238,12 @@
     "delete_confirmation": "输入的用户名不一致。",
     "no_booster": "暂时没有这种卡包了。",
     "not_enough_meme_money": "MemeMoney 不足。",
-    "no_cards": "暂时还没有可用的卡牌。"
+    "no_cards": "暂时还没有可用的卡牌。",
+    "card_not_owned": "你没有这张卡牌。",
+    "already_max_variant": "这张卡牌已经是神圣等级。",
+    "not_enough_duplicates": "重复卡不足，无法升级。",
+    "cannot_sell": "这张卡牌无法出售。",
+    "daily_sell_cap": "今日出售额度已用完。"
   },
   "statName": {
     "hp": "生命值",
@@ -584,5 +589,38 @@
       "tap": "两步把游戏安装到主屏幕。",
       "button": "安装应用"
     }
+  },
+  "dup": {
+    "variant": {
+      "normal": "普通",
+      "gold": "金色",
+      "divine": "神圣"
+    },
+    "owned": "{count, plural, other {# 张}} · {dups, plural, =0 {没有重复} other {# 张重复}}",
+    "upgradeTo": "升级为{variant}",
+    "upgradeCost": "{have} / {cost} 张重复卡",
+    "maxed": "神圣卡牌：已达最高等级！",
+    "upgraded": "你的卡牌已升级为{variant}！",
+    "sell": "出售",
+    "sellCount": "出售数量",
+    "less": "减少一张",
+    "more": "增加一张",
+    "sold": "已获得 +{amount} MemeMoney。",
+    "keepLast": "已升级的卡牌：始终保留一张，以免失去升级。",
+    "canSellAll": "这张卡牌可以全部出售，包括最后一张。",
+    "capLeft": "今日普通、稀有、史诗卡出售额度：还剩 {amount} MemeMoney。",
+    "capReached": "今日出售额度已用完，明天再来吧！",
+    "nothingToSell": "这张卡牌没有可出售的。",
+    "bulk": {
+      "button": "出售我的重复卡",
+      "none": "没有可出售的重复卡",
+      "summary": "{cards, plural, other {# 张重复卡}} → +{amount} MemeMoney",
+      "note": "每张卡牌都会保留一张。普通、稀有和史诗卡受每日额度限制。",
+      "confirm": "确认出售",
+      "cancel": "取消",
+      "done": "已获得 +{amount} MemeMoney。"
+    },
+    "confirmLast": "确认",
+    "lastWarning": "这是你的最后一张：卡牌将从收藏中移除。"
   }
 }

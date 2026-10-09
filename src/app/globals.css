@@ -1197,3 +1197,97 @@ body:has(> dialog.mm-detail[open]) #mm-app {
   width: 100%;
   height: 100%;
 }
+
+/* ==========================================================================
+   Améliorations de cartes (cosmétiques) : Dorée et Divine.
+   Elles priment sur l'identité de la rareté (placées en fin de fichier).
+   ========================================================================== */
+.mm-card[data-variant="gold"] {
+  --frame: linear-gradient(135deg, #7a5200 0%, #ffd76a 22%, #b8860b 45%, #fff3b0 60%, #c99400 80%, #7a5200 100%);
+  --glow: 0 0 6cqw 1cqw rgb(255 200 61 / 0.55);
+}
+.mm-card[data-variant="divine"] {
+  --frame: linear-gradient(135deg, #ffffff 0%, #d9e2f2 20%, #ffffff 40%, #aeb9cf 62%, #ffffff 82%, #e8eef8 100%);
+  --glow: 0 0 10cqw 3cqw rgb(255 255 255 / 0.95), 0 0 4cqw 1cqw rgb(190 205 240 / 0.95);
+}
+.mm-card[data-variant="gold"] .mm-card__frame,
+.mm-card[data-variant="divine"] .mm-card__frame {
+  background: var(--frame);
+  background-size: 220% 220%;
+  animation: mm-variant-sheen 4s ease-in-out infinite;
+}
+/* Illustration : dorée, ou blanche, pure et argentée. */
+.mm-card[data-variant="gold"] .mm-card__art img {
+  filter: sepia(0.85) saturate(2.4) hue-rotate(-8deg) brightness(1.06) contrast(1.05);
+}
+.mm-card[data-variant="divine"] .mm-card__art img {
+  filter: grayscale(1) brightness(1.75) contrast(0.78);
+}
+/* Divine : voile de lumière blanche sur l'illustration et intérieur nacré. */
+.mm-card[data-variant="divine"] .mm-card__art::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 38%, rgb(255 255 255 / 0.65), transparent 60%),
+    linear-gradient(180deg, rgb(235 242 255 / 0.35), rgb(255 255 255 / 0));
+}
+.mm-card[data-variant="divine"] .mm-card__inner {
+  background: linear-gradient(160deg, #ffffff, #eef3fb 55%, #ffffff);
+}
+.mm-card[data-variant="gold"] .mm-card__inner {
+  background: linear-gradient(160deg, #fff8e1, #ffe9a8 55%, #fff4cf);
+}
+/* Nom de la carte. */
+.mm-card[data-variant="gold"] .mm-card__caption {
+  color: #ffd76a;
+  -webkit-text-stroke-color: #4a3200;
+}
+.mm-card[data-variant="divine"] .mm-card__caption {
+  color: #ffffff;
+  -webkit-text-stroke-color: #7d89a6;
+  text-shadow: 0 0 2cqw rgb(255 255 255 / 0.9);
+}
+/* Éclats qui scintillent sur l'illustration. */
+.mm-card[data-variant="gold"] .mm-card__fx,
+.mm-card[data-variant="divine"] .mm-card__fx {
+  opacity: 0.9;
+  mix-blend-mode: screen;
+  animation: mm-twinkle 2.2s ease-in-out infinite;
+  background:
+    radial-gradient(circle at 16% 20%, var(--spark) 0 1.1cqw, transparent 1.2cqw),
+    radial-gradient(circle at 80% 28%, var(--spark) 0 0.9cqw, transparent 1cqw),
+    radial-gradient(circle at 64% 76%, var(--spark) 0 1cqw, transparent 1.1cqw),
+    radial-gradient(circle at 30% 64%, var(--spark) 0 0.7cqw, transparent 0.8cqw),
+    linear-gradient(115deg, transparent 35%, var(--sheen) 50%, transparent 65%) no-repeat;
+  background-size: auto, auto, auto, auto, 250% 100%;
+}
+.mm-card[data-variant="gold"] { --spark: #fff3b0; --sheen: rgb(255 230 140 / 0.55); }
+.mm-card[data-variant="divine"] { --spark: #ffffff; --sheen: rgb(255 255 255 / 0.7); }
+@keyframes mm-variant-sheen {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Boutons d'amélioration. */
+.mm-btn--gold {
+  background: linear-gradient(135deg, #b8860b, #ffd76a 50%, #c99400);
+  color: #3a2800;
+  border-color: #3a2800;
+}
+.mm-btn--divine {
+  background: linear-gradient(135deg, #ffffff, #d9e2f2 50%, #ffffff);
+  color: #1a1238;
+  box-shadow: 0 4px 0 0 #7d89a6, 0 0 12px rgb(170 190 230 / 0.8);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mm-card[data-variant="gold"] .mm-card__frame,
+  .mm-card[data-variant="divine"] .mm-card__frame,
+  .mm-card[data-variant="gold"] .mm-card__fx,
+  .mm-card[data-variant="divine"] .mm-card__fx {
+    animation: none;
+  }
+}

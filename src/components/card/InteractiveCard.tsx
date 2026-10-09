@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, type ReactNode } from "react";
 import type { Card } from "@/lib/validation/card";
 import { CardDetailDialog } from "./CardDetailDialog";
 import { MemeCard, type MemeCardSize } from "./MemeCard";
@@ -10,19 +10,24 @@ export function InteractiveCard({
   card,
   size = "full",
   owned = true,
+  variant = "normal",
+  detail,
   className,
 }: {
   card: Card;
   size?: MemeCardSize;
   owned?: boolean;
+  variant?: "normal" | "gold" | "divine";
+  /** Contenu ajouté à la fiche (ex. : actions sur les doublons dans la collection). */
+  detail?: ReactNode;
   className?: string;
 }) {
   const [open, setOpen] = useState(false);
   const close = useCallback(() => setOpen(false), []);
   return (
     <>
-      <MemeCard card={card} size={size} owned={owned} onOpen={() => setOpen(true)} className={className} />
-      {open ? <CardDetailDialog card={card} owned={owned} onClose={close} /> : null}
+      <MemeCard card={card} size={size} owned={owned} variant={variant} onOpen={() => setOpen(true)} className={className} />
+      {open ? <CardDetailDialog card={card} owned={owned} variant={variant} detail={detail} onClose={close} /> : null}
     </>
   );
 }

@@ -238,7 +238,12 @@
     "delete_confirmation": "Le pseudo saisi ne correspond pas.",
     "no_booster": "Plus de booster de ce type pour l'instant.",
     "not_enough_meme_money": "Pas assez de MemeMoney.",
-    "no_cards": "Aucune carte n'est disponible pour l'instant."
+    "no_cards": "Aucune carte n'est disponible pour l'instant.",
+    "card_not_owned": "Tu ne possèdes pas cette carte.",
+    "already_max_variant": "Cette carte est déjà Divine.",
+    "not_enough_duplicates": "Pas assez de doublons pour cette amélioration.",
+    "cannot_sell": "Cet exemplaire ne peut pas être revendu.",
+    "daily_sell_cap": "Limite de revente du jour atteinte."
   },
   "statName": {
     "hp": "Points de vie",
@@ -584,5 +589,38 @@
       "tap": "Installe le jeu sur ton écran d'accueil en deux gestes.",
       "button": "Installer l'application"
     }
+  },
+  "dup": {
+    "variant": {
+      "normal": "Normale",
+      "gold": "Dorée",
+      "divine": "Divine"
+    },
+    "owned": "{count, plural, one {# exemplaire} other {# exemplaires}} · {dups, plural, =0 {aucun doublon} one {# doublon} other {# doublons}}",
+    "upgradeTo": "Passer en {variant}",
+    "upgradeCost": "{have} / {cost} doublons",
+    "maxed": "Carte Divine : amélioration maximale !",
+    "upgraded": "Ta carte est maintenant {variant} !",
+    "sell": "Revendre",
+    "sellCount": "Quantité à revendre",
+    "less": "Une de moins",
+    "more": "Une de plus",
+    "sold": "+{amount} MemeMoney ajoutés à ton solde.",
+    "keepLast": "Carte améliorée : tu gardes toujours un exemplaire, pour ne pas perdre ton amélioration.",
+    "canSellAll": "Tu peux revendre cette carte jusqu'au dernier exemplaire.",
+    "capLeft": "Revente de communes, rares et épiques aujourd'hui : encore {amount} MemeMoney.",
+    "capReached": "Limite de revente du jour atteinte. Reviens demain !",
+    "nothingToSell": "Aucun exemplaire à revendre pour cette carte.",
+    "bulk": {
+      "button": "Revendre mes doublons",
+      "none": "Aucun doublon à revendre",
+      "summary": "{cards, plural, one {# doublon} other {# doublons}} → +{amount} MemeMoney",
+      "note": "Un exemplaire de chaque carte est toujours gardé. Les communes, rares et épiques s'arrêtent à la limite du jour.",
+      "confirm": "Confirmer la revente",
+      "cancel": "Annuler",
+      "done": "+{amount} MemeMoney ajoutés à ton solde."
+    },
+    "confirmLast": "Confirmer",
+    "lastWarning": "C'est ton dernier exemplaire : la carte quittera ta collection."
   }
 }

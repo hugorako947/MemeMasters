@@ -13,6 +13,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { getAuthUser } from "@/lib/server/auth";
 import { getBoosterState } from "@/lib/server/boosters";
 import { getCollection } from "@/lib/server/cards";
+import { resaleLeftCents } from "@/lib/server/duplicates";
 import { getPlayer } from "@/lib/server/players";
 
 export default async function HomePage({ searchParams }: PageProps<"/">) {
@@ -21,12 +22,12 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
   const player = await getPlayer(user.id);
   if (!player || !player.consentUpToDate) redirect("/bienvenue");
   const { vue } = await searchParams;
-  const [collection, boosters] = await Promise.all([getCollection(player.id), getBoosterState(player)]);
+  const [collection, boosters, resaleLeft] = await Promise.all([getCollection(player.id), getBoosterState(player), resaleLeftCents(player)]);
   return (
     <AppShell player={player}>
       <div className="grid gap-6">
         <h1 className="font-display text-4xl leading-none md:text-5xl">{(await getTranslations("playerHome"))("title", { username: player.username })}</h1>
-        <PlayerFeatures player={player} collection={collection} boosters={boosters} initial={typeof vue === "string" ? vue : undefined} />
+        <PlayerFeatures player={player} collection={collection} boosters={boosters} resaleLeftCents={resaleLeft} initial={typeof vue === "string" ? vue : undefined} />
       </div>
     </AppShell>
   );

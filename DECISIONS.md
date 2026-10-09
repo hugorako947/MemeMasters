@@ -186,3 +186,13 @@ Chaque entrée : la décision, puis la raison.
 - **Audit mobile (375 px)** : 18 pages et l'ouverture de booster vérifiées, aucun débordement horizontal. Zones tactiles agrandies à 44 px : liens du pied de page, « Mot de passe oublié ? », logo, pseudos du classement.
 
 - **Contrôle des dépendances** : `npm run dev` et `npm run build` vérifient d'abord que toutes les bibliothèques de package.json sont installées (`scripts/check-deps.mjs`) et indiquent `npm install` sinon, au lieu de l'erreur « Module not found ».
+
+## Doublons : améliorations et revente (décision du propriétaire)
+
+- **Deux améliorations cosmétiques, sans effet en combat**, qui s'enchaînent : **Dorée** (5 doublons : cadre, nom, éclats et illustration dorés), puis **Divine** (10 doublons de plus : cadre, nom, éclats et illustration blancs, purs, argentés et brillants). La variante s'affiche partout où la carte apparaît.
+- **Revente contre de la MemeMoney, à prix bas** : commune 0,1, rare 0,25, épique 0,5, légendaire 3, brainrot 10, superbrainrot 25, godlevel 60. Les fractions sont gardées d'une vente à l'autre (colonne `meme_money_cents`), rien ne se perd.
+- **Qui peut-on revendre** : toutes les raretés, jusqu'au dernier exemplaire (décision du propriétaire, qui remplace la règle « doublons seulement à partir de Légendaire »). Une carte Dorée ou Divine garde toujours son dernier exemplaire (sinon l'amélioration serait perdue). Vendre le dernier exemplaire d'une carte demande une confirmation.
+- **Plafond quotidien de 20 MemeMoney**, appliqué aux communes, rares et épiques seulement (`CAP_EXEMPT_FROM`). Ajustement après test : avec un plafond général, un doublon de Godlevel (60) ou de SuperBrainrot (25) n'aurait jamais pu être vendu. Les doublons de Légendaire et au-dessus sont trop rares pour être « farmés ».
+- **« Revendre mes doublons »** : aperçu du total puis confirmation ; uniquement des doublons (un exemplaire de chaque carte est gardé), des plus courants aux plus rares.
+- **Toujours une boucle fermée** : la MemeMoney ne se reconvertit jamais en argent réel et ne s'échange pas entre joueurs.
+- Tout se règle dans `GAME_CONFIG.DUPLICATES`. Améliorations et reventes sont faites côté serveur, dans une transaction, et testées de bout en bout sur une vraie base PostgreSQL.

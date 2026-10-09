@@ -22,12 +22,14 @@ export async function PlayerFeatures({
   player,
   collection,
   boosters,
+  resaleLeftCents,
   initial,
   param,
 }: {
   player: Player;
   collection: CollectionItem[];
   boosters: BoosterStateView;
+  resaleLeftCents: number;
   initial?: string;
   param?: string;
 }) {
@@ -38,7 +40,7 @@ export async function PlayerFeatures({
       param={param}
       initial={index === -1 ? 1 : index}
       slides={[
-        { key: "collection", label: t("collection.title"), content: <CollectionSlide items={collection} /> },
+        { key: "collection", label: t("collection.title"), content: <CollectionSlide items={collection} resaleLeftCents={resaleLeftCents} /> },
         { key: "boosters", label: t("boosters.title"), content: <BoostersSlide state={boosters} /> },
         { key: "batailles", label: t("battles.title"), content: <BattlesSlide player={player} /> },
       ]}
@@ -114,12 +116,12 @@ async function BattlesSlide({ player }: { player: Player }) {
 }
 
 /** La collection du joueur, directement consultable. */
-async function CollectionSlide({ items }: { items: CollectionItem[] }) {
+async function CollectionSlide({ items, resaleLeftCents }: { items: CollectionItem[]; resaleLeftCents: number }) {
   const t = await getTranslations("playerHome.collection");
   return (
     <section className="rounded-[1.75rem] border-[3px] border-ink bg-surface p-4 shadow-[0_5px_0_0_var(--mm-shadow)] sm:p-6">
       <p className="mb-4 text-ink-soft sm:text-lg">{t("lead")}</p>
-      <CollectionBrowser items={items} />
+      <CollectionBrowser items={items} resaleLeftCents={resaleLeftCents} />
     </section>
   );
 }

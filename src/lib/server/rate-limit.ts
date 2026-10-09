@@ -21,6 +21,7 @@ export const RATE_LIMITS = {
   contact: { scope: "contact", limit: 5, windowSeconds: 3600 },
   boosterOpen: { scope: "booster_open", limit: 10, windowSeconds: 60 },
   boosterBuy: { scope: "booster_buy", limit: 10, windowSeconds: 60 },
+  collection: { scope: "collection", limit: 30, windowSeconds: 60 },
 } as const satisfies Record<string, RateLimitRule>;
 
 /**

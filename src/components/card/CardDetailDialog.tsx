@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useEffect, useRef, type MouseEvent } from "react";
+import { useEffect, useRef, type MouseEvent, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { RARITY_GLYPH } from "@/config/rarities";
 import { VIBE_EMOJI, beatenBy, beats } from "@/config/vibes";
@@ -17,7 +17,19 @@ const STAT_COLOR = { hp: "#127a4b", atk: "#ff3d7f", def: "#2d5bff", spd: "#f5a40
  * piège du focus, touche Échap et retour du focus gérés par le navigateur.
  * L'arrière-plan est flouté (::backdrop, voir globals.css).
  */
-export function CardDetailDialog({ card, owned = true, onClose }: { card: Card; owned?: boolean; onClose: () => void }) {
+export function CardDetailDialog({
+  card,
+  owned = true,
+  variant = "normal",
+  detail,
+  onClose,
+}: {
+  card: Card;
+  owned?: boolean;
+  variant?: "normal" | "gold" | "divine";
+  detail?: ReactNode;
+  onClose: () => void;
+}) {
   const t = useTranslations();
   const ref = useRef<HTMLDialogElement>(null);
 
@@ -87,7 +99,7 @@ export function CardDetailDialog({ card, owned = true, onClose }: { card: Card; 
 
         <div className="grid gap-6 md:grid-cols-[minmax(0,19rem)_1fr] md:items-start">
           <div className="mx-auto w-full max-w-[17rem] md:sticky md:top-0 md:max-w-none">
-            <MemeCard card={card} owned={owned} />
+            <MemeCard card={card} owned={owned} variant={variant} />
           </div>
 
           <div className="grid gap-5">
@@ -109,6 +121,8 @@ export function CardDetailDialog({ card, owned = true, onClose }: { card: Card; 
                 <RarityOdds rarity={card.rarity} />
               </p>
             </header>
+
+            {detail}
 
             {!owned ? (
               <p className="rounded-xl border-2 border-dashed border-ink-soft bg-surface p-4 font-semibold">{t("detail.notOwned")}</p>

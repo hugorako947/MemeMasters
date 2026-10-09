@@ -16,6 +16,8 @@ export interface MemeCardProps {
   static?: boolean;
   /** false : carte non possédée, en niveaux de gris et floutée (seul le nom reste lisible). */
   owned?: boolean;
+  /** Amélioration cosmétique de la carte (Dorée, Divine). */
+  variant?: "normal" | "gold" | "divine";
   /** Si fourni, la carte devient cliquable et ouvre sa fiche détaillée. */
   onOpen?: () => void;
   className?: string;
@@ -36,6 +38,7 @@ export function MemeCard({
   size = "full",
   static: isStatic = false,
   owned = true,
+  variant = "normal",
   onOpen,
   className,
 }: MemeCardProps) {
@@ -85,6 +88,7 @@ export function MemeCard({
       data-rarity={card.rarity}
       data-size={size}
       data-owned={owned ? "true" : "false"}
+      data-variant={variant}
       data-active="false"
       aria-label={t("card.ariaLabel", { name: card.name, rarity: rarityLabel, vibe: vibeLabel, hp: card.hp })}
       onPointerMove={onMove}

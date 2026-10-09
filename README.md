@@ -173,6 +173,7 @@ Tout se règle dans **`src/config/game.config.ts`**, validé au démarrage (une 
 | Le nom du jeu (titre, manifest, logo) | `GAME_NAME` et `GAME_SHORT_NAME` |
 | La composition des 3 boosters (journalier, spécial, très spécial), la chance de la rareté supérieure et de la Godlevel | `BOOSTERS` |
 | Le pity (légendaire garantie dans le booster journalier) | `PITY_THRESHOLD` |
+| Le coût des améliorations Dorée et Divine, les prix de revente des doublons et le plafond quotidien | `DUPLICATES` |
 | Les boosters gratuits par jour | `DAILY_FREE_BOOSTERS` |
 | Les défis quotidiens | `DAILY_CHALLENGES`, `CHALLENGE_REWARD_BOOSTERS` |
 | La taille des équipes et les minuteurs | `TEAM_SIZE`, `TURN_SECONDS`, `RECONNECT_SECONDS` |

@@ -38,6 +38,18 @@ const gameConfigSchema = z
     GAME_SHORT_NAME: z.string().min(1).max(12),
     GAME_TAGLINE: z.string().min(1).max(120),
 
+    /**
+     * Doublons : améliorations cosmétiques (aucun effet en combat) et revente.
+     * Les prix de revente sont en centièmes de MemeMoney ; les fractions sont
+     * conservées d'une vente à l'autre.
+     */
+    DUPLICATES: z.object({
+      UPGRADES: z.object({ gold: positiveInt, divine: positiveInt }),
+      SELL_CENTS: z.record(z.enum(RARITIES), positiveInt),
+      /** À partir de cette rareté, la revente n'entre pas dans le plafond quotidien. */
+      CAP_EXEMPT_FROM: z.enum(RARITIES),
+      DAILY_SELL_CAP: positiveInt,
+    }),
     BOOSTER_SIZE: z.number().int().min(1).max(10),
     /**
      * Composition des trois boosters. Chaque booster a des cartes fixes, plus un
@@ -157,6 +169,17 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
   GAME_SHORT_NAME: "MemeMasters",
   GAME_TAGLINE: "Ouvre des boosters, complète ta collection et affronte des joueurs du monde entier.",
 
+  DUPLICATES: {
+    // Dorée : 5 doublons ; Divine : 10 doublons de plus (sur une carte dorée).
+    UPGRADES: { gold: 5, divine: 10 },
+    // 0,1 MemeMoney par commune, 0,25 par rare, 0,5 par épique, puis 3 / 10 / 25 / 60.
+    SELL_CENTS: { commune: 10, rare: 25, epique: 50, legendaire: 300, brainrot: 1000, superbrainrot: 2500, godlevel: 6000 },
+    // Toutes les raretés se revendent jusqu'au dernier exemplaire (sauf une carte Dorée ou Divine).
+    CAP_EXEMPT_FROM: "legendaire",
+    // MemeMoney maximum gagnée chaque jour (fuseau du joueur) en revendant des communes,
+    // rares et épiques. Les doublons de Légendaire et au-dessus, rares par nature, n'y sont pas soumis.
+    DAILY_SELL_CAP: 20,
+  },
   BOOSTER_SIZE: 10,
   BOOSTERS: {
     // 5 communes, 3 rares, 1 épique + 1 épique (85 %) ou 1 légendaire (15 %).

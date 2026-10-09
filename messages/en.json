@@ -238,7 +238,12 @@
     "delete_confirmation": "The username you typed doesn't match.",
     "no_booster": "No booster of this type left for now.",
     "not_enough_meme_money": "Not enough MemeMoney.",
-    "no_cards": "No card is available yet."
+    "no_cards": "No card is available yet.",
+    "card_not_owned": "You don't own this card.",
+    "already_max_variant": "This card is already Divine.",
+    "not_enough_duplicates": "Not enough duplicates for this upgrade.",
+    "cannot_sell": "This copy can't be sold.",
+    "daily_sell_cap": "Daily selling limit reached."
   },
   "statName": {
     "hp": "Hit points",
@@ -584,5 +589,38 @@
       "tap": "Install the game on your home screen in two taps.",
       "button": "Install the app"
     }
+  },
+  "dup": {
+    "variant": {
+      "normal": "Standard",
+      "gold": "Golden",
+      "divine": "Divine"
+    },
+    "owned": "{count, plural, one {# copy} other {# copies}} · {dups, plural, =0 {no duplicates} one {# duplicate} other {# duplicates}}",
+    "upgradeTo": "Upgrade to {variant}",
+    "upgradeCost": "{have} / {cost} duplicates",
+    "maxed": "Divine card: fully upgraded!",
+    "upgraded": "Your card is now {variant}!",
+    "sell": "Sell",
+    "sellCount": "Quantity to sell",
+    "less": "One less",
+    "more": "One more",
+    "sold": "+{amount} MemeMoney added to your balance.",
+    "keepLast": "Upgraded card: you always keep one copy so you don't lose your upgrade.",
+    "canSellAll": "You can sell this card down to the last copy.",
+    "capLeft": "Common, rare and epic sales today: {amount} MemeMoney left.",
+    "capReached": "Daily selling limit reached. Come back tomorrow!",
+    "nothingToSell": "No copy of this card to sell.",
+    "bulk": {
+      "button": "Sell my duplicates",
+      "none": "No duplicates to sell",
+      "summary": "{cards, plural, one {# duplicate} other {# duplicates}} → +{amount} MemeMoney",
+      "note": "One copy of each card is always kept. Commons, rares and epics stop at the daily limit.",
+      "confirm": "Confirm the sale",
+      "cancel": "Cancel",
+      "done": "+{amount} MemeMoney added to your balance."
+    },
+    "confirmLast": "Confirm",
+    "lastWarning": "This is your last copy: the card will leave your collection."
   }
 }

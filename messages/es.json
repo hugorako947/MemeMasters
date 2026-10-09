@@ -238,7 +238,12 @@
     "delete_confirmation": "El nombre escrito no coincide.",
     "no_booster": "No te quedan sobres de este tipo por ahora.",
     "not_enough_meme_money": "No tienes suficiente MemeMoney.",
-    "no_cards": "Todavía no hay cartas disponibles."
+    "no_cards": "Todavía no hay cartas disponibles.",
+    "card_not_owned": "No tienes esta carta.",
+    "already_max_variant": "Esta carta ya es Divina.",
+    "not_enough_duplicates": "No tienes suficientes duplicados para esta mejora.",
+    "cannot_sell": "Este ejemplar no se puede vender.",
+    "daily_sell_cap": "Límite de ventas del día alcanzado."
   },
   "statName": {
     "hp": "Puntos de salud",
@@ -584,5 +589,38 @@
       "tap": "Instala el juego en tu pantalla de inicio en dos gestos.",
       "button": "Instalar la aplicación"
     }
+  },
+  "dup": {
+    "variant": {
+      "normal": "Normal",
+      "gold": "Dorada",
+      "divine": "Divina"
+    },
+    "owned": "{count, plural, one {# ejemplar} other {# ejemplares}} · {dups, plural, =0 {ningún duplicado} one {# duplicado} other {# duplicados}}",
+    "upgradeTo": "Pasar a {variant}",
+    "upgradeCost": "{have} / {cost} duplicados",
+    "maxed": "Carta Divina: ¡mejora máxima!",
+    "upgraded": "¡Tu carta ahora es {variant}!",
+    "sell": "Vender",
+    "sellCount": "Cantidad a vender",
+    "less": "Una menos",
+    "more": "Una más",
+    "sold": "+{amount} MemeMoney añadidos a tu saldo.",
+    "keepLast": "Carta mejorada: siempre conservas un ejemplar para no perder tu mejora.",
+    "canSellAll": "Puedes vender esta carta hasta el último ejemplar.",
+    "capLeft": "Ventas de comunes, raras y épicas hoy: quedan {amount} MemeMoney.",
+    "capReached": "Límite de ventas del día alcanzado. ¡Vuelve mañana!",
+    "nothingToSell": "No hay ejemplares de esta carta para vender.",
+    "bulk": {
+      "button": "Vender mis duplicados",
+      "none": "No hay duplicados para vender",
+      "summary": "{cards, plural, one {# duplicado} other {# duplicados}} → +{amount} MemeMoney",
+      "note": "Siempre se conserva un ejemplar de cada carta. Las comunes, raras y épicas se detienen en el límite del día.",
+      "confirm": "Confirmar la venta",
+      "cancel": "Cancelar",
+      "done": "+{amount} MemeMoney añadidos a tu saldo."
+    },
+    "confirmLast": "Confirmar",
+    "lastWarning": "Es tu último ejemplar: la carta saldrá de tu colección."
   }
 }

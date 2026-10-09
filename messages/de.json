@@ -238,7 +238,12 @@
     "delete_confirmation": "Der eingegebene Name stimmt nicht überein.",
     "no_booster": "Von diesem Booster-Typ ist gerade keiner mehr übrig.",
     "not_enough_meme_money": "Nicht genug MemeMoney.",
-    "no_cards": "Noch keine Karten verfügbar."
+    "no_cards": "Noch keine Karten verfügbar.",
+    "card_not_owned": "Du besitzt diese Karte nicht.",
+    "already_max_variant": "Diese Karte ist bereits göttlich.",
+    "not_enough_duplicates": "Nicht genug Duplikate für diese Aufwertung.",
+    "cannot_sell": "Dieses Exemplar kann nicht verkauft werden.",
+    "daily_sell_cap": "Tageslimit für Verkäufe erreicht."
   },
   "statName": {
     "hp": "Kraftpunkte",
@@ -584,5 +589,38 @@
       "tap": "Installiere das Spiel mit zwei Handgriffen auf deinem Startbildschirm.",
       "button": "App installieren"
     }
+  },
+  "dup": {
+    "variant": {
+      "normal": "Normal",
+      "gold": "Golden",
+      "divine": "Göttlich"
+    },
+    "owned": "{count, plural, one {# Exemplar} other {# Exemplare}} · {dups, plural, =0 {keine Duplikate} one {# Duplikat} other {# Duplikate}}",
+    "upgradeTo": "Aufwerten zu {variant}",
+    "upgradeCost": "{have} / {cost} Duplikate",
+    "maxed": "Göttliche Karte: maximal aufgewertet!",
+    "upgraded": "Deine Karte ist jetzt {variant}!",
+    "sell": "Verkaufen",
+    "sellCount": "Anzahl zum Verkaufen",
+    "less": "Eine weniger",
+    "more": "Eine mehr",
+    "sold": "+{amount} MemeMoney deinem Guthaben hinzugefügt.",
+    "keepLast": "Aufgewertete Karte: Du behältst immer ein Exemplar, damit die Aufwertung nicht verloren geht.",
+    "canSellAll": "Du kannst diese Karte bis zum letzten Exemplar verkaufen.",
+    "capLeft": "Verkauf von gewöhnlichen, seltenen und epischen Karten heute: noch {amount} MemeMoney.",
+    "capReached": "Tageslimit für Verkäufe erreicht. Komm morgen wieder!",
+    "nothingToSell": "Kein Exemplar dieser Karte zum Verkaufen.",
+    "bulk": {
+      "button": "Meine Duplikate verkaufen",
+      "none": "Keine Duplikate zum Verkaufen",
+      "summary": "{cards, plural, one {# Duplikat} other {# Duplikate}} → +{amount} MemeMoney",
+      "note": "Von jeder Karte bleibt immer ein Exemplar. Gewöhnliche, seltene und epische Karten stoppen am Tageslimit.",
+      "confirm": "Verkauf bestätigen",
+      "cancel": "Abbrechen",
+      "done": "+{amount} MemeMoney deinem Guthaben hinzugefügt."
+    },
+    "confirmLast": "Bestätigen",
+    "lastWarning": "Das ist dein letztes Exemplar: Die Karte verlässt deine Sammlung."
   }
 }
