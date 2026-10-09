@@ -27,13 +27,23 @@ export function canUpgrade(quantity: number, variant: Variant): boolean {
 }
 
 /**
- * Nombre maximum d'exemplaires revendables : tous, jusqu'au dernier, quelle
- * que soit la rareté. Seule exception : une carte Dorée ou Divine garde
- * toujours son dernier exemplaire (sinon son amélioration serait perdue).
+ * Exemplaires revendables : les exemplaires en trop. Le premier exemplaire
+ * reste toujours dans la collection (le but est de collectionner toutes les
+ * cartes), quelle que soit la rareté ou l'amélioration.
  */
-export function maxSellable(quantity: number, variant: Variant): number {
-  if (quantity <= 0) return 0;
-  return variant === "normal" ? quantity : duplicatesOf(quantity);
+export function maxSellable(quantity: number): number {
+  return duplicatesOf(quantity);
+}
+
+/**
+ * Revente d'une carte en un geste : tous ses exemplaires en trop, dans la
+ * limite du plafond du jour pour les communes, rares et épiques.
+ */
+export function sellAllDuplicates(rarity: Rarity, quantity: number, remainingCents: number): { count: number; cents: number; limited: boolean } {
+  const dups = maxSellable(quantity);
+  const price = GAME_CONFIG.DUPLICATES.SELL_CENTS[rarity];
+  const count = countsTowardCap(rarity) ? Math.min(dups, Math.floor(remainingCents / price)) : dups;
+  return { count, cents: count * price, limited: count < dups };
 }
 
 export function sellValueCents(rarity: Rarity, count: number, config = GAME_CONFIG.DUPLICATES): number {

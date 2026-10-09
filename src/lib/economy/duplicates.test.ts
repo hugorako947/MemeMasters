@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { GAME_CONFIG, gameConfigSchema } from "@/config/game.config";
-import { canUpgrade, countsTowardCap, creditCents, maxSellable, nextUpgrade, planBulkSale, sellValueCents } from "./duplicates";
+import { canUpgrade, countsTowardCap, creditCents, maxSellable, nextUpgrade, planBulkSale, sellAllDuplicates, sellValueCents } from "./duplicates";
 
 describe("améliorations", () => {
   it("Dorée coûte 5 doublons, puis Divine 10 de plus", () => {
@@ -18,14 +18,20 @@ describe("améliorations", () => {
 });
 
 describe("revente", () => {
-  it("laisse vendre jusqu'au dernier exemplaire, quelle que soit la rareté", () => {
-    expect(maxSellable(3, "normal")).toBe(3);
-    expect(maxSellable(1, "normal")).toBe(1); // dernière légendaire ou dernière Godlevel comprise
+  it("ne revend que les exemplaires en trop : la carte reste toujours dans la collection", () => {
+    expect(maxSellable(3)).toBe(2);
+    expect(maxSellable(1)).toBe(0);
+    expect(maxSellable(0)).toBe(0);
   });
 
-  it("ne fait jamais perdre une carte améliorée", () => {
-    expect(maxSellable(1, "gold")).toBe(0);
-    expect(maxSellable(4, "divine")).toBe(3);
+  it("revend tous les exemplaires en trop d'un coup (ex. : Lama Zen ×3 → revendre ×2)", () => {
+    expect(sellAllDuplicates("epique", 3, 2000)).toEqual({ count: 2, cents: 100, limited: false });
+    expect(sellAllDuplicates("epique", 1, 2000)).toEqual({ count: 0, cents: 0, limited: false });
+  });
+
+  it("s'arrête au plafond du jour pour les communes, mais pas pour une Godlevel", () => {
+    expect(sellAllDuplicates("commune", 50, 30)).toEqual({ count: 3, cents: 30, limited: true });
+    expect(sellAllDuplicates("godlevel", 3, 0)).toEqual({ count: 2, cents: 12000, limited: false });
   });
 
   it("applique les prix (en centièmes de MemeMoney)", () => {

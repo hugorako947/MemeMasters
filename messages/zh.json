@@ -601,13 +601,7 @@
     "upgradeCost": "{have} / {cost} 张重复卡",
     "maxed": "神圣卡牌：已达最高等级！",
     "upgraded": "你的卡牌已升级为{variant}！",
-    "sell": "出售",
-    "sellCount": "出售数量",
-    "less": "减少一张",
-    "more": "增加一张",
     "sold": "已获得 +{amount} MemeMoney。",
-    "keepLast": "已升级的卡牌：始终保留一张，以免失去升级。",
-    "canSellAll": "这张卡牌可以全部出售，包括最后一张。",
     "capLeft": "今日普通、稀有、史诗卡出售额度：还剩 {amount} MemeMoney。",
     "capReached": "今日出售额度已用完，明天再来吧！",
     "nothingToSell": "这张卡牌没有可出售的。",
@@ -620,7 +614,7 @@
       "cancel": "取消",
       "done": "已获得 +{amount} MemeMoney。"
     },
-    "confirmLast": "确认",
-    "lastWarning": "这是你的最后一张：卡牌将从收藏中移除。"
+    "sellAll": "出售 ×{count}",
+    "capPartial": "今日额度：{total} 张中今天可出售 {count} 张。"
   }
 }

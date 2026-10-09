@@ -601,13 +601,7 @@
     "upgradeCost": "{have} / {cost} doublons",
     "maxed": "Carte Divine : amélioration maximale !",
     "upgraded": "Ta carte est maintenant {variant} !",
-    "sell": "Revendre",
-    "sellCount": "Quantité à revendre",
-    "less": "Une de moins",
-    "more": "Une de plus",
     "sold": "+{amount} MemeMoney ajoutés à ton solde.",
-    "keepLast": "Carte améliorée : tu gardes toujours un exemplaire, pour ne pas perdre ton amélioration.",
-    "canSellAll": "Tu peux revendre cette carte jusqu'au dernier exemplaire.",
     "capLeft": "Revente de communes, rares et épiques aujourd'hui : encore {amount} MemeMoney.",
     "capReached": "Limite de revente du jour atteinte. Reviens demain !",
     "nothingToSell": "Aucun exemplaire à revendre pour cette carte.",
@@ -620,7 +614,7 @@
       "cancel": "Annuler",
       "done": "+{amount} MemeMoney ajoutés à ton solde."
     },
-    "confirmLast": "Confirmer",
-    "lastWarning": "C'est ton dernier exemplaire : la carte quittera ta collection."
+    "sellAll": "Revendre ×{count}",
+    "capPartial": "Limite du jour : {count} sur {total} peuvent être revendus aujourd'hui."
   }
 }

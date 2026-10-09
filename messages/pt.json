@@ -601,13 +601,7 @@
     "upgradeCost": "{have} / {cost} repetidas",
     "maxed": "Carta Divina: melhoria máxima!",
     "upgraded": "Sua carta agora é {variant}!",
-    "sell": "Vender",
-    "sellCount": "Quantidade a vender",
-    "less": "Uma a menos",
-    "more": "Uma a mais",
     "sold": "+{amount} MemeMoney adicionados ao seu saldo.",
-    "keepLast": "Carta melhorada: você sempre fica com um exemplar para não perder a melhoria.",
-    "canSellAll": "Você pode vender esta carta até o último exemplar.",
     "capLeft": "Vendas de comuns, raras e épicas hoje: restam {amount} MemeMoney.",
     "capReached": "Limite de vendas do dia atingido. Volte amanhã!",
     "nothingToSell": "Nenhum exemplar desta carta para vender.",
@@ -620,7 +614,7 @@
       "cancel": "Cancelar",
       "done": "+{amount} MemeMoney adicionados ao seu saldo."
     },
-    "confirmLast": "Confirmar",
-    "lastWarning": "É o seu último exemplar: a carta vai sair da sua coleção."
+    "sellAll": "Vender ×{count}",
+    "capPartial": "Limite do dia: {count} de {total} podem ser vendidas hoje."
   }
 }

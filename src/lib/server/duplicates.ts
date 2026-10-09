@@ -58,7 +58,7 @@ export async function sellCards(player: Player, lines: Array<{ cardId: string; c
     for (const line of lines) {
       const card = byId.get(line.cardId);
       if (!card) throw new ApiError(404, "card_not_owned");
-      if (line.count > maxSellable(card.quantity, card.variant)) throw new ApiError(409, "cannot_sell");
+      if (line.count > maxSellable(card.quantity)) throw new ApiError(409, "cannot_sell");
       const value = sellValueCents(card.rarity, line.count);
       cents += value;
       if (countsTowardCap(card.rarity)) cappedCents += value;
@@ -73,12 +73,8 @@ export async function sellCards(player: Player, lines: Array<{ cardId: string; c
     if (usage.resale_cents + cappedCents > GAME_CONFIG.DUPLICATES.DAILY_SELL_CAP * 100) throw new ApiError(409, "daily_sell_cap");
 
     for (const line of lines) {
-      const card = byId.get(line.cardId)!;
-      if (card.quantity === line.count) {
-        await tx`delete from public.user_cards where player_id = ${player.id} and card_id = ${line.cardId}`;
-      } else {
-        await tx`update public.user_cards set quantity = quantity - ${line.count} where player_id = ${player.id} and card_id = ${line.cardId}`;
-      }
+      // Le premier exemplaire reste toujours : la carte ne quitte jamais la collection.
+      await tx`update public.user_cards set quantity = quantity - ${line.count} where player_id = ${player.id} and card_id = ${line.cardId}`;
     }
 
     const [w] = await tx<{ meme_money_cents: number }[]>`

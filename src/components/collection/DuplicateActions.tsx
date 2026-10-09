@@ -5,12 +5,14 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useState } from "react";
 import { MemeCoin } from "@/components/player/RankBadge";
 import { FormMessage } from "@/components/ui/Field";
-import { countsTowardCap, duplicatesOf, maxSellable, nextUpgrade, sellValueCents, type Variant } from "@/lib/economy/duplicates";
+import { countsTowardCap, duplicatesOf, nextUpgrade, sellAllDuplicates, type Variant } from "@/lib/economy/duplicates";
 import { postJson } from "@/lib/client/api";
 import type { Card } from "@/lib/validation/card";
 
 /**
- * Dans la fiche d'une carte possédée : améliorer (Dorée, Divine) ou revendre.
+ * Dans la fiche d'une carte possédée : améliorer (Dorée, Divine) ou revendre
+ * d'un coup tous les exemplaires en trop (« Revendre ×2 »). Le premier
+ * exemplaire reste toujours dans la collection.
  */
 export function DuplicateActions({
   card,
@@ -32,14 +34,7 @@ export function DuplicateActions({
   const dups = duplicatesOf(quantity);
   const upgrade = nextUpgrade(variant);
   const capped = countsTowardCap(card.rarity);
-  const maxBySell = maxSellable(quantity, variant);
-  const unit = sellValueCents(card.rarity, 1);
-  const maxByCap = capped ? Math.floor(resaleLeftCents / unit) : Number.POSITIVE_INFINITY;
-  const max = Math.min(maxBySell, maxByCap);
-  const [count, setCount] = useState(1);
-  // Vendre le dernier exemplaire retire la carte de la collection : on demande une confirmation.
-  const [confirmLast, setConfirmLast] = useState(false);
-  const n = Math.min(Math.max(1, count), Math.max(1, max));
+  const sale = sellAllDuplicates(card.rarity, quantity, resaleLeftCents);
   const money = (cents: number) => format.number(cents / 100, { maximumFractionDigits: 2 });
 
   async function run(path: string, body: unknown, success: (data: { variant?: Variant; cents?: number }) => string) {
@@ -49,8 +44,6 @@ export function DuplicateActions({
     setPending(false);
     if (res.ok) {
       setMessage({ tone: "success", text: success(res.data) });
-      setCount(1);
-      setConfirmLast(false);
       router.refresh();
     } else {
       setMessage({ tone: "error", text: te(res.code as "server_error") });
@@ -89,42 +82,24 @@ export function DuplicateActions({
         <p className="text-sm font-bold">✨ {t("maxed")}</p>
       )}
 
-      {/* Revente */}
+      {/* Revente : tous les exemplaires en trop d'un coup ; la carte reste dans la collection. */}
       <div className="grid gap-2 border-t-2 border-dashed border-line pt-3">
-        <p className="text-sm text-ink-soft">{variant === "normal" ? t("canSellAll") : t("keepLast")}</p>
-        {max > 0 ? (
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="flex items-center rounded-full border-2 border-ink bg-surface" role="group" aria-label={t("sellCount")}>
-              <button type="button" onClick={() => { setCount(n - 1); setConfirmLast(false); }} disabled={n <= 1} className="grid size-10 place-items-center text-xl font-bold disabled:opacity-40" aria-label={t("less")}>
-                −
-              </button>
-              <span className="min-w-8 text-center font-display text-xl" aria-live="polite">
-                {n}
-              </span>
-              <button type="button" onClick={() => { setCount(n + 1); setConfirmLast(false); }} disabled={n >= max} className="grid size-10 place-items-center text-xl font-bold disabled:opacity-40" aria-label={t("more")}>
-                +
-              </button>
-            </div>
+        {sale.count > 0 ? (
+          <>
             <button
               type="button"
               disabled={pending}
-              onClick={() => {
-                if (n === quantity && !confirmLast) {
-                  setConfirmLast(true);
-                  return;
-                }
-                run("/api/collection/sell", { lines: [{ cardId: card.id, count: n }] }, (d) => t("sold", { amount: money(d.cents ?? 0) }));
-              }}
-              className={`mm-btn ${confirmLast ? "mm-btn--danger" : "mm-btn--secondary"} min-h-11 flex-1 gap-1.5 text-sm`}
+              onClick={() => run("/api/collection/sell", { lines: [{ cardId: card.id, count: sale.count }] }, (d) => t("sold", { amount: money(d.cents ?? 0) }))}
+              className="mm-btn mm-btn--secondary min-h-11 gap-1.5 text-sm"
             >
-              {confirmLast ? t("confirmLast") : t("sell")} · <MemeCoin /> +{money(unit * n)}
+              {t("sellAll", { count: sale.count })} · <MemeCoin /> +{money(sale.cents)}
             </button>
-          </div>
+            {sale.limited ? <p className="text-xs font-semibold text-ink-soft">{t("capPartial", { count: sale.count, total: dups })}</p> : null}
+          </>
         ) : (
-          <p className="text-sm font-semibold">{maxBySell > 0 && capped ? t("capReached") : t("nothingToSell")}</p>
+          <p className="text-sm font-semibold">{dups > 0 && capped ? t("capReached") : t("nothingToSell")}</p>
         )}
-        {confirmLast ? <p className="text-sm font-bold text-danger">{t("lastWarning")}</p> : null}
-        {capped ? <p className="text-xs text-ink-soft">{t("capLeft", { amount: money(resaleLeftCents) })}</p> : null}
+        {capped && dups > 0 ? <p className="text-xs text-ink-soft">{t("capLeft", { amount: money(resaleLeftCents) })}</p> : null}
       </div>
       {message ? <FormMessage tone={message.tone}>{message.text}</FormMessage> : null}
     </section>

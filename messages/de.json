@@ -601,13 +601,7 @@
     "upgradeCost": "{have} / {cost} Duplikate",
     "maxed": "Göttliche Karte: maximal aufgewertet!",
     "upgraded": "Deine Karte ist jetzt {variant}!",
-    "sell": "Verkaufen",
-    "sellCount": "Anzahl zum Verkaufen",
-    "less": "Eine weniger",
-    "more": "Eine mehr",
     "sold": "+{amount} MemeMoney deinem Guthaben hinzugefügt.",
-    "keepLast": "Aufgewertete Karte: Du behältst immer ein Exemplar, damit die Aufwertung nicht verloren geht.",
-    "canSellAll": "Du kannst diese Karte bis zum letzten Exemplar verkaufen.",
     "capLeft": "Verkauf von gewöhnlichen, seltenen und epischen Karten heute: noch {amount} MemeMoney.",
     "capReached": "Tageslimit für Verkäufe erreicht. Komm morgen wieder!",
     "nothingToSell": "Kein Exemplar dieser Karte zum Verkaufen.",
@@ -620,7 +614,7 @@
       "cancel": "Abbrechen",
       "done": "+{amount} MemeMoney deinem Guthaben hinzugefügt."
     },
-    "confirmLast": "Bestätigen",
-    "lastWarning": "Das ist dein letztes Exemplar: Die Karte verlässt deine Sammlung."
+    "sellAll": "×{count} verkaufen",
+    "capPartial": "Tageslimit: Heute können {count} von {total} verkauft werden."
   }
 }

@@ -601,16 +601,10 @@
     "upgradeCost": "{have} / {cost} duplicates",
     "maxed": "Divine card: fully upgraded!",
     "upgraded": "Your card is now {variant}!",
-    "sell": "Sell",
-    "sellCount": "Quantity to sell",
-    "less": "One less",
-    "more": "One more",
     "sold": "+{amount} MemeMoney added to your balance.",
-    "keepLast": "Upgraded card: you always keep one copy so you don't lose your upgrade.",
-    "canSellAll": "You can sell this card down to the last copy.",
     "capLeft": "Common, rare and epic sales today: {amount} MemeMoney left.",
     "capReached": "Daily selling limit reached. Come back tomorrow!",
-    "nothingToSell": "No copy of this card to sell.",
+    "nothingToSell": "No extra copy of this card to sell.",
     "bulk": {
       "button": "Sell my duplicates",
       "none": "No duplicates to sell",
@@ -620,7 +614,7 @@
       "cancel": "Cancel",
       "done": "+{amount} MemeMoney added to your balance."
     },
-    "confirmLast": "Confirm",
-    "lastWarning": "This is your last copy: the card will leave your collection."
+    "sellAll": "Sell ×{count}",
+    "capPartial": "Daily limit: {count} of {total} can be sold today."
   }
 }
