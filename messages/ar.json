@@ -240,8 +240,8 @@
     "not_enough_meme_money": "لا تكفي MemeMoney.",
     "no_cards": "لا توجد بطاقات متاحة بعد.",
     "card_not_owned": "لا تملك هذه البطاقة.",
-    "already_max_variant": "هذه البطاقة سماوية بالفعل.",
-    "not_enough_duplicates": "لا توجد مكررات كافية لهذه الترقية.",
+    "already_max_variant": "هذه البطاقة سماوية ★★★ بالفعل.",
+    "not_enough_duplicates": "لا توجد نسخ كافية لهذه الترقية.",
     "cannot_sell": "لا يمكن بيع هذه النسخة.",
     "daily_sell_cap": "تم بلوغ حد البيع اليومي."
   },
@@ -267,7 +267,8 @@
     "vibeTitle": "الطابع",
     "strongAgainst": "قوية ضد {vibe}",
     "weakAgainst": "ضعيفة أمام {vibe}",
-    "notOwned": "هذه البطاقة ليست في مجموعتك بعد. افتح الحزم لتجدها!"
+    "notOwned": "هذه البطاقة ليست في مجموعتك بعد. افتح الحزم لتجدها!",
+    "statBonus": "+{percent}%"
   },
   "showcase": {
     "title": "مستويات الندرة السبعة",
@@ -289,7 +290,7 @@
       "chipOwned": "المملوكة",
       "chipSort": "الترتيب: الشعبية",
       "filtersLabel": "أمثلة على عوامل التصفية",
-      "rankingHint": "🏆 الترتيب: الشعبية · الندرة · الصحة · الهجوم · السرعة · نسبة الفوز"
+      "rankingHint": "الترتيب: الشعبية · الندرة · الصحة · الهجوم · السرعة · نسبة الفوز"
     },
     "battle": {
       "title": "واجه العالم",
@@ -354,7 +355,7 @@
     "memeMoneyLabel": "{amount} MemeMoney. فتح المتجر"
   },
   "playerHome": {
-    "title": "مرحبًا {username}!",
+    "title": "أهلًا بك، {username}",
     "soon": "قريبًا",
     "boosters": {
       "title": "الحزم",
@@ -366,11 +367,8 @@
     },
     "battles": {
       "title": "المعارك",
-      "lead": "واجه لاعبين من رتبتك بفريق من {team} بطاقات.",
-      "nextReward": "عند بلوغ الرتبة التالية ← {boosters} حزم و{money} MemeMoney هدية",
-      "leadLive": "العب بطاقاتك مباشرة، دمّر أبراج الخصم وأسقط الملك!",
-      "training": "تدريب",
-      "rankedSoon": "مصنّفة: قريبًا"
+      "lead": "المعارك قادمة قريبًا: جهّز مجموعتك.",
+      "nextReward": "عند بلوغ الرتبة التالية ← {boosters} حزم و{money} MemeMoney هدية"
     },
     "collection": {
       "title": "المجموعة",
@@ -582,64 +580,46 @@
       "text": "امسح رمز QR هذا بكاميرا هاتفك: ستظهر التعليمات المناسبة لجهازك."
     },
     "benefits": {
-      "fullscreen": "📲 ملء الشاشة دون شريط المتصفح",
-      "oneTap": "⚡ تشغيل بلمسة واحدة",
-      "updates": "🔄 تحديثات تلقائية"
+      "fullscreen": "ملء الشاشة دون شريط المتصفح",
+      "oneTap": "تشغيل بلمسة واحدة",
+      "updates": "تحديثات تلقائية"
     },
     "cta": {
       "title": "العب على هاتفك أيضًا",
       "scan": "امسح رمز QR بهاتفك لتثبيت اللعبة في خطوتين.",
       "tap": "ثبّت اللعبة على شاشتك الرئيسية في خطوتين.",
       "button": "تثبيت التطبيق"
-    }
+    },
+    "localHint": "اختبار محلي: يجب أن يكون هاتفك على شبكة Wi-Fi نفسها مع هذا الحاسوب ({url}). التثبيت كتطبيق يتطلب عنوان HTTPS: راجع ملف README.",
+    "httpWarning": "أنت تتصفح دون HTTPS: يمكنك اللعب من هذا الهاتف، لكن التثبيت كتطبيق لا يكون ممكنًا إلا بعنوان آمن (https://)، بعد نشر الموقع أو عبر نفق اختبار."
   },
   "dup": {
-    "variant": {
-      "normal": "عادية",
-      "gold": "ذهبية",
-      "divine": "سماوية"
-    },
-    "owned": "{count, plural, one {نسخة واحدة} two {نسختان} few {# نسخ} other {# نسخة}} · {dups, plural, =0 {لا مكررات} one {مكررة واحدة} two {مكررتان} few {# مكررات} other {# مكررة}}",
-    "upgradeTo": "الترقية إلى {variant}",
-    "upgradeCost": "{have} / {cost} مكررات",
-    "maxed": "بطاقة سماوية: أعلى ترقية!",
-    "upgraded": "أصبحت بطاقتك {variant}!",
+    "owned": "{count, plural, one {نسخة واحدة} two {نسختان} few {# نسخ} other {# نسخة}} · {dups, plural, =0 {لا نسخ زائدة} one {نسخة زائدة} two {نسختان زائدتان} few {# نسخ زائدة} other {# نسخة زائدة}}",
+    "upgradeTo": "المستوى التالي: {level} (الإحصائيات +{percent}%)",
+    "upgradeCost": "{have} / {cost} نسخ",
+    "maxed": "سماوية ★★★: أعلى ترقية!",
+    "upgraded": "أصبحت بطاقتك {level}!",
     "sold": "تمت إضافة +{amount} MemeMoney إلى رصيدك.",
     "capLeft": "بيع البطاقات العادية والنادرة والملحمية اليوم: يتبقى {amount} MemeMoney.",
     "capReached": "تم بلوغ حد البيع اليومي. عد غدًا!",
     "nothingToSell": "لا توجد نسخ للبيع من هذه البطاقة.",
     "bulk": {
-      "button": "بيع مكرراتي",
-      "none": "لا مكررات للبيع",
-      "summary": "{cards, plural, one {مكررة واحدة} two {مكررتان} few {# مكررات} other {# مكررة}} ← +{amount} MemeMoney",
+      "button": "بيع نسخي الزائدة",
+      "none": "لا نسخ زائدة للبيع",
+      "summary": "{cards, plural, one {نسخة واحدة} two {نسختان} few {# نسخ} other {# نسخة}} ← +{amount} MemeMoney",
       "note": "نحتفظ دائمًا بنسخة من كل بطاقة. تتوقف البطاقات العادية والنادرة والملحمية عند الحد اليومي.",
       "confirm": "تأكيد البيع",
       "cancel": "إلغاء",
       "done": "تمت إضافة +{amount} MemeMoney إلى رصيدك."
     },
     "sellAll": "بيع ×{count}",
-    "capPartial": "الحد اليومي: يمكن بيع {count} من {total} اليوم."
-  },
-  "battle": {
-    "title": "معركة",
-    "quit": "خروج",
-    "bot": "روبوت",
-    "overtime": "وقت إضافي",
-    "doubleEnergy": "طاقة ×2!",
-    "selectCard": "اختر بطاقة في الأسفل أولًا.",
-    "notEnough": "لا توجد طاقة كافية.",
-    "invalidZone": "ليس هنا: ضع بطاقاتك في نصف ملعبك.",
-    "arenaLabel": "الساحة: اضغط على مكان في نصف ملعبك لوضع البطاقة المختارة.",
-    "cardLabel": "{name}، تكلف {cost} طاقة",
-    "next": "التالية",
-    "energyLabel": "الطاقة: {value} من 10",
-    "victory": "فوز!",
-    "defeat": "خسارة",
-    "draw": "تعادل",
-    "replay": "العب مجددًا",
-    "back": "رجوع",
-    "trainingNote": "تدريب: لا كؤوس ولا MemeMoney.",
-    "trainingShort": "تدريب",
-    "loaned": "{count, plural, one {بطاقة واحدة مُعارة} two {بطاقتان مُعارتان} few {# بطاقات مُعارة} other {# بطاقة مُعارة}} لإكمال مجموعتك"
+    "capPartial": "الحد اليومي: يمكن بيع {count} من {total} اليوم.",
+    "level": {
+      "0": "عادية",
+      "1": "ذهبية ★",
+      "2": "ذهبية ★★",
+      "3": "سماوية ★★★"
+    },
+    "upgradeButton": "الترقية إلى {level}"
   }
 }

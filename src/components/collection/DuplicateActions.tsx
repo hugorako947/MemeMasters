@@ -5,24 +5,25 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useState } from "react";
 import { MemeCoin } from "@/components/player/RankBadge";
 import { FormMessage } from "@/components/ui/Field";
-import { countsTowardCap, duplicatesOf, nextUpgrade, sellAllDuplicates, type Variant } from "@/lib/economy/duplicates";
+import { GAME_CONFIG } from "@/config/game.config";
+import { countsTowardCap, duplicatesOf, lookOf, nextUpgrade, sellAllDuplicates, type Level } from "@/lib/economy/duplicates";
 import { postJson } from "@/lib/client/api";
 import type { Card } from "@/lib/validation/card";
 
 /**
- * Dans la fiche d'une carte possédée : améliorer (Dorée, Divine) ou revendre
+ * Dans la fiche d'une carte possédée : améliorer (Dorée ★, ★★, Divine ★★★) ou revendre
  * d'un coup tous les exemplaires en trop (« Revendre ×2 »). Le premier
  * exemplaire reste toujours dans la collection.
  */
 export function DuplicateActions({
   card,
   quantity,
-  variant,
+  level,
   resaleLeftCents,
 }: {
   card: Card;
   quantity: number;
-  variant: Variant;
+  level: Level;
   resaleLeftCents: number;
 }) {
   const t = useTranslations("dup");
@@ -32,15 +33,15 @@ export function DuplicateActions({
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState<{ tone: "success" | "error"; text: string } | null>(null);
   const dups = duplicatesOf(quantity);
-  const upgrade = nextUpgrade(variant);
+  const upgrade = nextUpgrade(card.rarity, level);
   const capped = countsTowardCap(card.rarity);
   const sale = sellAllDuplicates(card.rarity, quantity, resaleLeftCents);
   const money = (cents: number) => format.number(cents / 100, { maximumFractionDigits: 2 });
 
-  async function run(path: string, body: unknown, success: (data: { variant?: Variant; cents?: number }) => string) {
+  async function run(path: string, body: unknown, success: (data: { level?: Level; cents?: number }) => string) {
     setPending(true);
     setMessage(null);
-    const res = await postJson<{ variant?: Variant; cents?: number }>(path, body);
+    const res = await postJson<{ level?: Level; cents?: number }>(path, body);
     setPending(false);
     if (res.ok) {
       setMessage({ tone: "success", text: success(res.data) });
@@ -56,30 +57,30 @@ export function DuplicateActions({
     <section className="grid gap-4 rounded-2xl border-2 border-ink bg-surface p-4">
       <p className="flex flex-wrap items-center justify-between gap-2 font-extrabold">
         <span>{t("owned", { count: quantity, dups })}</span>
-        <span className="rounded-full bg-paper px-3 py-1 text-sm">{t(`variant.${variant}`)}</span>
+        <span className="rounded-full bg-paper px-3 py-1 text-sm">{t(`level.${level}`)}</span>
       </p>
 
       {/* Amélioration */}
       {upgrade ? (
         <div className="grid gap-2">
           <div className="flex items-center justify-between gap-3 text-sm font-bold">
-            <span>{t("upgradeTo", { variant: t(`variant.${upgrade.to}`) })}</span>
+            <span>{t("upgradeTo", { level: t(`level.${upgrade.to}`), percent: GAME_CONFIG.DUPLICATES.STAT_BONUS_PERCENT[upgrade.to] })}</span>
             <span className="text-ink-soft">{t("upgradeCost", { have: Math.min(dups, upgrade.cost), cost: upgrade.cost })}</span>
           </div>
           <div className="mm-stat-bar" aria-hidden="true">
-            <span style={{ width: `${Math.min(100, (dups / upgrade.cost) * 100)}%`, ["--bar" as string]: upgrade.to === "gold" ? "#f5b400" : "#9aa7c7" }} />
+            <span style={{ width: `${Math.min(100, (dups / upgrade.cost) * 100)}%`, ["--bar" as string]: lookOf(upgrade.to) === "gold" ? "#f5b400" : "#9aa7c7" }} />
           </div>
           <button
             type="button"
             disabled={pending || dups < upgrade.cost}
-            onClick={() => run("/api/collection/upgrade", { cardId: card.id }, (d) => t("upgraded", { variant: t(`variant.${d.variant ?? upgrade.to}`) }))}
-            className={`mm-btn ${upgrade.to === "gold" ? "mm-btn--gold" : "mm-btn--divine"} min-h-11 text-sm`}
+            onClick={() => run("/api/collection/upgrade", { cardId: card.id }, (d) => t("upgraded", { level: t(`level.${d.level ?? upgrade.to}`) }))}
+            className={`mm-btn ${lookOf(upgrade.to) === "gold" ? "mm-btn--gold" : "mm-btn--divine"} min-h-11 text-sm`}
           >
-            ✨ {t("upgradeTo", { variant: t(`variant.${upgrade.to}`) })}
+            {t("upgradeButton", { level: t(`level.${upgrade.to}`) })}
           </button>
         </div>
       ) : (
-        <p className="text-sm font-bold">✨ {t("maxed")}</p>
+        <p className="text-sm font-bold">{t("maxed")}</p>
       )}
 
       {/* Revente : tous les exemplaires en trop d'un coup ; la carte reste dans la collection. */}

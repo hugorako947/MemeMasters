@@ -55,7 +55,7 @@ export function BottomNav({ username }: { username: string }) {
 
   return (
     <nav aria-label={t("label")} className="safe-bottom sticky bottom-0 z-40 px-3 pt-7">
-      <ul className="mx-auto grid max-w-lg grid-cols-[1fr_1fr_auto_1fr_1fr] items-center gap-1 rounded-[1.6rem] border-[2.5px] border-ink bg-surface p-1.5 shadow-[0_5px_0_0_var(--mm-shadow)]">
+      <ul className="mx-auto grid max-w-lg grid-cols-[1fr_1fr_auto_1fr_1fr] items-center gap-1 rounded-[1.6rem] border-2 border-ink bg-surface p-1.5 shadow-[0_3px_0_0_var(--mm-shadow)]">
         {left.map(side)}
         <li className="px-1">
           <Link href="/" aria-current={homeActive ? "page" : undefined} className="mm-nav-home">

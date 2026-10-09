@@ -41,7 +41,7 @@ export async function ShopView({ country, hasPurchased }: { country: string | nu
           {active.length > 0 ? (
             <ul className="grid gap-3 md:grid-cols-2">
               {firstDouble ? (
-                <li className="rounded-2xl border-[3px] border-ink bg-sticker p-4 text-[#1a1238] shadow-[0_4px_0_0_var(--mm-shadow)]">
+                <li className="rounded-2xl border-2 border-ink bg-sticker p-4 text-[#1a1238] shadow-[0_3px_0_0_var(--mm-shadow)]">
                   <p className="font-display text-2xl leading-none">{t("offers.firstDouble.title")}</p>
                   <p className="mt-1 text-sm font-semibold">{t("offers.firstDouble.text")}</p>
                 </li>
@@ -49,7 +49,7 @@ export async function ShopView({ country, hasPurchased }: { country: string | nu
               {active
                 .filter((o) => o.kind === "discount")
                 .map((o) => (
-                  <li key={o.code} className="rounded-2xl border-[3px] border-ink bg-candy p-4 text-[var(--mm-accent-ink)] shadow-[0_4px_0_0_var(--mm-shadow)]">
+                  <li key={o.code} className="rounded-2xl border-2 border-ink bg-candy p-4 text-[var(--mm-accent-ink)] shadow-[0_3px_0_0_var(--mm-shadow)]">
                     <p className="font-display text-2xl leading-none">{t("offers.discount.title", { percent: o.kind === "discount" ? o.percent : 0 })}</p>
                     <p className="mt-1 text-sm font-semibold">
                       {o.endsAt
@@ -73,7 +73,7 @@ export async function ShopView({ country, hasPurchased }: { country: string | nu
               return (
                 <li
                   key={product.code}
-                  className={`relative flex flex-col items-center gap-3 rounded-[1.5rem] border-[3px] bg-surface p-4 pt-6 text-center shadow-[0_5px_0_0_var(--mm-shadow)] ${
+                  className={`relative flex flex-col items-center gap-3 rounded-[1.5rem] border-2 bg-surface p-4 pt-6 text-center shadow-[0_3px_0_0_var(--mm-shadow)] ${
                     product.tag ? "border-candy" : "border-ink"
                   }`}
                 >

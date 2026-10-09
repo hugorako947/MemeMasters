@@ -240,8 +240,8 @@
     "not_enough_meme_money": "MemeMoney insuficiente.",
     "no_cards": "Ainda não há cartas disponíveis.",
     "card_not_owned": "Você não tem esta carta.",
-    "already_max_variant": "Esta carta já é Divina.",
-    "not_enough_duplicates": "Repetidas insuficientes para esta melhoria.",
+    "already_max_variant": "Esta carta já é Divina ★★★.",
+    "not_enough_duplicates": "Exemplares insuficientes para esta melhoria.",
     "cannot_sell": "Este exemplar não pode ser vendido.",
     "daily_sell_cap": "Limite de vendas do dia atingido."
   },
@@ -267,7 +267,8 @@
     "vibeTitle": "Vibe",
     "strongAgainst": "Forte contra {vibe}",
     "weakAgainst": "Fraca contra {vibe}",
-    "notOwned": "Esta carta ainda não está na sua coleção. Abra pacotes para encontrá-la!"
+    "notOwned": "Esta carta ainda não está na sua coleção. Abra pacotes para encontrá-la!",
+    "statBonus": "+{percent} %"
   },
   "showcase": {
     "title": "As 7 raridades",
@@ -289,7 +290,7 @@
       "chipOwned": "Obtidas",
       "chipSort": "Ordem: popularidade",
       "filtersLabel": "Exemplos de filtros",
-      "rankingHint": "🏆 Ranking: popularidade · raridade · PV · ataque · velocidade · taxa de vitória"
+      "rankingHint": "Ranking: popularidade · raridade · PV · ataque · velocidade · taxa de vitória"
     },
     "battle": {
       "title": "Enfrente o mundo",
@@ -354,7 +355,7 @@
     "memeMoneyLabel": "{amount} MemeMoney. Abrir a loja"
   },
   "playerHome": {
-    "title": "Oi, {username}!",
+    "title": "Bem-vindo, {username}",
     "soon": "Em breve",
     "boosters": {
       "title": "Pacotes",
@@ -366,11 +367,8 @@
     },
     "battles": {
       "title": "Batalhas",
-      "lead": "Enfrente jogadores do seu ranque com um time de {team} cartas.",
-      "nextReward": "Próximo ranque alcançado → {boosters} pacotes e {money} MemeMoney de presente",
-      "leadLive": "Jogue suas cartas ao vivo, destrua as torres rivais e derrube o rei!",
-      "training": "Treino",
-      "rankedSoon": "Ranqueada: em breve"
+      "lead": "As batalhas chegam em breve: prepare sua coleção.",
+      "nextReward": "Próximo ranque alcançado → {boosters} pacotes e {money} MemeMoney de presente"
     },
     "collection": {
       "title": "Coleção",
@@ -582,64 +580,46 @@
       "text": "Escaneie este QR code com a câmera do celular: as instruções para o seu aparelho vão aparecer."
     },
     "benefits": {
-      "fullscreen": "📲 Tela cheia, sem barra do navegador",
-      "oneTap": "⚡ Abre com um toque",
-      "updates": "🔄 Atualizações automáticas"
+      "fullscreen": "Tela cheia, sem barra do navegador",
+      "oneTap": "Abre com um toque",
+      "updates": "Atualizações automáticas"
     },
     "cta": {
       "title": "Jogue também no celular",
       "scan": "Escaneie o QR code com o celular para instalar o jogo em dois toques.",
       "tap": "Instale o jogo na sua tela inicial em dois toques.",
       "button": "Instalar o aplicativo"
-    }
+    },
+    "localHint": "Teste local: seu celular precisa estar no mesmo Wi-Fi deste computador ({url}). Instalar como app exige um endereço HTTPS: veja o README.",
+    "httpWarning": "Você está sem HTTPS: dá para jogar neste celular, mas instalar como app só é possível com um endereço seguro (https://), quando o site estiver no ar ou por um túnel de teste."
   },
   "dup": {
-    "variant": {
-      "normal": "Normal",
-      "gold": "Dourada",
-      "divine": "Divina"
-    },
-    "owned": "{count, plural, one {# exemplar} other {# exemplares}} · {dups, plural, =0 {nenhuma repetida} one {# repetida} other {# repetidas}}",
-    "upgradeTo": "Passar para {variant}",
-    "upgradeCost": "{have} / {cost} repetidas",
-    "maxed": "Carta Divina: melhoria máxima!",
-    "upgraded": "Sua carta agora é {variant}!",
+    "owned": "{count, plural, one {# exemplar} other {# exemplares}} · {dups, plural, =0 {nenhum sobrando} one {# sobrando} other {# sobrando}}",
+    "upgradeTo": "Próximo nível: {level} (atributos +{percent} %)",
+    "upgradeCost": "{have} / {cost} exemplares",
+    "maxed": "Divina ★★★: melhoria máxima!",
+    "upgraded": "Sua carta agora é {level}!",
     "sold": "+{amount} MemeMoney adicionados ao seu saldo.",
     "capLeft": "Vendas de comuns, raras e épicas hoje: restam {amount} MemeMoney.",
     "capReached": "Limite de vendas do dia atingido. Volte amanhã!",
     "nothingToSell": "Nenhum exemplar desta carta para vender.",
     "bulk": {
-      "button": "Vender minhas repetidas",
-      "none": "Nenhuma repetida para vender",
-      "summary": "{cards, plural, one {# repetida} other {# repetidas}} → +{amount} MemeMoney",
+      "button": "Vender meus exemplares sobrando",
+      "none": "Nenhum exemplar sobrando para vender",
+      "summary": "{cards, plural, one {# exemplar} other {# exemplares}} → +{amount} MemeMoney",
       "note": "Sempre fica um exemplar de cada carta. Comuns, raras e épicas param no limite do dia.",
       "confirm": "Confirmar a venda",
       "cancel": "Cancelar",
       "done": "+{amount} MemeMoney adicionados ao seu saldo."
     },
     "sellAll": "Vender ×{count}",
-    "capPartial": "Limite do dia: {count} de {total} podem ser vendidas hoje."
-  },
-  "battle": {
-    "title": "Batalha",
-    "quit": "Sair",
-    "bot": "Bot",
-    "overtime": "Prorrogação",
-    "doubleEnergy": "Energia ×2!",
-    "selectCard": "Primeiro escolha uma carta embaixo.",
-    "notEnough": "Energia insuficiente.",
-    "invalidZone": "Aqui não: coloque suas cartas no seu campo.",
-    "arenaLabel": "Arena: toque em um ponto do seu campo para colocar a carta escolhida.",
-    "cardLabel": "{name}, custa {cost} de energia",
-    "next": "Próxima",
-    "energyLabel": "Energia: {value} de 10",
-    "victory": "Vitória!",
-    "defeat": "Derrota",
-    "draw": "Empate",
-    "replay": "Jogar de novo",
-    "back": "Voltar",
-    "trainingNote": "Treino: sem troféus nem MemeMoney.",
-    "trainingShort": "Treino",
-    "loaned": "{count, plural, one {# carta emprestada} other {# cartas emprestadas}} para completar seu deck"
+    "capPartial": "Limite do dia: {count} de {total} podem ser vendidas hoje.",
+    "level": {
+      "0": "Normal",
+      "1": "Dourada ★",
+      "2": "Dourada ★★",
+      "3": "Divina ★★★"
+    },
+    "upgradeButton": "Passar para {level}"
   }
 }

@@ -95,7 +95,7 @@ export function InstallGuide({ serverPlatform, qr }: { serverPlatform: InstallPl
 function Box({ title, tone, children }: { title: string; tone?: "success"; children: ReactNode }) {
   return (
     <section
-      className={`grid gap-4 rounded-[1.75rem] border-[3px] p-5 shadow-[0_5px_0_0_var(--mm-shadow)] sm:p-6 ${
+      className={`grid gap-4 rounded-[1.75rem] border-2 p-5 shadow-[0_3px_0_0_var(--mm-shadow)] sm:p-6 ${
         tone === "success" ? "border-success bg-surface" : "border-ink bg-surface"
       }`}
     >

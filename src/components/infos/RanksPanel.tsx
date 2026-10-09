@@ -26,7 +26,7 @@ export async function RanksPanel({ trophies, highestRank }: { trophies: number; 
 
   return (
     <div className="grid gap-5">
-      <section className="grid gap-4 rounded-[1.75rem] border-[3px] border-ink bg-surface p-5 shadow-[0_5px_0_0_var(--mm-shadow)] sm:p-6">
+      <section className="grid gap-4 rounded-[1.75rem] border-2 border-ink bg-surface p-5 shadow-[0_3px_0_0_var(--mm-shadow)] sm:p-6">
         <div className="flex items-center gap-4">
           <RankShield rank={RANKS[current]} size={56} />
           <div>
@@ -87,7 +87,7 @@ export async function RanksPanel({ trophies, highestRank }: { trophies: number; 
                   <span className="text-ink-soft">{t("start")}</span>
                 ) : (
                   <>
-                    <span>🎁 {t("rewardBoosters", { count: reward.boosters })}</span>
+                    <span>{t("rewardBoosters", { count: reward.boosters })}</span>
                     <span className="flex items-center gap-1">
                       + <MemeCoin /> {reward.memeMoney}
                     </span>

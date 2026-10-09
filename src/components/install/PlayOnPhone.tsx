@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { ButtonLink } from "@/components/ui/Button";
+import { publicBaseUrl } from "@/lib/server/site-url";
 import { InstallQr } from "./InstallQr";
 
 /**
@@ -8,14 +9,16 @@ import { InstallQr } from "./InstallQr";
  */
 export async function PlayOnPhone({ compact = false }: { compact?: boolean }) {
   const t = await getTranslations("installer");
+  const site = await publicBaseUrl();
   return (
-    <div className={`flex items-center gap-4 rounded-[1.5rem] border-2 border-ink bg-surface p-4 ${compact ? "" : "shadow-[0_4px_0_0_var(--mm-shadow)]"}`}>
+    <div className={`flex items-center gap-4 rounded-[1.5rem] border-2 border-ink bg-surface p-4 ${compact ? "" : "shadow-[0_3px_0_0_var(--mm-shadow)]"}`}>
       <div className="hidden md:block">
         <InstallQr size={112} label={t("qrLabel")} />
       </div>
       <div className="grid gap-2">
-        <p className="font-extrabold">📱 {t("cta.title")}</p>
+        <p className="font-extrabold">{t("cta.title")}</p>
         <p className="hidden text-sm text-ink-soft md:block">{t("cta.scan")}</p>
+        {!site.https ? <p className="hidden max-w-sm text-xs text-ink-soft md:block">{t("localHint", { url: site.url })}</p> : null}
         <p className="text-sm text-ink-soft md:hidden">{t("cta.tap")}</p>
         {/* Le conteneur porte md:hidden : la classe du bouton imposerait son propre affichage. */}
         <div className="md:hidden">

@@ -17,7 +17,7 @@ export async function RarityShowcase({ className = "" }: { className?: string })
   return (
     <aside
       aria-labelledby="raretes-titre"
-      className={`relative overflow-hidden rounded-[1.75rem] border-[3px] border-ink bg-[var(--mm-night)] p-5 text-white shadow-[0_6px_0_0_var(--color-candy)] ${className}`}
+      className={`relative overflow-hidden rounded-[1.75rem] border-2 border-ink bg-[var(--mm-night)] p-5 text-white shadow-[0_6px_0_0_var(--color-candy)] ${className}`}
     >
       {/* Halo décoratif derrière les cartes */}
       <div

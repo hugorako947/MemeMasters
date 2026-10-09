@@ -240,8 +240,8 @@
     "not_enough_meme_money": "Nicht genug MemeMoney.",
     "no_cards": "Noch keine Karten verfügbar.",
     "card_not_owned": "Du besitzt diese Karte nicht.",
-    "already_max_variant": "Diese Karte ist bereits göttlich.",
-    "not_enough_duplicates": "Nicht genug Duplikate für diese Aufwertung.",
+    "already_max_variant": "Diese Karte ist bereits Göttlich ★★★.",
+    "not_enough_duplicates": "Nicht genug Exemplare für diese Aufwertung.",
     "cannot_sell": "Dieses Exemplar kann nicht verkauft werden.",
     "daily_sell_cap": "Tageslimit für Verkäufe erreicht."
   },
@@ -267,7 +267,8 @@
     "vibeTitle": "Vibe",
     "strongAgainst": "Stark gegen {vibe}",
     "weakAgainst": "Schwach gegen {vibe}",
-    "notOwned": "Diese Karte ist noch nicht in deiner Sammlung. Öffne Booster, um sie zu finden!"
+    "notOwned": "Diese Karte ist noch nicht in deiner Sammlung. Öffne Booster, um sie zu finden!",
+    "statBonus": "+{percent} %"
   },
   "showcase": {
     "title": "Die 7 Seltenheiten",
@@ -289,7 +290,7 @@
       "chipOwned": "Im Besitz",
       "chipSort": "Sortierung: Beliebtheit",
       "filtersLabel": "Beispielfilter",
-      "rankingHint": "🏆 Rangliste: Beliebtheit · Seltenheit · KP · Angriff · Tempo · Siegquote"
+      "rankingHint": "Rangliste: Beliebtheit · Seltenheit · KP · Angriff · Tempo · Siegquote"
     },
     "battle": {
       "title": "Fordere die Welt heraus",
@@ -354,7 +355,7 @@
     "memeMoneyLabel": "{amount} MemeMoney. Shop öffnen"
   },
   "playerHome": {
-    "title": "Hallo {username}!",
+    "title": "Willkommen, {username}",
     "soon": "Bald",
     "boosters": {
       "title": "Booster",
@@ -366,11 +367,8 @@
     },
     "battles": {
       "title": "Kämpfe",
-      "lead": "Tritt mit einem Team aus {team} Karten gegen Spieler deines Rangs an.",
-      "nextReward": "Nächster Rang erreicht → {boosters} Booster und {money} MemeMoney geschenkt",
-      "leadLive": "Spiel deine Karten live, zerstöre die gegnerischen Türme und stürze den König!",
-      "training": "Training",
-      "rankedSoon": "Gewertet: bald"
+      "lead": "Kämpfe kommen bald: Bereite deine Sammlung vor.",
+      "nextReward": "Nächster Rang erreicht → {boosters} Booster und {money} MemeMoney geschenkt"
     },
     "collection": {
       "title": "Sammlung",
@@ -582,64 +580,46 @@
       "text": "Scanne diesen QR-Code mit der Kamera deines Handys: Du siehst die passenden Anweisungen für dein Gerät."
     },
     "benefits": {
-      "fullscreen": "📲 Vollbild, ohne Browserleiste",
-      "oneTap": "⚡ Start mit einem Tipp",
-      "updates": "🔄 Automatische Updates"
+      "fullscreen": "Vollbild, ohne Browserleiste",
+      "oneTap": "Start mit einem Tipp",
+      "updates": "Automatische Updates"
     },
     "cta": {
       "title": "Spiel auch auf dem Handy",
       "scan": "Scanne den QR-Code mit deinem Handy, um das Spiel mit zwei Handgriffen zu installieren.",
       "tap": "Installiere das Spiel mit zwei Handgriffen auf deinem Startbildschirm.",
       "button": "App installieren"
-    }
+    },
+    "localHint": "Lokaler Test: Dein Handy muss im selben WLAN sein wie dieser Computer ({url}). Die Installation als App braucht eine HTTPS-Adresse: siehe README.",
+    "httpWarning": "Du surfst ohne HTTPS: Du kannst auf diesem Handy spielen, aber die Installation als App geht nur mit einer sicheren Adresse (https://), sobald die Seite online ist oder über einen Test-Tunnel."
   },
   "dup": {
-    "variant": {
-      "normal": "Normal",
-      "gold": "Golden",
-      "divine": "Göttlich"
-    },
-    "owned": "{count, plural, one {# Exemplar} other {# Exemplare}} · {dups, plural, =0 {keine Duplikate} one {# Duplikat} other {# Duplikate}}",
-    "upgradeTo": "Aufwerten zu {variant}",
-    "upgradeCost": "{have} / {cost} Duplikate",
-    "maxed": "Göttliche Karte: maximal aufgewertet!",
-    "upgraded": "Deine Karte ist jetzt {variant}!",
+    "owned": "{count, plural, one {# Exemplar} other {# Exemplare}} · {dups, plural, =0 {keine übrig} other {# übrig}}",
+    "upgradeTo": "Nächste Stufe: {level} (Werte +{percent} %)",
+    "upgradeCost": "{have} / {cost} Exemplare",
+    "maxed": "Göttlich ★★★: maximal aufgewertet!",
+    "upgraded": "Deine Karte ist jetzt {level}!",
     "sold": "+{amount} MemeMoney deinem Guthaben hinzugefügt.",
     "capLeft": "Verkauf von gewöhnlichen, seltenen und epischen Karten heute: noch {amount} MemeMoney.",
     "capReached": "Tageslimit für Verkäufe erreicht. Komm morgen wieder!",
     "nothingToSell": "Kein Exemplar dieser Karte zum Verkaufen.",
     "bulk": {
-      "button": "Meine Duplikate verkaufen",
-      "none": "Keine Duplikate zum Verkaufen",
-      "summary": "{cards, plural, one {# Duplikat} other {# Duplikate}} → +{amount} MemeMoney",
+      "button": "Überzählige Exemplare verkaufen",
+      "none": "Keine überzähligen Exemplare zum Verkaufen",
+      "summary": "{cards, plural, one {# Exemplar} other {# Exemplare}} → +{amount} MemeMoney",
       "note": "Von jeder Karte bleibt immer ein Exemplar. Gewöhnliche, seltene und epische Karten stoppen am Tageslimit.",
       "confirm": "Verkauf bestätigen",
       "cancel": "Abbrechen",
       "done": "+{amount} MemeMoney deinem Guthaben hinzugefügt."
     },
     "sellAll": "×{count} verkaufen",
-    "capPartial": "Tageslimit: Heute können {count} von {total} verkauft werden."
-  },
-  "battle": {
-    "title": "Kampf",
-    "quit": "Verlassen",
-    "bot": "Bot",
-    "overtime": "Verlängerung",
-    "doubleEnergy": "Energie ×2!",
-    "selectCard": "Wähle zuerst unten eine Karte.",
-    "notEnough": "Nicht genug Energie.",
-    "invalidZone": "Nicht hier: Lege deine Karten in deiner Hälfte ab.",
-    "arenaLabel": "Arena: Tippe auf einen Punkt in deiner Hälfte, um die gewählte Karte abzulegen.",
-    "cardLabel": "{name}, kostet {cost} Energie",
-    "next": "Nächste",
-    "energyLabel": "Energie: {value} von 10",
-    "victory": "Sieg!",
-    "defeat": "Niederlage",
-    "draw": "Unentschieden",
-    "replay": "Nochmal spielen",
-    "back": "Zurück",
-    "trainingNote": "Training: keine Trophäen, keine MemeMoney.",
-    "trainingShort": "Training",
-    "loaned": "{count, plural, one {# Karte geliehen} other {# Karten geliehen}}, um dein Deck zu vervollständigen"
+    "capPartial": "Tageslimit: Heute können {count} von {total} verkauft werden.",
+    "level": {
+      "0": "Normal",
+      "1": "Golden ★",
+      "2": "Golden ★★",
+      "3": "Göttlich ★★★"
+    },
+    "upgradeButton": "Aufwerten zu {level}"
   }
 }

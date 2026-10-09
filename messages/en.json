@@ -240,8 +240,8 @@
     "not_enough_meme_money": "Not enough MemeMoney.",
     "no_cards": "No card is available yet.",
     "card_not_owned": "You don't own this card.",
-    "already_max_variant": "This card is already Divine.",
-    "not_enough_duplicates": "Not enough duplicates for this upgrade.",
+    "already_max_variant": "This card is already Divine ★★★.",
+    "not_enough_duplicates": "Not enough copies for this upgrade.",
     "cannot_sell": "This copy can't be sold.",
     "daily_sell_cap": "Daily selling limit reached."
   },
@@ -267,7 +267,8 @@
     "vibeTitle": "Vibe",
     "strongAgainst": "Strong against {vibe}",
     "weakAgainst": "Weak against {vibe}",
-    "notOwned": "This card isn't in your collection yet. Open boosters to find it!"
+    "notOwned": "This card isn't in your collection yet. Open boosters to find it!",
+    "statBonus": "+{percent}%"
   },
   "showcase": {
     "title": "The 7 rarities",
@@ -289,7 +290,7 @@
       "chipOwned": "Owned",
       "chipSort": "Sort: popularity",
       "filtersLabel": "Example filters",
-      "rankingHint": "🏆 Ranking: popularity · rarity · HP · attack · speed · win rate"
+      "rankingHint": "Ranking: popularity · rarity · HP · attack · speed · win rate"
     },
     "battle": {
       "title": "Take on the world",
@@ -354,7 +355,7 @@
     "memeMoneyLabel": "{amount} MemeMoney. Open the shop"
   },
   "playerHome": {
-    "title": "Hi {username}!",
+    "title": "Welcome, {username}",
     "soon": "Soon",
     "boosters": {
       "title": "Boosters",
@@ -366,11 +367,8 @@
     },
     "battles": {
       "title": "Battles",
-      "lead": "Face players of your rank with a team of {team} cards.",
-      "nextReward": "Next rank reached → {boosters} boosters and {money} MemeMoney as a gift",
-      "leadLive": "Play your cards live, destroy the enemy towers and take down the king!",
-      "training": "Training",
-      "rankedSoon": "Ranked: soon"
+      "lead": "Battles are coming soon: get your collection ready.",
+      "nextReward": "Next rank reached → {boosters} boosters and {money} MemeMoney as a gift"
     },
     "collection": {
       "title": "Collection",
@@ -582,64 +580,46 @@
       "text": "Scan this QR code with your phone's camera: instructions for your device will appear."
     },
     "benefits": {
-      "fullscreen": "📲 Full screen, no browser bar",
-      "oneTap": "⚡ Opens in one tap",
-      "updates": "🔄 Automatic updates"
+      "fullscreen": "Full screen, no browser bar",
+      "oneTap": "Opens in one tap",
+      "updates": "Automatic updates"
     },
     "cta": {
       "title": "Play on your phone too",
       "scan": "Scan the QR code with your phone to install the game in two taps.",
       "tap": "Install the game on your home screen in two taps.",
       "button": "Install the app"
-    }
+    },
+    "localHint": "Local test: your phone must be on the same Wi-Fi as this computer ({url}). Installing as an app requires an HTTPS address: see the README.",
+    "httpWarning": "You're browsing without HTTPS: you can play from this phone, but installing it as an app requires a secure address (https://), once the site is online or through a test tunnel."
   },
   "dup": {
-    "variant": {
-      "normal": "Standard",
-      "gold": "Golden",
-      "divine": "Divine"
-    },
-    "owned": "{count, plural, one {# copy} other {# copies}} · {dups, plural, =0 {no duplicates} one {# duplicate} other {# duplicates}}",
-    "upgradeTo": "Upgrade to {variant}",
-    "upgradeCost": "{have} / {cost} duplicates",
-    "maxed": "Divine card: fully upgraded!",
-    "upgraded": "Your card is now {variant}!",
+    "owned": "{count, plural, one {# copy} other {# copies}} · {dups, plural, =0 {no extra copies} one {# extra} other {# extra}}",
+    "upgradeTo": "Next level: {level} (stats +{percent}%)",
+    "upgradeCost": "{have} / {cost} copies",
+    "maxed": "Divine ★★★: fully upgraded!",
+    "upgraded": "Your card is now {level}!",
     "sold": "+{amount} MemeMoney added to your balance.",
     "capLeft": "Common, rare and epic sales today: {amount} MemeMoney left.",
     "capReached": "Daily selling limit reached. Come back tomorrow!",
     "nothingToSell": "No extra copy of this card to sell.",
     "bulk": {
-      "button": "Sell my duplicates",
-      "none": "No duplicates to sell",
-      "summary": "{cards, plural, one {# duplicate} other {# duplicates}} → +{amount} MemeMoney",
+      "button": "Sell my extra copies",
+      "none": "No extra copies to sell",
+      "summary": "{cards, plural, one {# copy} other {# copies}} → +{amount} MemeMoney",
       "note": "One copy of each card is always kept. Commons, rares and epics stop at the daily limit.",
       "confirm": "Confirm the sale",
       "cancel": "Cancel",
       "done": "+{amount} MemeMoney added to your balance."
     },
     "sellAll": "Sell ×{count}",
-    "capPartial": "Daily limit: {count} of {total} can be sold today."
-  },
-  "battle": {
-    "title": "Battle",
-    "quit": "Quit",
-    "bot": "Bot",
-    "overtime": "Overtime",
-    "doubleEnergy": "Energy ×2!",
-    "selectCard": "Pick a card at the bottom first.",
-    "notEnough": "Not enough energy.",
-    "invalidZone": "Not here: place your cards on your side.",
-    "arenaLabel": "Arena: tap a spot on your side to place the selected card.",
-    "cardLabel": "{name}, costs {cost} energy",
-    "next": "Next",
-    "energyLabel": "Energy: {value} of 10",
-    "victory": "Victory!",
-    "defeat": "Defeat",
-    "draw": "Draw",
-    "replay": "Play again",
-    "back": "Back",
-    "trainingNote": "Training: no trophies, no MemeMoney.",
-    "trainingShort": "Training",
-    "loaned": "{count, plural, one {# card loaned} other {# cards loaned}} to complete your deck"
+    "capPartial": "Daily limit: {count} of {total} can be sold today.",
+    "level": {
+      "0": "Standard",
+      "1": "Golden ★",
+      "2": "Golden ★★",
+      "3": "Divine ★★★"
+    },
+    "upgradeButton": "Upgrade to {level}"
   }
 }

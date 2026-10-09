@@ -44,7 +44,10 @@ const gameConfigSchema = z
      * conservées d'une vente à l'autre.
      */
     DUPLICATES: z.object({
-      UPGRADES: z.object({ gold: positiveInt, divine: positiveInt }),
+      /** Exemplaires à revendre pour chaque niveau (★, ★★, ★★★), selon la rareté. */
+      UPGRADES: z.record(z.enum(RARITIES), z.tuple([positiveInt, positiveInt, positiveInt])),
+      /** Bonus de statistiques (PV, attaque, défense, vitesse), en %, aux niveaux 0, 1, 2 et 3. */
+      STAT_BONUS_PERCENT: z.tuple([z.literal(0), nonNegativeInt, nonNegativeInt, nonNegativeInt]),
       SELL_CENTS: z.record(z.enum(RARITIES), positiveInt),
       /** À partir de cette rareté, la revente n'entre pas dans le plafond quotidien. */
       CAP_EXEMPT_FROM: z.enum(RARITIES),
@@ -170,8 +173,19 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
   GAME_TAGLINE: "Ouvre des boosters, complète ta collection et affronte des joueurs du monde entier.",
 
   DUPLICATES: {
-    // Dorée : 5 doublons ; Divine : 10 doublons de plus (sur une carte dorée).
-    UPGRADES: { gold: 5, divine: 10 },
+    // Dorée ★ puis Dorée ★★ puis Divine ★★★ : exemplaires à utiliser pour chaque niveau.
+    // Plus la carte est rare, moins il en faut (on en obtient beaucoup moins).
+    UPGRADES: {
+      commune: [5, 10, 15],
+      rare: [4, 8, 12],
+      epique: [3, 6, 9],
+      legendaire: [2, 4, 6],
+      brainrot: [2, 3, 4],
+      superbrainrot: [1, 2, 3],
+      godlevel: [1, 2, 3],
+    },
+    // Volontairement modeste : une carte améliorée reste battable par la même carte non améliorée.
+    STAT_BONUS_PERCENT: [0, 3, 6, 10],
     // 0,1 MemeMoney par commune, 0,25 par rare, 0,5 par épique, puis 3 / 10 / 25 / 60.
     SELL_CENTS: { commune: 10, rare: 25, epique: 50, legendaire: 300, brainrot: 1000, superbrainrot: 2500, godlevel: 6000 },
     // Toutes les raretés se revendent jusqu'au dernier exemplaire (sauf une carte Dorée ou Divine).

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 import { InteractiveCard } from "@/components/card/InteractiveCard";
@@ -52,7 +51,7 @@ export async function PlayerFeatures({
 async function SlideFrame({ lead, tint, soon = false, children }: { lead: string; tint: string; soon?: boolean; children: ReactNode }) {
   const t = await getTranslations("playerHome");
   return (
-    <section className="rounded-[1.75rem] border-[3px] border-ink bg-surface p-4 shadow-[0_5px_0_0_var(--mm-shadow)] sm:p-6">
+    <section className="rounded-[1.75rem] border-2 border-ink bg-surface p-4 shadow-[0_3px_0_0_var(--mm-shadow)] sm:p-6">
       <div className="flex items-start justify-between gap-3">
         <p className="text-ink-soft sm:text-lg">{lead}</p>
         {soon ? (
@@ -83,7 +82,7 @@ async function BattlesSlide({ player }: { player: Player }) {
   const rank = rankFor(player.trophies);
   const next = RANKS[rankIndex(player.trophies) + 1];
   return (
-    <SlideFrame lead={t("leadLive")} tint="bg-[#fff6c9]">
+    <SlideFrame lead={t("lead")} tint="bg-[#fff6c9]" soon>
       <div className="mx-auto grid max-w-lg gap-5">
         <div className="flex items-center gap-3">
           <RankShield rank={rank} size={44} />
@@ -97,22 +96,14 @@ async function BattlesSlide({ player }: { player: Player }) {
         </div>
         {next ? (
           <p className="rounded-xl bg-white px-4 py-2.5 text-sm font-bold">
-            🎁 {t("nextReward", { boosters: RANK_REWARDS[next].boosters, money: RANK_REWARDS[next].memeMoney })}
+            {t("nextReward", { boosters: RANK_REWARDS[next].boosters, money: RANK_REWARDS[next].memeMoney })}
           </p>
         ) : null}
-        <div className="grid gap-2 sm:grid-cols-2">
-          <Link href="/bataille" className="mm-btn mm-btn--primary min-h-12 text-base">
-            ⚔️ {t("training")}
-          </Link>
-          <span className="mm-btn mm-btn--secondary min-h-12 cursor-not-allowed text-base opacity-60" aria-disabled="true">
-            🏆 {t("rankedSoon")}
-          </span>
-        </div>
         <div className="mx-auto grid w-full max-w-sm grid-cols-[1fr_auto_1fr] items-center gap-3">
           <div className="-rotate-6">
             <InteractiveCard card={sampleOf("epique")} size="compact" />
           </div>
-          <span className="meme-caption grid size-14 place-items-center rounded-full border-[3px] border-[#1a1238] bg-sticker text-2xl" aria-hidden="true">
+          <span className="meme-caption grid size-14 place-items-center rounded-full border-2 border-[#1a1238] bg-sticker text-2xl" aria-hidden="true">
             VS
           </span>
           <div className="rotate-6">
@@ -128,7 +119,7 @@ async function BattlesSlide({ player }: { player: Player }) {
 async function CollectionSlide({ items, resaleLeftCents }: { items: CollectionItem[]; resaleLeftCents: number }) {
   const t = await getTranslations("playerHome.collection");
   return (
-    <section className="rounded-[1.75rem] border-[3px] border-ink bg-surface p-4 shadow-[0_5px_0_0_var(--mm-shadow)] sm:p-6">
+    <section className="rounded-[1.75rem] border-2 border-ink bg-surface p-4 shadow-[0_3px_0_0_var(--mm-shadow)] sm:p-6">
       <p className="mb-4 text-ink-soft sm:text-lg">{t("lead")}</p>
       <CollectionBrowser items={items} resaleLeftCents={resaleLeftCents} />
     </section>

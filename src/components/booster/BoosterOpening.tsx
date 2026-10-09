@@ -98,7 +98,7 @@ export function BoosterOpening({ kind, onClose }: { kind: BoosterKind; onClose: 
 
   return createPortal(
     <dialog ref={ref} className="mm-detail" aria-label={t("title")}>
-      <div className="relative grid max-h-[inherit] gap-5 overflow-y-auto rounded-[1.75rem] border-[3px] border-ink bg-paper p-4 shadow-[0_8px_0_0_var(--mm-shadow)] sm:p-6">
+      <div className="relative grid max-h-[inherit] gap-5 overflow-y-auto rounded-[1.75rem] border-2 border-ink bg-paper p-4 shadow-[0_5px_0_0_var(--mm-shadow)] sm:p-6">
         {phase !== "reveal" ? (
           <div className="grid justify-items-center gap-5 py-6">
             <button

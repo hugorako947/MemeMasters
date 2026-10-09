@@ -5,6 +5,7 @@ import { useCallback, useMemo, useRef, type PointerEvent } from "react";
 import { RARITY_GLYPH, rarityTier } from "@/config/rarities";
 import { VIBE_EMOJI } from "@/config/vibes";
 import { cardArtDataUri } from "@/lib/art/generate";
+import { boostedStats, lookOf, type Level } from "@/lib/economy/duplicates";
 import type { Card } from "@/lib/validation/card";
 
 export type MemeCardSize = "full" | "compact";
@@ -16,8 +17,8 @@ export interface MemeCardProps {
   static?: boolean;
   /** false : carte non possédée, en niveaux de gris et floutée (seul le nom reste lisible). */
   owned?: boolean;
-  /** Amélioration cosmétique de la carte (Dorée, Divine). */
-  variant?: "normal" | "gold" | "divine";
+  /** Niveau d'amélioration : 0 normale, 1 Dorée ★, 2 Dorée ★★, 3 Divine ★★★. */
+  level?: Level;
   /** Si fourni, la carte devient cliquable et ouvre sa fiche détaillée. */
   onOpen?: () => void;
   className?: string;
@@ -38,11 +39,13 @@ export function MemeCard({
   size = "full",
   static: isStatic = false,
   owned = true,
-  variant = "normal",
+  level = 0,
   onOpen,
   className,
 }: MemeCardProps) {
   const t = useTranslations();
+  // Les améliorations augmentent un peu les statistiques affichées (et utilisées en combat).
+  const stats = boostedStats(card, level);
   const ref = useRef<HTMLElement>(null);
   const tier = rarityTier(card.rarity);
   const art = useMemo(
@@ -88,9 +91,9 @@ export function MemeCard({
       data-rarity={card.rarity}
       data-size={size}
       data-owned={owned ? "true" : "false"}
-      data-variant={variant}
+      data-variant={lookOf(level)}
       data-active="false"
-      aria-label={t("card.ariaLabel", { name: card.name, rarity: rarityLabel, vibe: vibeLabel, hp: card.hp })}
+      aria-label={t("card.ariaLabel", { name: card.name, rarity: rarityLabel, vibe: vibeLabel, hp: stats.hp })}
       onPointerMove={onMove}
       onPointerLeave={onLeave}
       onPointerCancel={onLeave}
@@ -100,7 +103,7 @@ export function MemeCard({
           <div className="mm-card__inner">
             <header className="mm-card__head">
               <span className="mm-card__hp">
-                {card.hp}
+                {stats.hp}
                 <abbr title={t("card.hp")}>{t("card.hp")}</abbr>
               </span>
               <span className="mm-card__vibe">
@@ -114,6 +117,7 @@ export function MemeCard({
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={art} alt="" draggable={false} decoding="async" />
               <div className="mm-card__fx" aria-hidden="true" />
+              {level > 0 ? <LevelBadge level={level} /> : null}
               <p className="mm-card__caption meme-caption" aria-hidden="true">
                 {card.name}
               </p>
@@ -123,15 +127,15 @@ export function MemeCard({
               <dl className="mm-card__stats">
                 <div className="mm-card__stat">
                   <dt>{t("card.atk")}</dt>
-                  <dd>{card.atk}</dd>
+                  <dd>{stats.atk}</dd>
                 </div>
                 <div className="mm-card__stat">
                   <dt>{t("card.def")}</dt>
-                  <dd>{card.def}</dd>
+                  <dd>{stats.def}</dd>
                 </div>
                 <div className="mm-card__stat">
                   <dt>{t("card.spd")}</dt>
-                  <dd>{card.spd}</dd>
+                  <dd>{stats.spd}</dd>
                 </div>
               </dl>
               <ul className="mm-card__moves">
@@ -183,5 +187,29 @@ export function MemeCard({
         />
       ) : null}
     </article>
+  );
+}
+
+/**
+ * Insigne des cartes améliorées : une ou deux étoiles dorées (Dorée ★, ★★),
+ * trois étoiles blanches et argentées qui brillent (Divine ★★★). Il distingue
+ * une carte Dorée d'une carte de rareté Légendaire, elle aussi dorée.
+ */
+function LevelBadge({ level }: { level: Level }) {
+  const look = lookOf(level);
+  return (
+    <span className="mm-card__variant" data-variant={look} aria-hidden="true">
+      {Array.from({ length: level }, (_, i) => (
+        <svg key={i} viewBox="0 0 24 24" className="mm-card__star">
+          <path
+            d="M12 2.8l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.6l-5.4 2.9 1.1-6.1-4.5-4.2 6.1-.8z"
+            fill={look === "divine" ? "#ffffff" : "#ffd23f"}
+            stroke={look === "divine" ? "#7d89a6" : "#4a3200"}
+            strokeWidth="1.8"
+            strokeLinejoin="round"
+          />
+        </svg>
+      ))}
+    </span>
   );
 }

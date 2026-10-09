@@ -35,7 +35,7 @@ export function ContactForm({ defaultEmail }: { defaultEmail: string }) {
   if (sent) return <FormMessage tone="success">{t("sent")}</FormMessage>;
 
   return (
-    <form onSubmit={onSubmit} className="grid gap-4 rounded-[1.5rem] border-2 border-ink bg-surface p-5 shadow-[0_4px_0_0_var(--mm-shadow)]" noValidate>
+    <form onSubmit={onSubmit} className="grid gap-4 rounded-[1.5rem] border-2 border-ink bg-surface p-5 shadow-[0_3px_0_0_var(--mm-shadow)]" noValidate>
       <RequiredNote>{t("required")}</RequiredNote>
       <Field
         label={t("email")}

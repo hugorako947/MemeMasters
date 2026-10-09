@@ -240,8 +240,8 @@
     "not_enough_meme_money": "Pas assez de MemeMoney.",
     "no_cards": "Aucune carte n'est disponible pour l'instant.",
     "card_not_owned": "Tu ne possèdes pas cette carte.",
-    "already_max_variant": "Cette carte est déjà Divine.",
-    "not_enough_duplicates": "Pas assez de doublons pour cette amélioration.",
+    "already_max_variant": "Cette carte est déjà Divine ★★★.",
+    "not_enough_duplicates": "Pas assez d'exemplaires pour cette amélioration.",
     "cannot_sell": "Cet exemplaire ne peut pas être revendu.",
     "daily_sell_cap": "Limite de revente du jour atteinte."
   },
@@ -267,7 +267,8 @@
     "vibeTitle": "Vibe",
     "strongAgainst": "Forte contre {vibe}",
     "weakAgainst": "Faible contre {vibe}",
-    "notOwned": "Cette carte n'est pas encore dans ta collection. Ouvre des boosters pour la trouver !"
+    "notOwned": "Cette carte n'est pas encore dans ta collection. Ouvre des boosters pour la trouver !",
+    "statBonus": "+{percent} %"
   },
   "showcase": {
     "title": "Les 7 raretés",
@@ -289,7 +290,7 @@
       "chipOwned": "Possédées",
       "chipSort": "Tri : popularité",
       "filtersLabel": "Exemples de filtres",
-      "rankingHint": "🏆 Classement : popularité · rareté · PV · attaque · vitesse · taux de victoire"
+      "rankingHint": "Classement : popularité · rareté · PV · attaque · vitesse · taux de victoire"
     },
     "battle": {
       "title": "Affronte le monde",
@@ -354,7 +355,7 @@
     "memeMoneyLabel": "{amount} MemeMoney. Ouvrir la boutique"
   },
   "playerHome": {
-    "title": "Salut {username} !",
+    "title": "Bienvenue, {username}",
     "soon": "Bientôt",
     "boosters": {
       "title": "Boosters",
@@ -366,11 +367,8 @@
     },
     "battles": {
       "title": "Batailles",
-      "lead": "Affronte des joueurs de ton rang avec une équipe de {team} cartes.",
-      "nextReward": "Prochain rang atteint → {boosters} boosters et {money} MemeMoney offerts",
-      "leadLive": "Pose tes cartes en direct, détruis les tours adverses et fais tomber le roi !",
-      "training": "Entraînement",
-      "rankedSoon": "Classée : bientôt"
+      "lead": "Les batailles arrivent bientôt : prépare ta collection.",
+      "nextReward": "Prochain rang atteint → {boosters} boosters et {money} MemeMoney offerts"
     },
     "collection": {
       "title": "Collection",
@@ -582,64 +580,46 @@
       "text": "Scanne ce QR code avec l'appareil photo de ton téléphone : les instructions s'afficheront, adaptées à ton appareil."
     },
     "benefits": {
-      "fullscreen": "📲 Plein écran, sans barre de navigateur",
-      "oneTap": "⚡ Lancement en un geste",
-      "updates": "🔄 Mises à jour automatiques"
+      "fullscreen": "Plein écran, sans barre de navigateur",
+      "oneTap": "Lancement en un geste",
+      "updates": "Mises à jour automatiques"
     },
     "cta": {
       "title": "Joue aussi sur ton téléphone",
       "scan": "Scanne le QR code avec ton téléphone pour installer le jeu en deux gestes.",
       "tap": "Installe le jeu sur ton écran d'accueil en deux gestes.",
       "button": "Installer l'application"
-    }
+    },
+    "localHint": "Test local : ton téléphone doit être sur le même Wi-Fi que cet ordinateur ({url}). L'installation comme application demande une adresse HTTPS : voir le README.",
+    "httpWarning": "Tu consultes le site sans HTTPS : tu peux jouer depuis ce téléphone, mais l'installer comme application n'est possible qu'avec une adresse sécurisée (https://), une fois le site en ligne ou via un tunnel de test."
   },
   "dup": {
-    "variant": {
-      "normal": "Normale",
-      "gold": "Dorée",
-      "divine": "Divine"
-    },
-    "owned": "{count, plural, one {# exemplaire} other {# exemplaires}} · {dups, plural, =0 {aucun doublon} one {# doublon} other {# doublons}}",
-    "upgradeTo": "Passer en {variant}",
-    "upgradeCost": "{have} / {cost} doublons",
-    "maxed": "Carte Divine : amélioration maximale !",
-    "upgraded": "Ta carte est maintenant {variant} !",
+    "owned": "{count, plural, one {# exemplaire} other {# exemplaires}} · {dups, plural, =0 {aucun en trop} other {# en trop}}",
+    "upgradeTo": "Prochain niveau : {level} (statistiques +{percent} %)",
+    "upgradeCost": "{have} / {cost} exemplaires",
+    "maxed": "Divine ★★★ : amélioration maximale !",
+    "upgraded": "Ta carte est maintenant {level} !",
     "sold": "+{amount} MemeMoney ajoutés à ton solde.",
     "capLeft": "Revente de communes, rares et épiques aujourd'hui : encore {amount} MemeMoney.",
     "capReached": "Limite de revente du jour atteinte. Reviens demain !",
     "nothingToSell": "Aucun exemplaire à revendre pour cette carte.",
     "bulk": {
-      "button": "Revendre mes doublons",
-      "none": "Aucun doublon à revendre",
-      "summary": "{cards, plural, one {# doublon} other {# doublons}} → +{amount} MemeMoney",
+      "button": "Revendre mes exemplaires en trop",
+      "none": "Aucun exemplaire en trop à revendre",
+      "summary": "{cards, plural, one {# exemplaire} other {# exemplaires}} → +{amount} MemeMoney",
       "note": "Un exemplaire de chaque carte est toujours gardé. Les communes, rares et épiques s'arrêtent à la limite du jour.",
       "confirm": "Confirmer la revente",
       "cancel": "Annuler",
       "done": "+{amount} MemeMoney ajoutés à ton solde."
     },
     "sellAll": "Revendre ×{count}",
-    "capPartial": "Limite du jour : {count} sur {total} peuvent être revendus aujourd'hui."
-  },
-  "battle": {
-    "title": "Bataille",
-    "quit": "Quitter",
-    "bot": "Bot",
-    "overtime": "Prolongation",
-    "doubleEnergy": "Énergie ×2 !",
-    "selectCard": "Choisis d'abord une carte en bas.",
-    "notEnough": "Pas assez d'énergie.",
-    "invalidZone": "Pas ici : pose tes cartes dans ton camp.",
-    "arenaLabel": "Arène : touche une case de ton camp pour y poser la carte choisie.",
-    "cardLabel": "{name}, coûte {cost} d'énergie",
-    "next": "Suivante",
-    "energyLabel": "Énergie : {value} sur 10",
-    "victory": "Victoire !",
-    "defeat": "Défaite",
-    "draw": "Égalité",
-    "replay": "Rejouer",
-    "back": "Retour",
-    "trainingNote": "Entraînement : ni trophées ni MemeMoney.",
-    "trainingShort": "Entraînement",
-    "loaned": "{count, plural, one {# carte prêtée} other {# cartes prêtées}} pour compléter ton deck"
+    "capPartial": "Limite du jour : {count} sur {total} peuvent être revendus aujourd'hui.",
+    "level": {
+      "0": "Normale",
+      "1": "Dorée ★",
+      "2": "Dorée ★★",
+      "3": "Divine ★★★"
+    },
+    "upgradeButton": "Passer en {level}"
   }
 }

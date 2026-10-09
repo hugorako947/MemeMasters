@@ -240,8 +240,8 @@
     "not_enough_meme_money": "MemeMoney 不足。",
     "no_cards": "暂时还没有可用的卡牌。",
     "card_not_owned": "你没有这张卡牌。",
-    "already_max_variant": "这张卡牌已经是神圣等级。",
-    "not_enough_duplicates": "重复卡不足，无法升级。",
+    "already_max_variant": "这张卡牌已经是神圣 ★★★。",
+    "not_enough_duplicates": "多余的卡牌不足，无法升级。",
     "cannot_sell": "这张卡牌无法出售。",
     "daily_sell_cap": "今日出售额度已用完。"
   },
@@ -267,7 +267,8 @@
     "vibeTitle": "氛围",
     "strongAgainst": "克制{vibe}",
     "weakAgainst": "被{vibe}克制",
-    "notOwned": "这张卡牌还不在你的收藏中。开卡包去找它吧！"
+    "notOwned": "这张卡牌还不在你的收藏中。开卡包去找它吧！",
+    "statBonus": "+{percent}%"
   },
   "showcase": {
     "title": "7 种稀有度",
@@ -289,7 +290,7 @@
       "chipOwned": "已拥有",
       "chipSort": "排序：人气",
       "filtersLabel": "筛选示例",
-      "rankingHint": "🏆 排行：人气 · 稀有度 · 生命 · 攻击 · 速度 · 胜率"
+      "rankingHint": "排行：人气 · 稀有度 · 生命 · 攻击 · 速度 · 胜率"
     },
     "battle": {
       "title": "挑战全世界",
@@ -354,7 +355,7 @@
     "memeMoneyLabel": "{amount} MemeMoney。打开商店"
   },
   "playerHome": {
-    "title": "你好，{username}！",
+    "title": "欢迎，{username}",
     "soon": "即将推出",
     "boosters": {
       "title": "卡包",
@@ -366,11 +367,8 @@
     },
     "battles": {
       "title": "对战",
-      "lead": "用 {team} 张卡牌组成的队伍，挑战与你同段位的玩家。",
-      "nextReward": "达到下一段位 → 赠送 {boosters} 个卡包和 {money} MemeMoney",
-      "leadLive": "实时出牌，摧毁敌方塔楼，击倒国王！",
-      "training": "训练",
-      "rankedSoon": "排位赛：即将推出"
+      "lead": "对战即将上线：先准备好你的收藏吧。",
+      "nextReward": "达到下一段位 → 赠送 {boosters} 个卡包和 {money} MemeMoney"
     },
     "collection": {
       "title": "收藏",
@@ -582,64 +580,46 @@
       "text": "用手机相机扫描这个二维码：会显示适合你设备的安装说明。"
     },
     "benefits": {
-      "fullscreen": "📲 全屏显示，没有浏览器栏",
-      "oneTap": "⚡ 一键启动",
-      "updates": "🔄 自动更新"
+      "fullscreen": "全屏显示，没有浏览器栏",
+      "oneTap": "一键启动",
+      "updates": "自动更新"
     },
     "cta": {
       "title": "也可以在手机上玩",
       "scan": "用手机扫描二维码，两步安装游戏。",
       "tap": "两步把游戏安装到主屏幕。",
       "button": "安装应用"
-    }
+    },
+    "localHint": "本地测试：手机需要和这台电脑连接同一个 Wi-Fi（{url}）。安装为应用需要 HTTPS 地址：请查看 README。",
+    "httpWarning": "当前没有使用 HTTPS：你可以在这台手机上玩，但只有在安全地址（https://）下才能安装为应用，也就是网站上线后或通过测试隧道。"
   },
   "dup": {
-    "variant": {
-      "normal": "普通",
-      "gold": "金色",
-      "divine": "神圣"
-    },
-    "owned": "{count, plural, other {# 张}} · {dups, plural, =0 {没有重复} other {# 张重复}}",
-    "upgradeTo": "升级为{variant}",
-    "upgradeCost": "{have} / {cost} 张重复卡",
-    "maxed": "神圣卡牌：已达最高等级！",
-    "upgraded": "你的卡牌已升级为{variant}！",
+    "owned": "{count, plural, other {# 张}} · {dups, plural, =0 {没有多余} other {多余 # 张}}",
+    "upgradeTo": "下一级：{level}（属性 +{percent}%）",
+    "upgradeCost": "{have} / {cost} 张",
+    "maxed": "神圣 ★★★：已达最高等级！",
+    "upgraded": "你的卡牌已升级为{level}！",
     "sold": "已获得 +{amount} MemeMoney。",
     "capLeft": "今日普通、稀有、史诗卡出售额度：还剩 {amount} MemeMoney。",
     "capReached": "今日出售额度已用完，明天再来吧！",
     "nothingToSell": "这张卡牌没有可出售的。",
     "bulk": {
-      "button": "出售我的重复卡",
-      "none": "没有可出售的重复卡",
-      "summary": "{cards, plural, other {# 张重复卡}} → +{amount} MemeMoney",
+      "button": "出售多余的卡牌",
+      "none": "没有可出售的多余卡牌",
+      "summary": "{cards, plural, other {# 张}} → +{amount} MemeMoney",
       "note": "每张卡牌都会保留一张。普通、稀有和史诗卡受每日额度限制。",
       "confirm": "确认出售",
       "cancel": "取消",
       "done": "已获得 +{amount} MemeMoney。"
     },
     "sellAll": "出售 ×{count}",
-    "capPartial": "今日额度：{total} 张中今天可出售 {count} 张。"
-  },
-  "battle": {
-    "title": "对战",
-    "quit": "退出",
-    "bot": "机器人",
-    "overtime": "加时赛",
-    "doubleEnergy": "能量 ×2！",
-    "selectCard": "先在下方选择一张卡牌。",
-    "notEnough": "能量不足。",
-    "invalidZone": "这里不行：请把卡牌放在你的半场。",
-    "arenaLabel": "竞技场：点击你半场的位置放置所选卡牌。",
-    "cardLabel": "{name}，消耗 {cost} 点能量",
-    "next": "下一张",
-    "energyLabel": "能量：{value} / 10",
-    "victory": "胜利！",
-    "defeat": "失败",
-    "draw": "平局",
-    "replay": "再来一局",
-    "back": "返回",
-    "trainingNote": "训练模式：不获得奖杯和 MemeMoney。",
-    "trainingShort": "训练",
-    "loaned": "借用 {count} 张卡牌补全你的卡组"
+    "capPartial": "今日额度：{total} 张中今天可出售 {count} 张。",
+    "level": {
+      "0": "普通",
+      "1": "金色 ★",
+      "2": "金色 ★★",
+      "3": "神圣 ★★★"
+    },
+    "upgradeButton": "升级为{level}"
   }
 }

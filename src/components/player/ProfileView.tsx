@@ -64,9 +64,9 @@ export async function ProfileView({ profile }: { profile: PublicProfile; viewer:
 
       <Panel className="grid gap-5">
         <dl className="grid grid-cols-3 gap-3 text-center">
-          <Stat label={t("wins")} value={format.number(profile.wins)} sub={percent(profile.wins)} tone="text-success" />
-          <Stat label={t("draws")} value={format.number(profile.draws)} sub={percent(profile.draws)} tone="text-ink-soft" />
-          <Stat label={t("losses")} value={format.number(profile.losses)} sub={percent(profile.losses)} tone="text-danger" />
+          <Stat label={t("wins")} value={format.number(profile.wins)} sub={percent(profile.wins)} />
+          <Stat label={t("draws")} value={format.number(profile.draws)} sub={percent(profile.draws)} />
+          <Stat label={t("losses")} value={format.number(profile.losses)} sub={percent(profile.losses)} />
         </dl>
         <div className="mm-keep-colors flex h-4 overflow-hidden rounded-full border-2 border-ink bg-line" aria-hidden="true">
           <span style={{ width: `${pct(profile.wins) * 100}%` }} className="bg-[#12a150]" />

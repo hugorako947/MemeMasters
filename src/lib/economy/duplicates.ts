@@ -1,28 +1,43 @@
 /**
- * Doublons : améliorations (Dorée, Divine) et revente contre de la MemeMoney.
+ * Exemplaires en trop : améliorations (Dorée ★, Dorée ★★, Divine ★★★) et
+ * revente contre de la MemeMoney.
  * Fonctions pures, utilisées par le serveur (qui décide) et par l'interface
  * (qui affiche un aperçu). Les montants sont en centièmes de MemeMoney.
  */
 import { GAME_CONFIG } from "@/config/game.config";
 import { isAtLeast, RARITIES, type Rarity } from "@/config/rarities";
 
-export const VARIANTS = ["normal", "gold", "divine"] as const;
-export type Variant = (typeof VARIANTS)[number];
+/** Niveau d'amélioration : 0 normale, 1 Dorée ★, 2 Dorée ★★, 3 Divine ★★★. */
+export const LEVELS = [0, 1, 2, 3] as const;
+export type Level = (typeof LEVELS)[number];
+export const MAX_LEVEL: Level = 3;
 
-/** Prochaine amélioration possible et son coût en doublons, ou null si la carte est déjà Divine. */
-export function nextUpgrade(variant: Variant, config = GAME_CONFIG.DUPLICATES): { to: Variant; cost: number } | null {
-  if (variant === "normal") return { to: "gold", cost: config.UPGRADES.gold };
-  if (variant === "gold") return { to: "divine", cost: config.UPGRADES.divine };
-  return null;
+/** Apparence correspondant au niveau : dorée (★, ★★) ou divine (★★★). */
+export function lookOf(level: Level): "normal" | "gold" | "divine" {
+  return level === 0 ? "normal" : level === MAX_LEVEL ? "divine" : "gold";
 }
 
-/** Doublons = exemplaires au-delà du premier. */
+/** Prochain niveau et son coût en exemplaires, ou null si la carte est déjà Divine ★★★. */
+export function nextUpgrade(rarity: Rarity, level: Level, config = GAME_CONFIG.DUPLICATES): { to: Level; cost: number } | null {
+  if (level >= MAX_LEVEL) return null;
+  return { to: (level + 1) as Level, cost: config.UPGRADES[rarity][level as 0 | 1 | 2] };
+}
+
+/** Statistiques augmentées par l'amélioration (arrondies, jamais en dessous de la carte de base). */
+export function boostedStats<T extends { hp: number; atk: number; def: number; spd: number }>(card: T, level: Level, config = GAME_CONFIG.DUPLICATES): T {
+  const pct = config.STAT_BONUS_PERCENT[level];
+  if (!pct) return card;
+  const up = (v: number) => Math.round((v * (100 + pct)) / 100);
+  return { ...card, hp: up(card.hp), atk: up(card.atk), def: up(card.def), spd: up(card.spd) };
+}
+
+/** Exemplaires en trop = exemplaires au-delà du premier. */
 export function duplicatesOf(quantity: number): number {
   return Math.max(0, quantity - 1);
 }
 
-export function canUpgrade(quantity: number, variant: Variant): boolean {
-  const next = nextUpgrade(variant);
+export function canUpgrade(rarity: Rarity, quantity: number, level: Level): boolean {
+  const next = nextUpgrade(rarity, level);
   return next !== null && duplicatesOf(quantity) >= next.cost;
 }
 
@@ -65,12 +80,11 @@ export interface BulkItem {
   cardId: string;
   rarity: Rarity;
   quantity: number;
-  variant: Variant;
 }
 
 /**
- * « Revendre tous mes doublons » : uniquement des doublons (un exemplaire est
- * toujours gardé), des raretés les plus courantes aux plus rares. Les
+ * « Revendre mes exemplaires en trop » : un exemplaire de chaque carte est
+ * toujours gardé ; des raretés les plus courantes aux plus rares. Les
  * communes, rares et épiques s'arrêtent au plafond du jour.
  */
 export function planBulkSale(

@@ -27,7 +27,7 @@ export function LeaderboardPanel({
   const caption = scope === "around" ? t("around", { window }) : scope === "rank" ? t("rank", { rank: rankName }) : t("world");
 
   return (
-    <section className="grid gap-4 rounded-[1.75rem] border-[3px] border-ink bg-surface p-4 shadow-[0_5px_0_0_var(--mm-shadow)] sm:p-6">
+    <section className="grid gap-4 rounded-[1.75rem] border-2 border-ink bg-surface p-4 shadow-[0_3px_0_0_var(--mm-shadow)] sm:p-6">
       <div role="radiogroup" aria-label={t("scopeLabel")} className="flex flex-wrap justify-center gap-2">
         {SCOPES.map((s) => (
           <button

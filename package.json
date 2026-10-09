@@ -20,7 +20,8 @@
     "doctor": "tsx scripts/doctor.mts",
     "cards:sql": "tsx scripts/generate-cards-sql.mts",
     "predev": "node scripts/check-deps.mjs",
-    "prebuild": "node scripts/check-deps.mjs"
+    "prebuild": "node scripts/check-deps.mjs",
+    "tunnel": "cloudflared tunnel --url http://localhost:3000"
   },
   "dependencies": {
     "@fontsource-variable/bricolage-grotesque": "^5.3.0",

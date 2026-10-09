@@ -240,8 +240,8 @@
     "not_enough_meme_money": "No tienes suficiente MemeMoney.",
     "no_cards": "Todavía no hay cartas disponibles.",
     "card_not_owned": "No tienes esta carta.",
-    "already_max_variant": "Esta carta ya es Divina.",
-    "not_enough_duplicates": "No tienes suficientes duplicados para esta mejora.",
+    "already_max_variant": "Esta carta ya es Divina ★★★.",
+    "not_enough_duplicates": "No tienes suficientes ejemplares para esta mejora.",
     "cannot_sell": "Este ejemplar no se puede vender.",
     "daily_sell_cap": "Límite de ventas del día alcanzado."
   },
@@ -267,7 +267,8 @@
     "vibeTitle": "Vibe",
     "strongAgainst": "Fuerte contra {vibe}",
     "weakAgainst": "Débil contra {vibe}",
-    "notOwned": "Esta carta aún no está en tu colección. ¡Abre sobres para encontrarla!"
+    "notOwned": "Esta carta aún no está en tu colección. ¡Abre sobres para encontrarla!",
+    "statBonus": "+{percent} %"
   },
   "showcase": {
     "title": "Las 7 rarezas",
@@ -289,7 +290,7 @@
       "chipOwned": "Obtenidas",
       "chipSort": "Orden: popularidad",
       "filtersLabel": "Ejemplos de filtros",
-      "rankingHint": "🏆 Clasificación: popularidad · rareza · PS · ataque · velocidad · % de victorias"
+      "rankingHint": "Clasificación: popularidad · rareza · PS · ataque · velocidad · % de victorias"
     },
     "battle": {
       "title": "Enfréntate al mundo",
@@ -354,7 +355,7 @@
     "memeMoneyLabel": "{amount} MemeMoney. Abrir la tienda"
   },
   "playerHome": {
-    "title": "¡Hola, {username}!",
+    "title": "Bienvenido, {username}",
     "soon": "Pronto",
     "boosters": {
       "title": "Sobres",
@@ -366,11 +367,8 @@
     },
     "battles": {
       "title": "Batallas",
-      "lead": "Enfréntate a jugadores de tu rango con un equipo de {team} cartas.",
-      "nextReward": "Próximo rango alcanzado → {boosters} sobres y {money} MemeMoney de regalo",
-      "leadLive": "¡Juega tus cartas en directo, destruye las torres rivales y derriba al rey!",
-      "training": "Entrenamiento",
-      "rankedSoon": "Clasificatoria: pronto"
+      "lead": "Las batallas llegan pronto: prepara tu colección.",
+      "nextReward": "Próximo rango alcanzado → {boosters} sobres y {money} MemeMoney de regalo"
     },
     "collection": {
       "title": "Colección",
@@ -582,64 +580,46 @@
       "text": "Escanea este código QR con la cámara de tu móvil: verás las instrucciones para tu dispositivo."
     },
     "benefits": {
-      "fullscreen": "📲 Pantalla completa, sin barra del navegador",
-      "oneTap": "⚡ Se abre con un toque",
-      "updates": "🔄 Actualizaciones automáticas"
+      "fullscreen": "Pantalla completa, sin barra del navegador",
+      "oneTap": "Se abre con un toque",
+      "updates": "Actualizaciones automáticas"
     },
     "cta": {
       "title": "Juega también en tu móvil",
       "scan": "Escanea el código QR con tu móvil para instalar el juego en dos gestos.",
       "tap": "Instala el juego en tu pantalla de inicio en dos gestos.",
       "button": "Instalar la aplicación"
-    }
+    },
+    "localHint": "Prueba local: tu móvil debe estar en la misma red Wi-Fi que este ordenador ({url}). Instalarlo como app requiere una dirección HTTPS: consulta el README.",
+    "httpWarning": "Navegas sin HTTPS: puedes jugar desde este móvil, pero instalarlo como app solo es posible con una dirección segura (https://), cuando el sitio esté en línea o con un túnel de prueba."
   },
   "dup": {
-    "variant": {
-      "normal": "Normal",
-      "gold": "Dorada",
-      "divine": "Divina"
-    },
-    "owned": "{count, plural, one {# ejemplar} other {# ejemplares}} · {dups, plural, =0 {ningún duplicado} one {# duplicado} other {# duplicados}}",
-    "upgradeTo": "Pasar a {variant}",
-    "upgradeCost": "{have} / {cost} duplicados",
-    "maxed": "Carta Divina: ¡mejora máxima!",
-    "upgraded": "¡Tu carta ahora es {variant}!",
+    "owned": "{count, plural, one {# ejemplar} other {# ejemplares}} · {dups, plural, =0 {ninguno de sobra} one {# de sobra} other {# de sobra}}",
+    "upgradeTo": "Siguiente nivel: {level} (estadísticas +{percent} %)",
+    "upgradeCost": "{have} / {cost} ejemplares",
+    "maxed": "Divina ★★★: ¡mejora máxima!",
+    "upgraded": "¡Tu carta ahora es {level}!",
     "sold": "+{amount} MemeMoney añadidos a tu saldo.",
     "capLeft": "Ventas de comunes, raras y épicas hoy: quedan {amount} MemeMoney.",
     "capReached": "Límite de ventas del día alcanzado. ¡Vuelve mañana!",
     "nothingToSell": "No hay ejemplares de esta carta para vender.",
     "bulk": {
-      "button": "Vender mis duplicados",
-      "none": "No hay duplicados para vender",
-      "summary": "{cards, plural, one {# duplicado} other {# duplicados}} → +{amount} MemeMoney",
+      "button": "Vender mis ejemplares de sobra",
+      "none": "No hay ejemplares de sobra para vender",
+      "summary": "{cards, plural, one {# ejemplar} other {# ejemplares}} → +{amount} MemeMoney",
       "note": "Siempre se conserva un ejemplar de cada carta. Las comunes, raras y épicas se detienen en el límite del día.",
       "confirm": "Confirmar la venta",
       "cancel": "Cancelar",
       "done": "+{amount} MemeMoney añadidos a tu saldo."
     },
     "sellAll": "Vender ×{count}",
-    "capPartial": "Límite del día: hoy se pueden vender {count} de {total}."
-  },
-  "battle": {
-    "title": "Batalla",
-    "quit": "Salir",
-    "bot": "Bot",
-    "overtime": "Prórroga",
-    "doubleEnergy": "¡Energía ×2!",
-    "selectCard": "Primero elige una carta abajo.",
-    "notEnough": "No tienes suficiente energía.",
-    "invalidZone": "Aquí no: coloca tus cartas en tu campo.",
-    "arenaLabel": "Arena: toca un punto de tu campo para colocar la carta elegida.",
-    "cardLabel": "{name}, cuesta {cost} de energía",
-    "next": "Siguiente",
-    "energyLabel": "Energía: {value} de 10",
-    "victory": "¡Victoria!",
-    "defeat": "Derrota",
-    "draw": "Empate",
-    "replay": "Jugar otra vez",
-    "back": "Volver",
-    "trainingNote": "Entrenamiento: sin trofeos ni MemeMoney.",
-    "trainingShort": "Entrenamiento",
-    "loaned": "{count, plural, one {# carta prestada} other {# cartas prestadas}} para completar tu mazo"
+    "capPartial": "Límite del día: hoy se pueden vender {count} de {total}.",
+    "level": {
+      "0": "Normal",
+      "1": "Dorada ★",
+      "2": "Dorada ★★",
+      "3": "Divina ★★★"
+    },
+    "upgradeButton": "Pasar a {level}"
   }
 }

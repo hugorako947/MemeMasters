@@ -5,13 +5,13 @@ import { useRouter } from "next/navigation";
 import { useRef, useState, type MouseEvent } from "react";
 import { GAME_CONFIG } from "@/config/game.config";
 
-/** Confettis lancés au clic (direction, rotation, emoji). */
+/** Éclats lancés au clic (couleur, direction, rotation). */
 const BURST = [
-  { e: "✨", dx: "-46px", dy: "-30px", rot: "-40deg" },
-  { e: "💥", dx: "48px", dy: "-28px", rot: "30deg" },
-  { e: "⭐", dx: "-30px", dy: "26px", rot: "60deg" },
-  { e: "🃏", dx: "34px", dy: "28px", rot: "-25deg" },
-  { e: "😂", dx: "0px", dy: "-44px", rot: "15deg" },
+  { c: "#ffd23f", dx: "-46px", dy: "-30px", rot: "-40deg" },
+  { c: "#ff3d7f", dx: "48px", dy: "-28px", rot: "30deg" },
+  { c: "#5fd0ff", dx: "-30px", dy: "26px", rot: "60deg" },
+  { c: "#b36bff", dx: "34px", dy: "28px", rot: "-25deg" },
+  { c: "#ffffff", dx: "0px", dy: "-44px", rot: "15deg" },
 ];
 
 /**
@@ -45,7 +45,7 @@ export function Logo({ size = "md" }: { size?: "md" | "lg" }) {
       href="/"
       onClick={onClick}
       data-boing={boing ? "true" : "false"}
-      className={`mm-logo meme-caption ${cls} -rotate-2 py-1.5`}
+      className={`mm-logo meme-caption ${cls} -rotate-1 py-1.5`}
       aria-label={`${GAME_CONFIG.GAME_NAME}, accueil`}
     >
       <span className="mm-logo__text">{GAME_CONFIG.GAME_NAME}</span>
@@ -54,10 +54,8 @@ export function Logo({ size = "md" }: { size?: "md" | "lg" }) {
           key={i}
           aria-hidden="true"
           className="mm-logo__burst"
-          style={{ ["--dx" as string]: b.dx, ["--dy" as string]: b.dy, ["--rot" as string]: b.rot }}
-        >
-          {b.e}
-        </span>
+          style={{ ["--dx" as string]: b.dx, ["--dy" as string]: b.dy, ["--rot" as string]: b.rot, background: b.c }}
+        />
       ))}
     </Link>
   );

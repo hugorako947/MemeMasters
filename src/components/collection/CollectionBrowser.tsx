@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { InteractiveCard } from "@/components/card/InteractiveCard";
 import { RARITIES, type Rarity } from "@/config/rarities";
 import { VIBES, type Vibe } from "@/config/vibes";
-import type { Variant } from "@/lib/economy/duplicates";
+import type { Level } from "@/lib/economy/duplicates";
 import type { Card } from "@/lib/validation/card";
 import { BulkSell } from "./BulkSell";
 import { DuplicateActions } from "./DuplicateActions";
@@ -13,7 +13,7 @@ import { DuplicateActions } from "./DuplicateActions";
 export interface CollectionItem {
   card: Card;
   quantity: number;
-  variant: Variant;
+  level: Level;
   firstObtainedAt: string | null;
 }
 
@@ -122,7 +122,7 @@ export function CollectionBrowser({ items, resaleLeftCents }: { items: Collectio
 
       {owned > 0 ? (
         <BulkSell
-          items={items.map((i) => ({ cardId: i.card.id, rarity: i.card.rarity, quantity: i.quantity, variant: i.variant }))}
+          items={items.map((i) => ({ cardId: i.card.id, rarity: i.card.rarity, quantity: i.quantity }))}
           resaleLeftCents={resaleLeftCents}
         />
       ) : null}
@@ -132,14 +132,14 @@ export function CollectionBrowser({ items, resaleLeftCents }: { items: Collectio
         <p className="py-6 text-center text-ink-soft">{t("empty")}</p>
       ) : (
         <ul className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-6">
-          {visible.map(({ card, quantity, variant }) => (
+          {visible.map(({ card, quantity, level }) => (
             <li key={card.id} className="relative">
               <InteractiveCard
                 card={card}
                 size="compact"
                 owned={quantity > 0}
-                variant={variant}
-                detail={<DuplicateActions card={card} quantity={quantity} variant={variant} resaleLeftCents={resaleLeftCents} />}
+                level={level}
+                detail={<DuplicateActions card={card} quantity={quantity} level={level} resaleLeftCents={resaleLeftCents} />}
               />
               {quantity > 1 ? (
                 <span className="pointer-events-none absolute -end-1.5 -top-1.5 z-20 rounded-full border-2 border-ink bg-sticker px-2 text-xs font-extrabold text-[#1a1238]">

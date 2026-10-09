@@ -20,7 +20,7 @@ export async function NewsList() {
         const body = localized(item.body, locale);
         return (
           <li key={item.id}>
-            <article className="rounded-[1.5rem] border-[3px] border-ink bg-surface p-5 shadow-[0_4px_0_0_var(--mm-shadow)]">
+            <article className="rounded-[1.5rem] border-2 border-ink bg-surface p-5 shadow-[0_3px_0_0_var(--mm-shadow)]">
               <p className="flex flex-wrap items-center gap-2 text-xs font-extrabold">
                 <span className={`rounded-full px-2.5 py-1 ${KIND_STYLE[item.kind]}`}>{t(`kinds.${item.kind}`)}</span>
                 <time dateTime={item.date} className="text-ink-soft">

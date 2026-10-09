@@ -76,7 +76,7 @@ export function AppearanceForm({ initial }: { initial: Appearance }) {
                   aria-label={accent}
                   aria-pressed={value.accent === accent}
                   onClick={() => save({ ...value, accent })}
-                  className={`mm-keep-colors size-10 rounded-full border-[3px] transition-transform hover:scale-110 ${
+                  className={`mm-keep-colors size-10 rounded-full border-2 transition-transform hover:scale-110 ${
                     value.accent === accent ? "scale-110 border-ink" : "border-white"
                   }`}
                   style={{ background: accent, boxShadow: "0 0 0 2px #1a1238" }}

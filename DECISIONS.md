@@ -209,3 +209,20 @@ Chaque entrée : la décision, puis la raison.
 - **Équilibrage mesuré** sur 40 parties bot contre bot : durée moyenne ≈ 3 minutes, toutes les issues apparaissent (roi détruit, temps, prolongation, départage).
 - **Entraînement contre un bot** (`/bataille`) : jouable maintenant, plein écran, sans trophées ni MemeMoney.
 - **Prochaine étape, le multijoueur en direct** : les deux téléphones font tourner le même moteur ; chaque pose de carte passe par le serveur (qui vérifie énergie, carte et zone, puis fixe l'instant d'apparition 1 seconde plus tard, le temps que l'information arrive chez l'adversaire) et est relayée par Supabase Realtime. À la fin, le serveur rejoue la partie lui-même pour désigner le vainqueur avant d'attribuer trophées et MemeMoney : un joueur qui modifierait son navigateur ne peut pas tricher. Aucun serveur de jeu supplémentaire n'est nécessaire.
+
+## Retour en arrière sur les batailles, sobriété, insignes, QR code (demande du propriétaire)
+
+- **Batailles en temps réel retirées** (moteur, bot, arène, page `/bataille`). La page Batailles de l'accueil reste, en « Bientôt ». Le système de combat sera choisi parmi des idées proposées au propriétaire, puis validé avant d'être construit : c'est le cœur du jeu.
+- **Moins de bruit visuel** : émojis décoratifs retirés (🎁, ⚔️, 🏆, 📱, ✨, 📲, ⚡, 🔄, confettis-émojis du logo remplacés par des éclats de couleur). Conservés parce qu'ils portent une information : ✓, ✕, symboles de rareté, icônes de vibe (toujours accompagnées du nom).
+- **Un peu plus sérieux, toujours amusant** : ombres portées de 3 px (au lieu de 4 à 8), contours de 2 px (au lieu de 3), logo moins incliné, accueil « Bienvenue, {pseudo} ». Couleurs, typographie et cartes inchangées.
+- **Insignes des cartes améliorées** : étoile sur les cartes Dorées, ailes d'ange sur les Divines, en haut à gauche de l'illustration. Ils distinguent une carte Dorée d'une Légendaire (dorée par nature).
+- **Profil** : victoires, nuls et défaites dans la même couleur (encre).
+- **QR code** : il suit l'adresse réelle de la requête (domaine Vercel, tunnel HTTPS) et, en local, l'adresse Wi-Fi de l'ordinateur (`src/lib/server/site-url.ts`). En développement, Next.js accepte les requêtes du Wi-Fi et des tunnels (`allowedDevOrigins`). Sans HTTPS, la page d'installation explique que l'installation demande une adresse sécurisée.
+
+## Améliorations en 3 niveaux, avec bonus de statistiques (décision du propriétaire)
+
+- **On parle d'« exemplaires »**, plus de « doublons », dans tous les textes du jeu (7 langues) : « 14 exemplaires · 13 en trop », « Revendre mes exemplaires en trop »…
+- **Trois niveaux** : Dorée ★ → Dorée ★★ → Divine ★★★. Insigne en haut à gauche de l'illustration : une ou deux étoiles dorées, puis trois étoiles blanches et argentées qui scintillent (les ailes d'ange sont abandonnées).
+- **Coût en exemplaires, selon la rareté** (pour ★ / ★★ / ★★★) : commune 5 / 10 / 15, rare 4 / 8 / 12, épique 3 / 6 / 9, légendaire 2 / 4 / 6, brainrot 2 / 3 / 4, superbrainrot et godlevel 1 / 2 / 3. Réglable dans `DUPLICATES.UPGRADES`.
+- **Bonus de statistiques** (PV, attaque, défense, vitesse) : +3 %, +6 %, +10 %. Volontairement modeste, parce que les exemplaires viennent des boosters, que la MemeMoney permet d'acheter : un bonus trop fort rendrait le jeu « payant pour gagner ». Une carte améliorée reste battable par la même carte non améliorée. Réglable dans `DUPLICATES.STAT_BONUS_PERCENT`. La fiche de la carte affiche les statistiques augmentées et le bonus.
+- **Migration** : `variant` devient `upgrade_level` (0 à 3) ; une carte Dorée existante passe à ★, une Divine à ★★ (même nombre d'exemplaires déjà utilisés pour une commune).

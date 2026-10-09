@@ -6,6 +6,8 @@ import { createPortal } from "react-dom";
 import { RARITY_GLYPH } from "@/config/rarities";
 import { VIBE_EMOJI, beatenBy, beats } from "@/config/vibes";
 import type { Card, DefenseEffect, SpecialEffect } from "@/lib/validation/card";
+import { GAME_CONFIG } from "@/config/game.config";
+import { boostedStats, type Level } from "@/lib/economy/duplicates";
 import { MemeCard } from "./MemeCard";
 import { RarityOdds } from "./RarityOdds";
 
@@ -20,17 +22,19 @@ const STAT_COLOR = { hp: "#127a4b", atk: "#ff3d7f", def: "#2d5bff", spd: "#f5a40
 export function CardDetailDialog({
   card,
   owned = true,
-  variant = "normal",
+  level = 0,
   detail,
   onClose,
 }: {
   card: Card;
   owned?: boolean;
-  variant?: "normal" | "gold" | "divine";
+  level?: Level;
   detail?: ReactNode;
   onClose: () => void;
 }) {
   const t = useTranslations();
+  const stats = boostedStats(card, level);
+  const bonus = GAME_CONFIG.DUPLICATES.STAT_BONUS_PERCENT[level];
   const ref = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -90,7 +94,7 @@ export function CardDetailDialog({
   // être flouté sans flouter la fenêtre elle-même (voir globals.css).
   return createPortal(
     <dialog ref={ref} className="mm-detail" aria-labelledby={titleId} onClick={onBackdropClick}>
-      <div className="relative max-h-[inherit] overflow-y-auto rounded-[1.75rem] border-[3px] border-ink bg-paper p-4 shadow-[0_8px_0_0_var(--mm-shadow)] sm:p-6">
+      <div className="relative max-h-[inherit] overflow-y-auto rounded-[1.75rem] border-2 border-ink bg-paper p-4 shadow-[0_5px_0_0_var(--mm-shadow)] sm:p-6">
         <div className="sticky top-0 z-20 mb-3 flex justify-end md:-mb-12">
           <button type="button" onClick={() => ref.current?.close()} className="mm-btn mm-btn--secondary min-h-11 px-3 text-sm">
             <span aria-hidden="true">✕</span> {t("detail.close")}
@@ -99,7 +103,7 @@ export function CardDetailDialog({
 
         <div className="grid gap-6 md:grid-cols-[minmax(0,19rem)_1fr] md:items-start">
           <div className="mx-auto w-full max-w-[17rem] md:sticky md:top-0 md:max-w-none">
-            <MemeCard card={card} owned={owned} variant={variant} />
+            <MemeCard card={card} owned={owned} level={level} />
           </div>
 
           <div className="grid gap-5">
@@ -135,15 +139,20 @@ export function CardDetailDialog({
                 ) : null}
 
                 <section className="grid gap-3">
-                  <h3 className="text-lg font-extrabold">{t("detail.stats")}</h3>
+                  <h3 className="flex flex-wrap items-center gap-2 text-lg font-extrabold">
+                    {t("detail.stats")}
+                    {bonus > 0 ? (
+                      <span className="rounded-full bg-sticker px-2.5 py-0.5 text-xs font-extrabold text-[#1a1238]">{t("detail.statBonus", { percent: bonus })}</span>
+                    ) : null}
+                  </h3>
                   {(["hp", "atk", "def", "spd"] as const).map((key) => (
                     <div key={key} className="grid grid-cols-[6.5rem_2.5rem_1fr] items-center gap-3 text-sm">
                       <span className="font-semibold">{t(`statName.${key}`)}</span>
-                      <span className="text-end font-display text-xl">{card[key]}</span>
+                      <span className="text-end font-display text-xl">{stats[key]}</span>
                       <span className="mm-stat-bar" aria-hidden="true">
                         <span
                           style={{
-                            width: `${Math.round((card[key] / STAT_MAX[key]) * 100)}%`,
+                            width: `${Math.min(100, Math.round((stats[key] / STAT_MAX[key]) * 100))}%`,
                             ["--bar" as string]: STAT_COLOR[key],
                           }}
                         />

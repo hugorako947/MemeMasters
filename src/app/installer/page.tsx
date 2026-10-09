@@ -6,6 +6,7 @@ import { InstallQr } from "@/components/install/InstallQr";
 import { AdaptiveShell } from "@/components/layout/AdaptiveShell";
 import { GAME_CONFIG } from "@/config/game.config";
 import { detectPlatform } from "@/lib/pwa/detect";
+import { publicBaseUrl } from "@/lib/server/site-url";
 
 export async function generateMetadata(): Promise<Metadata> {
   return { title: (await getTranslations("installer"))("title", { name: GAME_CONFIG.GAME_NAME }) };
@@ -15,6 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function InstallerPage() {
   const t = await getTranslations("installer");
   const platform = detectPlatform((await headers()).get("user-agent") ?? "");
+  const site = await publicBaseUrl();
   return (
     <AdaptiveShell publicWidth="max-w-2xl">
       <div className="mx-auto grid max-w-xl gap-6">
@@ -22,6 +24,7 @@ export default async function InstallerPage() {
           <h1 className="font-display text-5xl leading-none">{t("title", { name: GAME_CONFIG.GAME_NAME })}</h1>
           <p className="mt-2 text-ink-soft">{t("lead")}</p>
         </div>
+        {!site.https ? <p className="rounded-2xl border-2 border-dashed border-ink-soft bg-surface p-4 text-sm font-semibold">{t("httpWarning")}</p> : null}
         <InstallGuide serverPlatform={platform} qr={<InstallQr size={150} label={t("qrLabel")} />} />
         <ul className="grid gap-2 text-sm font-semibold sm:grid-cols-3">
           {(["fullscreen", "oneTap", "updates"] as const).map((b) => (

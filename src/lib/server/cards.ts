@@ -1,7 +1,7 @@
 import "server-only";
 import type { Rarity } from "@/config/rarities";
 import type { Vibe } from "@/config/vibes";
-import type { Variant } from "@/lib/economy/duplicates";
+import type { Level } from "@/lib/economy/duplicates";
 import type { Card } from "@/lib/validation/card";
 import { sql } from "./db";
 
@@ -49,16 +49,16 @@ export function toCard(r: CardRow): Card {
 export interface CollectionEntry {
   card: Card;
   quantity: number;
-  variant: Variant;
+  level: Level;
   firstObtainedAt: string | null;
 }
 
 /** Toutes les cartes actives du jeu, avec la quantité possédée par le joueur. */
 export async function getCollection(playerId: string): Promise<CollectionEntry[]> {
-  const rows = await sql()<(CardRow & { quantity: number | null; variant: Variant | null; first_obtained_at: Date | null })[]>`
+  const rows = await sql()<(CardRow & { quantity: number | null; upgrade_level: Level | null; first_obtained_at: Date | null })[]>`
     select c.id, c.slug, c.name, c.description, c.rarity, c.vibe, c.hp, c.atk, c.def, c.spd,
            c.normal_attack, c.special_attack, c.defense_ability, c.art_seed, c.image_path,
-           uc.quantity, uc.variant, uc.first_obtained_at
+           uc.quantity, uc.upgrade_level, uc.first_obtained_at
     from public.cards c
     left join public.user_cards uc on uc.card_id = c.id and uc.player_id = ${playerId}
     where c.is_active
@@ -67,7 +67,7 @@ export async function getCollection(playerId: string): Promise<CollectionEntry[]
   return rows.map((r) => ({
     card: toCard(r),
     quantity: r.quantity ?? 0,
-    variant: r.variant ?? "normal",
+    level: r.upgrade_level ?? 0,
     firstObtainedAt: r.first_obtained_at ? r.first_obtained_at.toISOString() : null,
   }));
 }

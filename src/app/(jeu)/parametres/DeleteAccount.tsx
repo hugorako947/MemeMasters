@@ -63,7 +63,7 @@ function DeleteDialog({ username, onClose }: { username: string; onClose: () => 
     <dialog ref={ref} className="mm-detail" aria-labelledby="delete-title" style={{ width: "min(100% - 1.5rem, 32rem)" }}>
       <form
         onSubmit={onSubmit}
-        className="grid gap-4 rounded-[1.75rem] border-[3px] border-ink bg-surface p-5 shadow-[0_8px_0_0_var(--mm-shadow)] sm:p-6"
+        className="grid gap-4 rounded-[1.75rem] border-2 border-ink bg-surface p-5 shadow-[0_5px_0_0_var(--mm-shadow)] sm:p-6"
       >
         <h2 id="delete-title" className="font-display text-4xl leading-none text-danger">
           {t("title")}

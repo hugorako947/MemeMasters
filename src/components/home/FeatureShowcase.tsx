@@ -49,7 +49,7 @@ function Feature({
   children: ReactNode;
 }) {
   return (
-    <article className="grid items-center gap-5 overflow-hidden rounded-[1.75rem] border-[3px] border-ink bg-surface p-5 shadow-[0_5px_0_0_var(--mm-shadow)] md:grid-cols-2 md:gap-8 md:p-7">
+    <article className="grid items-center gap-5 overflow-hidden rounded-[1.75rem] border-2 border-ink bg-surface p-5 shadow-[0_3px_0_0_var(--mm-shadow)] md:grid-cols-2 md:gap-8 md:p-7">
       <div className={flip ? "md:order-2" : ""}>
         <h3 className="font-display text-3xl leading-none md:text-4xl">{title}</h3>
         <p className="mt-3 text-ink-soft md:text-lg">{text}</p>
@@ -136,7 +136,7 @@ async function BattleScene() {
     <div className="relative mx-auto max-w-sm">
       <div className="mb-3 flex justify-between text-xs font-extrabold">
         <span className="rounded-full border-2 border-ink bg-surface px-3 py-1">⏱ {t("timer", { seconds: GAME_CONFIG.TURN_SECONDS })}</span>
-        <span className="rounded-full border-2 border-ink bg-surface px-3 py-1">🏆 {t("trophies")}</span>
+        <span className="rounded-full border-2 border-ink bg-surface px-3 py-1">{t("trophies")}</span>
       </div>
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
         {fighters.map(({ c, hp, side }, i) => (
@@ -150,7 +150,7 @@ async function BattleScene() {
           </div>
         ))}
         <span
-          className="meme-caption order-2 grid size-14 place-items-center rounded-full border-[3px] border-ink bg-sticker text-2xl"
+          className="meme-caption order-2 grid size-14 place-items-center rounded-full border-2 border-ink bg-sticker text-2xl"
           style={{ WebkitTextStroke: "0.1em var(--color-ink)" }}
         >
           VS

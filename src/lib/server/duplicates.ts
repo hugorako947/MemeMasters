@@ -1,7 +1,7 @@
 import "server-only";
 import { GAME_CONFIG } from "@/config/game.config";
 import type { Rarity } from "@/config/rarities";
-import { countsTowardCap, creditCents, maxSellable, nextUpgrade, sellValueCents, type Variant } from "@/lib/economy/duplicates";
+import { countsTowardCap, creditCents, maxSellable, nextUpgrade, sellValueCents, type Level } from "@/lib/economy/duplicates";
 import { gameDate } from "@/lib/time/game-day";
 import { sql } from "./db";
 import { ApiError } from "./http";
@@ -15,25 +15,28 @@ export async function resaleLeftCents(player: Player): Promise<number> {
   return Math.max(0, GAME_CONFIG.DUPLICATES.DAILY_SELL_CAP * 100 - (rows[0]?.resale_cents ?? 0));
 }
 
-/** Améliore une carte (Dorée, puis Divine) en consommant des doublons. */
-export async function upgradeCard(player: Player, cardId: string): Promise<{ variant: Variant }> {
+/** Améliore une carte d'un niveau (Dorée ★, Dorée ★★, Divine ★★★) en utilisant des exemplaires en trop. */
+export async function upgradeCard(player: Player, cardId: string): Promise<{ level: Level }> {
   return sql().begin(async (tx) => {
-    const [row] = await tx<{ quantity: number; variant: Variant }[]>`
-      select quantity, variant from public.user_cards where player_id = ${player.id} and card_id = ${cardId} for update
+    const [row] = await tx<{ quantity: number; upgrade_level: Level; rarity: Rarity }[]>`
+      select uc.quantity, uc.upgrade_level, c.rarity
+      from public.user_cards uc join public.cards c on c.id = uc.card_id
+      where uc.player_id = ${player.id} and uc.card_id = ${cardId}
+      for update of uc
     `;
     if (!row) throw new ApiError(404, "card_not_owned");
-    const next = nextUpgrade(row.variant);
+    const next = nextUpgrade(row.rarity, row.upgrade_level);
     if (!next) throw new ApiError(409, "already_max_variant");
     if (row.quantity - 1 < next.cost) throw new ApiError(409, "not_enough_duplicates");
     await tx`
-      update public.user_cards set quantity = quantity - ${next.cost}, variant = ${next.to}
+      update public.user_cards set quantity = quantity - ${next.cost}, upgrade_level = ${next.to}
       where player_id = ${player.id} and card_id = ${cardId}
     `;
     await tx`
       insert into public.economy_ledger (player_id, kind, cards_delta, note)
-      values (${player.id}, 'card_upgrade', ${-next.cost}, ${`${cardId}:${next.to}`})
+      values (${player.id}, 'card_upgrade', ${-next.cost}, ${`${cardId}:niveau ${next.to}`})
     `;
-    return { variant: next.to };
+    return { level: next.to };
   });
 }
 
@@ -45,8 +48,8 @@ export async function sellCards(player: Player, lines: Array<{ cardId: string; c
   const today = gameDate(player.timezone);
   return sql().begin(async (tx) => {
     const ids = lines.map((l) => l.cardId);
-    const owned = await tx<{ card_id: string; quantity: number; variant: Variant; rarity: Rarity }[]>`
-      select uc.card_id, uc.quantity, uc.variant, c.rarity
+    const owned = await tx<{ card_id: string; quantity: number; rarity: Rarity }[]>`
+      select uc.card_id, uc.quantity, c.rarity
       from public.user_cards uc join public.cards c on c.id = uc.card_id
       where uc.player_id = ${player.id} and uc.card_id = any(${ids}::uuid[])
       for update of uc

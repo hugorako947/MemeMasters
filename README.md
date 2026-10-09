@@ -155,7 +155,37 @@ Si une bibliothèque manque, `npm run dev` s'arrête avec le message « dépenda
 
 ## Installer le jeu sur un téléphone
 
-La page `/installer` affiche les instructions adaptées à l'appareil. Le QR code de l'accueil et des réglages pointe vers `NEXT_PUBLIC_SITE_URL/installer` : renseignez l'adresse publique du site (Vercel) pour qu'il fonctionne. En local, un téléphone ne peut pas joindre `localhost` ; pour tester, mettez temporairement l'adresse IP de votre ordinateur sur le réseau Wi-Fi (par exemple `http://192.168.1.20:3000`) et lancez `npm run dev -- -H 0.0.0.0`. L'installation complète (service worker) ne fonctionne qu'en HTTPS, donc une fois déployé.
+Le QR code (accueil et Réglages → Application) suit automatiquement l'adresse par laquelle vous consultez le site : en local, il pointe vers l'adresse de votre ordinateur sur le Wi-Fi ; derrière un tunnel ou sur Vercel, vers l'adresse publique. Aucun réglage n'est nécessaire.
+
+**Pourquoi il faut du HTTPS.** Un téléphone n'accepte d'installer un site comme application que s'il est servi en HTTPS (adresse en `https://`) et en version de production (le service worker est désactivé en développement). On a donc trois niveaux :
+
+### 1. Jouer depuis le téléphone, sans l'installer (même Wi-Fi)
+
+1. Ordinateur et téléphone sur le **même Wi-Fi**.
+2. `npm run dev`, puis ouvrez `http://localhost:3000` sur l'ordinateur.
+3. Scannez le QR code de l'accueil avec l'appareil photo du téléphone.
+
+Le jeu s'ouvre dans le navigateur du téléphone. Si rien ne s'affiche, le pare-feu de l'ordinateur bloque peut-être le port 3000 : autorisez Node.js sur les réseaux privés (Windows le propose à la première ouverture).
+
+### 2. L'installer vraiment comme application, depuis votre ordinateur (tunnel HTTPS gratuit)
+
+Un « tunnel » donne temporairement à votre ordinateur une adresse publique en HTTPS.
+
+1. Installez Cloudflare Tunnel, une seule fois : sous Windows `winget install --id Cloudflare.cloudflared`, sur Mac `brew install cloudflared` (ou téléchargez-le sur le site de Cloudflare).
+2. Lancez la version de production : `npm run build` puis `npm start`.
+3. Dans un second terminal : `npm run tunnel`. Une adresse du type `https://xxxx.trycloudflare.com` s'affiche.
+4. Ouvrez cette adresse **sur l'ordinateur** : le QR code de l'accueil pointe maintenant vers elle. Scannez-le : la page d'installation s'affiche sur le téléphone, avec le bouton ou les étapes pour l'installer.
+5. Pour vous connecter avec un lien envoyé par e-mail ou avec Google depuis cette adresse, ajoutez-la dans Supabase → Authentication → URL Configuration → Redirect URLs (la connexion par mot de passe fonctionne sans rien changer).
+
+L'adresse change à chaque lancement du tunnel et ne fonctionne que tant que votre ordinateur et le tunnel tournent : c'est fait pour tester.
+
+### 3. Pour de bon : mettre le site en ligne (Vercel, gratuit pour démarrer)
+
+1. Créez un compte sur vercel.com et importez le projet (depuis GitHub, ou avec `npx vercel` dans le dossier du projet).
+2. Dans Vercel → Settings → Environment Variables, recopiez les variables de `.env.local` (et mettez `NEXT_PUBLIC_SITE_URL` à l'adresse du site, par exemple `https://mememasters.vercel.app`).
+3. Dans Supabase → Authentication → URL Configuration, mettez cette adresse comme Site URL et ajoutez-la aux Redirect URLs.
+
+Le QR code fonctionne alors pour tout le monde, l'installation est possible sur Android, iPhone et ordinateur, et chaque nouveau déploiement met à jour l'application automatiquement.
 
 ## Régler les batailles
 
@@ -178,7 +208,7 @@ Tout se règle dans **`src/config/game.config.ts`**, validé au démarrage (une 
 | Le nom du jeu (titre, manifest, logo) | `GAME_NAME` et `GAME_SHORT_NAME` |
 | La composition des 3 boosters (journalier, spécial, très spécial), la chance de la rareté supérieure et de la Godlevel | `BOOSTERS` |
 | Le pity (légendaire garantie dans le booster journalier) | `PITY_THRESHOLD` |
-| Le coût des améliorations Dorée et Divine, les prix de revente des doublons et le plafond quotidien | `DUPLICATES` |
+| Le coût des améliorations (★, ★★, ★★★) par rareté, leur bonus de statistiques, les prix de revente des exemplaires et le plafond quotidien | `DUPLICATES` |
 | Les boosters gratuits par jour | `DAILY_FREE_BOOSTERS` |
 | Les défis quotidiens | `DAILY_CHALLENGES`, `CHALLENGE_REWARD_BOOSTERS` |
 | La taille des équipes et les minuteurs | `TEAM_SIZE`, `TURN_SECONDS`, `RECONNECT_SECONDS` |

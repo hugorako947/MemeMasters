@@ -7,7 +7,6 @@ import { ProfileView } from "@/components/player/ProfileView";
 import { SettingsView } from "@/components/player/SettingsView";
 import { ShopView } from "@/components/player/ShopView";
 import { InfosView } from "@/components/infos/InfosView";
-import { BattleArena } from "@/components/battle/BattleArena";
 import { STARTER_SET } from "@/content/cards/starter-set";
 import type { Leaderboard, LeaderboardScope } from "@/lib/server/leaderboard";
 import type { Player, PublicProfile } from "@/lib/server/players";
@@ -16,7 +15,7 @@ import { parseAppearance, THEME_COOKIES } from "@/lib/theme/theme";
 /**
  * Aperçu des pages joueur avec des données fictives, pour travailler le design
  * sans compte ni base de données. DÉVELOPPEMENT UNIQUEMENT : introuvable en production.
- *   /apercu?vue=accueil | profil | reglages | boutique | infos | bataille&onglet=…&trophees=1240&pays=FR
+ *   /apercu?vue=accueil | profil | reglages | boutique | infos&onglet=…&trophees=1240&pays=FR
  */
 export default async function PreviewPage({ searchParams }: PageProps<"/apercu">) {
   if (process.env.NODE_ENV === "production") notFound();
@@ -75,8 +74,6 @@ export default async function PreviewPage({ searchParams }: PageProps<"/apercu">
     <AppShell player={player}>
       {view === "profil" ? (
         <ProfileView profile={profile} viewer={player} />
-      ) : view === "bataille" ? (
-        <BattleArena deck={STARTER_SET.slice(0, 8)} botDeck={STARTER_SET.slice(20, 28)} seed={20261009} playerName={player.username} />
       ) : view === "infos" ? (
         <InfosView boards={fakeBoards(player.trophies)} trophies={player.trophies} highestRank={player.highestRank} initial={typeof params.onglet === "string" ? params.onglet : undefined} param="onglet" />
       ) : view === "boutique" ? (
@@ -91,7 +88,7 @@ export default async function PreviewPage({ searchParams }: PageProps<"/apercu">
             collection={STARTER_SET.map((card, i) => ({
               card,
               quantity: i === 0 ? 14 : i % 3 === 0 ? 0 : (i % 4) + 1,
-              variant: i === 0 ? ("gold" as const) : i === 1 ? ("divine" as const) : ("normal" as const),
+              level: (i === 0 ? 2 : i === 1 ? 3 : i === 2 ? 1 : 0) as 0 | 1 | 2 | 3,
               firstObtainedAt: null,
             }))}
             resaleLeftCents={1650}

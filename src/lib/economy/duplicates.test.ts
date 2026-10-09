@@ -1,19 +1,37 @@
 import { describe, expect, it } from "vitest";
 import { GAME_CONFIG, gameConfigSchema } from "@/config/game.config";
-import { canUpgrade, countsTowardCap, creditCents, maxSellable, nextUpgrade, planBulkSale, sellAllDuplicates, sellValueCents } from "./duplicates";
+import { boostedStats, canUpgrade, countsTowardCap, creditCents, lookOf, maxSellable, nextUpgrade, planBulkSale, sellAllDuplicates, sellValueCents } from "./duplicates";
 
 describe("améliorations", () => {
-  it("Dorée coûte 5 doublons, puis Divine 10 de plus", () => {
-    expect(nextUpgrade("normal")).toEqual({ to: "gold", cost: 5 });
-    expect(nextUpgrade("gold")).toEqual({ to: "divine", cost: 10 });
-    expect(nextUpgrade("divine")).toBeNull();
+  it("passe de Dorée ★ à Dorée ★★ puis Divine ★★★ (5, 10, 15 exemplaires pour une commune)", () => {
+    expect(nextUpgrade("commune", 0)).toEqual({ to: 1, cost: 5 });
+    expect(nextUpgrade("commune", 1)).toEqual({ to: 2, cost: 10 });
+    expect(nextUpgrade("commune", 2)).toEqual({ to: 3, cost: 15 });
+    expect(nextUpgrade("commune", 3)).toBeNull();
   });
 
-  it("compte les doublons, pas le premier exemplaire", () => {
-    expect(canUpgrade(5, "normal")).toBe(false); // 4 doublons
-    expect(canUpgrade(6, "normal")).toBe(true); // 5 doublons
-    expect(canUpgrade(11, "gold")).toBe(true);
-    expect(canUpgrade(20, "divine")).toBe(false);
+  it("demande moins d'exemplaires pour les cartes plus rares", () => {
+    const total = (r: Parameters<typeof nextUpgrade>[0]) => GAME_CONFIG.DUPLICATES.UPGRADES[r].reduce((a, b) => a + b, 0);
+    const order = ["commune", "rare", "epique", "legendaire", "brainrot", "superbrainrot", "godlevel"] as const;
+    for (let i = 1; i < order.length; i++) expect(total(order[i])).toBeLessThanOrEqual(total(order[i - 1]));
+  });
+
+  it("compte les exemplaires en trop, pas le premier", () => {
+    expect(canUpgrade("commune", 5, 0)).toBe(false); // 4 en trop
+    expect(canUpgrade("commune", 6, 0)).toBe(true); // 5 en trop
+    expect(canUpgrade("legendaire", 3, 0)).toBe(true); // 2 en trop
+    expect(canUpgrade("commune", 99, 3)).toBe(false);
+  });
+
+  it("augmente un peu les statistiques à chaque niveau", () => {
+    const card = { hp: 100, atk: 40, def: 35, spd: 80 };
+    expect(boostedStats(card, 0)).toEqual(card);
+    expect(boostedStats(card, 1)).toEqual({ hp: 103, atk: 41, def: 36, spd: 82 });
+    expect(boostedStats(card, 3)).toEqual({ hp: 110, atk: 44, def: 39, spd: 88 });
+  });
+
+  it("donne l'apparence dorée aux niveaux 1 et 2, divine au niveau 3", () => {
+    expect([0, 1, 2, 3].map((l) => lookOf(l as 0 | 1 | 2 | 3))).toEqual(["normal", "gold", "gold", "divine"]);
   });
 });
 
@@ -55,9 +73,9 @@ describe("revente", () => {
 
 describe("revente groupée", () => {
   const items = [
-    { cardId: "leg", rarity: "legendaire" as const, quantity: 3, variant: "normal" as const },
-    { cardId: "com", rarity: "commune" as const, quantity: 4, variant: "normal" as const },
-    { cardId: "solo", rarity: "rare" as const, quantity: 1, variant: "normal" as const },
+    { cardId: "leg", rarity: "legendaire" as const, quantity: 3 },
+    { cardId: "com", rarity: "commune" as const, quantity: 4 },
+    { cardId: "solo", rarity: "rare" as const, quantity: 1 },
   ];
 
   it("ne vend que des doublons, des plus courants aux plus rares", () => {
@@ -81,7 +99,7 @@ describe("revente groupée", () => {
   it("laisse toujours vendre un doublon de Godlevel, même si sa valeur dépasse le plafond", () => {
     expect(countsTowardCap("godlevel")).toBe(false);
     expect(countsTowardCap("epique")).toBe(true);
-    const plan = planBulkSale([{ cardId: "god", rarity: "godlevel", quantity: 2, variant: "normal" }], 0);
+    const plan = planBulkSale([{ cardId: "god", rarity: "godlevel", quantity: 2 }], 0);
     expect(plan.lines).toEqual([{ cardId: "god", count: 1 }]);
   });
 
