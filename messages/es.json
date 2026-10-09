@@ -367,7 +367,10 @@
     "battles": {
       "title": "Batallas",
       "lead": "Enfréntate a jugadores de tu rango con un equipo de {team} cartas.",
-      "nextReward": "Próximo rango alcanzado → {boosters} sobres y {money} MemeMoney de regalo"
+      "nextReward": "Próximo rango alcanzado → {boosters} sobres y {money} MemeMoney de regalo",
+      "leadLive": "¡Juega tus cartas en directo, destruye las torres rivales y derriba al rey!",
+      "training": "Entrenamiento",
+      "rankedSoon": "Clasificatoria: pronto"
     },
     "collection": {
       "title": "Colección",
@@ -616,5 +619,27 @@
     },
     "sellAll": "Vender ×{count}",
     "capPartial": "Límite del día: hoy se pueden vender {count} de {total}."
+  },
+  "battle": {
+    "title": "Batalla",
+    "quit": "Salir",
+    "bot": "Bot",
+    "overtime": "Prórroga",
+    "doubleEnergy": "¡Energía ×2!",
+    "selectCard": "Primero elige una carta abajo.",
+    "notEnough": "No tienes suficiente energía.",
+    "invalidZone": "Aquí no: coloca tus cartas en tu campo.",
+    "arenaLabel": "Arena: toca un punto de tu campo para colocar la carta elegida.",
+    "cardLabel": "{name}, cuesta {cost} de energía",
+    "next": "Siguiente",
+    "energyLabel": "Energía: {value} de 10",
+    "victory": "¡Victoria!",
+    "defeat": "Derrota",
+    "draw": "Empate",
+    "replay": "Jugar otra vez",
+    "back": "Volver",
+    "trainingNote": "Entrenamiento: sin trofeos ni MemeMoney.",
+    "trainingShort": "Entrenamiento",
+    "loaned": "{count, plural, one {# carta prestada} other {# cartas prestadas}} para completar tu mazo"
   }
 }

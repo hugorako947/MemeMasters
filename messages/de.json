@@ -367,7 +367,10 @@
     "battles": {
       "title": "Kämpfe",
       "lead": "Tritt mit einem Team aus {team} Karten gegen Spieler deines Rangs an.",
-      "nextReward": "Nächster Rang erreicht → {boosters} Booster und {money} MemeMoney geschenkt"
+      "nextReward": "Nächster Rang erreicht → {boosters} Booster und {money} MemeMoney geschenkt",
+      "leadLive": "Spiel deine Karten live, zerstöre die gegnerischen Türme und stürze den König!",
+      "training": "Training",
+      "rankedSoon": "Gewertet: bald"
     },
     "collection": {
       "title": "Sammlung",
@@ -616,5 +619,27 @@
     },
     "sellAll": "×{count} verkaufen",
     "capPartial": "Tageslimit: Heute können {count} von {total} verkauft werden."
+  },
+  "battle": {
+    "title": "Kampf",
+    "quit": "Verlassen",
+    "bot": "Bot",
+    "overtime": "Verlängerung",
+    "doubleEnergy": "Energie ×2!",
+    "selectCard": "Wähle zuerst unten eine Karte.",
+    "notEnough": "Nicht genug Energie.",
+    "invalidZone": "Nicht hier: Lege deine Karten in deiner Hälfte ab.",
+    "arenaLabel": "Arena: Tippe auf einen Punkt in deiner Hälfte, um die gewählte Karte abzulegen.",
+    "cardLabel": "{name}, kostet {cost} Energie",
+    "next": "Nächste",
+    "energyLabel": "Energie: {value} von 10",
+    "victory": "Sieg!",
+    "defeat": "Niederlage",
+    "draw": "Unentschieden",
+    "replay": "Nochmal spielen",
+    "back": "Zurück",
+    "trainingNote": "Training: keine Trophäen, keine MemeMoney.",
+    "trainingShort": "Training",
+    "loaned": "{count, plural, one {# Karte geliehen} other {# Karten geliehen}}, um dein Deck zu vervollständigen"
   }
 }

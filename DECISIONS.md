@@ -196,3 +196,16 @@ Chaque entrée : la décision, puis la raison.
 - **« Revendre mes doublons »** : aperçu du total puis confirmation ; uniquement des doublons (un exemplaire de chaque carte est gardé), des plus courants aux plus rares.
 - **Toujours une boucle fermée** : la MemeMoney ne se reconvertit jamais en argent réel et ne s'échange pas entre joueurs.
 - Tout se règle dans `GAME_CONFIG.DUPLICATES`. Améliorations et reventes sont faites côté serveur, dans une transaction, et testées de bout en bout sur une vraie base PostgreSQL.
+
+## Batailles en temps réel, style « arène à tours » (phase 4, première étape)
+
+- **Changement de concept, voulu par le propriétaire** : le combat au tour par tour du cahier des charges est remplacé par du temps réel inspiré de Clash Royale. Les mécaniques de jeu ne sont pas protégées, mais on n'utilise ni ses noms, ni ses visuels, ni le mot « élixir » (ici : **énergie**).
+- **Arène** : deux camps séparés par une rivière, deux ponts, deux tours latérales (2 600 PV) et une tour du roi (4 000 PV, réveillée quand on l'attaque ou qu'une tour latérale tombe). Une tour = une couronne ; le roi = victoire immédiate.
+- **Partie** : 3 minutes, énergie doublée pendant la dernière minute, prolongation d'une minute (première couronne gagnante), puis départage par la tour la plus abîmée, sinon égalité.
+- **Énergie** : départ à 5, maximum 10, ≈ 1 point toutes les 2,8 s. **Coût des cartes selon la rareté** : 2 (commune) à 8 (godlevel) ; une carte plus chère est plus puissante.
+- **Deck de 8 cartes, main de 4 + la suivante** (comme le genre l'impose ; `TEAM_SIZE` ne sert plus aux batailles). Pour l'instant : les 8 meilleures cartes du joueur ; s'il en a moins de 8, des communes sont prêtées. Un éditeur de deck viendra ensuite.
+- **Chaque vibe a un style** : Wholesome = tank qui vise les tours ; Rage = cogneur ; Chaos = rapide ; Cringe = dégâts de zone ; Ironique = tir à longue portée ; Absurde = tir à moyenne portée. Les avantages de vibes (+25 % / −20 %) et l'attaque spéciale (une frappe sur quatre) s'appliquent.
+- **Moteur déterministe** (`src/lib/battle/engine.ts`) : calculs en nombres entiers, générateur aléatoire à graine, actions simultanées dans un même tick (supprime l'avantage du premier camp, mesuré sur 40 parties miroir : 18 / 21). Une partie se rejoue à l'identique à partir de sa graine et de ses poses de cartes : c'est la base de l'anti-triche des parties classées.
+- **Équilibrage mesuré** sur 40 parties bot contre bot : durée moyenne ≈ 3 minutes, toutes les issues apparaissent (roi détruit, temps, prolongation, départage).
+- **Entraînement contre un bot** (`/bataille`) : jouable maintenant, plein écran, sans trophées ni MemeMoney.
+- **Prochaine étape, le multijoueur en direct** : les deux téléphones font tourner le même moteur ; chaque pose de carte passe par le serveur (qui vérifie énergie, carte et zone, puis fixe l'instant d'apparition 1 seconde plus tard, le temps que l'information arrive chez l'adversaire) et est relayée par Supabase Realtime. À la fin, le serveur rejoue la partie lui-même pour désigner le vainqueur avant d'attribuer trophées et MemeMoney : un joueur qui modifierait son navigateur ne peut pas tricher. Aucun serveur de jeu supplémentaire n'est nécessaire.

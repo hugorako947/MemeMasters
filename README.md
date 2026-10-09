@@ -131,6 +131,7 @@ Pour travailler le design sans compte ni base de données, lancez `npm run dev` 
 
 - http://localhost:3000/apercu?vue=boutique&pays=BR (boutique, prix dans la devise d'un pays)
 - http://localhost:3000/apercu?vue=infos&onglet=rangs (Infos : raretes, rangs, classement ou news)
+- http://localhost:3000/apercu?vue=bataille (bataille d'entraînement contre le bot, avec des cartes du jeu de départ)
 - http://localhost:3000/apercu?onglet=collection (collection fictive ; l'ouverture de booster demande un vrai compte)
 
 Ajoutez `&trophees=4200` pour simuler un autre rang. Cette page utilise des données fictives et n'existe pas en production.
@@ -155,6 +156,10 @@ Si une bibliothèque manque, `npm run dev` s'arrête avec le message « dépenda
 ## Installer le jeu sur un téléphone
 
 La page `/installer` affiche les instructions adaptées à l'appareil. Le QR code de l'accueil et des réglages pointe vers `NEXT_PUBLIC_SITE_URL/installer` : renseignez l'adresse publique du site (Vercel) pour qu'il fonctionne. En local, un téléphone ne peut pas joindre `localhost` ; pour tester, mettez temporairement l'adresse IP de votre ordinateur sur le réseau Wi-Fi (par exemple `http://192.168.1.20:3000`) et lancez `npm run dev -- -H 0.0.0.0`. L'installation complète (service worker) ne fonctionne qu'en HTTPS, donc une fois déployé.
+
+## Régler les batailles
+
+Les règles (durée, énergie, tours, délai d'apparition) sont dans `src/lib/battle/rules.ts` ; la façon dont une carte devient une unité (points de vie, dégâts, portée, style de chaque vibe) est dans `unitTemplate`, `src/lib/battle/engine.ts`. Après une modification, `npm test` vérifie que les parties restent déterministes et se terminent toujours.
 
 ## Publier une news
 

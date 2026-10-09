@@ -367,7 +367,10 @@
     "battles": {
       "title": "Battles",
       "lead": "Face players of your rank with a team of {team} cards.",
-      "nextReward": "Next rank reached → {boosters} boosters and {money} MemeMoney as a gift"
+      "nextReward": "Next rank reached → {boosters} boosters and {money} MemeMoney as a gift",
+      "leadLive": "Play your cards live, destroy the enemy towers and take down the king!",
+      "training": "Training",
+      "rankedSoon": "Ranked: soon"
     },
     "collection": {
       "title": "Collection",
@@ -616,5 +619,27 @@
     },
     "sellAll": "Sell ×{count}",
     "capPartial": "Daily limit: {count} of {total} can be sold today."
+  },
+  "battle": {
+    "title": "Battle",
+    "quit": "Quit",
+    "bot": "Bot",
+    "overtime": "Overtime",
+    "doubleEnergy": "Energy ×2!",
+    "selectCard": "Pick a card at the bottom first.",
+    "notEnough": "Not enough energy.",
+    "invalidZone": "Not here: place your cards on your side.",
+    "arenaLabel": "Arena: tap a spot on your side to place the selected card.",
+    "cardLabel": "{name}, costs {cost} energy",
+    "next": "Next",
+    "energyLabel": "Energy: {value} of 10",
+    "victory": "Victory!",
+    "defeat": "Defeat",
+    "draw": "Draw",
+    "replay": "Play again",
+    "back": "Back",
+    "trainingNote": "Training: no trophies, no MemeMoney.",
+    "trainingShort": "Training",
+    "loaned": "{count, plural, one {# card loaned} other {# cards loaned}} to complete your deck"
   }
 }

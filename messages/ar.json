@@ -367,7 +367,10 @@
     "battles": {
       "title": "المعارك",
       "lead": "واجه لاعبين من رتبتك بفريق من {team} بطاقات.",
-      "nextReward": "عند بلوغ الرتبة التالية ← {boosters} حزم و{money} MemeMoney هدية"
+      "nextReward": "عند بلوغ الرتبة التالية ← {boosters} حزم و{money} MemeMoney هدية",
+      "leadLive": "العب بطاقاتك مباشرة، دمّر أبراج الخصم وأسقط الملك!",
+      "training": "تدريب",
+      "rankedSoon": "مصنّفة: قريبًا"
     },
     "collection": {
       "title": "المجموعة",
@@ -616,5 +619,27 @@
     },
     "sellAll": "بيع ×{count}",
     "capPartial": "الحد اليومي: يمكن بيع {count} من {total} اليوم."
+  },
+  "battle": {
+    "title": "معركة",
+    "quit": "خروج",
+    "bot": "روبوت",
+    "overtime": "وقت إضافي",
+    "doubleEnergy": "طاقة ×2!",
+    "selectCard": "اختر بطاقة في الأسفل أولًا.",
+    "notEnough": "لا توجد طاقة كافية.",
+    "invalidZone": "ليس هنا: ضع بطاقاتك في نصف ملعبك.",
+    "arenaLabel": "الساحة: اضغط على مكان في نصف ملعبك لوضع البطاقة المختارة.",
+    "cardLabel": "{name}، تكلف {cost} طاقة",
+    "next": "التالية",
+    "energyLabel": "الطاقة: {value} من 10",
+    "victory": "فوز!",
+    "defeat": "خسارة",
+    "draw": "تعادل",
+    "replay": "العب مجددًا",
+    "back": "رجوع",
+    "trainingNote": "تدريب: لا كؤوس ولا MemeMoney.",
+    "trainingShort": "تدريب",
+    "loaned": "{count, plural, one {بطاقة واحدة مُعارة} two {بطاقتان مُعارتان} few {# بطاقات مُعارة} other {# بطاقة مُعارة}} لإكمال مجموعتك"
   }
 }

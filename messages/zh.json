@@ -367,7 +367,10 @@
     "battles": {
       "title": "对战",
       "lead": "用 {team} 张卡牌组成的队伍，挑战与你同段位的玩家。",
-      "nextReward": "达到下一段位 → 赠送 {boosters} 个卡包和 {money} MemeMoney"
+      "nextReward": "达到下一段位 → 赠送 {boosters} 个卡包和 {money} MemeMoney",
+      "leadLive": "实时出牌，摧毁敌方塔楼，击倒国王！",
+      "training": "训练",
+      "rankedSoon": "排位赛：即将推出"
     },
     "collection": {
       "title": "收藏",
@@ -616,5 +619,27 @@
     },
     "sellAll": "出售 ×{count}",
     "capPartial": "今日额度：{total} 张中今天可出售 {count} 张。"
+  },
+  "battle": {
+    "title": "对战",
+    "quit": "退出",
+    "bot": "机器人",
+    "overtime": "加时赛",
+    "doubleEnergy": "能量 ×2！",
+    "selectCard": "先在下方选择一张卡牌。",
+    "notEnough": "能量不足。",
+    "invalidZone": "这里不行：请把卡牌放在你的半场。",
+    "arenaLabel": "竞技场：点击你半场的位置放置所选卡牌。",
+    "cardLabel": "{name}，消耗 {cost} 点能量",
+    "next": "下一张",
+    "energyLabel": "能量：{value} / 10",
+    "victory": "胜利！",
+    "defeat": "失败",
+    "draw": "平局",
+    "replay": "再来一局",
+    "back": "返回",
+    "trainingNote": "训练模式：不获得奖杯和 MemeMoney。",
+    "trainingShort": "训练",
+    "loaned": "借用 {count} 张卡牌补全你的卡组"
   }
 }
