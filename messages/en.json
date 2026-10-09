@@ -243,7 +243,14 @@
     "already_max_variant": "This card is already Divine ★★★.",
     "not_enough_duplicates": "Not enough copies for this upgrade.",
     "cannot_sell": "This copy can't be sold.",
-    "daily_sell_cap": "Daily selling limit reached."
+    "daily_sell_cap": "Daily selling limit reached.",
+    "player_not_found": "No player has this username.",
+    "friend_self": "You can't add yourself.",
+    "already_friends": "You're already friends.",
+    "already_requested": "Request already sent.",
+    "friends_limit": "You've reached the maximum number of friends.",
+    "pending_limit": "Too many pending requests: wait for some to be accepted.",
+    "request_not_found": "This request no longer exists."
   },
   "statName": {
     "hp": "Hit points",
@@ -443,7 +450,10 @@
       "rarities": "Rarities",
       "leaderboard": "Ranking",
       "news": "News",
-      "ranks": "Ranks"
+      "ranks": "Ranks",
+      "upgrades": "Upgrades",
+      "memeMoney": "MemeMoney",
+      "trophies": "Trophies"
     },
     "leaderboard": {
       "scopeLabel": "Ranking scope",
@@ -487,6 +497,68 @@
       "start": "Starting rank",
       "rewardBoosters": "{count, plural, one {# booster} other {# boosters}}",
       "obtained": "Reward claimed"
+    },
+    "upgrades": {
+      "levelsTitle": "The 3 levels",
+      "lead": "Your extra copies can upgrade a card: it changes look and its stats go up a little.",
+      "base": "Base card",
+      "bonus": "Stats +{percent}%",
+      "howTitle": "How it works",
+      "how1": "One copy of each card always stays in your collection: only extra copies are used.",
+      "how2": "Levels unlock in order: Golden ★, then Golden ★★, then Divine ★★★.",
+      "how3": "The rarer the card, the fewer copies you need (table below).",
+      "how4": "Each level raises HP, attack, defense and speed, up to +{max}% at Divine.",
+      "how5": "A star appears on the artwork for each level: gold for Golden, white and silver for Divine.",
+      "costTitle": "Copies needed",
+      "rarity": "Rarity",
+      "copies": "{count, plural, one {# copy} other {# copies}}",
+      "sellTitle": "Selling extra copies",
+      "sellPrice": "Price per copy",
+      "sell1": "On a card's page, “Sell” sells all its extra copies at once.",
+      "sell2": "“Sell my extra copies” does the same for your whole collection.",
+      "sell3": "Commons, rares and epics earn at most {cap} MemeMoney per day; rarer cards have no limit.",
+      "sell4": "Small amounts (0.1, 0.25…) add up and are never lost."
+    },
+    "memeMoney": {
+      "whatTitle": "What is it?",
+      "what": "MemeMoney is the game's currency. Your balance is shown at the top right; tap it to open the Shop.",
+      "earnTitle": "How to earn it",
+      "earnWin": "Win a ranked battle: +{amount} MemeMoney (battles are coming soon).",
+      "earnRanks": "Reach a new rank for the first time: up to {total} MemeMoney in total, plus boosters (see Ranks).",
+      "earnSell": "Sell your extra copies (see Upgrades), up to {cap} MemeMoney per day for commons, rares and epics.",
+      "earnShop": "Buy it in the Shop with real money, from {price}.",
+      "earnFirst": "Your very first top-up gives twice as much MemeMoney.",
+      "spendTitle": "Spending it",
+      "item": "Item",
+      "price": "Price",
+      "spendWhere": "These boosters are bought on the Boosters page of the home screen, then opened whenever you like.",
+      "rulesTitle": "The rules",
+      "rule1": "MemeMoney has no real-money value: it can't be resold, refunded or converted into money.",
+      "rule2": "It can't be traded between players.",
+      "rule3": "Fractions earned by selling cards are kept and add up.",
+      "rule4": "Real-money purchases are for people aged {age} and over, capped at {cap} per 30-day period."
+    },
+    "trophies": {
+      "whatTitle": "What are they?",
+      "what": "Trophies measure your level in ranked battles. The more you have, the higher your rank and the stronger your opponents.",
+      "gainTitle": "Winning and losing trophies",
+      "result": "Result",
+      "change": "Trophies",
+      "win": "Win",
+      "draw": "Draw",
+      "loss": "Loss",
+      "floor": "You can never go below 0 trophies.",
+      "bots": "Battles against a bot don't change your trophies.",
+      "soon": "Ranked battles are coming soon: until then, your trophies don't move.",
+      "useTitle": "What they're for",
+      "use1": "Every {per} trophies, you move up a rank (see Ranks).",
+      "use2": "Each new rank reached for the first time gives boosters and MemeMoney.",
+      "use3": "The game matches you with opponents who have a similar number of trophies.",
+      "use4": "They place you against other players in the Ranking tab.",
+      "whereTitle": "Where to see them",
+      "where1": "At the top left of the screen, next to your rank.",
+      "where2": "In your Profile, with a chart of how they change.",
+      "where3": "In the Ranking: around you, in your rank or worldwide."
     }
   },
   "collection": {
@@ -621,5 +693,30 @@
       "3": "Divine ★★★"
     },
     "upgradeButton": "Upgrade to {level}"
+  },
+  "notifications": {
+    "new": "New"
+  },
+  "friends": {
+    "title": "{count, plural, =0 {Friends} other {Friends (#)}}",
+    "searchLabel": "Add a friend",
+    "searchPlaceholder": "Player's username",
+    "noResult": "No player found.",
+    "add": "Add",
+    "accept": "Accept",
+    "decline": "Decline",
+    "cancel": "Cancel",
+    "remove": "Remove",
+    "confirmRemove": "Confirm",
+    "keep": "Keep",
+    "incoming": "{count, plural, one {# request received} other {# requests received}}",
+    "outgoing": "{count, plural, one {# request sent} other {# requests sent}}",
+    "list": "My friends",
+    "empty": "No friends yet: search for a player by username to add them.",
+    "wantsYou": "This player wants to be your friend.",
+    "status": {
+      "friends": "Friend",
+      "outgoing": "Request sent"
+    }
   }
 }

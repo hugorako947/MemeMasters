@@ -243,7 +243,14 @@
     "already_max_variant": "Esta carta já é Divina ★★★.",
     "not_enough_duplicates": "Exemplares insuficientes para esta melhoria.",
     "cannot_sell": "Este exemplar não pode ser vendido.",
-    "daily_sell_cap": "Limite de vendas do dia atingido."
+    "daily_sell_cap": "Limite de vendas do dia atingido.",
+    "player_not_found": "Nenhum jogador tem esse nome.",
+    "friend_self": "Você não pode adicionar a si mesmo.",
+    "already_friends": "Vocês já são amigos.",
+    "already_requested": "Pedido já enviado.",
+    "friends_limit": "Você atingiu o número máximo de amigos.",
+    "pending_limit": "Pedidos pendentes demais: espere alguns serem aceitos.",
+    "request_not_found": "Este pedido não existe mais."
   },
   "statName": {
     "hp": "Pontos de vida",
@@ -443,7 +450,10 @@
       "rarities": "Raridades",
       "leaderboard": "Ranking",
       "news": "Notícias",
-      "ranks": "Ranques"
+      "ranks": "Ranques",
+      "upgrades": "Melhorias",
+      "memeMoney": "MemeMoney",
+      "trophies": "Troféus"
     },
     "leaderboard": {
       "scopeLabel": "Alcance do ranking",
@@ -487,6 +497,68 @@
       "start": "Ranque inicial",
       "rewardBoosters": "{count, plural, one {# pacote} other {# pacotes}}",
       "obtained": "Recompensa recebida"
+    },
+    "upgrades": {
+      "levelsTitle": "Os 3 níveis",
+      "lead": "Seus exemplares sobrando podem melhorar uma carta: ela muda de visual e os atributos sobem um pouco.",
+      "base": "Carta base",
+      "bonus": "Atributos +{percent} %",
+      "howTitle": "Como funciona",
+      "how1": "Um exemplar de cada carta sempre fica na sua coleção: só os exemplares sobrando são usados.",
+      "how2": "Os níveis são desbloqueados em ordem: Dourada ★, depois Dourada ★★ e depois Divina ★★★.",
+      "how3": "Quanto mais rara a carta, menos exemplares são necessários (tabela abaixo).",
+      "how4": "Cada nível aumenta PV, ataque, defesa e velocidade, até +{max} % na Divina.",
+      "how5": "Uma estrela aparece na ilustração a cada nível: douradas para Dourada, brancas e prateadas para Divina.",
+      "costTitle": "Exemplares necessários",
+      "rarity": "Raridade",
+      "copies": "{count, plural, one {# exemplar} other {# exemplares}}",
+      "sellTitle": "Vender os exemplares sobrando",
+      "sellPrice": "Preço por exemplar",
+      "sell1": "Na ficha de uma carta, “Vender” vende de uma vez todos os exemplares sobrando.",
+      "sell2": "“Vender meus exemplares sobrando” faz o mesmo com toda a sua coleção.",
+      "sell3": "Comuns, raras e épicas rendem no máximo {cap} MemeMoney por dia; cartas mais raras não têm limite.",
+      "sell4": "Os valores pequenos (0,1; 0,25…) se somam e nunca se perdem."
+    },
+    "memeMoney": {
+      "whatTitle": "O que é?",
+      "what": "A MemeMoney é a moeda do jogo. Seu saldo aparece no canto superior direito; toque nele para abrir a Loja.",
+      "earnTitle": "Como ganhar",
+      "earnWin": "Vencer uma batalha ranqueada: +{amount} MemeMoney (as batalhas chegam em breve).",
+      "earnRanks": "Alcançar um novo ranque pela primeira vez: até {total} MemeMoney no total, além de pacotes (veja Ranques).",
+      "earnSell": "Vender seus exemplares sobrando (veja Melhorias), até {cap} MemeMoney por dia com comuns, raras e épicas.",
+      "earnShop": "Comprar na Loja com dinheiro real, a partir de {price}.",
+      "earnFirst": "Sua primeira recarga rende o dobro de MemeMoney.",
+      "spendTitle": "Como gastar",
+      "item": "Compra",
+      "price": "Preço",
+      "spendWhere": "Esses pacotes são comprados na página Pacotes do início e abertos quando você quiser.",
+      "rulesTitle": "As regras",
+      "rule1": "A MemeMoney não tem valor em dinheiro real: não pode ser revendida, reembolsada nem convertida em dinheiro.",
+      "rule2": "Ela não pode ser trocada entre jogadores.",
+      "rule3": "As frações ganhas vendendo cartas são guardadas e se somam.",
+      "rule4": "Compras com dinheiro real são para maiores de {age} anos, com limite de {cap} a cada 30 dias."
+    },
+    "trophies": {
+      "whatTitle": "O que são?",
+      "what": "Os troféus medem seu nível nas batalhas ranqueadas. Quanto mais você tem, mais alto seu ranque e mais fortes seus adversários.",
+      "gainTitle": "Ganhar e perder troféus",
+      "result": "Resultado",
+      "change": "Troféus",
+      "win": "Vitória",
+      "draw": "Empate",
+      "loss": "Derrota",
+      "floor": "Você nunca fica abaixo de 0 troféus.",
+      "bots": "Batalhas contra um bot não mudam seus troféus.",
+      "soon": "As batalhas ranqueadas chegam em breve: até lá, seus troféus não mudam.",
+      "useTitle": "Para que servem",
+      "use1": "A cada {per} troféus você sobe de ranque (veja Ranques).",
+      "use2": "Cada novo ranque alcançado pela primeira vez dá pacotes e MemeMoney.",
+      "use3": "O jogo encontra adversários com um número de troféus parecido com o seu.",
+      "use4": "Eles posicionam você em relação aos outros jogadores na aba Ranking.",
+      "whereTitle": "Onde ver",
+      "where1": "No canto superior esquerdo da tela, ao lado do seu ranque.",
+      "where2": "No seu Perfil, com o gráfico da evolução.",
+      "where3": "No Ranking: perto de você, no seu ranque ou no mundo."
     }
   },
   "collection": {
@@ -621,5 +693,30 @@
       "3": "Divina ★★★"
     },
     "upgradeButton": "Passar para {level}"
+  },
+  "notifications": {
+    "new": "Novo"
+  },
+  "friends": {
+    "title": "{count, plural, =0 {Amigos} other {Amigos (#)}}",
+    "searchLabel": "Adicionar um amigo",
+    "searchPlaceholder": "Nome do jogador",
+    "noResult": "Nenhum jogador encontrado.",
+    "add": "Adicionar",
+    "accept": "Aceitar",
+    "decline": "Recusar",
+    "cancel": "Cancelar",
+    "remove": "Remover",
+    "confirmRemove": "Confirmar",
+    "keep": "Manter",
+    "incoming": "{count, plural, one {# pedido recebido} other {# pedidos recebidos}}",
+    "outgoing": "{count, plural, one {# pedido enviado} other {# pedidos enviados}}",
+    "list": "Meus amigos",
+    "empty": "Você ainda não tem amigos: procure um jogador pelo nome para adicioná-lo.",
+    "wantsYou": "Este jogador quer ser seu amigo.",
+    "status": {
+      "friends": "Amigo",
+      "outgoing": "Pedido enviado"
+    }
   }
 }

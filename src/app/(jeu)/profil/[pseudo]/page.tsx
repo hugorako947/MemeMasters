@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { ProfileView } from "@/components/player/ProfileView";
 import { requirePlayer } from "@/lib/server/auth";
+import { getFriendsOverview, relationWith } from "@/lib/server/friends";
 import { getPublicProfile } from "@/lib/server/players";
 
 /** Les pseudos n'utilisent que [A-Za-z0-9_] : un paramètre mal encodé n'est pas un profil. */
@@ -25,5 +26,7 @@ export default async function ProfilePage({ params }: PageProps<"/profil/[pseudo
   const username = decodePseudo(pseudo);
   const profile = username ? await getPublicProfile(username) : null;
   if (!profile) notFound();
-  return <ProfileView profile={profile} viewer={player} />;
+  const isMe = profile.id === player.id;
+  const [friends, relation] = await Promise.all([isMe ? getFriendsOverview(player.id) : undefined, isMe ? undefined : relationWith(player.id, profile.id)]);
+  return <ProfileView profile={profile} viewer={player} friends={friends} relation={relation} />;
 }

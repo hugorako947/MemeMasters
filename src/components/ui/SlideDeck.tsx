@@ -1,6 +1,9 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { postJson } from "@/lib/client/api";
+import { NotificationDot } from "./NotificationDot";
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
 
 export interface Slide {
@@ -8,6 +11,8 @@ export interface Slide {
   label: string;
   icon?: ReactNode;
   content: ReactNode;
+  /** Point rouge de notification sur l'onglet. */
+  badge?: boolean;
 }
 
 /**
@@ -18,10 +23,27 @@ export interface Slide {
  * La hauteur suit la page affichée. L'onglet actif est reflété dans l'adresse
  * (?vue=…) pour pouvoir partager ou recharger sans perdre sa place.
  */
-export function SlideDeck({ slides, initial, param = "vue" }: { slides: Slide[]; initial: number; param?: string }) {
+export function SlideDeck({
+  slides,
+  initial,
+  param = "vue",
+  onShow,
+  markSeen,
+}: {
+  slides: Slide[];
+  initial: number;
+  param?: string;
+  /** Appelé quand une page devient visible. */
+  onShow?: (key: string) => void;
+  /** Notification à marquer comme vue quand la page s'affiche (clé de page → clé de notification). */
+  markSeen?: Record<string, "news" | "boosters" | "shop">;
+}) {
+  const router = useRouter();
   // Note : min-w-0 empêche la grille parente de s'élargir à la largeur des 3 pages.
   const t = useTranslations("slides");
   const [index, setIndex] = useState(initial);
+  // Au-delà de 4 onglets, le bandeau défile horizontalement (téléphone).
+  const scrollable = slides.length > 4;
   const [height, setHeight] = useState<number | null>(null);
   const refs = useRef<Array<HTMLDivElement | null>>([]);
   const tabs = useRef<Array<HTMLButtonElement | null>>([]);
@@ -54,7 +76,17 @@ export function SlideDeck({ slides, initial, param = "vue" }: { slides: Slide[];
     refs.current.forEach((el, i) => {
       if (el) el.inert = i !== index;
     });
-  }, [index]);
+    // Onglet actif ramené au centre du bandeau (utile quand il défile).
+    tabs.current[index]?.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+    onShow?.(slides[index].key);
+    const slide = slides[index];
+    const seenKey = markSeen?.[slide.key];
+    if (slide.badge && seenKey) {
+      postJson("/api/seen", { key: seenKey }).then((r) => {
+        if (r.ok) router.refresh(); // met à jour les points rouges de la navigation
+      });
+    }
+  }, [index, onShow, slides, markSeen, router]);
 
   const rtl = () => document.documentElement.dir === "rtl";
 
@@ -83,7 +115,14 @@ export function SlideDeck({ slides, initial, param = "vue" }: { slides: Slide[];
 
   return (
     <div className="grid min-w-0 gap-4">
-      <div role="tablist" aria-label={t("label")} onKeyDown={onTabKey} className="mx-auto flex w-full max-w-lg rounded-full border-2 border-ink bg-surface p-1 shadow-[0_3px_0_0_var(--mm-shadow)]">
+      <div
+        role="tablist"
+        aria-label={t("label")}
+        onKeyDown={onTabKey}
+        className={`mx-auto flex w-full rounded-full border-2 border-ink bg-surface p-1 shadow-[0_3px_0_0_var(--mm-shadow)] ${
+          scrollable ? "mm-tabs-scroll max-w-3xl overflow-x-auto" : "max-w-lg"
+        }`}
+      >
         {slides.map((slide, i) => (
           <button
             key={slide.key}
@@ -97,12 +136,15 @@ export function SlideDeck({ slides, initial, param = "vue" }: { slides: Slide[];
             aria-controls={`${baseId}-panel-${i}`}
             tabIndex={i === index ? 0 : -1}
             onClick={() => go(i)}
-            className={`flex min-h-11 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-full px-1.5 text-xs font-extrabold transition-colors sm:px-2 sm:text-sm ${
+            className={`relative flex min-h-11 items-center justify-center gap-1.5 rounded-full text-xs font-extrabold transition-colors sm:text-sm ${
+              scrollable ? "shrink-0 px-3.5" : "min-w-0 flex-1 px-1.5 sm:px-2"
+            } ${
               i === index ? "bg-candy text-[var(--mm-accent-ink)]" : "text-ink-soft hover:text-ink"
             }`}
           >
             {slide.icon}
             {slide.label}
+            {slide.badge ? <NotificationDot /> : null}
           </button>
         ))}
       </div>

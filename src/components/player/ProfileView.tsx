@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { FriendButton } from "@/components/friends/FriendButton";
+import { FriendsPanel } from "@/components/friends/FriendsPanel";
+import type { FriendsOverview, Relation } from "@/lib/server/friends";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { RankShield, TrophyIcon } from "@/components/player/RankBadge";
 import { TrophyChart } from "@/components/player/TrophyChart";
@@ -7,7 +10,18 @@ import { progressToNextRank, RANKS, rankFor } from "@/config/ranks";
 import type { Player, PublicProfile } from "@/lib/server/players";
 
 /** Profil d'un joueur : rang, statistiques de bataille, progression des trophées. */
-export async function ProfileView({ profile }: { profile: PublicProfile; viewer: Player }) {
+export async function ProfileView({
+  profile,
+  friends,
+  relation,
+}: {
+  profile: PublicProfile;
+  viewer: Player;
+  /** Son propre profil : panneau d'amis. */
+  friends?: FriendsOverview;
+  /** Profil d'un autre joueur : relation d'amitié. */
+  relation?: Relation;
+}) {
   const t = await getTranslations("profile");
   const tr = await getTranslations("rank");
   const format = await getFormatter();
@@ -29,6 +43,11 @@ export async function ProfileView({ profile }: { profile: PublicProfile; viewer:
         <p className="mt-2 text-ink-soft">
           {t("memberSince", { date: format.dateTime(profile.createdAt, { day: "numeric", month: "long", year: "numeric" }) })}
         </p>
+        {relation ? (
+          <div className="mt-3">
+            <FriendButton relation={relation} target={{ id: profile.id, username: profile.username }} />
+          </div>
+        ) : null}
       </header>
 
       <Panel className="grid gap-4 sm:grid-cols-[auto_1fr] sm:items-center">
@@ -89,6 +108,8 @@ export async function ProfileView({ profile }: { profile: PublicProfile; viewer:
           asOf={profile.asOf}
         />
       </Panel>
+
+      {friends ? <FriendsPanel overview={friends} /> : null}
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { getFormatter, getTranslations } from "next-intl/server";
 import { Logo } from "@/components/brand/Logo";
 import { MemeCoin, RankShield, TrophyIcon } from "@/components/player/RankBadge";
 import { rankFor } from "@/config/ranks";
+import { getBadges, type Badges } from "@/lib/server/notifications";
 import type { Player } from "@/lib/server/players";
 import { BackLink } from "./BackLink";
 import { BottomNav } from "./BottomNav";
@@ -15,7 +16,9 @@ import { SiteFooter } from "./SiteFooter";
  * en haut, le rang et les trophées (gauche), le titre (centre), la MemeMoney (droite) ;
  * en bas, la navigation, au-dessus du pied de page. Pas de fil d'Ariane.
  */
-export async function AppShell({ player, back, children }: { player: Player; back?: string; children: ReactNode }) {
+export async function AppShell({ player, back, children, badges }: { player: Player; back?: string; children: ReactNode; badges?: Badges }) {
+  // Points rouges de notification (calculés par le serveur, sauf dans l'aperçu).
+  const dots = badges ?? (await getBadges(player));
   const t = await getTranslations();
   const format = await getFormatter();
   const rank = rankFor(player.trophies);
@@ -76,7 +79,7 @@ export async function AppShell({ player, back, children }: { player: Player; bac
         </main>
       </div>
 
-      <BottomNav username={player.username} />
+      <BottomNav username={player.username} badges={{ shop: dots.shop, infos: dots.infos, home: dots.home, profile: dots.profile }} />
       <SiteFooter />
     </div>
   );

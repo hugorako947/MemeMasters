@@ -22,6 +22,10 @@ export const RATE_LIMITS = {
   boosterOpen: { scope: "booster_open", limit: 10, windowSeconds: 60 },
   boosterBuy: { scope: "booster_buy", limit: 10, windowSeconds: 60 },
   collection: { scope: "collection", limit: 30, windowSeconds: 60 },
+  friendsSearch: { scope: "friends_search", limit: 40, windowSeconds: 60 },
+  friendsRequest: { scope: "friends_request", limit: 20, windowSeconds: 3600 },
+  friendsAction: { scope: "friends_action", limit: 60, windowSeconds: 60 },
+  seen: { scope: "seen", limit: 60, windowSeconds: 60 },
 } as const satisfies Record<string, RateLimitRule>;
 
 /**

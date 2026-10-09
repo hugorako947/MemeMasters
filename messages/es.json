@@ -243,7 +243,14 @@
     "already_max_variant": "Esta carta ya es Divina ★★★.",
     "not_enough_duplicates": "No tienes suficientes ejemplares para esta mejora.",
     "cannot_sell": "Este ejemplar no se puede vender.",
-    "daily_sell_cap": "Límite de ventas del día alcanzado."
+    "daily_sell_cap": "Límite de ventas del día alcanzado.",
+    "player_not_found": "Ningún jugador tiene este nombre.",
+    "friend_self": "No puedes añadirte a ti mismo.",
+    "already_friends": "Ya sois amigos.",
+    "already_requested": "Solicitud ya enviada.",
+    "friends_limit": "Has alcanzado el número máximo de amigos.",
+    "pending_limit": "Demasiadas solicitudes pendientes: espera a que acepten algunas.",
+    "request_not_found": "Esta solicitud ya no existe."
   },
   "statName": {
     "hp": "Puntos de salud",
@@ -443,7 +450,10 @@
       "rarities": "Rarezas",
       "leaderboard": "Clasificación",
       "news": "Noticias",
-      "ranks": "Rangos"
+      "ranks": "Rangos",
+      "upgrades": "Mejoras",
+      "memeMoney": "MemeMoney",
+      "trophies": "Trofeos"
     },
     "leaderboard": {
       "scopeLabel": "Alcance de la clasificación",
@@ -487,6 +497,68 @@
       "start": "Rango inicial",
       "rewardBoosters": "{count, plural, one {# sobre} other {# sobres}}",
       "obtained": "Recompensa obtenida"
+    },
+    "upgrades": {
+      "levelsTitle": "Los 3 niveles",
+      "lead": "Tus ejemplares de sobra pueden mejorar una carta: cambia de aspecto y sus estadísticas suben un poco.",
+      "base": "Carta base",
+      "bonus": "Estadísticas +{percent} %",
+      "howTitle": "Cómo funciona",
+      "how1": "Siempre se queda un ejemplar de cada carta en tu colección: solo se usan los ejemplares de sobra.",
+      "how2": "Los niveles se desbloquean en orden: Dorada ★, luego Dorada ★★ y luego Divina ★★★.",
+      "how3": "Cuanto más rara es la carta, menos ejemplares necesitas (tabla de abajo).",
+      "how4": "Cada nivel aumenta PS, ataque, defensa y velocidad, hasta +{max} % en Divina.",
+      "how5": "Aparece una estrella en la ilustración por cada nivel: doradas para Dorada, blancas y plateadas para Divina.",
+      "costTitle": "Ejemplares necesarios",
+      "rarity": "Rareza",
+      "copies": "{count, plural, one {# ejemplar} other {# ejemplares}}",
+      "sellTitle": "Vender los ejemplares de sobra",
+      "sellPrice": "Precio por ejemplar",
+      "sell1": "En la ficha de una carta, «Vender» vende de una vez todos sus ejemplares de sobra.",
+      "sell2": "«Vender mis ejemplares de sobra» hace lo mismo con toda tu colección.",
+      "sell3": "Las comunes, raras y épicas dan como máximo {cap} MemeMoney al día; las cartas más raras no tienen límite.",
+      "sell4": "Las cantidades pequeñas (0,1; 0,25…) se suman y nunca se pierden."
+    },
+    "memeMoney": {
+      "whatTitle": "¿Qué es?",
+      "what": "La MemeMoney es la moneda del juego. Tu saldo aparece arriba a la derecha; tócalo para abrir la Tienda.",
+      "earnTitle": "Cómo conseguirla",
+      "earnWin": "Ganar una batalla clasificatoria: +{amount} MemeMoney (las batallas llegan pronto).",
+      "earnRanks": "Alcanzar un rango nuevo por primera vez: hasta {total} MemeMoney en total, además de sobres (ver Rangos).",
+      "earnSell": "Vender tus ejemplares de sobra (ver Mejoras), hasta {cap} MemeMoney al día por comunes, raras y épicas.",
+      "earnShop": "Comprarla en la Tienda con dinero real, desde {price}.",
+      "earnFirst": "Tu primera recarga da el doble de MemeMoney.",
+      "spendTitle": "Gastarla",
+      "item": "Compra",
+      "price": "Precio",
+      "spendWhere": "Estos sobres se compran en la página Sobres del inicio y se abren cuando quieras.",
+      "rulesTitle": "Las reglas",
+      "rule1": "La MemeMoney no tiene valor en dinero real: no se revende, no se reembolsa y no se convierte en dinero.",
+      "rule2": "No se intercambia entre jugadores.",
+      "rule3": "Las fracciones ganadas vendiendo cartas se guardan y se suman.",
+      "rule4": "Las compras con dinero real son para mayores de {age} años, con un límite de {cap} por periodo de 30 días."
+    },
+    "trophies": {
+      "whatTitle": "¿Qué son?",
+      "what": "Los trofeos miden tu nivel en batallas clasificatorias. Cuantos más tengas, más alto es tu rango y más fuertes son tus rivales.",
+      "gainTitle": "Ganar y perder trofeos",
+      "result": "Resultado",
+      "change": "Trofeos",
+      "win": "Victoria",
+      "draw": "Empate",
+      "loss": "Derrota",
+      "floor": "Nunca puedes bajar de 0 trofeos.",
+      "bots": "Las batallas contra un bot no cambian tus trofeos.",
+      "soon": "Las batallas clasificatorias llegan pronto: mientras tanto, tus trofeos no se mueven.",
+      "useTitle": "Para qué sirven",
+      "use1": "Cada {per} trofeos subes de rango (ver Rangos).",
+      "use2": "Cada rango nuevo alcanzado por primera vez da sobres y MemeMoney.",
+      "use3": "El juego te empareja con rivales con un número de trofeos parecido al tuyo.",
+      "use4": "Te sitúan frente a los demás jugadores en la pestaña Clasificación.",
+      "whereTitle": "Dónde verlos",
+      "where1": "Arriba a la izquierda de la pantalla, junto a tu rango.",
+      "where2": "En tu Perfil, con el gráfico de su evolución.",
+      "where3": "En la Clasificación: a tu alrededor, en tu rango o en el mundo."
     }
   },
   "collection": {
@@ -621,5 +693,30 @@
       "3": "Divina ★★★"
     },
     "upgradeButton": "Pasar a {level}"
+  },
+  "notifications": {
+    "new": "Nuevo"
+  },
+  "friends": {
+    "title": "{count, plural, =0 {Amigos} other {Amigos (#)}}",
+    "searchLabel": "Añadir un amigo",
+    "searchPlaceholder": "Nombre del jugador",
+    "noResult": "No se encontró ningún jugador.",
+    "add": "Añadir",
+    "accept": "Aceptar",
+    "decline": "Rechazar",
+    "cancel": "Cancelar",
+    "remove": "Eliminar",
+    "confirmRemove": "Confirmar",
+    "keep": "Mantener",
+    "incoming": "{count, plural, one {# solicitud recibida} other {# solicitudes recibidas}}",
+    "outgoing": "{count, plural, one {# solicitud enviada} other {# solicitudes enviadas}}",
+    "list": "Mis amigos",
+    "empty": "Aún no tienes amigos: busca a un jugador por su nombre para añadirlo.",
+    "wantsYou": "Este jugador quiere ser tu amigo.",
+    "status": {
+      "friends": "Amigo",
+      "outgoing": "Solicitud enviada"
+    }
   }
 }

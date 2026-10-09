@@ -5,24 +5,29 @@ import { rankFor } from "@/config/ranks";
 import type { Leaderboard, LeaderboardScope } from "@/lib/server/leaderboard";
 import { LeaderboardPanel } from "./LeaderboardPanel";
 import { NewsList } from "./NewsList";
+import { MemeMoneyPanel } from "./MemeMoneyPanel";
 import { RanksPanel } from "./RanksPanel";
+import { TrophiesPanel } from "./TrophiesPanel";
+import { UpgradesPanel } from "./UpgradesPanel";
 import { RaritiesGrid } from "./RaritiesGrid";
 
-export const INFOS_SLIDES = ["raretes", "rangs", "classement", "news"] as const;
+export const INFOS_SLIDES = ["raretes", "ameliorations", "mememoney", "classement", "rangs", "trophees", "news"] as const;
 
-/** Infos : Raretés, Rangs, Classement (ouvert par défaut) et News. */
+/** Infos : Raretés, Améliorations, MemeMoney, Classement (au centre, ouvert par défaut), Rangs, Trophées et News. */
 export async function InfosView({
   boards,
   trophies,
   highestRank,
   initial,
   param,
+  newsBadge = false,
 }: {
   boards: Record<LeaderboardScope, Leaderboard>;
   trophies: number;
   highestRank: number;
   initial: string | undefined;
   param?: string;
+  newsBadge?: boolean;
 }) {
   const t = await getTranslations("infos");
   const tr = await getTranslations("rank");
@@ -33,17 +38,21 @@ export async function InfosView({
     <div className="grid gap-5">
       <h1 className="sr-only">{t("title")}</h1>
       <SlideDeck
+        markSeen={{ news: "news" }}
         param={param}
         initial={start}
         slides={[
           { key: "raretes", label: t("tabs.rarities"), content: <RaritiesGrid /> },
-          { key: "rangs", label: t("tabs.ranks"), content: <RanksPanel trophies={trophies} highestRank={highestRank} /> },
+          { key: "ameliorations", label: t("tabs.upgrades"), content: <UpgradesPanel /> },
+          { key: "mememoney", label: t("tabs.memeMoney"), content: <MemeMoneyPanel /> },
           {
             key: "classement",
             label: t("tabs.leaderboard"),
             content: <LeaderboardPanel boards={boards} rankName={tr(rankFor(trophies))} window={GAME_CONFIG.TROPHIES.LEADERBOARD_AROUND} />,
           },
-          { key: "news", label: t("tabs.news"), content: <NewsList /> },
+          { key: "rangs", label: t("tabs.ranks"), content: <RanksPanel trophies={trophies} highestRank={highestRank} /> },
+          { key: "trophees", label: t("tabs.trophies"), content: <TrophiesPanel trophies={trophies} /> },
+          { key: "news", label: t("tabs.news"), content: <NewsList />, badge: newsBadge },
         ]}
       />
     </div>

@@ -14,6 +14,7 @@ import { getAuthUser } from "@/lib/server/auth";
 import { getBoosterState } from "@/lib/server/boosters";
 import { getCollection } from "@/lib/server/cards";
 import { resaleLeftCents } from "@/lib/server/duplicates";
+import { getBadges } from "@/lib/server/notifications";
 import { getPlayer } from "@/lib/server/players";
 
 export default async function HomePage({ searchParams }: PageProps<"/">) {
@@ -22,12 +23,17 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
   const player = await getPlayer(user.id);
   if (!player || !player.consentUpToDate) redirect("/bienvenue");
   const { vue } = await searchParams;
-  const [collection, boosters, resaleLeft] = await Promise.all([getCollection(player.id), getBoosterState(player), resaleLeftCents(player)]);
+  const [collection, boosters, resaleLeft, badges] = await Promise.all([
+    getCollection(player.id),
+    getBoosterState(player),
+    resaleLeftCents(player),
+    getBadges(player),
+  ]);
   return (
-    <AppShell player={player}>
+    <AppShell player={player} badges={badges}>
       <div className="grid gap-6">
         <h1 className="font-display text-4xl leading-none md:text-5xl">{(await getTranslations("playerHome"))("title", { username: player.username })}</h1>
-        <PlayerFeatures player={player} collection={collection} boosters={boosters} resaleLeftCents={resaleLeft} initial={typeof vue === "string" ? vue : undefined} />
+        <PlayerFeatures player={player} collection={collection} boosters={boosters} resaleLeftCents={resaleLeft} boostersBadge={badges.boosters} initial={typeof vue === "string" ? vue : undefined} />
       </div>
     </AppShell>
   );
@@ -47,10 +53,11 @@ async function GuestHome() {
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-10">
         <div className="grid content-start gap-14">
           <section>
-            <h1 className="meme-caption -rotate-2 text-[clamp(3.4rem,14vw,7.5rem)] leading-[0.9]">
+            <h1 className="meme-caption -rotate-1 text-[clamp(3.4rem,14vw,7.5rem)] leading-[0.9] lg:text-[clamp(3.4rem,6.8vw,7.5rem)]">
               {GAME_CONFIG.GAME_NAME}
             </h1>
-            <div className="mt-6 grid items-center gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+            {/* Côte à côte sur tablette et très grand écran ; empilés de 1024 à 1279 px, où la colonne est étroite (panneau des raretés à droite). */}
+            <div className="mt-6 grid items-center gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-12 lg:grid-cols-1 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
               <div>
                 <p className="max-w-md text-xl font-medium text-ink-soft">{t("guestLead")}</p>
                 <div className="mt-8 flex flex-col gap-4 sm:flex-row">
@@ -70,11 +77,12 @@ async function GuestHome() {
               </div>
 
               {/* L'éventail : touche une carte pour ouvrir sa fiche. */}
-              <div className="relative mx-auto h-[18.5rem] w-full max-w-[21rem] md:h-[24rem]">
-                <div className="absolute left-0 top-10 w-[46%] -rotate-[11deg]">
+              {/* L'éventail reste dans sa propre colonne : il ne passe jamais sur les boutons. */}
+              <div className="relative mx-auto h-[18.5rem] w-full max-w-[21rem] md:h-[24rem] md:max-w-[19rem]">
+                <div className="absolute left-[5%] top-10 w-[42%] -rotate-[8deg]">
                   <InteractiveCard card={fan[0]} size="compact" />
                 </div>
-                <div className="absolute right-0 top-10 w-[46%] rotate-[10deg]">
+                <div className="absolute right-[5%] top-10 w-[42%] rotate-[8deg]">
                   <InteractiveCard card={fan[2]} size="compact" />
                 </div>
                 <div className="absolute left-1/2 top-0 z-10 w-[58%] -translate-x-1/2">

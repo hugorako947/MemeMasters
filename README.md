@@ -179,13 +179,59 @@ Un « tunnel » donne temporairement à votre ordinateur une adresse publique en
 
 L'adresse change à chaque lancement du tunnel et ne fonctionne que tant que votre ordinateur et le tunnel tournent : c'est fait pour tester.
 
-### 3. Pour de bon : mettre le site en ligne (Vercel, gratuit pour démarrer)
+### 3. Pour de bon : mettre le site en ligne sur Vercel
 
-1. Créez un compte sur vercel.com et importez le projet (depuis GitHub, ou avec `npx vercel` dans le dossier du projet).
-2. Dans Vercel → Settings → Environment Variables, recopiez les variables de `.env.local` (et mettez `NEXT_PUBLIC_SITE_URL` à l'adresse du site, par exemple `https://mememasters.vercel.app`).
-3. Dans Supabase → Authentication → URL Configuration, mettez cette adresse comme Site URL et ajoutez-la aux Redirect URLs.
+**Avant de commencer** : un compte GitHub (gratuit), un compte Vercel (se connecter avec GitHub), et votre projet Supabase déjà en place (`npx supabase db push` fait).
 
-Le QR code fonctionne alors pour tout le monde, l'installation est possible sur Android, iPhone et ordinateur, et chaque nouveau déploiement met à jour l'application automatiquement.
+**Étape 1 — Mettre le code sur GitHub** (une seule fois)
+
+1. Sur github.com : **New repository**, nom `mememasters`, visibilité **Private**, sans README. Créez-le.
+2. Dans le dossier du projet, sur votre ordinateur :
+   ```bash
+   git init
+   git add .
+   git commit -m "Première mise en ligne"
+   git branch -M main
+   git remote add origin https://github.com/VOTRE-COMPTE/mememasters.git
+   git push -u origin main
+   ```
+   Le fichier `.gitignore` exclut déjà `.env.local` : vos clés secrètes ne partent pas sur GitHub.
+
+**Étape 2 — Importer le projet dans Vercel**
+
+1. Sur vercel.com : **Add New… → Project**, choisissez le dépôt `mememasters` → **Import**.
+2. Vercel reconnaît Next.js : ne changez ni la commande de build ni le dossier de sortie.
+3. Ouvrez **Environment Variables** et ajoutez, une par une, les variables de votre `.env.local` :
+
+   | Variable | Valeur |
+   | --- | --- |
+   | `NEXT_PUBLIC_SITE_URL` | l'adresse du site, par exemple `https://mememasters.vercel.app` (à corriger après le 1er déploiement si besoin) |
+   | `NEXT_PUBLIC_SUPABASE_URL` | comme dans `.env.local` |
+   | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | comme dans `.env.local` |
+   | `DATABASE_URL` | comme dans `.env.local` (l'adresse du **pooler** Supabase, port 6543) |
+   | `SUPABASE_SECRET_KEY` | comme dans `.env.local` |
+   | `CRON_SECRET` | une longue chaîne aléatoire |
+
+   Ne mettez pas `NEXT_PUBLIC_ENABLE_SW_DEV` (réservée aux tests locaux). Les variables Google et Stripe ne sont à ajouter que si vous utilisez ces services.
+4. **Deploy**. Après 2 à 3 minutes, Vercel affiche l'adresse du site (`https://….vercel.app`).
+
+**Étape 3 — Dire à Supabase quelle est l'adresse du site**
+
+Supabase → **Authentication → URL Configuration** :
+- **Site URL** : l'adresse Vercel (`https://….vercel.app`) ;
+- **Redirect URLs** : ajoutez `https://….vercel.app/**`.
+
+Sans cela, les liens de confirmation d'e-mail et la connexion Google renverraient vers `localhost`. Si l'adresse finale diffère de celle mise dans `NEXT_PUBLIC_SITE_URL`, corrigez la variable dans Vercel puis **Deployments → … → Redeploy**.
+
+**Étape 4 — Installer le jeu sur votre téléphone**
+
+1. Ouvrez l'adresse Vercel sur votre ordinateur : le QR code de l'accueil pointe désormais vers le site en ligne.
+2. Scannez-le avec l'appareil photo du téléphone : la page d'installation s'ouvre et affiche les étapes adaptées (bouton « Installer » sur Android, Partager → Sur l'écran d'accueil sur iPhone avec Safari).
+3. L'icône du jeu apparaît sur l'écran d'accueil ; il s'ouvre en plein écran, comme une application.
+
+**Ensuite, à chaque modification** : `git add .`, `git commit -m "…"`, `git push`. Vercel redéploie tout seul, et l'application installée sur les téléphones propose « Nouvelle version disponible ». Pensez aussi à `npx supabase db push` quand une version contient une nouvelle migration.
+
+**Bon à savoir** : l'offre gratuite de Vercel (Hobby) est réservée aux projets non commerciaux. Elle convient pour tester et faire jouer vos proches ; dès que les achats en argent réel seront ouverts (phase 5), il faudra passer à l'offre payante (Pro) ou à un autre hébergeur. Le domaine `….vercel.app` peut être remplacé par votre propre nom de domaine (Settings → Domains).
 
 ## Régler les batailles
 

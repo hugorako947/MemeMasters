@@ -6,7 +6,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set search_path = public, extensions;
 
-select plan(29);
+select plan(32);
 
 -- ---------------------------------------------------------------- données
 insert into auth.users (id, email) values
@@ -44,9 +44,14 @@ select is(
 
 insert into public.contact_messages (email, category, message) values ('x@test.local', 'question', 'Un message de test.');
 
+insert into public.friendships (requester_id, addressee_id, status)
+  select a.id, b.id, 'accepted' from public.profiles a, public.profiles b
+  where a.username = 'alice' and b.username = 'bob';
+
 -- ---------------------------------------------------------------- anonyme
 set local role anon;
 select throws_ok('select * from public.contact_messages', '42501', null, 'anonyme : messages de contact interdits');
+select is((select count(*)::int from public.friendships), 0, 'anonyme : ne voit aucune relation d''amitié');
 select is((select count(*)::int from public.cards where slug in ('carte-active', 'carte-retiree')), 1, 'anonyme : voit seulement les cartes actives');
 select is((select count(*)::int from public.profiles), 0, 'anonyme : ne voit aucun profil');
 select is((select count(*)::int from public.player_wallets), 0, 'anonyme : ne voit aucun portefeuille');
@@ -67,6 +72,8 @@ select is((select count(*)::int from public.battles), 1, 'joueur : voit son comb
 select is((select count(*)::int from public.battle_secrets), 0, 'joueur : ne voit jamais l''état secret');
 select is((select count(*)::int from public.admin_audit_log), 0, 'joueur : pas de journal d''audit');
 select throws_ok('select * from public.contact_messages', '42501', null, 'joueur : ne lit pas les messages de contact');
+select ok((select count(*) from public.friendships) >= 0, 'joueur : lit la table des amis (filtrée par RLS)');
+select throws_ok($$insert into public.friendships (requester_id, addressee_id) select id, id from public.profiles limit 1$$, '42501', null, 'joueur : ne crée pas de relation directement');
 select is((select count(*)::int from public.player_rankings), 3, 'joueur : lit le classement des joueurs');
 
 select throws_ok(

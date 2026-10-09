@@ -71,11 +71,22 @@ export default async function PreviewPage({ searchParams }: PageProps<"/apercu">
     asOf: new Date(now).toISOString(),
   };
   return (
-    <AppShell player={player}>
+    <AppShell player={player} badges={{ home: true, boosters: true, infos: true, news: true, shop: true, profile: true }}>
       {view === "profil" ? (
-        <ProfileView profile={profile} viewer={player} />
+        <ProfileView
+          profile={profile}
+          viewer={player}
+          friends={{
+            friends: [
+              { id: "f1", username: "MemeLord", trophies: 2410, since: new Date().toISOString() },
+              { id: "f2", username: "PixelCat", trophies: 980, since: new Date().toISOString() },
+            ],
+            incoming: [{ requestId: "r1", from: { id: "f3", username: "Brainrotix", trophies: 1630 }, createdAt: new Date().toISOString() }],
+            outgoing: [{ requestId: "r2", to: { id: "f4", username: "Tralala", trophies: 3120 }, createdAt: new Date().toISOString() }],
+          }}
+        />
       ) : view === "infos" ? (
-        <InfosView boards={fakeBoards(player.trophies)} trophies={player.trophies} highestRank={player.highestRank} initial={typeof params.onglet === "string" ? params.onglet : undefined} param="onglet" />
+        <InfosView boards={fakeBoards(player.trophies)} trophies={player.trophies} highestRank={player.highestRank} newsBadge initial={typeof params.onglet === "string" ? params.onglet : undefined} param="onglet" />
       ) : view === "boutique" ? (
         <ShopView country={typeof params.pays === "string" ? params.pays : "FR"} hasPurchased={false} />
       ) : view === "reglages" ? (
@@ -92,6 +103,7 @@ export default async function PreviewPage({ searchParams }: PageProps<"/apercu">
               firstObtainedAt: null,
             }))}
             resaleLeftCents={1650}
+            boostersBadge
             boosters={{ freeLeft: 2, freePerDay: 3, dailyReserve: 1, special: 1, verySpecial: 0, memeMoney: player.memeMoney }}
             initial={typeof params.onglet === "string" ? params.onglet : undefined}
             param="onglet"

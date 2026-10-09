@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
+import { NotificationDot } from "@/components/ui/NotificationDot";
 import { HomeIcon, InfoIcon, ProfileIcon, SettingsIcon, ShopIcon } from "./NavIcons";
 
 interface NavItem {
@@ -11,6 +12,7 @@ interface NavItem {
   label: string;
   icon: ReactNode;
   match: (path: string) => boolean;
+  badge?: boolean;
 }
 
 /**
@@ -18,7 +20,14 @@ interface NavItem {
  * milieu, plus grand, rond et mis en avant), Profil, Réglages. Elle reste
  * visible pendant le défilement puis se pose au-dessus du pied de page.
  */
-export function BottomNav({ username }: { username: string }) {
+export function BottomNav({
+  username,
+  badges = {},
+}: {
+  username: string;
+  /** Points rouges : quelque chose de nouveau sur cette page. */
+  badges?: Partial<Record<"shop" | "infos" | "home" | "profile", boolean>>;
+}) {
   const t = useTranslations("nav");
   const path = usePathname();
   const side = (item: NavItem) => {
@@ -28,19 +37,20 @@ export function BottomNav({ username }: { username: string }) {
         <Link
           href={item.href}
           aria-current={active ? "page" : undefined}
-          className={`flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-[1.15rem] px-1 text-[0.7rem] font-bold transition-colors sm:text-xs ${
+          className={`relative flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-[1.15rem] px-1 text-[0.7rem] font-bold transition-colors sm:text-xs ${
             active ? "bg-candy text-[var(--mm-accent-ink)]" : "text-ink-soft hover:bg-paper hover:text-ink"
           }`}
         >
           {item.icon}
           <span>{item.label}</span>
+          {item.badge && !active ? <NotificationDot /> : null}
         </Link>
       </li>
     );
   };
   const left: NavItem[] = [
-    { href: "/boutique", label: t("shop"), icon: <ShopIcon />, match: (p) => p.startsWith("/boutique") },
-    { href: "/infos", label: t("infos"), icon: <InfoIcon />, match: (p) => p.startsWith("/infos") || p.startsWith("/raretes") },
+    { href: "/boutique", label: t("shop"), icon: <ShopIcon />, match: (p) => p.startsWith("/boutique"), badge: badges.shop },
+    { href: "/infos", label: t("infos"), icon: <InfoIcon />, match: (p) => p.startsWith("/infos") || p.startsWith("/raretes"), badge: badges.infos },
   ];
   const right: NavItem[] = [
     {
@@ -48,6 +58,7 @@ export function BottomNav({ username }: { username: string }) {
       label: t("profile"),
       icon: <ProfileIcon />,
       match: (p) => p.startsWith("/profil"),
+      badge: badges.profile,
     },
     { href: "/parametres", label: t("settings"), icon: <SettingsIcon />, match: (p) => p.startsWith("/parametres") },
   ];
@@ -59,6 +70,7 @@ export function BottomNav({ username }: { username: string }) {
         {left.map(side)}
         <li className="px-1">
           <Link href="/" aria-current={homeActive ? "page" : undefined} className="mm-nav-home">
+            {badges.home && !homeActive ? <NotificationDot className="!right-1 !top-1" /> : null}
             <span className="grid place-items-center gap-0.5 text-[0.7rem] font-extrabold">
               <span className="scale-125">
                 <HomeIcon />

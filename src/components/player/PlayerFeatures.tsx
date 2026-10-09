@@ -23,6 +23,7 @@ export async function PlayerFeatures({
   collection,
   boosters,
   resaleLeftCents,
+  boostersBadge = false,
   initial,
   param,
 }: {
@@ -30,6 +31,7 @@ export async function PlayerFeatures({
   collection: CollectionItem[];
   boosters: BoosterStateView;
   resaleLeftCents: number;
+  boostersBadge?: boolean;
   initial?: string;
   param?: string;
 }) {
@@ -37,11 +39,12 @@ export async function PlayerFeatures({
   const index = HOME_SLIDES.indexOf((initial ?? "boosters") as (typeof HOME_SLIDES)[number]);
   return (
     <SlideDeck
+      markSeen={{ boosters: "boosters" }}
       param={param}
       initial={index === -1 ? 1 : index}
       slides={[
         { key: "collection", label: t("collection.title"), content: <CollectionSlide items={collection} resaleLeftCents={resaleLeftCents} /> },
-        { key: "boosters", label: t("boosters.title"), content: <BoostersSlide state={boosters} /> },
+        { key: "boosters", label: t("boosters.title"), content: <BoostersSlide state={boosters} />, badge: boostersBadge },
         { key: "batailles", label: t("battles.title"), content: <BattlesSlide player={player} /> },
       ]}
     />

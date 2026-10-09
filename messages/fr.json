@@ -243,7 +243,14 @@
     "already_max_variant": "Cette carte est déjà Divine ★★★.",
     "not_enough_duplicates": "Pas assez d'exemplaires pour cette amélioration.",
     "cannot_sell": "Cet exemplaire ne peut pas être revendu.",
-    "daily_sell_cap": "Limite de revente du jour atteinte."
+    "daily_sell_cap": "Limite de revente du jour atteinte.",
+    "player_not_found": "Aucun joueur ne porte ce pseudo.",
+    "friend_self": "Tu ne peux pas t'ajouter toi-même.",
+    "already_friends": "Vous êtes déjà amis.",
+    "already_requested": "Demande déjà envoyée.",
+    "friends_limit": "Tu as atteint le nombre maximum d'amis.",
+    "pending_limit": "Trop de demandes en attente : attends que certaines soient acceptées.",
+    "request_not_found": "Cette demande n'existe plus."
   },
   "statName": {
     "hp": "Points de vie",
@@ -443,7 +450,10 @@
       "rarities": "Raretés",
       "leaderboard": "Classement",
       "news": "News",
-      "ranks": "Rangs"
+      "ranks": "Rangs",
+      "upgrades": "Améliorations",
+      "memeMoney": "MemeMoney",
+      "trophies": "Trophées"
     },
     "leaderboard": {
       "scopeLabel": "Portée du classement",
@@ -487,6 +497,68 @@
       "start": "Rang de départ",
       "rewardBoosters": "{count, plural, one {# booster} other {# boosters}}",
       "obtained": "Récompense obtenue"
+    },
+    "upgrades": {
+      "levelsTitle": "Les 3 niveaux",
+      "lead": "Tes exemplaires en trop peuvent améliorer une carte : elle change d'apparence et ses statistiques augmentent un peu.",
+      "base": "Carte de base",
+      "bonus": "Statistiques +{percent} %",
+      "howTitle": "Comment ça marche",
+      "how1": "Un exemplaire de chaque carte reste toujours dans ta collection : seuls les exemplaires en trop servent.",
+      "how2": "Les niveaux se débloquent dans l'ordre : Dorée ★, puis Dorée ★★, puis Divine ★★★.",
+      "how3": "Plus la carte est rare, moins il faut d'exemplaires (tableau ci-dessous).",
+      "how4": "Chaque niveau augmente les points de vie, l'attaque, la défense et la vitesse, jusqu'à +{max} % au niveau Divine.",
+      "how5": "Une étoile apparaît sur l'illustration pour chaque niveau : dorées pour Dorée, blanches et argentées pour Divine.",
+      "costTitle": "Exemplaires nécessaires",
+      "rarity": "Rareté",
+      "copies": "{count, plural, one {# exemplaire} other {# exemplaires}}",
+      "sellTitle": "Revendre les exemplaires en trop",
+      "sellPrice": "Prix par exemplaire",
+      "sell1": "Dans la fiche d'une carte, « Revendre » vend d'un coup tous ses exemplaires en trop.",
+      "sell2": "« Revendre mes exemplaires en trop » fait la même chose pour toute ta collection.",
+      "sell3": "Les communes, rares et épiques rapportent au plus {cap} MemeMoney par jour ; les cartes plus rares n'ont pas de limite.",
+      "sell4": "Les petites sommes (0,1 ; 0,25…) s'additionnent et ne sont jamais perdues."
+    },
+    "memeMoney": {
+      "whatTitle": "C'est quoi ?",
+      "what": "La MemeMoney est la monnaie du jeu. Ton solde s'affiche en haut à droite ; touche-le pour ouvrir la Boutique.",
+      "earnTitle": "Comment en gagner",
+      "earnWin": "Gagner une bataille classée : +{amount} MemeMoney (les batailles arrivent bientôt).",
+      "earnRanks": "Atteindre un nouveau rang pour la première fois : jusqu'à {total} MemeMoney au total, avec des boosters (voir Rangs).",
+      "earnSell": "Revendre tes exemplaires en trop (voir Améliorations), jusqu'à {cap} MemeMoney par jour pour les communes, rares et épiques.",
+      "earnShop": "L'acheter dans la Boutique avec de l'argent réel, à partir de {price}.",
+      "earnFirst": "Ta toute première recharge rapporte deux fois plus de MemeMoney.",
+      "spendTitle": "La dépenser",
+      "item": "Achat",
+      "price": "Prix",
+      "spendWhere": "Ces boosters s'achètent dans la page Boosters de l'accueil, puis s'ouvrent quand tu veux.",
+      "rulesTitle": "Les règles",
+      "rule1": "La MemeMoney n'a aucune valeur en argent réel : elle ne se revend pas, ne se rembourse pas et ne se convertit pas en euros.",
+      "rule2": "Elle ne s'échange pas entre joueurs.",
+      "rule3": "Les fractions gagnées en revendant des cartes sont gardées et s'additionnent.",
+      "rule4": "Les achats en argent réel sont réservés aux {age} ans et plus, et plafonnés à {cap} par période de 30 jours."
+    },
+    "trophies": {
+      "whatTitle": "C'est quoi ?",
+      "what": "Les trophées mesurent ton niveau en bataille classée. Plus tu en as, plus ton rang est élevé et plus tes adversaires sont forts.",
+      "gainTitle": "Gagner et perdre des trophées",
+      "result": "Résultat",
+      "change": "Trophées",
+      "win": "Victoire",
+      "draw": "Match nul",
+      "loss": "Défaite",
+      "floor": "Tu ne peux jamais descendre sous 0 trophée.",
+      "bots": "Les batailles contre un bot ne changent pas tes trophées.",
+      "soon": "Les batailles classées arrivent bientôt : en attendant, tes trophées ne bougent pas.",
+      "useTitle": "À quoi servent-ils",
+      "use1": "Tous les {per} trophées, tu passes au rang suivant (voir Rangs).",
+      "use2": "Chaque nouveau rang atteint pour la première fois offre des boosters et de la MemeMoney.",
+      "use3": "Le jeu te propose des adversaires qui ont un nombre de trophées proche du tien.",
+      "use4": "Ils te placent face aux autres joueurs dans l'onglet Classement.",
+      "whereTitle": "Où les voir",
+      "where1": "En haut à gauche de l'écran, à côté de ton rang.",
+      "where2": "Dans ton Profil, avec le graphique de leur évolution.",
+      "where3": "Dans le Classement : autour de toi, dans ton rang ou dans le monde."
     }
   },
   "collection": {
@@ -621,5 +693,30 @@
       "3": "Divine ★★★"
     },
     "upgradeButton": "Passer en {level}"
+  },
+  "notifications": {
+    "new": "Nouveau"
+  },
+  "friends": {
+    "title": "{count, plural, =0 {Amis} other {Amis (#)}}",
+    "searchLabel": "Ajouter un ami",
+    "searchPlaceholder": "Pseudo du joueur",
+    "noResult": "Aucun joueur trouvé.",
+    "add": "Ajouter",
+    "accept": "Accepter",
+    "decline": "Refuser",
+    "cancel": "Annuler",
+    "remove": "Retirer",
+    "confirmRemove": "Confirmer",
+    "keep": "Garder",
+    "incoming": "{count, plural, one {# demande reçue} other {# demandes reçues}}",
+    "outgoing": "{count, plural, one {# demande envoyée} other {# demandes envoyées}}",
+    "list": "Mes amis",
+    "empty": "Tu n'as pas encore d'amis : cherche un joueur par son pseudo pour l'ajouter.",
+    "wantsYou": "Ce joueur veut être ton ami.",
+    "status": {
+      "friends": "Ami",
+      "outgoing": "Demande envoyée"
+    }
   }
 }

@@ -243,7 +243,14 @@
     "already_max_variant": "Diese Karte ist bereits Göttlich ★★★.",
     "not_enough_duplicates": "Nicht genug Exemplare für diese Aufwertung.",
     "cannot_sell": "Dieses Exemplar kann nicht verkauft werden.",
-    "daily_sell_cap": "Tageslimit für Verkäufe erreicht."
+    "daily_sell_cap": "Tageslimit für Verkäufe erreicht.",
+    "player_not_found": "Kein Spieler trägt diesen Namen.",
+    "friend_self": "Du kannst dich nicht selbst hinzufügen.",
+    "already_friends": "Ihr seid schon befreundet.",
+    "already_requested": "Anfrage bereits gesendet.",
+    "friends_limit": "Du hast die maximale Anzahl an Freunden erreicht.",
+    "pending_limit": "Zu viele offene Anfragen: Warte, bis einige angenommen werden.",
+    "request_not_found": "Diese Anfrage existiert nicht mehr."
   },
   "statName": {
     "hp": "Kraftpunkte",
@@ -443,7 +450,10 @@
       "rarities": "Seltenheiten",
       "leaderboard": "Rangliste",
       "news": "News",
-      "ranks": "Ränge"
+      "ranks": "Ränge",
+      "upgrades": "Aufwertungen",
+      "memeMoney": "MemeMoney",
+      "trophies": "Trophäen"
     },
     "leaderboard": {
       "scopeLabel": "Umfang der Rangliste",
@@ -487,6 +497,68 @@
       "start": "Startrang",
       "rewardBoosters": "{count, plural, one {# Booster} other {# Booster}}",
       "obtained": "Belohnung erhalten"
+    },
+    "upgrades": {
+      "levelsTitle": "Die 3 Stufen",
+      "lead": "Deine überzähligen Exemplare können eine Karte aufwerten: Sie sieht anders aus und ihre Werte steigen etwas.",
+      "base": "Grundkarte",
+      "bonus": "Werte +{percent} %",
+      "howTitle": "So funktioniert's",
+      "how1": "Ein Exemplar jeder Karte bleibt immer in deiner Sammlung: Nur überzählige Exemplare werden verwendet.",
+      "how2": "Die Stufen werden der Reihe nach freigeschaltet: Golden ★, dann Golden ★★, dann Göttlich ★★★.",
+      "how3": "Je seltener die Karte, desto weniger Exemplare brauchst du (Tabelle unten).",
+      "how4": "Jede Stufe erhöht KP, Angriff, Verteidigung und Tempo, bis zu +{max} % bei Göttlich.",
+      "how5": "Für jede Stufe erscheint ein Stern auf dem Bild: golden bei Golden, weiß und silbern bei Göttlich.",
+      "costTitle": "Benötigte Exemplare",
+      "rarity": "Seltenheit",
+      "copies": "{count, plural, one {# Exemplar} other {# Exemplare}}",
+      "sellTitle": "Überzählige Exemplare verkaufen",
+      "sellPrice": "Preis pro Exemplar",
+      "sell1": "Auf der Kartenseite verkauft „Verkaufen“ alle überzähligen Exemplare auf einmal.",
+      "sell2": "„Überzählige Exemplare verkaufen“ macht dasselbe für deine ganze Sammlung.",
+      "sell3": "Gewöhnliche, seltene und epische Karten bringen höchstens {cap} MemeMoney pro Tag; seltenere Karten haben kein Limit.",
+      "sell4": "Kleine Beträge (0,1; 0,25 …) summieren sich und gehen nie verloren."
+    },
+    "memeMoney": {
+      "whatTitle": "Was ist das?",
+      "what": "MemeMoney ist die Währung des Spiels. Dein Guthaben steht oben rechts; tippe darauf, um den Shop zu öffnen.",
+      "earnTitle": "So verdienst du sie",
+      "earnWin": "Einen gewerteten Kampf gewinnen: +{amount} MemeMoney (Kämpfe kommen bald).",
+      "earnRanks": "Zum ersten Mal einen neuen Rang erreichen: insgesamt bis zu {total} MemeMoney, dazu Booster (siehe Ränge).",
+      "earnSell": "Überzählige Exemplare verkaufen (siehe Aufwertungen), bis zu {cap} MemeMoney pro Tag für gewöhnliche, seltene und epische Karten.",
+      "earnShop": "Im Shop mit echtem Geld kaufen, ab {price}.",
+      "earnFirst": "Deine allererste Aufladung bringt doppelt so viel MemeMoney.",
+      "spendTitle": "Ausgeben",
+      "item": "Kauf",
+      "price": "Preis",
+      "spendWhere": "Diese Booster kaufst du auf der Booster-Seite des Startbildschirms und öffnest sie, wann du willst.",
+      "rulesTitle": "Die Regeln",
+      "rule1": "MemeMoney hat keinen Echtgeldwert: Sie kann weder weiterverkauft, erstattet noch in Geld umgetauscht werden.",
+      "rule2": "Sie kann nicht zwischen Spielern getauscht werden.",
+      "rule3": "Bruchteile aus Kartenverkäufen bleiben erhalten und summieren sich.",
+      "rule4": "Käufe mit echtem Geld sind ab {age} Jahren möglich und auf {cap} pro 30 Tage begrenzt."
+    },
+    "trophies": {
+      "whatTitle": "Was sind sie?",
+      "what": "Trophäen messen dein Niveau in gewerteten Kämpfen. Je mehr du hast, desto höher dein Rang und desto stärker deine Gegner.",
+      "gainTitle": "Trophäen gewinnen und verlieren",
+      "result": "Ergebnis",
+      "change": "Trophäen",
+      "win": "Sieg",
+      "draw": "Unentschieden",
+      "loss": "Niederlage",
+      "floor": "Du kannst nie unter 0 Trophäen fallen.",
+      "bots": "Kämpfe gegen einen Bot ändern deine Trophäen nicht.",
+      "soon": "Gewertete Kämpfe kommen bald: Bis dahin bleiben deine Trophäen gleich.",
+      "useTitle": "Wofür sie da sind",
+      "use1": "Alle {per} Trophäen steigst du einen Rang auf (siehe Ränge).",
+      "use2": "Jeder zum ersten Mal erreichte Rang bringt Booster und MemeMoney.",
+      "use3": "Das Spiel sucht dir Gegner mit ähnlich vielen Trophäen.",
+      "use4": "Sie bestimmen deinen Platz in der Rangliste.",
+      "whereTitle": "Wo du sie siehst",
+      "where1": "Oben links auf dem Bildschirm, neben deinem Rang.",
+      "where2": "In deinem Profil, mit einem Verlaufsdiagramm.",
+      "where3": "In der Rangliste: um dich herum, in deinem Rang oder weltweit."
     }
   },
   "collection": {
@@ -621,5 +693,30 @@
       "3": "Göttlich ★★★"
     },
     "upgradeButton": "Aufwerten zu {level}"
+  },
+  "notifications": {
+    "new": "Neu"
+  },
+  "friends": {
+    "title": "{count, plural, =0 {Freunde} other {Freunde (#)}}",
+    "searchLabel": "Freund hinzufügen",
+    "searchPlaceholder": "Benutzername des Spielers",
+    "noResult": "Kein Spieler gefunden.",
+    "add": "Hinzufügen",
+    "accept": "Annehmen",
+    "decline": "Ablehnen",
+    "cancel": "Zurückziehen",
+    "remove": "Entfernen",
+    "confirmRemove": "Bestätigen",
+    "keep": "Behalten",
+    "incoming": "{count, plural, one {# Anfrage erhalten} other {# Anfragen erhalten}}",
+    "outgoing": "{count, plural, one {# Anfrage gesendet} other {# Anfragen gesendet}}",
+    "list": "Meine Freunde",
+    "empty": "Noch keine Freunde: Suche einen Spieler nach Benutzernamen, um ihn hinzuzufügen.",
+    "wantsYou": "Dieser Spieler möchte dein Freund sein.",
+    "status": {
+      "friends": "Freund",
+      "outgoing": "Anfrage gesendet"
+    }
   }
 }

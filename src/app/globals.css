@@ -1334,3 +1334,27 @@ body:has(> dialog.mm-detail[open]) #mm-app {
 @media (prefers-reduced-motion: reduce) {
   .mm-card__variant[data-variant="divine"] .mm-card__star { animation: none; }
 }
+
+/* Point rouge de notification (navigation et onglets). */
+.mm-dot {
+  position: absolute;
+  top: 0.2rem;
+  right: 0.35rem;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 9999px;
+  background: #e5193f;
+  border: 2px solid var(--color-surface);
+  box-shadow: 0 0 0 1px rgb(229 25 63 / 0.35);
+}
+[dir="rtl"] .mm-dot {
+  right: auto;
+  left: 0.35rem;
+}
+/* Bandeau d'onglets défilant : pas de barre de défilement visible. */
+.mm-tabs-scroll {
+  scrollbar-width: none;
+}
+.mm-tabs-scroll::-webkit-scrollbar {
+  display: none;
+}

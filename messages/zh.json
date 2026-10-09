@@ -243,7 +243,14 @@
     "already_max_variant": "这张卡牌已经是神圣 ★★★。",
     "not_enough_duplicates": "多余的卡牌不足，无法升级。",
     "cannot_sell": "这张卡牌无法出售。",
-    "daily_sell_cap": "今日出售额度已用完。"
+    "daily_sell_cap": "今日出售额度已用完。",
+    "player_not_found": "没有玩家使用这个用户名。",
+    "friend_self": "不能添加自己。",
+    "already_friends": "你们已经是好友了。",
+    "already_requested": "请求已发送。",
+    "friends_limit": "好友数量已达上限。",
+    "pending_limit": "待处理的请求太多：请等一些被接受后再试。",
+    "request_not_found": "这个请求已不存在。"
   },
   "statName": {
     "hp": "生命值",
@@ -443,7 +450,10 @@
       "rarities": "稀有度",
       "leaderboard": "排行榜",
       "news": "新闻",
-      "ranks": "段位"
+      "ranks": "段位",
+      "upgrades": "升级",
+      "memeMoney": "MemeMoney",
+      "trophies": "奖杯"
     },
     "leaderboard": {
       "scopeLabel": "排行榜范围",
@@ -487,6 +497,68 @@
       "start": "初始段位",
       "rewardBoosters": "{count, plural, other {# 个卡包}}",
       "obtained": "奖励已领取"
+    },
+    "upgrades": {
+      "levelsTitle": "3 个等级",
+      "lead": "多余的卡牌可以升级一张卡牌：外观改变，属性也会小幅提升。",
+      "base": "基础卡牌",
+      "bonus": "属性 +{percent}%",
+      "howTitle": "规则说明",
+      "how1": "每张卡牌都会在收藏中保留一张：只使用多余的卡牌。",
+      "how2": "等级按顺序解锁：金色 ★，然后金色 ★★，最后神圣 ★★★。",
+      "how3": "卡牌越稀有，所需张数越少（见下表）。",
+      "how4": "每个等级都会提升生命、攻击、防御和速度，神圣等级最高 +{max}%。",
+      "how5": "每升一级，插图上就会多一颗星：金色等级为金星，神圣等级为银白色星星。",
+      "costTitle": "所需张数",
+      "rarity": "稀有度",
+      "copies": "{count, plural, other {# 张}}",
+      "sellTitle": "出售多余的卡牌",
+      "sellPrice": "每张价格",
+      "sell1": "在卡牌详情中，“出售”会一次卖掉这张卡牌所有多余的张数。",
+      "sell2": "“出售多余的卡牌”会对整个收藏执行同样的操作。",
+      "sell3": "普通、稀有和史诗卡每天最多带来 {cap} MemeMoney；更稀有的卡牌没有上限。",
+      "sell4": "零碎金额（0.1、0.25……）会累积，永远不会丢失。"
+    },
+    "memeMoney": {
+      "whatTitle": "这是什么？",
+      "what": "MemeMoney 是游戏货币。余额显示在右上角；点击即可打开商店。",
+      "earnTitle": "如何获得",
+      "earnWin": "赢得一场排位赛：+{amount} MemeMoney（对战即将上线）。",
+      "earnRanks": "首次达到新段位：总计最多 {total} MemeMoney，另有卡包（见段位）。",
+      "earnSell": "出售多余的卡牌（见升级），普通、稀有和史诗卡每天最多 {cap} MemeMoney。",
+      "earnShop": "在商店用真实货币购买，最低 {price}。",
+      "earnFirst": "首次充值可获得双倍 MemeMoney。",
+      "spendTitle": "如何使用",
+      "item": "物品",
+      "price": "价格",
+      "spendWhere": "这些卡包在首页的“卡包”页面购买，随时都能打开。",
+      "rulesTitle": "规则",
+      "rule1": "MemeMoney 不具备现实货币价值：不可转售、不可退款，也不能兑换成钱。",
+      "rule2": "不能在玩家之间交易。",
+      "rule3": "出售卡牌获得的零碎金额会保留并累积。",
+      "rule4": "真实货币购买仅限 {age} 岁及以上，每 30 天上限为 {cap}。"
+    },
+    "trophies": {
+      "whatTitle": "这是什么？",
+      "what": "奖杯衡量你在排位赛中的水平。奖杯越多，段位越高，对手也越强。",
+      "gainTitle": "获得与失去奖杯",
+      "result": "结果",
+      "change": "奖杯",
+      "win": "胜利",
+      "draw": "平局",
+      "loss": "失败",
+      "floor": "奖杯不会低于 0。",
+      "bots": "与机器人对战不会改变奖杯。",
+      "soon": "排位赛即将上线：在此之前，你的奖杯不会变化。",
+      "useTitle": "有什么用",
+      "use1": "每 {per} 个奖杯升一个段位（见段位）。",
+      "use2": "首次达到每个新段位都会获得卡包和 MemeMoney。",
+      "use3": "游戏会为你匹配奖杯数相近的对手。",
+      "use4": "它们决定你在排行榜中的位置。",
+      "whereTitle": "在哪里查看",
+      "where1": "屏幕左上角，段位旁边。",
+      "where2": "个人资料中，附有变化图表。",
+      "where3": "排行榜中：你的附近、你的段位或全球。"
     }
   },
   "collection": {
@@ -621,5 +693,30 @@
       "3": "神圣 ★★★"
     },
     "upgradeButton": "升级为{level}"
+  },
+  "notifications": {
+    "new": "新"
+  },
+  "friends": {
+    "title": "{count, plural, =0 {好友} other {好友（#）}}",
+    "searchLabel": "添加好友",
+    "searchPlaceholder": "玩家用户名",
+    "noResult": "没有找到玩家。",
+    "add": "添加",
+    "accept": "接受",
+    "decline": "拒绝",
+    "cancel": "撤回",
+    "remove": "删除",
+    "confirmRemove": "确认",
+    "keep": "保留",
+    "incoming": "{count, plural, other {收到 # 个请求}}",
+    "outgoing": "{count, plural, other {已发送 # 个请求}}",
+    "list": "我的好友",
+    "empty": "还没有好友：按用户名搜索玩家来添加吧。",
+    "wantsYou": "这位玩家想和你成为好友。",
+    "status": {
+      "friends": "好友",
+      "outgoing": "请求已发送"
+    }
   }
 }
