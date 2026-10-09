@@ -184,3 +184,5 @@ Chaque entrée : la décision, puis la raison.
 - **QR code** (généré côté serveur, toujours noir sur blanc même en thème inversé) vers `/installer` : sur l'accueil visiteur (grand écran) et dans **Réglages → Application** pour le joueur. Sur téléphone, un bouton « Installer l'application » le remplace (on ne scanne pas son propre écran). Les réglages regroupent déjà ce qui concerne l'appareil (langue, thème) : l'installation y a sa place.
 - **Le QR code pointe vers `NEXT_PUBLIC_SITE_URL`** : en local, il mène à localhost, que le téléphone ne peut pas joindre.
 - **Audit mobile (375 px)** : 18 pages et l'ouverture de booster vérifiées, aucun débordement horizontal. Zones tactiles agrandies à 44 px : liens du pied de page, « Mot de passe oublié ? », logo, pseudos du classement.
+
+- **Contrôle des dépendances** : `npm run dev` et `npm run build` vérifient d'abord que toutes les bibliothèques de package.json sont installées (`scripts/check-deps.mjs`) et indiquent `npm install` sinon, au lieu de l'erreur « Module not found ».
