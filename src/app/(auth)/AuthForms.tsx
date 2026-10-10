@@ -6,7 +6,9 @@ import { useActionState, useEffect, useState, type AnimationEvent, type ReactNod
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { CheckboxField, Field, FormMessage, RequiredNote } from "@/components/ui/Field";
 import { PasswordChecklist } from "@/components/ui/PasswordChecklist";
+import { Captcha } from "@/components/ui/Captcha";
 import { PasswordField } from "@/components/ui/PasswordField";
+import { publicEnv } from "@/lib/env.public";
 import { useDeviceTimeZone } from "@/lib/client/use-device-timezone";
 import { looksLikeEmail, PASSWORD_MAX, passwordIsStrong } from "@/lib/validation/auth";
 import { usernameProblem } from "@/lib/validation/username";
@@ -56,6 +58,9 @@ function LegalLink({ href, children }: { href: string; children: ReactNode }) {
 export function SignInForm({ next, notice }: { next: string; notice?: string | null }) {
   const t = useTranslations("auth");
   const [state, action, pending] = useActionState(signInAction, IDLE);
+  // Anti-robot : le bouton attend la vérification (si le captcha est configuré).
+  const [captchaOk, setCaptchaOk] = useState(false);
+  const captchaReady = !publicEnv.turnstileSiteKey || captchaOk;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   // Remplissage automatique du navigateur : les valeurs ne sont lisibles qu'après
@@ -95,7 +100,8 @@ export function SignInForm({ next, notice }: { next: string; notice?: string | n
           required
         />
         <ErrorMessage state={state} />
-        <Button type="submit" disabled={!ready || pending}>
+        <Captcha resetKey={state} onToken={(token) => setCaptchaOk(Boolean(token))} />
+        <Button type="submit" disabled={!ready || !captchaReady || pending}>
           {pending ? t("pending") : t("submitSignIn")}
         </Button>
       </form>
@@ -209,6 +215,9 @@ export function SignUpForm() {
   const t = useTranslations("auth");
   const te = useTranslations("errors");
   const [state, action, pending] = useActionState(signUpAction, IDLE);
+  // Anti-robot : le bouton attend la vérification (si le captcha est configuré).
+  const [captchaOk, setCaptchaOk] = useState(false);
+  const captchaReady = !publicEnv.turnstileSiteKey || captchaOk;
   const timezone = useDeviceTimeZone("Europe/Paris");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -282,7 +291,8 @@ export function SignUpForm() {
         />
         <ConsentFields adult={adult} terms={terms} onAdult={setAdult} onTerms={setTerms} />
         <ErrorMessage state={state} />
-        <Button type="submit" disabled={!ready || pending}>
+        <Captcha resetKey={state} onToken={(token) => setCaptchaOk(Boolean(token))} />
+        <Button type="submit" disabled={!ready || !captchaReady || pending}>
           {pending ? t("pending") : t("submitSignUp")}
         </Button>
       </form>
@@ -303,6 +313,9 @@ export function SignUpForm() {
 export function ForgotPasswordForm() {
   const t = useTranslations("auth");
   const [state, action, pending] = useActionState(forgotPasswordAction, IDLE);
+  // Anti-robot : le bouton attend la vérification (si le captcha est configuré).
+  const [captchaOk, setCaptchaOk] = useState(false);
+  const captchaReady = !publicEnv.turnstileSiteKey || captchaOk;
   const [email, setEmail] = useState("");
   if (state.status === "sent") {
     return (
@@ -328,7 +341,8 @@ export function ForgotPasswordForm() {
         required
       />
       <ErrorMessage state={state} />
-      <Button type="submit" disabled={!looksLikeEmail(email) || pending}>
+      <Captcha resetKey={state} onToken={(token) => setCaptchaOk(Boolean(token))} />
+        <Button type="submit" disabled={!looksLikeEmail(email) || !captchaReady || pending}>
         {pending ? t("pending") : t("forgotSubmit")}
       </Button>
     </form>

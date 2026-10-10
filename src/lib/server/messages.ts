@@ -40,8 +40,13 @@ export async function listConversations(playerId: string): Promise<Conversation[
     { other_id: string; username: string; trophies: number; body: string; created_at: Date; sender_id: string; unread: number }[]
   >`
     with mine as (
-      select case when sender_id = ${playerId} then recipient_id else sender_id end as other_id, body, created_at, sender_id
-      from public.messages where ${playerId} in (sender_id, recipient_id)
+      select m.other_id, m.body, m.created_at, m.sender_id
+      from (
+        select case when sender_id = ${playerId} then recipient_id else sender_id end as other_id, body, created_at, sender_id
+        from public.messages where ${playerId} in (sender_id, recipient_id)
+      ) m
+      left join public.conversation_hides h on h.player_id = ${playerId} and h.other_id = m.other_id
+      where h.hidden_before is null or m.created_at > h.hidden_before
     ), last as (
       select distinct on (other_id) other_id, body, created_at, sender_id from mine order by other_id, created_at desc
     ), unread as (
@@ -104,6 +109,10 @@ export async function getThread(player: Player, username: string): Promise<Threa
       select id, sender_id, body, created_at, read_at from public.messages
       where least(sender_id, recipient_id) = least(${player.id}::uuid, ${other.id}::uuid)
         and greatest(sender_id, recipient_id) = greatest(${player.id}::uuid, ${other.id}::uuid)
+        and created_at > coalesce(
+          (select hidden_before from public.conversation_hides where player_id = ${player.id} and other_id = ${other.id}),
+          '-infinity'
+        )
       order by created_at desc
       limit ${MESSAGE_RULES.PAGE}
     `,
@@ -129,4 +138,26 @@ export async function sendMessage(player: Player, username: string, body: string
     insert into public.messages (sender_id, recipient_id, body) values (${player.id}, ${other.id}, ${text}) returning id, created_at
   `;
   return { id: m.id, fromMe: true, body: text, createdAt: m.created_at.toISOString(), read: false };
+}
+
+/** Supprime un de ses propres messages (il disparaît pour les deux joueurs). */
+export async function deleteMessage(player: Player, messageId: string): Promise<void> {
+  const rows = await sql()`delete from public.messages where id = ${messageId} and sender_id = ${player.id} returning id`;
+  if (rows.length === 0) throw new ApiError(404, "message_not_found");
+}
+
+/**
+ * Supprime une conversation de sa propre liste. L'autre joueur la garde ;
+ * si de nouveaux messages arrivent, elle réapparaît avec ceux-là seulement.
+ */
+export async function hideConversation(player: Player, username: string): Promise<void> {
+  const other = await findPlayer(username);
+  await sql().begin(async (tx) => {
+    await tx`
+      insert into public.conversation_hides (player_id, other_id, hidden_before) values (${player.id}, ${other.id}, now())
+      on conflict (player_id, other_id) do update set hidden_before = now()
+    `;
+    // Les messages reçus de cette conversation ne comptent plus comme non lus.
+    await tx`update public.messages set read_at = now() where recipient_id = ${player.id} and sender_id = ${other.id} and read_at is null`;
+  });
 }

@@ -20,14 +20,6 @@
     "superbrainrot": "SuperBrainrot",
     "godlevel": "Godlevel"
   },
-  "vibe": {
-    "chaos": "混乱",
-    "wholesome": "治愈",
-    "rage": "暴怒",
-    "ironique": "反讽",
-    "cringe": "尴尬",
-    "absurde": "荒诞"
-  },
   "card": {
     "hp": "生命",
     "atk": "攻击",
@@ -38,9 +30,10 @@
     "defense": "防御",
     "power": "威力 {power}",
     "energyCost": "{count, plural, other {# 点能量}}",
-    "ariaLabel": "{name}，{rarity}卡牌，氛围 {vibe}，{hp} 生命",
+    "ariaLabel": "{name}，{rarity}卡牌，{hp} 生命",
     "tiltHint": "在卡牌上移动手指或鼠标，让它闪闪发光。",
-    "open": "查看 {name} 的详情"
+    "open": "查看 {name} 的详情",
+    "copies": "{count, plural, other {# 张}}"
   },
   "effect": {
     "none": "无效果",
@@ -248,8 +241,8 @@
     "not_enough_meme_money": "MemeMoney 不足。",
     "no_cards": "暂时还没有可用的卡牌。",
     "card_not_owned": "你没有这张卡牌。",
-    "already_max_variant": "这张卡牌已经是神圣 ★★★。",
-    "not_enough_duplicates": "多余的卡牌不足，无法升级。",
+    "already_max_variant": "这张卡牌已完成最终进化（神圣 ★★★）。",
+    "not_enough_duplicates": "卡牌张数不足，无法进化。",
     "cannot_sell": "这张卡牌无法出售。",
     "daily_sell_cap": "今日出售额度已用完。",
     "player_not_found": "没有玩家使用这个用户名。",
@@ -260,7 +253,9 @@
     "pending_limit": "待处理的请求太多：请等一些被接受后再试。",
     "request_not_found": "这个请求已不存在。",
     "blocked": "无法操作：你们中有一方屏蔽了对方。",
-    "message_limit": "请等对方回复后再发送更多消息。"
+    "message_limit": "请等对方回复后再发送更多消息。",
+    "captcha_failed": "人机验证未通过，请稍后重试。",
+    "message_not_found": "这条消息已不存在。"
   },
   "statName": {
     "hp": "生命值",
@@ -281,9 +276,6 @@
     "special": "特技攻击",
     "defense": "防御",
     "power": "威力 {power}",
-    "vibeTitle": "氛围",
-    "strongAgainst": "克制{vibe}",
-    "weakAgainst": "被{vibe}克制",
     "notOwned": "这张卡牌还不在你的收藏中。开卡包去找它吧！",
     "statBonus": "+{percent}%"
   },
@@ -300,10 +292,9 @@
     },
     "collection": {
       "title": "完成你的收藏",
-      "text": "按稀有度或氛围筛选、排序、搜索并追踪进度。缺少的卡牌会一直模糊，直到你找到它们。排行榜比较游戏中所有卡牌：人气、攻击、胜率……",
+      "text": "按稀有度筛选、排序、搜索并追踪进度。缺少的卡牌会一直模糊，直到你找到它们。排行榜比较游戏中所有卡牌：人气、攻击、胜率……",
       "progress": "87 / 240 张卡牌",
       "chipRarity": "稀有度",
-      "chipVibe": "氛围",
       "chipOwned": "已拥有",
       "chipSort": "排序：人气",
       "filtersLabel": "筛选示例",
@@ -467,7 +458,7 @@
       "leaderboard": "排行榜",
       "news": "新闻",
       "ranks": "段位",
-      "upgrades": "升级",
+      "upgrades": "进化",
       "memeMoney": "MemeMoney",
       "trophies": "奖杯"
     },
@@ -515,22 +506,22 @@
       "obtained": "奖励已领取"
     },
     "upgrades": {
-      "levelsTitle": "3 个等级",
-      "lead": "多余的卡牌可以升级一张卡牌：外观改变，属性也会小幅提升。",
+      "levelsTitle": "3 次进化",
+      "lead": "多余的卡牌可以让一张卡牌进化：外观改变，属性也会小幅提升。",
       "base": "基础卡牌",
       "bonus": "属性 +{percent}%",
       "howTitle": "规则说明",
       "how1": "每张卡牌都会在收藏中保留一张：只使用多余的卡牌。",
-      "how2": "等级按顺序解锁：金色 ★，然后金色 ★★，最后神圣 ★★★。",
+      "how2": "进化按顺序解锁：金色 ★，然后金色 ★★，最后神圣 ★★★。",
       "how3": "卡牌越稀有，所需张数越少（见下表）。",
-      "how4": "每个等级都会提升生命、攻击、防御和速度，神圣等级最高 +{max}%。",
-      "how5": "每升一级，插图上就会多一颗星：金色等级为金星，神圣等级为银白色星星。",
+      "how4": "每次进化都会提升生命、攻击、防御和速度，神圣最高 +{max}%。",
+      "how5": "每次进化，插图上就会多一颗星：金色为金星，神圣为银白色星星。",
       "costTitle": "所需张数",
       "rarity": "稀有度",
       "copies": "{count, plural, other {# 张}}",
       "sellTitle": "出售多余的卡牌",
       "sellPrice": "每张价格",
-      "sell1": "在卡牌详情中，“出售”会一次卖掉这张卡牌所有多余的张数。",
+      "sell1": "点击一张卡牌：“出售”按钮会一次卖掉所有多余的张数。",
       "sell2": "“出售多余的卡牌”会对整个收藏执行同样的操作。",
       "sell3": "普通、稀有和史诗卡每天最多带来 {cap} MemeMoney；更稀有的卡牌没有上限。",
       "sell4": "零碎金额（0.1、0.25……）会累积，永远不会丢失。"
@@ -541,7 +532,7 @@
       "earnTitle": "如何获得",
       "earnWin": "赢得一场排位赛：+{amount} MemeMoney（对战即将上线）。",
       "earnRanks": "首次达到新段位：总计最多 {total} MemeMoney，另有卡包（见段位）。",
-      "earnSell": "出售多余的卡牌（见升级），普通、稀有和史诗卡每天最多 {cap} MemeMoney。",
+      "earnSell": "出售多余的卡牌（见进化），普通、稀有和史诗卡每天最多 {cap} MemeMoney。",
       "earnShop": "在商店用真实货币购买，最低 {price}。",
       "earnFirst": "首次充值可获得双倍 MemeMoney。",
       "spendTitle": "如何使用",
@@ -588,8 +579,6 @@
     "search": "搜索卡牌",
     "rarityLabel": "稀有度",
     "rarityAll": "稀有度",
-    "vibeLabel": "氛围",
-    "vibeAll": "氛围",
     "sortLabel": "排序方式",
     "sort": {
       "rarity": "稀有度",
@@ -682,14 +671,9 @@
   },
   "dup": {
     "owned": "{count, plural, other {# 张}} · {dups, plural, =0 {没有多余} other {多余 # 张}}",
-    "upgradeTo": "下一级：{level}（属性 +{percent}%）",
-    "upgradeCost": "{have} / {cost} 张",
-    "maxed": "神圣 ★★★：已达最高等级！",
-    "upgraded": "你的卡牌已升级为{level}！",
+    "maxed": "神圣 ★★★：最终进化",
+    "upgraded": "你的卡牌已进化：{level}！",
     "sold": "已获得 +{amount} MemeMoney。",
-    "capLeft": "今日普通、稀有、史诗卡出售额度：还剩 {amount} MemeMoney。",
-    "capReached": "今日出售额度已用完，明天再来吧！",
-    "nothingToSell": "这张卡牌没有可出售的。",
     "bulk": {
       "button": "出售多余的卡牌",
       "none": "没有可出售的多余卡牌",
@@ -707,7 +691,9 @@
       "2": "金色 ★★",
       "3": "神圣 ★★★"
     },
-    "upgradeButton": "升级为{level}"
+    "evolveTo": "进化为{level}",
+    "evolveCost": "{have}/{cost} 张",
+    "nothingToSellShort": "没有可出售的"
   },
   "notifications": {
     "new": "新",
@@ -737,7 +723,7 @@
   },
   "messages": {
     "title": "消息",
-    "lead": "给好友或其他玩家写消息。打开对方的资料，点击“写消息”即可。",
+    "lead": "用“新消息”给好友写信。要给其他玩家写消息，请打开对方资料并点击“写消息”。",
     "empty": "还没有对话。打开一位玩家的资料，点击“写消息”开始聊天。",
     "you": "你",
     "back": "对话列表",
@@ -749,7 +735,18 @@
     "notFriend": "{count, plural, other {你们还不是好友：在对方回复前还能发送 # 条消息。}}",
     "placeholder": "输入消息…",
     "send": "发送",
-    "write": "写消息"
+    "write": "写消息",
+    "new": "新消息",
+    "cancelNew": "取消",
+    "pickFriend": "你想给哪位好友写消息？",
+    "noFriends": "还没有好友：去“好友”页添加吧。",
+    "filterFriends": "搜索好友",
+    "otherPlayers": "要给非好友玩家写消息：在“好友”中搜索对方，打开资料，然后点击“写消息”。",
+    "hide": "删除对话",
+    "hideConfirm": "从你的列表中删除这个对话？对方仍会保留。",
+    "delete": "删除",
+    "confirmDelete": "确认",
+    "keep": "保留"
   },
   "block": {
     "block": "屏蔽",
@@ -777,5 +774,12 @@
     "cancel": "取消",
     "sent": "谢谢：你的举报已提交给团队。",
     "close": "关闭"
+  },
+  "defense": {
+    "heal": "回复 {percent}% 生命",
+    "reflect": "反弹 {percent}% 伤害",
+    "dodge": "{chance}% 概率闪避",
+    "cleanse": "消除负面效果",
+    "recharge": "充能 1 点"
   }
 }

@@ -241,6 +241,16 @@ Les règles (durée, énergie, tours, délai d'apparition) sont dans `src/lib/ba
 
 Ajoutez une entrée en haut de `src/content/news.ts` (date, type, titre et texte en français, autres langues facultatives). Elle apparaît dans Infos → News.
 
+## Anti-robot (captcha)
+
+Le jeu utilise **Cloudflare Turnstile** sur la connexion, l'inscription, le mot de passe oublié et le formulaire de contact. Le plus souvent, le joueur n'a rien à faire : la case se coche toute seule.
+
+1. Sur dash.cloudflare.com (compte gratuit) : **Turnstile → Add widget**, ajoutez vos domaines (`localhost` et votre adresse Vercel), mode **Managed**.
+2. Copiez la **Site Key** dans `NEXT_PUBLIC_TURNSTILE_SITE_KEY` et la **Secret Key** dans `TURNSTILE_SECRET_KEY` (dans `.env.local` et dans Vercel → Environment Variables), puis redéployez.
+3. N'activez pas en plus le CAPTCHA de Supabase : la vérification est déjà faite par le jeu, et un jeton ne peut servir qu'une fois.
+
+Sans ces deux clés, le captcha est simplement désactivé.
+
 ## Messages de contact et signalements
 
 Les messages envoyés depuis `/contact` sont dans la table `contact_messages` (tableau de bord Supabase → Table Editor). Passez `status` à `handled` une fois traités. Les signalements de joueurs sont dans la table `player_reports` (motif, précisions, joueur signalé), à traiter de la même façon.

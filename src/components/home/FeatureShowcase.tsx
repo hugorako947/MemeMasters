@@ -85,7 +85,7 @@ async function BoosterScene({ caption }: { caption: string }) {
 /** Un aperçu de la collection : progression, filtres, cartes possédées ou floutées. */
 async function CollectionScene() {
   const t = await getTranslations("features.collection");
-  const chips = [t("chipRarity"), t("chipVibe"), t("chipOwned"), t("chipSort")];
+  const chips = [t("chipRarity"), t("chipOwned"), t("chipSort")];
   const grid = [
     { c: card("le-chat-qui-juge"), owned: true },
     { c: card("spirale-du-scroll-infini"), owned: false },

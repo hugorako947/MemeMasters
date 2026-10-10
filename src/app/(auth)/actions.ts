@@ -6,6 +6,7 @@ import { publicEnv } from "@/lib/env.public";
 import { createPlayer, isUsernameTaken } from "@/lib/server/players";
 import { isValidTimeZone } from "@/lib/time/game-day";
 import { usernameProblem } from "@/lib/validation/username";
+import { verifyCaptcha } from "@/lib/server/captcha";
 import { clientIp, consumeRateLimit, RATE_LIMITS, type RateLimitRule } from "@/lib/server/rate-limit";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import {
@@ -86,6 +87,7 @@ export async function signInAction(_prev: AuthFormState, formData: FormData): Pr
   if (!parsed.success) return { status: "error", code: "invalid_credentials" };
   const limited = await rateLimitError(RATE_LIMITS.signIn);
   if (limited) return { status: "error", code: limited };
+  if (!(await verifyCaptcha(formData.get("captchaToken")))) return { status: "error", code: "captcha_failed" };
 
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
@@ -137,6 +139,7 @@ export async function signUpAction(_prev: AuthFormState, formData: FormData): Pr
   if (!parsed.success) return { status: "error", code: signUpErrorCode(parsed.error.issues[0]?.path[0], username) };
   const limited = await rateLimitError(RATE_LIMITS.signUp);
   if (limited) return { status: "error", code: limited };
+  if (!(await verifyCaptcha(formData.get("captchaToken")))) return { status: "error", code: "captcha_failed" };
 
   const { email, password, timezone: rawTimezone } = parsed.data;
   const timezone = isValidTimeZone(rawTimezone) ? rawTimezone : "Europe/Paris";
@@ -182,6 +185,7 @@ export async function forgotPasswordAction(_prev: AuthFormState, formData: FormD
   if (!parsed.success) return { status: "error", code: "invalid_input" };
   const limited = await rateLimitError(RATE_LIMITS.passwordReset);
   if (limited) return { status: "error", code: limited };
+  if (!(await verifyCaptcha(formData.get("captchaToken")))) return { status: "error", code: "captcha_failed" };
 
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {

@@ -148,7 +148,7 @@ export async function ProfileView({
               key: "messages",
               label: t("tabs.messages"),
               badge: social.badges.messages,
-              content: <MessagesPanel initial={social.conversations} openWith={social.openWith} />,
+              content: <MessagesPanel initial={social.conversations} openWith={social.openWith} friends={social.friends.friends} />,
             },
           ]}
         />

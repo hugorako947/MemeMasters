@@ -20,14 +20,6 @@
     "superbrainrot": "SuperBrainrot",
     "godlevel": "Godlevel"
   },
-  "vibe": {
-    "chaos": "Chaos",
-    "wholesome": "Wholesome",
-    "rage": "Wut",
-    "ironique": "Ironisch",
-    "cringe": "Cringe",
-    "absurde": "Absurd"
-  },
   "card": {
     "hp": "KP",
     "atk": "ANG",
@@ -38,9 +30,10 @@
     "defense": "Verteidigung",
     "power": "{power} Stärke",
     "energyCost": "{count, plural, one {# Energie} other {# Energie}}",
-    "ariaLabel": "{name}, Seltenheit {rarity}, Vibe {vibe}, {hp} KP",
+    "ariaLabel": "{name}, Seltenheit {rarity}, {hp} KP",
     "tiltHint": "Bewege Finger oder Maus über die Karte, damit sie glänzt.",
-    "open": "Karte {name} ansehen"
+    "open": "Karte {name} ansehen",
+    "copies": "{count, plural, one {# Exemplar} other {# Exemplare}}"
   },
   "effect": {
     "none": "Kein Effekt",
@@ -248,8 +241,8 @@
     "not_enough_meme_money": "Nicht genug MemeMoney.",
     "no_cards": "Noch keine Karten verfügbar.",
     "card_not_owned": "Du besitzt diese Karte nicht.",
-    "already_max_variant": "Diese Karte ist bereits Göttlich ★★★.",
-    "not_enough_duplicates": "Nicht genug Exemplare für diese Aufwertung.",
+    "already_max_variant": "Diese Karte hat bereits ihre letzte Entwicklung (Göttlich ★★★).",
+    "not_enough_duplicates": "Nicht genug Exemplare für diese Entwicklung.",
     "cannot_sell": "Dieses Exemplar kann nicht verkauft werden.",
     "daily_sell_cap": "Tageslimit für Verkäufe erreicht.",
     "player_not_found": "Kein Spieler trägt diesen Namen.",
@@ -260,7 +253,9 @@
     "pending_limit": "Zu viele offene Anfragen: Warte, bis einige angenommen werden.",
     "request_not_found": "Diese Anfrage existiert nicht mehr.",
     "blocked": "Nicht möglich: Einer von euch hat den anderen blockiert.",
-    "message_limit": "Warte auf eine Antwort, bevor du weitere Nachrichten sendest."
+    "message_limit": "Warte auf eine Antwort, bevor du weitere Nachrichten sendest.",
+    "captcha_failed": "Die Anti-Bot-Prüfung ist fehlgeschlagen. Versuch es gleich noch einmal.",
+    "message_not_found": "Diese Nachricht existiert nicht mehr."
   },
   "statName": {
     "hp": "Kraftpunkte",
@@ -281,9 +276,6 @@
     "special": "Spezialangriff",
     "defense": "Verteidigung",
     "power": "Stärke {power}",
-    "vibeTitle": "Vibe",
-    "strongAgainst": "Stark gegen {vibe}",
-    "weakAgainst": "Schwach gegen {vibe}",
     "notOwned": "Diese Karte ist noch nicht in deiner Sammlung. Öffne Booster, um sie zu finden!",
     "statBonus": "+{percent} %"
   },
@@ -300,10 +292,9 @@
     },
     "collection": {
       "title": "Vervollständige deine Sammlung",
-      "text": "Filtere nach Seltenheit oder Vibe, sortiere, suche und verfolge deinen Fortschritt. Fehlende Karten bleiben unscharf, bis du sie findest. Die Rangliste vergleicht alle Karten des Spiels: Beliebtheit, Angriff, Siegquote …",
+      "text": "Filtere nach Seltenheit, sortiere, suche und verfolge deinen Fortschritt. Fehlende Karten bleiben unscharf, bis du sie findest. Die Rangliste vergleicht alle Karten des Spiels: Beliebtheit, Angriff, Siegquote …",
       "progress": "87 / 240 Karten",
       "chipRarity": "Seltenheit",
-      "chipVibe": "Vibe",
       "chipOwned": "Im Besitz",
       "chipSort": "Sortierung: Beliebtheit",
       "filtersLabel": "Beispielfilter",
@@ -467,7 +458,7 @@
       "leaderboard": "Rangliste",
       "news": "News",
       "ranks": "Ränge",
-      "upgrades": "Aufwertungen",
+      "upgrades": "Entwicklungen",
       "memeMoney": "MemeMoney",
       "trophies": "Trophäen"
     },
@@ -515,22 +506,22 @@
       "obtained": "Belohnung erhalten"
     },
     "upgrades": {
-      "levelsTitle": "Die 3 Stufen",
-      "lead": "Deine überzähligen Exemplare können eine Karte aufwerten: Sie sieht anders aus und ihre Werte steigen etwas.",
+      "levelsTitle": "Die 3 Entwicklungen",
+      "lead": "Deine überzähligen Exemplare lassen eine Karte sich entwickeln: Sie sieht anders aus und ihre Werte steigen etwas.",
       "base": "Grundkarte",
       "bonus": "Werte +{percent} %",
       "howTitle": "So funktioniert's",
       "how1": "Ein Exemplar jeder Karte bleibt immer in deiner Sammlung: Nur überzählige Exemplare werden verwendet.",
-      "how2": "Die Stufen werden der Reihe nach freigeschaltet: Golden ★, dann Golden ★★, dann Göttlich ★★★.",
+      "how2": "Die Entwicklungen werden der Reihe nach freigeschaltet: Golden ★, dann Golden ★★, dann Göttlich ★★★.",
       "how3": "Je seltener die Karte, desto weniger Exemplare brauchst du (Tabelle unten).",
-      "how4": "Jede Stufe erhöht KP, Angriff, Verteidigung und Tempo, bis zu +{max} % bei Göttlich.",
-      "how5": "Für jede Stufe erscheint ein Stern auf dem Bild: golden bei Golden, weiß und silbern bei Göttlich.",
+      "how4": "Jede Entwicklung erhöht KP, Angriff, Verteidigung und Tempo, bis zu +{max} % bei Göttlich.",
+      "how5": "Mit jeder Entwicklung erscheint ein Stern auf dem Bild: golden bei Golden, weiß und silbern bei Göttlich.",
       "costTitle": "Benötigte Exemplare",
       "rarity": "Seltenheit",
       "copies": "{count, plural, one {# Exemplar} other {# Exemplare}}",
       "sellTitle": "Überzählige Exemplare verkaufen",
       "sellPrice": "Preis pro Exemplar",
-      "sell1": "Auf der Kartenseite verkauft „Verkaufen“ alle überzähligen Exemplare auf einmal.",
+      "sell1": "Tippe auf eine Karte: „Verkaufen“ verkauft alle überzähligen Exemplare auf einmal.",
       "sell2": "„Überzählige Exemplare verkaufen“ macht dasselbe für deine ganze Sammlung.",
       "sell3": "Gewöhnliche, seltene und epische Karten bringen höchstens {cap} MemeMoney pro Tag; seltenere Karten haben kein Limit.",
       "sell4": "Kleine Beträge (0,1; 0,25 …) summieren sich und gehen nie verloren."
@@ -541,7 +532,7 @@
       "earnTitle": "So verdienst du sie",
       "earnWin": "Einen gewerteten Kampf gewinnen: +{amount} MemeMoney (Kämpfe kommen bald).",
       "earnRanks": "Zum ersten Mal einen neuen Rang erreichen: insgesamt bis zu {total} MemeMoney, dazu Booster (siehe Ränge).",
-      "earnSell": "Überzählige Exemplare verkaufen (siehe Aufwertungen), bis zu {cap} MemeMoney pro Tag für gewöhnliche, seltene und epische Karten.",
+      "earnSell": "Überzählige Exemplare verkaufen (siehe Entwicklungen), bis zu {cap} MemeMoney pro Tag für gewöhnliche, seltene und epische Karten.",
       "earnShop": "Im Shop mit echtem Geld kaufen, ab {price}.",
       "earnFirst": "Deine allererste Aufladung bringt doppelt so viel MemeMoney.",
       "spendTitle": "Ausgeben",
@@ -588,8 +579,6 @@
     "search": "Karte suchen",
     "rarityLabel": "Seltenheit",
     "rarityAll": "Seltenheiten",
-    "vibeLabel": "Vibe",
-    "vibeAll": "Vibes",
     "sortLabel": "Sortieren nach",
     "sort": {
       "rarity": "Seltenheit",
@@ -682,14 +671,9 @@
   },
   "dup": {
     "owned": "{count, plural, one {# Exemplar} other {# Exemplare}} · {dups, plural, =0 {keine übrig} other {# übrig}}",
-    "upgradeTo": "Nächste Stufe: {level} (Werte +{percent} %)",
-    "upgradeCost": "{have} / {cost} Exemplare",
-    "maxed": "Göttlich ★★★: maximal aufgewertet!",
-    "upgraded": "Deine Karte ist jetzt {level}!",
+    "maxed": "Göttlich ★★★: letzte Entwicklung",
+    "upgraded": "Deine Karte hat sich entwickelt: {level}!",
     "sold": "+{amount} MemeMoney deinem Guthaben hinzugefügt.",
-    "capLeft": "Verkauf von gewöhnlichen, seltenen und epischen Karten heute: noch {amount} MemeMoney.",
-    "capReached": "Tageslimit für Verkäufe erreicht. Komm morgen wieder!",
-    "nothingToSell": "Kein Exemplar dieser Karte zum Verkaufen.",
     "bulk": {
       "button": "Überzählige Exemplare verkaufen",
       "none": "Keine überzähligen Exemplare zum Verkaufen",
@@ -707,7 +691,9 @@
       "2": "Golden ★★",
       "3": "Göttlich ★★★"
     },
-    "upgradeButton": "Aufwerten zu {level}"
+    "evolveTo": "Entwickeln zu {level}",
+    "evolveCost": "{have}/{cost}",
+    "nothingToSellShort": "Nichts zu verkaufen"
   },
   "notifications": {
     "new": "Neu",
@@ -737,7 +723,7 @@
   },
   "messages": {
     "title": "Nachrichten",
-    "lead": "Schreib deinen Freunden oder anderen Spielern. Öffne dazu ihr Profil und tippe auf „Schreiben“.",
+    "lead": "Schreib deinen Freunden über „Neue Nachricht“. Um einem anderen Spieler zu schreiben, öffne sein Profil und tippe auf „Schreiben“.",
     "empty": "Noch keine Unterhaltungen. Öffne das Profil eines Spielers und tippe auf „Schreiben“.",
     "you": "Du",
     "back": "Unterhaltungen",
@@ -749,7 +735,18 @@
     "notFriend": "{count, plural, one {Ihr seid keine Freunde: noch # Nachricht bis zu seiner Antwort.} other {Ihr seid keine Freunde: noch # Nachrichten bis zu seiner Antwort.}}",
     "placeholder": "Schreib deine Nachricht …",
     "send": "Senden",
-    "write": "Schreiben"
+    "write": "Schreiben",
+    "new": "Neue Nachricht",
+    "cancelNew": "Abbrechen",
+    "pickFriend": "Welchem Freund möchtest du schreiben?",
+    "noFriends": "Noch keine Freunde: Füge welche im Tab Freunde hinzu.",
+    "filterFriends": "Freund suchen",
+    "otherPlayers": "Um einem Spieler zu schreiben, der nicht dein Freund ist: Such ihn unter Freunde, öffne sein Profil und tippe auf „Schreiben“.",
+    "hide": "Unterhaltung löschen",
+    "hideConfirm": "Diese Unterhaltung aus deiner Liste löschen? Der andere Spieler behält sie.",
+    "delete": "Löschen",
+    "confirmDelete": "Bestätigen",
+    "keep": "Behalten"
   },
   "block": {
     "block": "Blockieren",
@@ -777,5 +774,12 @@
     "cancel": "Abbrechen",
     "sent": "Danke: Deine Meldung wurde an das Team weitergeleitet.",
     "close": "Schließen"
+  },
+  "defense": {
+    "heal": "Heilt {percent} % der KP",
+    "reflect": "Wirft {percent} % des Schadens zurück",
+    "dodge": "{chance} % Chance auszuweichen",
+    "cleanse": "Hebt negative Effekte auf",
+    "recharge": "Lädt 1 Energie auf"
   }
 }

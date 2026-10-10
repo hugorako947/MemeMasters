@@ -4,7 +4,9 @@ import { useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/Button";
 import { Field, FormMessage, RequiredNote } from "@/components/ui/Field";
+import { Captcha } from "@/components/ui/Captcha";
 import { postJson } from "@/lib/client/api";
+import { publicEnv } from "@/lib/env.public";
 import { looksLikeEmail } from "@/lib/validation/auth";
 import { CONTACT_CATEGORIES, CONTACT_MESSAGE_MAX, CONTACT_MESSAGE_MIN, CONTACT_SUBJECT_MAX, CONTACT_SUBJECT_MIN, type ContactCategory } from "@/lib/validation/contact";
 
@@ -20,16 +22,20 @@ export function ContactForm({ defaultEmail }: { defaultEmail: string }) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [attempt, setAttempt] = useState(0);
   const length = message.trim().length;
   const subjectOk = !needsSubject || subject.trim().length >= CONTACT_SUBJECT_MIN;
-  const ready = looksLikeEmail(email) && category !== "" && subjectOk && length >= CONTACT_MESSAGE_MIN && length <= CONTACT_MESSAGE_MAX;
+  const captchaReady = !publicEnv.turnstileSiteKey || Boolean(captchaToken);
+  const ready = looksLikeEmail(email) && category !== "" && subjectOk && captchaReady && length >= CONTACT_MESSAGE_MIN && length <= CONTACT_MESSAGE_MAX;
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
     if (!ready) return;
     setPending(true);
     setError(null);
-    const result = await postJson("/api/contact", { email, category, subject: needsSubject ? subject : undefined, message, website });
+    const result = await postJson("/api/contact", { email, category, subject: needsSubject ? subject : undefined, message, website, captchaToken: captchaToken ?? undefined });
+    setAttempt((n) => n + 1); // un jeton ne sert qu'une fois
     setPending(false);
     if (result.ok) setSent(true);
     else setError(te(result.code as "server_error"));
@@ -116,6 +122,7 @@ export function ContactForm({ defaultEmail }: { defaultEmail: string }) {
           <input tabIndex={-1} autoComplete="off" value={website} onChange={(e) => setWebsite(e.target.value)} />
         </label>
       </div>
+      <Captcha resetKey={attempt} onToken={setCaptchaToken} />
       {error ? <FormMessage tone="error">{error}</FormMessage> : null}
       <Button type="submit" disabled={!ready || pending}>
         {pending ? "…" : t("submit")}

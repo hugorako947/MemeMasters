@@ -1,9 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useCallback, useMemo, useRef, type PointerEvent } from "react";
+import { useCallback, useMemo, useRef, type PointerEvent, type ReactNode } from "react";
 import { RARITY_GLYPH, rarityTier } from "@/config/rarities";
-import { VIBE_EMOJI } from "@/config/vibes";
 import { cardArtDataUri } from "@/lib/art/generate";
 import { boostedStats, lookOf, type Level } from "@/lib/economy/duplicates";
 import type { Card } from "@/lib/validation/card";
@@ -19,7 +18,11 @@ export interface MemeCardProps {
   owned?: boolean;
   /** Niveau d'amélioration : 0 normale, 1 Dorée ★, 2 Dorée ★★, 3 Divine ★★★. */
   level?: Level;
-  /** Si fourni, la carte devient cliquable et ouvre sa fiche détaillée. */
+  /** Nombre d'exemplaires possédés : badge « ×n » sur l'illustration quand il y en a plus d'un. */
+  quantity?: number;
+  /** Boutons affichés sur la carte elle-même (vue agrandie : faire évoluer, vendre). */
+  actions?: ReactNode;
+  /** Si fourni, la carte devient cliquable et s'affiche en grand. */
   onOpen?: () => void;
   className?: string;
 }
@@ -40,6 +43,8 @@ export function MemeCard({
   static: isStatic = false,
   owned = true,
   level = 0,
+  quantity = 0,
+  actions,
   onOpen,
   className,
 }: MemeCardProps) {
@@ -81,8 +86,24 @@ export function MemeCard({
   }, []);
 
   const rarityLabel = t(`rarity.${card.rarity}`);
-  const vibeLabel = t(`vibe.${card.vibe}`);
   const { specialAttack: special } = card;
+  // Ce que fait la défense, en quelques mots (affiché sous son nom).
+  const defenseText = (e: Card["defenseAbility"]["effect"]): string => {
+    switch (e.kind) {
+      case "heal":
+        return t("defense.heal", { percent: e.percent });
+      case "reflect":
+        return t("defense.reflect", { percent: e.percent });
+      case "dodge":
+        return t("defense.dodge", { chance: e.chance });
+      case "cleanse":
+        return t("defense.cleanse");
+      case "recharge":
+        return t("defense.recharge");
+      default:
+        return "";
+    }
+  };
 
   return (
     <article
@@ -93,7 +114,8 @@ export function MemeCard({
       data-owned={owned ? "true" : "false"}
       data-variant={lookOf(level)}
       data-active="false"
-      aria-label={t("card.ariaLabel", { name: card.name, rarity: rarityLabel, vibe: vibeLabel, hp: stats.hp })}
+      data-has-actions={actions ? "true" : undefined}
+      aria-label={t("card.ariaLabel", { name: card.name, rarity: rarityLabel, hp: stats.hp })}
       onPointerMove={onMove}
       onPointerLeave={onLeave}
       onPointerCancel={onLeave}
@@ -101,14 +123,12 @@ export function MemeCard({
       <div className="mm-card__tilt">
         <div className="mm-card__frame">
           <div className="mm-card__inner">
+            {/* Nom en haut à gauche, points de vie en haut à droite (hors de l'illustration). */}
             <header className="mm-card__head">
+              <span className="mm-card__name">{card.name}</span>
               <span className="mm-card__hp">
                 {stats.hp}
                 <abbr title={t("card.hp")}>{t("card.hp")}</abbr>
-              </span>
-              <span className="mm-card__vibe">
-                <span aria-hidden="true">{VIBE_EMOJI[card.vibe]}</span>
-                {vibeLabel}
               </span>
             </header>
 
@@ -118,9 +138,11 @@ export function MemeCard({
               <img src={art} alt="" draggable={false} decoding="async" />
               <div className="mm-card__fx" aria-hidden="true" />
               {level > 0 ? <LevelBadge level={level} /> : null}
-              <p className="mm-card__caption meme-caption" aria-hidden="true">
-                {card.name}
-              </p>
+              {quantity > 1 ? (
+                <span className="mm-card__qty" aria-label={t("card.copies", { count: quantity })}>
+                  ×{quantity}
+                </span>
+              ) : null}
             </div>
 
             <div className="mm-card__body">
@@ -164,10 +186,13 @@ export function MemeCard({
                   <span className="mm-card__move-name">
                     <span className="mm-card__move-kind">{t("card.defense")}</span>
                     {card.defenseAbility.name}
+                    <span className="mm-card__move-desc">{defenseText(card.defenseAbility.effect)}</span>
                   </span>
                 </li>
               </ul>
             </div>
+
+            {actions ? <div className="mm-card__actions">{actions}</div> : null}
 
             <footer className="mm-card__strip">
               <span aria-hidden="true">{RARITY_GLYPH[card.rarity]}</span>

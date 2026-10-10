@@ -20,14 +20,6 @@
     "superbrainrot": "SuperBrainrot",
     "godlevel": "Godlevel"
   },
-  "vibe": {
-    "chaos": "Chaos",
-    "wholesome": "Wholesome",
-    "rage": "Rage",
-    "ironique": "Ironique",
-    "cringe": "Cringe",
-    "absurde": "Absurde"
-  },
   "card": {
     "hp": "PV",
     "atk": "ATQ",
@@ -38,9 +30,10 @@
     "defense": "Défense",
     "power": "{power} de puissance",
     "energyCost": "{count, plural, one {# énergie} other {# énergies}}",
-    "ariaLabel": "{name}, carte {rarity}, vibe {vibe}, {hp} PV",
+    "ariaLabel": "{name}, carte {rarity}, {hp} PV",
     "tiltHint": "Bouge le doigt ou la souris sur la carte pour la faire briller.",
-    "open": "Voir la fiche de {name}"
+    "open": "Voir la fiche de {name}",
+    "copies": "{count, plural, one {# exemplaire} other {# exemplaires}}"
   },
   "effect": {
     "none": "Aucun effet",
@@ -248,8 +241,8 @@
     "not_enough_meme_money": "Pas assez de MemeMoney.",
     "no_cards": "Aucune carte n'est disponible pour l'instant.",
     "card_not_owned": "Tu ne possèdes pas cette carte.",
-    "already_max_variant": "Cette carte est déjà Divine ★★★.",
-    "not_enough_duplicates": "Pas assez d'exemplaires pour cette amélioration.",
+    "already_max_variant": "Cette carte a déjà sa dernière évolution (Divine ★★★).",
+    "not_enough_duplicates": "Pas assez d'exemplaires pour cette évolution.",
     "cannot_sell": "Cet exemplaire ne peut pas être revendu.",
     "daily_sell_cap": "Limite de revente du jour atteinte.",
     "player_not_found": "Aucun joueur ne porte ce pseudo.",
@@ -260,7 +253,9 @@
     "pending_limit": "Trop de demandes en attente : attends que certaines soient acceptées.",
     "request_not_found": "Cette demande n'existe plus.",
     "blocked": "Impossible : l'un de vous a bloqué l'autre.",
-    "message_limit": "Attends une réponse avant d'envoyer d'autres messages."
+    "message_limit": "Attends une réponse avant d'envoyer d'autres messages.",
+    "captcha_failed": "La vérification anti-robot n'a pas abouti. Réessaie dans un instant.",
+    "message_not_found": "Ce message n'existe plus."
   },
   "statName": {
     "hp": "Points de vie",
@@ -281,9 +276,6 @@
     "special": "Attaque spéciale",
     "defense": "Défense",
     "power": "Puissance {power}",
-    "vibeTitle": "Vibe",
-    "strongAgainst": "Forte contre {vibe}",
-    "weakAgainst": "Faible contre {vibe}",
     "notOwned": "Cette carte n'est pas encore dans ta collection. Ouvre des boosters pour la trouver !",
     "statBonus": "+{percent} %"
   },
@@ -300,10 +292,9 @@
     },
     "collection": {
       "title": "Complète ta collection",
-      "text": "Filtre par rareté ou par vibe, trie, cherche et suis ta progression. Les cartes qui te manquent restent floutées jusqu'à ce que tu les trouves. Le classement compare toutes les cartes du jeu : popularité, attaque, taux de victoire…",
+      "text": "Filtre par rareté, trie, cherche et suis ta progression. Les cartes qui te manquent restent floutées jusqu'à ce que tu les trouves. Le classement compare toutes les cartes du jeu : popularité, attaque, taux de victoire…",
       "progress": "87 / 240 cartes",
       "chipRarity": "Rareté",
-      "chipVibe": "Vibe",
       "chipOwned": "Possédées",
       "chipSort": "Tri : popularité",
       "filtersLabel": "Exemples de filtres",
@@ -467,7 +458,7 @@
       "leaderboard": "Classement",
       "news": "News",
       "ranks": "Rangs",
-      "upgrades": "Améliorations",
+      "upgrades": "Évolutions",
       "memeMoney": "MemeMoney",
       "trophies": "Trophées"
     },
@@ -515,22 +506,22 @@
       "obtained": "Récompense obtenue"
     },
     "upgrades": {
-      "levelsTitle": "Les 3 niveaux",
-      "lead": "Tes exemplaires en trop peuvent améliorer une carte : elle change d'apparence et ses statistiques augmentent un peu.",
+      "levelsTitle": "Les 3 évolutions",
+      "lead": "Tes exemplaires en trop font évoluer une carte : elle change d'apparence et ses statistiques augmentent un peu.",
       "base": "Carte de base",
       "bonus": "Statistiques +{percent} %",
       "howTitle": "Comment ça marche",
       "how1": "Un exemplaire de chaque carte reste toujours dans ta collection : seuls les exemplaires en trop servent.",
-      "how2": "Les niveaux se débloquent dans l'ordre : Dorée ★, puis Dorée ★★, puis Divine ★★★.",
+      "how2": "Les évolutions se débloquent dans l'ordre : Dorée ★, puis Dorée ★★, puis Divine ★★★.",
       "how3": "Plus la carte est rare, moins il faut d'exemplaires (tableau ci-dessous).",
-      "how4": "Chaque niveau augmente les points de vie, l'attaque, la défense et la vitesse, jusqu'à +{max} % au niveau Divine.",
-      "how5": "Une étoile apparaît sur l'illustration pour chaque niveau : dorées pour Dorée, blanches et argentées pour Divine.",
+      "how4": "Chaque évolution augmente les points de vie, l'attaque, la défense et la vitesse, jusqu'à +{max} % en Divine.",
+      "how5": "Une étoile apparaît sur l'illustration à chaque évolution : dorées pour Dorée, blanches et argentées pour Divine.",
       "costTitle": "Exemplaires nécessaires",
       "rarity": "Rareté",
       "copies": "{count, plural, one {# exemplaire} other {# exemplaires}}",
       "sellTitle": "Revendre les exemplaires en trop",
       "sellPrice": "Prix par exemplaire",
-      "sell1": "Dans la fiche d'une carte, « Revendre » vend d'un coup tous ses exemplaires en trop.",
+      "sell1": "Touche une carte : le bouton « Vendre » vend d'un coup tous ses exemplaires en trop.",
       "sell2": "« Revendre mes exemplaires en trop » fait la même chose pour toute ta collection.",
       "sell3": "Les communes, rares et épiques rapportent au plus {cap} MemeMoney par jour ; les cartes plus rares n'ont pas de limite.",
       "sell4": "Les petites sommes (0,1 ; 0,25…) s'additionnent et ne sont jamais perdues."
@@ -541,7 +532,7 @@
       "earnTitle": "Comment en gagner",
       "earnWin": "Gagner une bataille classée : +{amount} MemeMoney (les batailles arrivent bientôt).",
       "earnRanks": "Atteindre un nouveau rang pour la première fois : jusqu'à {total} MemeMoney au total, avec des boosters (voir Rangs).",
-      "earnSell": "Revendre tes exemplaires en trop (voir Améliorations), jusqu'à {cap} MemeMoney par jour pour les communes, rares et épiques.",
+      "earnSell": "Revendre tes exemplaires en trop (voir Évolutions), jusqu'à {cap} MemeMoney par jour pour les communes, rares et épiques.",
       "earnShop": "L'acheter dans la Boutique avec de l'argent réel, à partir de {price}.",
       "earnFirst": "Ta toute première recharge rapporte deux fois plus de MemeMoney.",
       "spendTitle": "La dépenser",
@@ -588,8 +579,6 @@
     "search": "Rechercher une carte",
     "rarityLabel": "Rareté",
     "rarityAll": "Raretés",
-    "vibeLabel": "Vibe",
-    "vibeAll": "Vibes",
     "sortLabel": "Trier par",
     "sort": {
       "rarity": "Rareté",
@@ -682,14 +671,9 @@
   },
   "dup": {
     "owned": "{count, plural, one {# exemplaire} other {# exemplaires}} · {dups, plural, =0 {aucun en trop} other {# en trop}}",
-    "upgradeTo": "Prochain niveau : {level} (statistiques +{percent} %)",
-    "upgradeCost": "{have} / {cost} exemplaires",
-    "maxed": "Divine ★★★ : amélioration maximale !",
-    "upgraded": "Ta carte est maintenant {level} !",
+    "maxed": "Divine ★★★ : évolution maximale",
+    "upgraded": "Ta carte a évolué : {level} !",
     "sold": "+{amount} MemeMoney ajoutés à ton solde.",
-    "capLeft": "Revente de communes, rares et épiques aujourd'hui : encore {amount} MemeMoney.",
-    "capReached": "Limite de revente du jour atteinte. Reviens demain !",
-    "nothingToSell": "Aucun exemplaire à revendre pour cette carte.",
     "bulk": {
       "button": "Revendre mes exemplaires en trop",
       "none": "Aucun exemplaire en trop à revendre",
@@ -699,7 +683,7 @@
       "cancel": "Annuler",
       "done": "+{amount} MemeMoney ajoutés à ton solde."
     },
-    "sellAll": "Revendre ×{count}",
+    "sellAll": "Vendre ×{count}",
     "capPartial": "Limite du jour : {count} sur {total} peuvent être revendus aujourd'hui.",
     "level": {
       "0": "Normale",
@@ -707,7 +691,9 @@
       "2": "Dorée ★★",
       "3": "Divine ★★★"
     },
-    "upgradeButton": "Passer en {level}"
+    "evolveTo": "Évoluer en {level}",
+    "evolveCost": "{have}/{cost} ex.",
+    "nothingToSellShort": "Aucun exemplaire à vendre"
   },
   "notifications": {
     "new": "Nouveau",
@@ -737,7 +723,7 @@
   },
   "messages": {
     "title": "Messages",
-    "lead": "Écris à tes amis ou à d'autres joueurs. Pour écrire à quelqu'un, ouvre son profil puis touche « Écrire ».",
+    "lead": "Écris à tes amis avec « Nouveau message ». Pour écrire à un autre joueur, ouvre son profil puis touche « Écrire ».",
     "empty": "Aucune conversation pour l'instant. Ouvre le profil d'un joueur et touche « Écrire » pour commencer.",
     "you": "Toi",
     "back": "Conversations",
@@ -749,7 +735,18 @@
     "notFriend": "{count, plural, one {Vous n'êtes pas amis : encore # message possible avant sa réponse.} other {Vous n'êtes pas amis : encore # messages possibles avant sa réponse.}}",
     "placeholder": "Écris ton message…",
     "send": "Envoyer",
-    "write": "Écrire"
+    "write": "Écrire",
+    "new": "Nouveau message",
+    "cancelNew": "Annuler",
+    "pickFriend": "À quel ami veux-tu écrire ?",
+    "noFriends": "Tu n'as pas encore d'amis : ajoute-en dans l'onglet Amis.",
+    "filterFriends": "Chercher un ami",
+    "otherPlayers": "Pour écrire à un joueur qui n'est pas ton ami : cherche-le dans Amis, ouvre son profil, puis touche « Écrire ».",
+    "hide": "Supprimer la conversation",
+    "hideConfirm": "Supprimer cette conversation de ta liste ? L'autre joueur la garde.",
+    "delete": "Supprimer",
+    "confirmDelete": "Confirmer",
+    "keep": "Garder"
   },
   "block": {
     "block": "Bloquer",
@@ -777,5 +774,12 @@
     "cancel": "Annuler",
     "sent": "Merci : ton signalement a été transmis à l'équipe.",
     "close": "Fermer"
+  },
+  "defense": {
+    "heal": "Soigne {percent} % des PV",
+    "reflect": "Renvoie {percent} % des dégâts",
+    "dodge": "{chance} % de chances d'esquiver",
+    "cleanse": "Annule les effets négatifs",
+    "recharge": "Recharge 1 énergie"
   }
 }

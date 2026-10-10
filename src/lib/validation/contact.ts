@@ -19,5 +19,7 @@ export const contactSchema = z
     message: z.string().trim().min(CONTACT_MESSAGE_MIN).max(CONTACT_MESSAGE_MAX),
     /** Champ piège invisible : un humain le laisse vide, un robot le remplit. */
     website: z.string().max(0).optional(),
+    /** Jeton anti-robot Cloudflare Turnstile (si le captcha est configuré). */
+    captchaToken: z.string().max(2048).optional(),
   })
   .refine((d) => d.category !== "other" || (d.subject?.length ?? 0) >= CONTACT_SUBJECT_MIN, { path: ["subject"] });

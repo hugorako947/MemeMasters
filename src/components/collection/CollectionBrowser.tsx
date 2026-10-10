@@ -4,11 +4,10 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { InteractiveCard } from "@/components/card/InteractiveCard";
 import { RARITIES, type Rarity } from "@/config/rarities";
-import { VIBES, type Vibe } from "@/config/vibes";
 import type { Level } from "@/lib/economy/duplicates";
 import type { Card } from "@/lib/validation/card";
 import { BulkSell } from "./BulkSell";
-import { DuplicateActions } from "./DuplicateActions";
+import { CardActions } from "./CardActions";
 
 export interface CollectionItem {
   card: Card;
@@ -27,11 +26,9 @@ type Sort = "rarity" | "name" | "recent" | "quantity";
 export function CollectionBrowser({ items, resaleLeftCents }: { items: CollectionItem[]; resaleLeftCents: number }) {
   const t = useTranslations("collection");
   const tr = useTranslations("rarity");
-  const tv = useTranslations("vibe");
   const format = useFormatter();
   const [show, setShow] = useState<Show>("all");
   const [rarity, setRarity] = useState<Rarity | "all">("all");
-  const [vibe, setVibe] = useState<Vibe | "all">("all");
   const [sort, setSort] = useState<Sort>("rarity");
   const [query, setQuery] = useState("");
 
@@ -44,7 +41,6 @@ export function CollectionBrowser({ items, resaleLeftCents }: { items: Collectio
       (i) =>
         (show === "all" || (show === "owned" ? i.quantity > 0 : i.quantity === 0)) &&
         (rarity === "all" || i.card.rarity === rarity) &&
-        (vibe === "all" || i.card.vibe === vibe) &&
         (!q || i.card.name.toLocaleLowerCase().includes(q)),
     );
     const byRarity = (a: CollectionItem, b: CollectionItem) => RARITIES.indexOf(b.card.rarity) - RARITIES.indexOf(a.card.rarity);
@@ -54,7 +50,7 @@ export function CollectionBrowser({ items, resaleLeftCents }: { items: Collectio
       if (sort === "recent") return (b.firstObtainedAt ?? "").localeCompare(a.firstObtainedAt ?? "") || byRarity(a, b);
       return byRarity(a, b) || a.card.name.localeCompare(b.card.name);
     });
-  }, [items, show, rarity, vibe, sort, query]);
+  }, [items, show, rarity, sort, query]);
 
   const select = "min-h-10 w-full min-w-0 truncate rounded-full border-2 border-ink bg-surface px-2.5 text-xs font-bold sm:text-sm";
 
@@ -85,28 +81,20 @@ export function CollectionBrowser({ items, resaleLeftCents }: { items: Collectio
             </button>
           ))}
         </div>
-        <div className="grid grid-cols-3 gap-2 sm:grid-cols-[minmax(0,2fr)_repeat(3,minmax(0,1fr))]">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-[minmax(0,2fr)_repeat(2,minmax(0,1fr))]">
           <input
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t("search")}
             aria-label={t("search")}
-            className="col-span-3 min-h-10 min-w-0 rounded-full border-2 border-ink bg-surface px-4 text-sm sm:col-span-1"
+            className="col-span-2 min-h-10 min-w-0 rounded-full border-2 border-ink bg-surface px-4 text-sm sm:col-span-1"
           />
           <select aria-label={t("rarityLabel")} value={rarity} onChange={(e) => setRarity(e.target.value as Rarity | "all")} className={select}>
             <option value="all">{t("rarityAll")}</option>
             {RARITIES.map((r) => (
               <option key={r} value={r}>
                 {tr(r)}
-              </option>
-            ))}
-          </select>
-          <select aria-label={t("vibeLabel")} value={vibe} onChange={(e) => setVibe(e.target.value as Vibe | "all")} className={select}>
-            <option value="all">{t("vibeAll")}</option>
-            {VIBES.map((v) => (
-              <option key={v} value={v}>
-                {tv(v)}
               </option>
             ))}
           </select>
@@ -139,13 +127,9 @@ export function CollectionBrowser({ items, resaleLeftCents }: { items: Collectio
                 size="compact"
                 owned={quantity > 0}
                 level={level}
-                detail={<DuplicateActions card={card} quantity={quantity} level={level} resaleLeftCents={resaleLeftCents} />}
+                quantity={quantity}
+                actions={<CardActions card={card} quantity={quantity} level={level} resaleLeftCents={resaleLeftCents} />}
               />
-              {quantity > 1 ? (
-                <span className="pointer-events-none absolute -end-1.5 -top-1.5 z-20 rounded-full border-2 border-ink bg-sticker px-2 text-xs font-extrabold text-[#1a1238]">
-                  {t("quantity", { count: quantity })}
-                </span>
-              ) : null}
             </li>
           ))}
         </ul>

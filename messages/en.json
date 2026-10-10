@@ -20,14 +20,6 @@
     "superbrainrot": "SuperBrainrot",
     "godlevel": "Godlevel"
   },
-  "vibe": {
-    "chaos": "Chaos",
-    "wholesome": "Wholesome",
-    "rage": "Rage",
-    "ironique": "Ironic",
-    "cringe": "Cringe",
-    "absurde": "Absurd"
-  },
   "card": {
     "hp": "HP",
     "atk": "ATK",
@@ -38,9 +30,10 @@
     "defense": "Defense",
     "power": "{power} power",
     "energyCost": "{count, plural, one {# energy} other {# energy}}",
-    "ariaLabel": "{name}, {rarity} card, {vibe} vibe, {hp} HP",
+    "ariaLabel": "{name}, {rarity} card, {hp} HP",
     "tiltHint": "Move your finger or mouse over the card to make it shine.",
-    "open": "Open the card sheet of {name}"
+    "open": "Open the card sheet of {name}",
+    "copies": "{count, plural, one {# copy} other {# copies}}"
   },
   "effect": {
     "none": "No effect",
@@ -248,8 +241,8 @@
     "not_enough_meme_money": "Not enough MemeMoney.",
     "no_cards": "No card is available yet.",
     "card_not_owned": "You don't own this card.",
-    "already_max_variant": "This card is already Divine ★★★.",
-    "not_enough_duplicates": "Not enough copies for this upgrade.",
+    "already_max_variant": "This card already has its final evolution (Divine ★★★).",
+    "not_enough_duplicates": "Not enough copies for this evolution.",
     "cannot_sell": "This copy can't be sold.",
     "daily_sell_cap": "Daily selling limit reached.",
     "player_not_found": "No player has this username.",
@@ -260,7 +253,9 @@
     "pending_limit": "Too many pending requests: wait for some to be accepted.",
     "request_not_found": "This request no longer exists.",
     "blocked": "Not possible: one of you has blocked the other.",
-    "message_limit": "Wait for a reply before sending more messages."
+    "message_limit": "Wait for a reply before sending more messages.",
+    "captcha_failed": "The anti-bot check didn't go through. Try again in a moment.",
+    "message_not_found": "This message no longer exists."
   },
   "statName": {
     "hp": "Hit points",
@@ -281,9 +276,6 @@
     "special": "Special attack",
     "defense": "Defense",
     "power": "Power {power}",
-    "vibeTitle": "Vibe",
-    "strongAgainst": "Strong against {vibe}",
-    "weakAgainst": "Weak against {vibe}",
     "notOwned": "This card isn't in your collection yet. Open boosters to find it!",
     "statBonus": "+{percent}%"
   },
@@ -300,10 +292,9 @@
     },
     "collection": {
       "title": "Complete your collection",
-      "text": "Filter by rarity or vibe, sort, search and track your progress. The cards you're missing stay blurred until you find them. The ranking compares every card in the game: popularity, attack, win rate…",
+      "text": "Filter by rarity, sort, search and track your progress. Missing cards stay blurred until you find them. The ranking compares every card in the game: popularity, attack, win rate…",
       "progress": "87 / 240 cards",
       "chipRarity": "Rarity",
-      "chipVibe": "Vibe",
       "chipOwned": "Owned",
       "chipSort": "Sort: popularity",
       "filtersLabel": "Example filters",
@@ -467,7 +458,7 @@
       "leaderboard": "Ranking",
       "news": "News",
       "ranks": "Ranks",
-      "upgrades": "Upgrades",
+      "upgrades": "Evolutions",
       "memeMoney": "MemeMoney",
       "trophies": "Trophies"
     },
@@ -515,22 +506,22 @@
       "obtained": "Reward claimed"
     },
     "upgrades": {
-      "levelsTitle": "The 3 levels",
-      "lead": "Your extra copies can upgrade a card: it changes look and its stats go up a little.",
+      "levelsTitle": "The 3 evolutions",
+      "lead": "Your extra copies make a card evolve: it changes look and its stats go up a little.",
       "base": "Base card",
       "bonus": "Stats +{percent}%",
       "howTitle": "How it works",
       "how1": "One copy of each card always stays in your collection: only extra copies are used.",
-      "how2": "Levels unlock in order: Golden ★, then Golden ★★, then Divine ★★★.",
+      "how2": "Evolutions unlock in order: Golden ★, then Golden ★★, then Divine ★★★.",
       "how3": "The rarer the card, the fewer copies you need (table below).",
-      "how4": "Each level raises HP, attack, defense and speed, up to +{max}% at Divine.",
-      "how5": "A star appears on the artwork for each level: gold for Golden, white and silver for Divine.",
+      "how4": "Each evolution raises HP, attack, defense and speed, up to +{max}% at Divine.",
+      "how5": "A star appears on the artwork with each evolution: gold for Golden, white and silver for Divine.",
       "costTitle": "Copies needed",
       "rarity": "Rarity",
       "copies": "{count, plural, one {# copy} other {# copies}}",
       "sellTitle": "Selling extra copies",
       "sellPrice": "Price per copy",
-      "sell1": "On a card's page, “Sell” sells all its extra copies at once.",
+      "sell1": "Tap a card: the “Sell” button sells all its extra copies at once.",
       "sell2": "“Sell my extra copies” does the same for your whole collection.",
       "sell3": "Commons, rares and epics earn at most {cap} MemeMoney per day; rarer cards have no limit.",
       "sell4": "Small amounts (0.1, 0.25…) add up and are never lost."
@@ -541,7 +532,7 @@
       "earnTitle": "How to earn it",
       "earnWin": "Win a ranked battle: +{amount} MemeMoney (battles are coming soon).",
       "earnRanks": "Reach a new rank for the first time: up to {total} MemeMoney in total, plus boosters (see Ranks).",
-      "earnSell": "Sell your extra copies (see Upgrades), up to {cap} MemeMoney per day for commons, rares and epics.",
+      "earnSell": "Sell your extra copies (see Evolutions), up to {cap} MemeMoney per day for commons, rares and epics.",
       "earnShop": "Buy it in the Shop with real money, from {price}.",
       "earnFirst": "Your very first top-up gives twice as much MemeMoney.",
       "spendTitle": "Spending it",
@@ -588,8 +579,6 @@
     "search": "Search a card",
     "rarityLabel": "Rarity",
     "rarityAll": "Rarities",
-    "vibeLabel": "Vibe",
-    "vibeAll": "Vibes",
     "sortLabel": "Sort by",
     "sort": {
       "rarity": "Rarity",
@@ -682,14 +671,9 @@
   },
   "dup": {
     "owned": "{count, plural, one {# copy} other {# copies}} · {dups, plural, =0 {no extra copies} one {# extra} other {# extra}}",
-    "upgradeTo": "Next level: {level} (stats +{percent}%)",
-    "upgradeCost": "{have} / {cost} copies",
-    "maxed": "Divine ★★★: fully upgraded!",
-    "upgraded": "Your card is now {level}!",
+    "maxed": "Divine ★★★: final evolution",
+    "upgraded": "Your card evolved: {level}!",
     "sold": "+{amount} MemeMoney added to your balance.",
-    "capLeft": "Common, rare and epic sales today: {amount} MemeMoney left.",
-    "capReached": "Daily selling limit reached. Come back tomorrow!",
-    "nothingToSell": "No extra copy of this card to sell.",
     "bulk": {
       "button": "Sell my extra copies",
       "none": "No extra copies to sell",
@@ -707,7 +691,9 @@
       "2": "Golden ★★",
       "3": "Divine ★★★"
     },
-    "upgradeButton": "Upgrade to {level}"
+    "evolveTo": "Evolve to {level}",
+    "evolveCost": "{have}/{cost}",
+    "nothingToSellShort": "No copies to sell"
   },
   "notifications": {
     "new": "New",
@@ -737,7 +723,7 @@
   },
   "messages": {
     "title": "Messages",
-    "lead": "Write to your friends or other players. To write to someone, open their profile and tap “Write”.",
+    "lead": "Write to your friends with “New message”. To write to another player, open their profile and tap “Write”.",
     "empty": "No conversations yet. Open a player's profile and tap “Write” to start.",
     "you": "You",
     "back": "Conversations",
@@ -749,7 +735,18 @@
     "notFriend": "{count, plural, one {You're not friends: # more message before they reply.} other {You're not friends: # more messages before they reply.}}",
     "placeholder": "Write your message…",
     "send": "Send",
-    "write": "Write"
+    "write": "Write",
+    "new": "New message",
+    "cancelNew": "Cancel",
+    "pickFriend": "Which friend do you want to write to?",
+    "noFriends": "No friends yet: add some in the Friends tab.",
+    "filterFriends": "Search a friend",
+    "otherPlayers": "To write to a player who isn't your friend: find them in Friends, open their profile, then tap “Write”.",
+    "hide": "Delete conversation",
+    "hideConfirm": "Delete this conversation from your list? The other player keeps it.",
+    "delete": "Delete",
+    "confirmDelete": "Confirm",
+    "keep": "Keep"
   },
   "block": {
     "block": "Block",
@@ -777,5 +774,12 @@
     "cancel": "Cancel",
     "sent": "Thank you: your report has been sent to the team.",
     "close": "Close"
+  },
+  "defense": {
+    "heal": "Heals {percent}% of HP",
+    "reflect": "Reflects {percent}% of damage",
+    "dodge": "{chance}% chance to dodge",
+    "cleanse": "Removes negative effects",
+    "recharge": "Recharges 1 energy"
   }
 }

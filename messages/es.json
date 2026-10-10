@@ -20,14 +20,6 @@
     "superbrainrot": "SuperBrainrot",
     "godlevel": "Godlevel"
   },
-  "vibe": {
-    "chaos": "Caos",
-    "wholesome": "Wholesome",
-    "rage": "Rabia",
-    "ironique": "Irónica",
-    "cringe": "Cringe",
-    "absurde": "Absurda"
-  },
   "card": {
     "hp": "PS",
     "atk": "ATQ",
@@ -38,9 +30,10 @@
     "defense": "Defensa",
     "power": "{power} de poder",
     "energyCost": "{count, plural, one {# energía} other {# energías}}",
-    "ariaLabel": "{name}, carta {rarity}, vibe {vibe}, {hp} PS",
+    "ariaLabel": "{name}, carta {rarity}, {hp} PS",
     "tiltHint": "Mueve el dedo o el ratón sobre la carta para hacerla brillar.",
-    "open": "Ver la ficha de {name}"
+    "open": "Ver la ficha de {name}",
+    "copies": "{count, plural, one {# ejemplar} other {# ejemplares}}"
   },
   "effect": {
     "none": "Sin efecto",
@@ -248,8 +241,8 @@
     "not_enough_meme_money": "No tienes suficiente MemeMoney.",
     "no_cards": "Todavía no hay cartas disponibles.",
     "card_not_owned": "No tienes esta carta.",
-    "already_max_variant": "Esta carta ya es Divina ★★★.",
-    "not_enough_duplicates": "No tienes suficientes ejemplares para esta mejora.",
+    "already_max_variant": "Esta carta ya tiene su última evolución (Divina ★★★).",
+    "not_enough_duplicates": "No tienes suficientes ejemplares para esta evolución.",
     "cannot_sell": "Este ejemplar no se puede vender.",
     "daily_sell_cap": "Límite de ventas del día alcanzado.",
     "player_not_found": "Ningún jugador tiene este nombre.",
@@ -260,7 +253,9 @@
     "pending_limit": "Demasiadas solicitudes pendientes: espera a que acepten algunas.",
     "request_not_found": "Esta solicitud ya no existe.",
     "blocked": "No es posible: uno de vosotros ha bloqueado al otro.",
-    "message_limit": "Espera una respuesta antes de enviar más mensajes."
+    "message_limit": "Espera una respuesta antes de enviar más mensajes.",
+    "captcha_failed": "La verificación antirrobots no se completó. Inténtalo de nuevo en un momento.",
+    "message_not_found": "Este mensaje ya no existe."
   },
   "statName": {
     "hp": "Puntos de salud",
@@ -281,9 +276,6 @@
     "special": "Ataque especial",
     "defense": "Defensa",
     "power": "Poder {power}",
-    "vibeTitle": "Vibe",
-    "strongAgainst": "Fuerte contra {vibe}",
-    "weakAgainst": "Débil contra {vibe}",
     "notOwned": "Esta carta aún no está en tu colección. ¡Abre sobres para encontrarla!",
     "statBonus": "+{percent} %"
   },
@@ -300,10 +292,9 @@
     },
     "collection": {
       "title": "Completa tu colección",
-      "text": "Filtra por rareza o por vibe, ordena, busca y sigue tu progreso. Las cartas que te faltan siguen borrosas hasta que las encuentres. La clasificación compara todas las cartas del juego: popularidad, ataque, porcentaje de victorias…",
+      "text": "Filtra por rareza, ordena, busca y sigue tu progreso. Las cartas que te faltan siguen borrosas hasta que las encuentres. La clasificación compara todas las cartas del juego: popularidad, ataque, porcentaje de victorias…",
       "progress": "87 / 240 cartas",
       "chipRarity": "Rareza",
-      "chipVibe": "Vibe",
       "chipOwned": "Obtenidas",
       "chipSort": "Orden: popularidad",
       "filtersLabel": "Ejemplos de filtros",
@@ -467,7 +458,7 @@
       "leaderboard": "Clasificación",
       "news": "Noticias",
       "ranks": "Rangos",
-      "upgrades": "Mejoras",
+      "upgrades": "Evoluciones",
       "memeMoney": "MemeMoney",
       "trophies": "Trofeos"
     },
@@ -515,22 +506,22 @@
       "obtained": "Recompensa obtenida"
     },
     "upgrades": {
-      "levelsTitle": "Los 3 niveles",
-      "lead": "Tus ejemplares de sobra pueden mejorar una carta: cambia de aspecto y sus estadísticas suben un poco.",
+      "levelsTitle": "Las 3 evoluciones",
+      "lead": "Tus ejemplares de sobra hacen evolucionar una carta: cambia de aspecto y sus estadísticas suben un poco.",
       "base": "Carta base",
       "bonus": "Estadísticas +{percent} %",
       "howTitle": "Cómo funciona",
       "how1": "Siempre se queda un ejemplar de cada carta en tu colección: solo se usan los ejemplares de sobra.",
-      "how2": "Los niveles se desbloquean en orden: Dorada ★, luego Dorada ★★ y luego Divina ★★★.",
+      "how2": "Las evoluciones se desbloquean en orden: Dorada ★, luego Dorada ★★ y luego Divina ★★★.",
       "how3": "Cuanto más rara es la carta, menos ejemplares necesitas (tabla de abajo).",
-      "how4": "Cada nivel aumenta PS, ataque, defensa y velocidad, hasta +{max} % en Divina.",
-      "how5": "Aparece una estrella en la ilustración por cada nivel: doradas para Dorada, blancas y plateadas para Divina.",
+      "how4": "Cada evolución aumenta PS, ataque, defensa y velocidad, hasta +{max} % en Divina.",
+      "how5": "Aparece una estrella en la ilustración con cada evolución: doradas para Dorada, blancas y plateadas para Divina.",
       "costTitle": "Ejemplares necesarios",
       "rarity": "Rareza",
       "copies": "{count, plural, one {# ejemplar} other {# ejemplares}}",
       "sellTitle": "Vender los ejemplares de sobra",
       "sellPrice": "Precio por ejemplar",
-      "sell1": "En la ficha de una carta, «Vender» vende de una vez todos sus ejemplares de sobra.",
+      "sell1": "Toca una carta: el botón «Vender» vende de una vez todos sus ejemplares de sobra.",
       "sell2": "«Vender mis ejemplares de sobra» hace lo mismo con toda tu colección.",
       "sell3": "Las comunes, raras y épicas dan como máximo {cap} MemeMoney al día; las cartas más raras no tienen límite.",
       "sell4": "Las cantidades pequeñas (0,1; 0,25…) se suman y nunca se pierden."
@@ -541,7 +532,7 @@
       "earnTitle": "Cómo conseguirla",
       "earnWin": "Ganar una batalla clasificatoria: +{amount} MemeMoney (las batallas llegan pronto).",
       "earnRanks": "Alcanzar un rango nuevo por primera vez: hasta {total} MemeMoney en total, además de sobres (ver Rangos).",
-      "earnSell": "Vender tus ejemplares de sobra (ver Mejoras), hasta {cap} MemeMoney al día por comunes, raras y épicas.",
+      "earnSell": "Vender tus ejemplares de sobra (ver Evoluciones), hasta {cap} MemeMoney al día por comunes, raras y épicas.",
       "earnShop": "Comprarla en la Tienda con dinero real, desde {price}.",
       "earnFirst": "Tu primera recarga da el doble de MemeMoney.",
       "spendTitle": "Gastarla",
@@ -588,8 +579,6 @@
     "search": "Buscar una carta",
     "rarityLabel": "Rareza",
     "rarityAll": "Rarezas",
-    "vibeLabel": "Vibe",
-    "vibeAll": "Vibes",
     "sortLabel": "Ordenar por",
     "sort": {
       "rarity": "Rareza",
@@ -682,14 +671,9 @@
   },
   "dup": {
     "owned": "{count, plural, one {# ejemplar} other {# ejemplares}} · {dups, plural, =0 {ninguno de sobra} one {# de sobra} other {# de sobra}}",
-    "upgradeTo": "Siguiente nivel: {level} (estadísticas +{percent} %)",
-    "upgradeCost": "{have} / {cost} ejemplares",
-    "maxed": "Divina ★★★: ¡mejora máxima!",
-    "upgraded": "¡Tu carta ahora es {level}!",
+    "maxed": "Divina ★★★: evolución máxima",
+    "upgraded": "Tu carta ha evolucionado: {level}!",
     "sold": "+{amount} MemeMoney añadidos a tu saldo.",
-    "capLeft": "Ventas de comunes, raras y épicas hoy: quedan {amount} MemeMoney.",
-    "capReached": "Límite de ventas del día alcanzado. ¡Vuelve mañana!",
-    "nothingToSell": "No hay ejemplares de esta carta para vender.",
     "bulk": {
       "button": "Vender mis ejemplares de sobra",
       "none": "No hay ejemplares de sobra para vender",
@@ -707,7 +691,9 @@
       "2": "Dorada ★★",
       "3": "Divina ★★★"
     },
-    "upgradeButton": "Pasar a {level}"
+    "evolveTo": "Evolucionar a {level}",
+    "evolveCost": "{have}/{cost} ej.",
+    "nothingToSellShort": "Ningún ejemplar para vender"
   },
   "notifications": {
     "new": "Nuevo",
@@ -737,7 +723,7 @@
   },
   "messages": {
     "title": "Mensajes",
-    "lead": "Escribe a tus amigos o a otros jugadores. Para escribir a alguien, abre su perfil y toca «Escribir».",
+    "lead": "Escribe a tus amigos con «Nuevo mensaje». Para escribir a otro jugador, abre su perfil y toca «Escribir».",
     "empty": "Aún no hay conversaciones. Abre el perfil de un jugador y toca «Escribir» para empezar.",
     "you": "Tú",
     "back": "Conversaciones",
@@ -749,7 +735,18 @@
     "notFriend": "{count, plural, one {No sois amigos: # mensaje más antes de su respuesta.} other {No sois amigos: # mensajes más antes de su respuesta.}}",
     "placeholder": "Escribe tu mensaje…",
     "send": "Enviar",
-    "write": "Escribir"
+    "write": "Escribir",
+    "new": "Nuevo mensaje",
+    "cancelNew": "Cancelar",
+    "pickFriend": "¿A qué amigo quieres escribir?",
+    "noFriends": "Aún no tienes amigos: añade algunos en la pestaña Amigos.",
+    "filterFriends": "Buscar un amigo",
+    "otherPlayers": "Para escribir a un jugador que no es tu amigo: búscalo en Amigos, abre su perfil y toca «Escribir».",
+    "hide": "Eliminar la conversación",
+    "hideConfirm": "¿Eliminar esta conversación de tu lista? El otro jugador la conserva.",
+    "delete": "Eliminar",
+    "confirmDelete": "Confirmar",
+    "keep": "Mantener"
   },
   "block": {
     "block": "Bloquear",
@@ -777,5 +774,12 @@
     "cancel": "Cancelar",
     "sent": "Gracias: tu denuncia se ha enviado al equipo.",
     "close": "Cerrar"
+  },
+  "defense": {
+    "heal": "Cura un {percent} % de los PS",
+    "reflect": "Devuelve un {percent} % del daño",
+    "dodge": "{chance} % de probabilidad de esquivar",
+    "cleanse": "Anula los efectos negativos",
+    "recharge": "Recarga 1 energía"
   }
 }

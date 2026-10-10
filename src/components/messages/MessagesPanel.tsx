@@ -18,10 +18,21 @@ const MAX = 500;
  * Les nouveaux messages arrivent automatiquement (vérification toutes les
  * 4 secondes quand une conversation est ouverte, 15 secondes sinon).
  */
-export function MessagesPanel({ initial, openWith }: { initial: Conversation[]; openWith?: string }) {
+export function MessagesPanel({
+  initial,
+  openWith,
+  friends,
+}: {
+  initial: Conversation[];
+  openWith?: string;
+  /** Amis à qui écrire directement (« Nouveau message »). */
+  friends: Array<{ id: string; username: string; trophies: number }>;
+}) {
   const t = useTranslations("messages");
   const [conversations, setConversations] = useState(initial);
   const [current, setCurrent] = useState<string | null>(openWith ?? null);
+  const [picking, setPicking] = useState(false);
+  const [filter, setFilter] = useState("");
 
   useEffect(() => {
     if (current) return;
@@ -32,12 +43,70 @@ export function MessagesPanel({ initial, openWith }: { initial: Conversation[]; 
     return () => clearInterval(timer);
   }, [current]);
 
-  if (current) return <ThreadView username={current} onBack={() => setCurrent(null)} />;
+  if (current)
+    return (
+      <ThreadView
+        username={current}
+        onBack={() => setCurrent(null)}
+        onHidden={(name) => {
+          setConversations((list) => list.filter((c) => c.other.username !== name));
+          setCurrent(null);
+        }}
+      />
+    );
+
+  const shownFriends = friends.filter((f) => f.username.toLowerCase().includes(filter.trim().toLowerCase()));
 
   return (
     <section className="grid gap-3 rounded-[1.5rem] border-2 border-ink bg-surface p-4 shadow-[0_3px_0_0_var(--mm-shadow)] sm:p-5">
-      <h2 className="font-display text-3xl leading-none">{t("title")}</h2>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="font-display text-3xl leading-none">{t("title")}</h2>
+        <button type="button" onClick={() => setPicking((p) => !p)} aria-expanded={picking} className="mm-btn mm-btn--primary min-h-10 px-4 text-sm">
+          {picking ? t("cancelNew") : t("new")}
+        </button>
+      </div>
       <p className="text-sm text-ink-soft">{t("lead")}</p>
+
+      {/* Nouveau message : on choisit parmi ses amis. Pour un autre joueur : son profil, bouton « Écrire ». */}
+      {picking ? (
+        <div className="grid gap-2 rounded-xl border-2 border-ink bg-paper p-3">
+          <p className="text-sm font-bold">{t("pickFriend")}</p>
+          {friends.length === 0 ? (
+            <p className="text-sm text-ink-soft">{t("noFriends")}</p>
+          ) : (
+            <>
+              {friends.length > 6 ? (
+                <input
+                  type="search"
+                  value={filter}
+                  onChange={(e) => setFilter(e.target.value)}
+                  placeholder={t("filterFriends")}
+                  aria-label={t("filterFriends")}
+                  className="min-h-10 rounded-full border-2 border-ink bg-surface px-4 text-sm"
+                />
+              ) : null}
+              <ul className="grid gap-1">
+                {shownFriends.map((f) => (
+                  <li key={f.id}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPicking(false);
+                        setCurrent(f.username);
+                      }}
+                      className="flex min-h-11 w-full items-center gap-3 rounded-xl bg-surface px-3 text-start font-bold hover:bg-[color-mix(in_srgb,var(--color-candy),transparent_88%)]"
+                    >
+                      <RankShield rank={rankFor(f.trophies)} size={24} />
+                      {f.username}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+          <p className="text-xs text-ink-soft">{t("otherPlayers")}</p>
+        </div>
+      ) : null}
       {conversations.length === 0 ? (
         <p className="rounded-xl bg-paper p-4 text-sm font-semibold">{t("empty")}</p>
       ) : (
@@ -69,7 +138,7 @@ export function MessagesPanel({ initial, openWith }: { initial: Conversation[]; 
   );
 }
 
-function ThreadView({ username, onBack }: { username: string; onBack: () => void }) {
+function ThreadView({ username, onBack, onHidden }: { username: string; onBack: () => void; onHidden: (username: string) => void }) {
   const t = useTranslations("messages");
   const te = useTranslations("errors");
   const format = useFormatter();
@@ -78,6 +147,23 @@ function ThreadView({ username, onBack }: { username: string; onBack: () => void
   const [text, setText] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
+  const [confirmMsg, setConfirmMsg] = useState<string | null>(null);
+  const [confirmHide, setConfirmHide] = useState(false);
+
+  async function removeMessage(id: string) {
+    const res = await postJson("/api/messages/delete", { messageId: id });
+    if (res.ok) setThread((th) => (th ? { ...th, messages: th.messages.filter((m) => m.id !== id) } : th));
+    else setError(te(res.code as "server_error"));
+    setConfirmMsg(null);
+  }
+
+  async function hide() {
+    const res = await postJson("/api/messages/hide", { username });
+    if (res.ok) {
+      router.refresh();
+      onHidden(username);
+    } else setError(te(res.code as "server_error"));
+  }
   const endRef = useRef<HTMLDivElement>(null);
   const lastId = useRef<string | null>(null);
 
@@ -144,6 +230,21 @@ function ThreadView({ username, onBack }: { username: string; onBack: () => void
           </span>
         ) : null}
       </div>
+      {confirmHide ? (
+        <div className="flex flex-wrap items-center gap-2 rounded-xl bg-paper p-3 text-sm">
+          <span className="flex-1 font-semibold">{t("hideConfirm")}</span>
+          <button type="button" onClick={hide} className="mm-btn mm-btn--danger min-h-10 px-4 text-sm">
+            {t("delete")}
+          </button>
+          <button type="button" onClick={() => setConfirmHide(false)} className="mm-btn mm-btn--secondary min-h-10 px-4 text-sm">
+            {t("keep")}
+          </button>
+        </div>
+      ) : (
+        <button type="button" onClick={() => setConfirmHide(true)} className="justify-self-end text-xs font-bold text-ink-soft underline-offset-4 hover:text-ink hover:underline">
+          {t("hide")}
+        </button>
+      )}
 
       <div className="grid max-h-[55vh] min-h-48 content-start gap-2 overflow-y-auto rounded-xl bg-paper p-3" aria-live="polite">
         {thread && thread.messages.length === 0 ? <p className="text-center text-sm text-ink-soft">{t("start", { username })}</p> : null}
@@ -153,6 +254,27 @@ function ThreadView({ username, onBack }: { username: string; onBack: () => void
             <span className="text-[0.7rem] text-ink-soft">
               {format.dateTime(new Date(m.createdAt), { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
               {m.fromMe && m.read ? ` · ${t("read")}` : ""}
+              {m.fromMe ? (
+                confirmMsg === m.id ? (
+                  <>
+                    {" · "}
+                    <button type="button" onClick={() => removeMessage(m.id)} className="font-bold text-danger underline">
+                      {t("confirmDelete")}
+                    </button>
+                    {" · "}
+                    <button type="button" onClick={() => setConfirmMsg(null)} className="font-bold underline">
+                      {t("keep")}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    {" · "}
+                    <button type="button" onClick={() => setConfirmMsg(m.id)} className="underline-offset-2 hover:underline">
+                      {t("delete")}
+                    </button>
+                  </>
+                )
+              ) : null}
             </span>
           </div>
         ))}

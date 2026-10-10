@@ -140,9 +140,10 @@
 }
 
 .mm-card__head {
-  display: flex;
+  /* Le nom se raccourcit (…) avant que les PV ne soient rognés. */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  justify-content: space-between;
   gap: 2cqw;
   padding: 2.6cqw 3.4cqw 2cqw;
   font-size: 4.4cqw;
@@ -162,16 +163,59 @@
   text-decoration: none;
   margin-left: 0.6cqw;
 }
-.mm-card__vibe {
-  display: inline-flex;
-  align-items: center;
-  gap: 1cqw;
-  padding: 1cqw 2.4cqw;
+.mm-card__name {
+  min-width: 0;
+  overflow: hidden;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 5.6cqw;
+  line-height: 1.05;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mm-card__hp {
+  flex-shrink: 0;
+}
+/* Nombre d'exemplaires, sur l'illustration (en haut à droite). */
+.mm-card__qty {
+  position: absolute;
+  z-index: 3;
+  top: 2.2cqw;
+  right: 2.2cqw;
+  padding: 0.6cqw 2.4cqw;
   border-radius: 99px;
-  background: var(--color-paper);
-  border: 0.5cqw solid var(--color-ink);
-  font-size: 3.6cqw;
-  font-weight: 800;
+  border: 0.7cqw solid #1a1238;
+  background: var(--color-sticker, #ffd23f);
+  color: #1a1238;
+  font-family: var(--font-display);
+  font-size: 5cqw;
+  line-height: 1.1;
+  box-shadow: 0 0.6cqw 0 0 #1a1238;
+}
+/* Ce que fait la défense, en petit sous son nom. */
+.mm-card__move-desc {
+  display: block;
+  margin-top: 0.4cqw;
+  font-size: 3cqw;
+  font-weight: 600;
+  color: var(--color-ink-soft);
+  line-height: 1.2;
+}
+/* Boutons sur la carte (vue agrandie) : la carte s'allonge pour les accueillir. */
+.mm-card[data-has-actions="true"] {
+  aspect-ratio: 5 / 8.3;
+}
+.mm-card[data-has-actions="true"] .mm-card__inner {
+  grid-template-rows: auto auto 1fr auto auto;
+}
+.mm-card__actions {
+  position: relative;
+  z-index: 6;
+  display: grid;
+  gap: 1.6cqw;
+  padding: 0 3cqw 2.6cqw;
 }
 
 .mm-card__art {
@@ -191,13 +235,7 @@
   object-fit: cover;
 }
 .mm-card__caption {
-  position: absolute;
-  inset: auto 0 2.2cqw 0;
-  padding: 0 3cqw;
-  text-align: center;
-  font-size: 7.6cqw;
-  z-index: 3;
-  text-wrap: balance;
+  display: none;
 }
 
 .mm-card__body {
@@ -311,13 +349,28 @@
   opacity: 1;
 }
 
-/* Vignette : illustration + nom + rareté seulement. */
-.mm-card[data-size="compact"] .mm-card__body,
-.mm-card[data-size="compact"] .mm-card__head {
+/* Vignette : nom + PV, illustration et rareté seulement. */
+.mm-card[data-size="compact"] .mm-card__body {
   display: none;
 }
+.mm-card[data-size="compact"] .mm-card__head {
+  padding: 3cqw 4cqw 2.4cqw;
+}
+.mm-card[data-size="compact"] .mm-card__name {
+  font-size: 7.6cqw;
+}
+.mm-card[data-size="compact"] .mm-card__hp {
+  font-size: 7.6cqw;
+}
+.mm-card[data-size="compact"] .mm-card__hp abbr {
+  font-size: 5cqw;
+}
+.mm-card[data-size="compact"] .mm-card__qty {
+  font-size: 8cqw;
+  padding: 0.8cqw 3.4cqw;
+}
 .mm-card[data-size="compact"] .mm-card__inner {
-  grid-template-rows: 1fr auto;
+  grid-template-rows: auto 1fr auto;
 }
 .mm-card[data-size="compact"] .mm-card__art {
   aspect-ratio: auto;
@@ -670,6 +723,10 @@ body:has(> dialog.mm-detail[open]) #mm-app {
   background: transparent;
   color: var(--color-ink);
   overflow: visible;
+}
+/* Carte agrandie : seule au centre, sur fond flouté. */
+.mm-detail.mm-detail--card {
+  width: min(100% - 2rem, 24rem);
 }
 /* Fenêtre étroite (signalement…) : centrée, à la largeur de son contenu. */
 .mm-detail.mm-detail--narrow {
@@ -1058,9 +1115,7 @@ body:has(> dialog.mm-detail[open]) #mm-app {
   border: 3px solid var(--color-ink);
   background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--color-candy), white 35%), var(--color-candy) 60%);
   color: var(--mm-accent-ink);
-  box-shadow:
-    0 5px 0 0 var(--mm-shadow),
-    0 0 0 5px var(--color-paper);
+  box-shadow: 0 5px 0 0 var(--mm-shadow);
   transition: transform 0.18s cubic-bezier(0.3, 1.8, 0.5, 1);
 }
 .mm-nav-home:hover {
@@ -1248,9 +1303,16 @@ body:has(> dialog.mm-detail[open]) #mm-app {
   background: linear-gradient(160deg, #fff8e1, #ffe9a8 55%, #fff4cf);
 }
 /* Nom de la carte. */
+.mm-card[data-variant="gold"] .mm-card__name {
+  color: #8a6200;
+}
 .mm-card[data-variant="gold"] .mm-card__caption {
   color: #ffd76a;
   -webkit-text-stroke-color: #4a3200;
+}
+.mm-card[data-variant="divine"] .mm-card__name {
+  color: #5b6684;
+  text-shadow: 0 0 2cqw rgb(255 255 255 / 0.9);
 }
 .mm-card[data-variant="divine"] .mm-card__caption {
   color: #ffffff;

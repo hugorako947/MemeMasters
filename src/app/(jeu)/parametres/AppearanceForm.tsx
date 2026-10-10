@@ -20,6 +20,7 @@ const PREVIEW: Record<Theme, { bg: string; fg: string; accent: string; filter?: 
 export function AppearanceForm({ initial }: { initial: Appearance }) {
   const t = useTranslations("settings");
   const te = useTranslations("errors");
+  const [randomOpen, setRandomOpen] = useState(false);
   const [value, setValue] = useState<Appearance>(initial);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,15 +38,23 @@ export function AppearanceForm({ initial }: { initial: Appearance }) {
       <ul role="radiogroup" aria-label={t("themeTitle")} className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         {THEMES.map((theme) => {
           const p = PREVIEW[theme];
-          const selected = value.theme === theme;
+          // « Aléatoire » est « choisi » dès qu'on a ouvert son panneau, même avant d'avoir tiré des couleurs.
+          const selected = theme === "random" ? value.theme === "random" || randomOpen : value.theme === theme && !randomOpen;
           return (
             <li key={theme}>
               <button
                 type="button"
                 role="radio"
                 aria-checked={selected}
-                // « Aléatoire » : chaque clic tire une nouvelle palette.
-                onClick={() => save(theme === "random" ? { theme, accent: newSeed(), base: null } : { ...value, theme })}
+                // « Aléatoire » ouvre seulement le panneau : les couleurs ne changent qu'avec « Nouvelles couleurs ».
+                onClick={() => {
+                  if (theme === "random") {
+                    setRandomOpen(true);
+                    return;
+                  }
+                  setRandomOpen(false);
+                  save({ ...value, theme });
+                }}
                 className={`grid w-full gap-2 rounded-xl border-2 p-2 text-sm font-bold transition-transform hover:-translate-y-0.5 ${
                   selected ? "border-ink shadow-[0_3px_0_0_var(--mm-shadow)]" : "border-line"
                 } bg-surface`}
@@ -66,10 +75,17 @@ export function AppearanceForm({ initial }: { initial: Appearance }) {
         })}
       </ul>
 
-      {value.theme === "random" ? (
+      {value.theme === "random" || randomOpen ? (
         <div className="flex flex-wrap items-center gap-3 rounded-xl border-2 border-line bg-paper p-4">
           <p className="flex-1 text-sm text-ink-soft">{t("randomHint")}</p>
-          <button type="button" onClick={() => save({ theme: "random", accent: newSeed(), base: null })} className="mm-btn mm-btn--primary min-h-10 px-4 text-sm">
+          <button
+            type="button"
+            onClick={() => {
+              setRandomOpen(false);
+              save({ theme: "random", accent: newSeed(), base: null });
+            }}
+            className="mm-btn mm-btn--primary min-h-10 px-4 text-sm"
+          >
             {t("randomAgain")}
           </button>
         </div>
