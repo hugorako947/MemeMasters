@@ -727,6 +727,10 @@ body:has(> dialog.mm-detail[open]) #mm-app {
 /* Carte agrandie : seule au centre, sur fond flouté. */
 .mm-detail.mm-detail--card {
   width: min(100% - 2rem, 24rem);
+  cursor: zoom-out;
+}
+.mm-detail--card .mm-card__actions {
+  cursor: auto;
 }
 /* Fenêtre étroite (signalement…) : centrée, à la largeur de son contenu. */
 .mm-detail.mm-detail--narrow {

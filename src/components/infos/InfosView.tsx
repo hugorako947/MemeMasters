@@ -5,15 +5,16 @@ import { rankFor } from "@/config/ranks";
 import type { Leaderboard, LeaderboardScope } from "@/lib/server/leaderboard";
 import { LeaderboardPanel } from "./LeaderboardPanel";
 import { NewsList } from "./NewsList";
+import { CardGuidePanel } from "./CardGuidePanel";
 import { MemeMoneyPanel } from "./MemeMoneyPanel";
 import { RanksPanel } from "./RanksPanel";
 import { TrophiesPanel } from "./TrophiesPanel";
 import { UpgradesPanel } from "./UpgradesPanel";
 import { RaritiesGrid } from "./RaritiesGrid";
 
-export const INFOS_SLIDES = ["raretes", "ameliorations", "mememoney", "classement", "rangs", "trophees", "news"] as const;
+export const INFOS_SLIDES = ["carte", "raretes", "ameliorations", "classement", "rangs", "trophees", "mememoney", "news"] as const;
 
-/** Infos : Raretés, Améliorations, MemeMoney, Classement (au centre, ouvert par défaut), Rangs, Trophées et News. */
+/** Infos : Carte, Raretés, Évolutions, Classement (ouvert par défaut), Rangs, Trophées, MemeMoney et News. */
 export async function InfosView({
   boards,
   trophies,
@@ -42,9 +43,9 @@ export async function InfosView({
         param={param}
         initial={start}
         slides={[
+          { key: "carte", label: t("tabs.card"), content: <CardGuidePanel /> },
           { key: "raretes", label: t("tabs.rarities"), content: <RaritiesGrid /> },
           { key: "ameliorations", label: t("tabs.upgrades"), content: <UpgradesPanel /> },
-          { key: "mememoney", label: t("tabs.memeMoney"), content: <MemeMoneyPanel /> },
           {
             key: "classement",
             label: t("tabs.leaderboard"),
@@ -52,6 +53,7 @@ export async function InfosView({
           },
           { key: "rangs", label: t("tabs.ranks"), content: <RanksPanel trophies={trophies} highestRank={highestRank} /> },
           { key: "trophees", label: t("tabs.trophies"), content: <TrophiesPanel trophies={trophies} /> },
+          { key: "mememoney", label: t("tabs.memeMoney"), content: <MemeMoneyPanel /> },
           { key: "news", label: t("tabs.news"), content: <NewsList />, badge: newsBadge },
         ]}
       />

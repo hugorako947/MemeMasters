@@ -35,7 +35,7 @@ export async function AppShell({ player, back, children, badges }: { player: Pla
         {t("nav.skipToContent")}
       </a>
 
-      <header className="safe-top mx-auto grid w-full max-w-5xl grid-cols-[1fr_auto_1fr] items-center gap-2 px-3 pt-3 md:px-6">
+      <header className="safe-top mx-auto grid w-full max-w-7xl grid-cols-[1fr_auto_1fr] items-center gap-2 px-3 pt-3 md:px-8 xl:px-10">
         <Link
           href={profileHref}
           className="flex items-center gap-2 justify-self-start rounded-full border-2 border-ink bg-surface py-1 ps-1.5 pe-3 shadow-[0_3px_0_0_var(--mm-shadow)] transition-transform hover:-translate-y-0.5"
@@ -68,7 +68,7 @@ export async function AppShell({ player, back, children, badges }: { player: Pla
         </Link>
       </header>
 
-      <div className="mx-auto w-full max-w-5xl flex-1 px-4 pt-5 md:px-6">
+      <div className="mx-auto w-full max-w-7xl flex-1 px-4 pt-6 md:px-8 xl:px-10">
         {back ? (
           <div className="mb-3">
             <BackLink to={back} />

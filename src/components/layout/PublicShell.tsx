@@ -8,7 +8,7 @@ export function PublicShell({
   children,
   hideLogo = false,
   back = true,
-  width = "max-w-6xl",
+  width = "max-w-7xl",
 }: {
   children: ReactNode;
   hideLogo?: boolean;

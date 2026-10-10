@@ -1,6 +1,7 @@
 import { getFormatter, getTranslations } from "next-intl/server";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Panel } from "@/components/ui/Panel";
+import { FullscreenToggle } from "@/components/install/FullscreenToggle";
 import { PlayOnPhone } from "@/components/install/PlayOnPhone";
 import { GAME_CONFIG } from "@/config/game.config";
 import { timezoneUnlockDate, type Player } from "@/lib/server/players";
@@ -50,6 +51,7 @@ export async function SettingsView({ player, email }: { player: Player; email: s
       {/* L'application : avec les autres préférences de l'appareil (langue, thème). */}
       <Panel className="grid gap-3">
         <h2 className="text-xl font-extrabold">{t("appTitle")}</h2>
+        <FullscreenToggle />
         <PlayOnPhone layout="row" />
       </Panel>
 

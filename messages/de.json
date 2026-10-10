@@ -460,7 +460,8 @@
       "ranks": "Ränge",
       "upgrades": "Entwicklungen",
       "memeMoney": "MemeMoney",
-      "trophies": "Trophäen"
+      "trophies": "Trophäen",
+      "card": "Karte"
     },
     "leaderboard": {
       "scopeLabel": "Umfang der Rangliste",
@@ -566,6 +567,33 @@
       "where1": "Oben links auf dem Bildschirm, neben deinem Rang.",
       "where2": "In deinem Profil, mit einem Verlaufsdiagramm.",
       "where3": "In der Rangliste: um dich herum, in deinem Rang oder weltweit."
+    },
+    "card": {
+      "title": "Aufbau einer Karte",
+      "lead": "Jede Meme-Karte ist ein Kämpfer. Hier siehst du, was jedes Element bedeutet, am Beispiel dieser Karte.",
+      "nameTitle": "Name und Seltenheit",
+      "name": "Der Name steht oben links, die Seltenheit im Band unten. Je seltener die Karte, desto höher ihre Werte.",
+      "hpTitle": "KP: {hp}",
+      "hp": "Kraftpunkte: die Ausdauer der Karte. Fallen sie auf 0, ist die Karte kampfunfähig.",
+      "atkTitle": "ANG: {atk}",
+      "atk": "Angriff: die allgemeine Stärke der Karte. Er erhöht den Schaden all ihrer Attacken.",
+      "defTitle": "VER: {def}",
+      "def": "Verteidigung: die Robustheit der Karte. Sie verringert den erlittenen Schaden.",
+      "spdTitle": "TEM: {spd}",
+      "spd": "Tempo: Die schnellste Karte handelt in jeder Kampfrunde zuerst.",
+      "attackTitle": "Angriff: {name} ({power})",
+      "attack": "Der Grundangriff, jederzeit und ohne Energie einsetzbar. Die Zahl rechts ist seine Stärke: die Kraft genau dieser Attacke.",
+      "whyTitle": "Warum {atk} und {power}?",
+      "why": "{atk} ist die Stärke der Karte, {power} die Stärke dieser einen Attacke. Der Schaden kombiniert beides, die gegnerische Verteidigung verringert ihn: ungefähr Stärke × Angriff ÷ Verteidigung des Gegners. Hier: {power} × {atk} ÷ {def} ≈ {damage} Schaden gegen eine Karte mit {def} Verteidigung.",
+      "specialTitle": "Spezialangriff: {name} ({power})",
+      "special": "Eine stärkere Attacke, oft mit Zusatzeffekt (mehrmals treffen, betäuben, heilen …). Sie kostet Energie.",
+      "energyTitle": "Energie: {count, plural, one {# Punkt} other {# Punkte}}",
+      "energy": "Die gelben Punkte zeigen, wie viel Energie der Spezialangriff braucht. Die Karte sammelt im Kampf Energie: Hier braucht sie {count}, bevor sie ihn einsetzen kann.",
+      "defenseTitle": "Verteidigung: {name}",
+      "defense": "Die Fähigkeit, die die Karte nutzt, wenn sie sich schützt statt anzugreifen. Der kurze Satz darunter sagt, was sie bewirkt (heilen, Schaden zurückwerfen, ausweichen …).",
+      "extrasTitle": "Sterne und Exemplare",
+      "extras": "Die Sterne oben links im Bild zeigen die Entwicklung der Karte, die ihre Werte etwas erhöht. Das Abzeichen ×n oben rechts zeigt, wie viele Exemplare du besitzt.",
+      "soon": "Die vollständigen Kampfregeln werden erklärt, sobald die Kämpfe kommen; diese Rechnungen zeigen das Prinzip."
     }
   },
   "collection": {
@@ -714,7 +742,7 @@
     "incoming": "{count, plural, one {# Anfrage erhalten} other {# Anfragen erhalten}}",
     "outgoing": "{count, plural, one {# Anfrage gesendet} other {# Anfragen gesendet}}",
     "list": "Meine Freunde",
-    "empty": "Noch keine Freunde: Suche einen Spieler nach Benutzernamen, um ihn hinzuzufügen.",
+    "empty": "Noch keine Freunde? Suche einen Spieler nach Benutzernamen, um ihn hinzuzufügen.",
     "wantsYou": "Dieser Spieler möchte dein Freund sein.",
     "status": {
       "friends": "Freund",
@@ -723,8 +751,7 @@
   },
   "messages": {
     "title": "Nachrichten",
-    "lead": "Schreib deinen Freunden über „Neue Nachricht“. Um einem anderen Spieler zu schreiben, öffne sein Profil und tippe auf „Schreiben“.",
-    "empty": "Noch keine Unterhaltungen. Öffne das Profil eines Spielers und tippe auf „Schreiben“.",
+    "empty": "Noch keine Unterhaltungen.",
     "you": "Du",
     "back": "Unterhaltungen",
     "start": "Schreib die erste Nachricht an {username}.",
@@ -741,7 +768,6 @@
     "pickFriend": "Welchem Freund möchtest du schreiben?",
     "noFriends": "Noch keine Freunde: Füge welche im Tab Freunde hinzu.",
     "filterFriends": "Freund suchen",
-    "otherPlayers": "Um einem Spieler zu schreiben, der nicht dein Freund ist: Such ihn unter Freunde, öffne sein Profil und tippe auf „Schreiben“.",
     "hide": "Unterhaltung löschen",
     "hideConfirm": "Diese Unterhaltung aus deiner Liste löschen? Der andere Spieler behält sie.",
     "delete": "Löschen",
@@ -781,5 +807,11 @@
     "dodge": "{chance} % Chance auszuweichen",
     "cleanse": "Hebt negative Effekte auf",
     "recharge": "Lädt 1 Energie auf"
+  },
+  "fullscreen": {
+    "hint": "Blendet die Browserleisten aus, damit du den ganzen Bildschirm nutzt.",
+    "enter": "Vollbild",
+    "exit": "Vollbild beenden",
+    "unsupported": "Vollbild ist in diesem Browser nicht verfügbar. Auf dem iPhone installierst du das Spiel auf dem Startbildschirm: Es öffnet sich dann ohne Browserleiste."
   }
 }

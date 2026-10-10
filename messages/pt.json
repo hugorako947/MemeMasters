@@ -460,7 +460,8 @@
       "ranks": "Ranques",
       "upgrades": "Evoluções",
       "memeMoney": "MemeMoney",
-      "trophies": "Troféus"
+      "trophies": "Troféus",
+      "card": "Carta"
     },
     "leaderboard": {
       "scopeLabel": "Alcance do ranking",
@@ -566,6 +567,33 @@
       "where1": "No canto superior esquerdo da tela, ao lado do seu ranque.",
       "where2": "No seu Perfil, com o gráfico da evolução.",
       "where3": "No Ranking: perto de você, no seu ranque ou no mundo."
+    },
+    "card": {
+      "title": "Anatomia de uma carta",
+      "lead": "Cada carta de meme é um lutador. Veja o que significa cada elemento, com esta carta como exemplo.",
+      "nameTitle": "Nome e raridade",
+      "name": "O nome fica no canto superior esquerdo; a raridade, na faixa de baixo. Quanto mais rara a carta, maiores seus atributos.",
+      "hpTitle": "PV: {hp}",
+      "hp": "Pontos de vida: a resistência da carta. Quando chegam a 0, a carta fica fora de combate.",
+      "atkTitle": "ATQ: {atk}",
+      "atk": "Ataque: a força geral da carta. Aumenta o dano de todos os golpes.",
+      "defTitle": "DEF: {def}",
+      "def": "Defesa: a solidez da carta. Reduz o dano que ela recebe.",
+      "spdTitle": "VEL: {spd}",
+      "spd": "Velocidade: a carta mais rápida age primeiro em cada turno de combate.",
+      "attackTitle": "Ataque: {name} ({power})",
+      "attack": "O golpe básico, usável a qualquer momento, sem energia. O número à direita é o poder: a força própria desse golpe.",
+      "whyTitle": "Por que {atk} e {power}?",
+      "why": "{atk} é a força da carta; {power}, o poder desse golpe específico. O dano combina os dois e a defesa adversária o reduz: mais ou menos poder × ataque ÷ defesa do adversário. Aqui: {power} × {atk} ÷ {def} ≈ {damage} de dano contra uma carta com {def} de defesa.",
+      "specialTitle": "Ataque especial: {name} ({power})",
+      "special": "Um golpe mais forte, muitas vezes com um efeito extra (bater várias vezes, atordoar, se curar…). Custa energia.",
+      "energyTitle": "Energia: {count, plural, one {# ponto} other {# pontos}}",
+      "energy": "Os pontos amarelos indicam a energia necessária para usar o ataque especial. A carta ganha energia durante o combate: aqui, precisa de {count} para poder usá-lo.",
+      "defenseTitle": "Defesa: {name}",
+      "defense": "A habilidade usada quando a carta se protege em vez de atacar. A frase abaixo diz o que ela faz (curar, devolver dano, esquivar…).",
+      "extrasTitle": "Estrelas e exemplares",
+      "extras": "As estrelas, no canto superior esquerdo da ilustração, mostram a evolução da carta, que aumenta um pouco seus atributos. O selo ×n, no canto superior direito, indica quantos exemplares você tem.",
+      "soon": "As regras completas das batalhas serão detalhadas quando elas chegarem; estes cálculos dão a ideia geral."
     }
   },
   "collection": {
@@ -714,7 +742,7 @@
     "incoming": "{count, plural, one {# pedido recebido} other {# pedidos recebidos}}",
     "outgoing": "{count, plural, one {# pedido enviado} other {# pedidos enviados}}",
     "list": "Meus amigos",
-    "empty": "Você ainda não tem amigos: procure um jogador pelo nome para adicioná-lo.",
+    "empty": "Ainda não tem amigos? Procure um jogador pelo nome para adicioná-lo.",
     "wantsYou": "Este jogador quer ser seu amigo.",
     "status": {
       "friends": "Amigo",
@@ -723,8 +751,7 @@
   },
   "messages": {
     "title": "Mensagens",
-    "lead": "Escreva para seus amigos com “Nova mensagem”. Para escrever para outro jogador, abra o perfil dele e toque em “Escrever”.",
-    "empty": "Nenhuma conversa ainda. Abra o perfil de um jogador e toque em “Escrever” para começar.",
+    "empty": "Nenhuma conversa por enquanto.",
     "you": "Você",
     "back": "Conversas",
     "start": "Escreva a primeira mensagem para {username}.",
@@ -741,7 +768,6 @@
     "pickFriend": "Para qual amigo você quer escrever?",
     "noFriends": "Você ainda não tem amigos: adicione alguns na aba Amigos.",
     "filterFriends": "Buscar um amigo",
-    "otherPlayers": "Para escrever para um jogador que não é seu amigo: procure-o em Amigos, abra o perfil e toque em “Escrever”.",
     "hide": "Excluir a conversa",
     "hideConfirm": "Excluir esta conversa da sua lista? O outro jogador continua com ela.",
     "delete": "Excluir",
@@ -781,5 +807,11 @@
     "dodge": "{chance} % de chance de esquivar",
     "cleanse": "Anula os efeitos negativos",
     "recharge": "Recarrega 1 energia"
+  },
+  "fullscreen": {
+    "hint": "Esconde as barras do navegador para usar a tela inteira.",
+    "enter": "Tela cheia",
+    "exit": "Sair da tela cheia",
+    "unsupported": "A tela cheia não está disponível neste navegador. No iPhone, instale o jogo na tela inicial: ele abrirá sem barra do navegador."
   }
 }

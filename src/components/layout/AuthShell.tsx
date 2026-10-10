@@ -10,7 +10,7 @@ export async function AuthShell({ children }: { children: ReactNode }) {
   const t = await getTranslations("home");
   return (
     <div className="flex min-h-dvh flex-col">
-      <div className="safe-top mx-auto w-full max-w-6xl px-5 pt-4 md:px-8">
+      <div className="safe-top mx-auto w-full max-w-7xl px-5 pt-4 md:px-8 xl:px-10">
         <BackLink />
       </div>
       <div className="mx-auto w-full max-w-md flex-1 px-5">

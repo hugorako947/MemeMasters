@@ -2,12 +2,21 @@
  * Variables publiques (exposées au navigateur). Elles doivent être lues avec
  * leur nom complet et littéral pour que Next.js les injecte au build.
  */
+/** Clés de test officielles de Cloudflare Turnstile : visibles, toujours validées. */
+export const TURNSTILE_TEST_SITE_KEY = "1x00000000000000000000AA";
+export const TURNSTILE_TEST_SECRET_KEY = "1x0000000000000000000000000000000AA";
+
 export const publicEnv = {
   supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
   supabasePublishableKey: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? "",
   siteUrl: (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, ""),
-  /** Clé publique Cloudflare Turnstile (anti-robot). Vide : captcha désactivé. */
-  turnstileSiteKey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "",
+  /**
+   * Clé publique Cloudflare Turnstile (anti-robot). En développement, sans clé,
+   * on utilise la clé de test officielle de Cloudflare (le captcha s'affiche et passe toujours).
+   */
+  turnstileSiteKey:
+    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ||
+    (process.env.NODE_ENV !== "production" ? TURNSTILE_TEST_SITE_KEY : ""),
 };
 
 function isHttpUrl(value: string): boolean {

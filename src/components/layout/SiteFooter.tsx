@@ -18,7 +18,7 @@ export async function SiteFooter() {
   const name = GAME_CONFIG.GAME_NAME;
   return (
     <footer className="mt-16 border-t-2 border-ink bg-surface">
-      <div className="mx-auto grid max-w-6xl gap-5 px-5 py-8 text-sm md:px-8">
+      <div className="mx-auto grid max-w-7xl gap-5 px-5 py-8 text-sm md:px-8 xl:px-10">
         <nav aria-label={t("label")}>
           <ul className="flex flex-wrap gap-x-5 font-bold">
             {LEGAL_LINKS.map((link) => (

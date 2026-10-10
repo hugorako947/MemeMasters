@@ -249,7 +249,7 @@ Le jeu utilise **Cloudflare Turnstile** sur la connexion, l'inscription, le mot 
 2. Copiez la **Site Key** dans `NEXT_PUBLIC_TURNSTILE_SITE_KEY` et la **Secret Key** dans `TURNSTILE_SECRET_KEY` (dans `.env.local` et dans Vercel → Environment Variables), puis redéployez.
 3. N'activez pas en plus le CAPTCHA de Supabase : la vérification est déjà faite par le jeu, et un jeton ne peut servir qu'une fois.
 
-Sans ces deux clés, le captcha est simplement désactivé.
+En local (`npm run dev`), sans clés, le jeu utilise automatiquement les **clés de test officielles de Cloudflare** : le captcha s'affiche (« Testing only ») et passe toujours. En production, sans clés, il est désactivé et un avertissement apparaît dans les journaux de Vercel : pensez à mettre vos vraies clés avant d'ouvrir le jeu au public.
 
 ## Messages de contact et signalements
 

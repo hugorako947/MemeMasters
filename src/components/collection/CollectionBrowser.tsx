@@ -119,7 +119,7 @@ export function CollectionBrowser({ items, resaleLeftCents }: { items: Collectio
       {visible.length === 0 ? (
         <p className="py-6 text-center text-ink-soft">{t("empty")}</p>
       ) : (
-        <ul className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+        <ul className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
           {visible.map(({ card, quantity, level }) => (
             <li key={card.id} className="relative">
               <InteractiveCard

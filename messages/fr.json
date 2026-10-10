@@ -389,7 +389,7 @@
     "shop": {
       "cta": "Boutique",
       "subtle": "Pas assez de MemeMoney ?",
-      "subtleDouble": "Pas assez de MemeMoney ? Ta 1re recharge est doublée."
+      "subtleDouble": "Pas assez de MemeMoney ? Ta 1ère recharge est doublée."
     }
   },
   "odds": {
@@ -460,7 +460,8 @@
       "ranks": "Rangs",
       "upgrades": "Évolutions",
       "memeMoney": "MemeMoney",
-      "trophies": "Trophées"
+      "trophies": "Trophées",
+      "card": "Carte"
     },
     "leaderboard": {
       "scopeLabel": "Portée du classement",
@@ -566,6 +567,33 @@
       "where1": "En haut à gauche de l'écran, à côté de ton rang.",
       "where2": "Dans ton Profil, avec le graphique de leur évolution.",
       "where3": "Dans le Classement : autour de toi, dans ton rang ou dans le monde."
+    },
+    "card": {
+      "title": "Anatomie d'une carte",
+      "lead": "Chaque carte de meme est un combattant. Voici ce que veut dire chaque élément, avec l'exemple de cette carte.",
+      "nameTitle": "Nom et rareté",
+      "name": "Le nom est en haut à gauche ; la rareté, dans le bandeau du bas. Plus une carte est rare, plus ses statistiques sont élevées.",
+      "hpTitle": "PV : {hp}",
+      "hp": "Points de vie : la résistance de la carte. Quand ils tombent à 0, la carte est mise hors combat.",
+      "atkTitle": "ATQ : {atk}",
+      "atk": "Attaque : la force générale de la carte. Elle augmente les dégâts de tous ses coups.",
+      "defTitle": "DÉF : {def}",
+      "def": "Défense : la solidité de la carte. Elle réduit les dégâts qu'elle reçoit.",
+      "spdTitle": "VIT : {spd}",
+      "spd": "Vitesse : la carte la plus rapide agit en premier pendant un tour de combat.",
+      "attackTitle": "Attaque : {name} ({power})",
+      "attack": "Le coup de base, utilisable à tout moment, sans énergie. Le nombre à droite est sa puissance : la force propre à ce coup.",
+      "whyTitle": "Pourquoi {atk} et {power} ?",
+      "why": "{atk}, c'est la force de la carte ; {power}, la puissance de ce coup précis. Les dégâts combinent les deux, puis la défense adverse les réduit : à peu près puissance × attaque ÷ défense de l'adversaire. Ici : {power} × {atk} ÷ {def} ≈ {damage} dégâts contre une carte qui a {def} de défense.",
+      "specialTitle": "Attaque spéciale : {name} ({power})",
+      "special": "Un coup plus puissant, souvent avec un effet en plus (frapper plusieurs fois, étourdir, se soigner…). Il coûte de l'énergie.",
+      "energyTitle": "Énergie : {count, plural, one {# point} other {# points}}",
+      "energy": "Les points jaunes indiquent l'énergie nécessaire pour lancer l'attaque spéciale. La carte gagne de l'énergie au fil du combat : ici, il en faut {count} avant de pouvoir la lancer.",
+      "defenseTitle": "Défense : {name}",
+      "defense": "La capacité utilisée quand la carte se protège au lieu d'attaquer. La petite phrase en dessous dit ce qu'elle fait (se soigner, renvoyer des dégâts, esquiver…).",
+      "extrasTitle": "Étoiles et exemplaires",
+      "extras": "Les étoiles, en haut à gauche de l'illustration, montrent l'évolution de la carte, qui augmente un peu ses statistiques. Le badge ×n, en haut à droite, indique combien d'exemplaires tu possèdes.",
+      "soon": "Les règles complètes des batailles seront détaillées à leur arrivée ; ces calculs donnent l'idée générale."
     }
   },
   "collection": {
@@ -714,7 +742,7 @@
     "incoming": "{count, plural, one {# demande reçue} other {# demandes reçues}}",
     "outgoing": "{count, plural, one {# demande envoyée} other {# demandes envoyées}}",
     "list": "Mes amis",
-    "empty": "Tu n'as pas encore d'amis : cherche un joueur par son pseudo pour l'ajouter.",
+    "empty": "Tu n'as pas encore d'amis ? Cherche un joueur par son pseudo pour l'ajouter.",
     "wantsYou": "Ce joueur veut être ton ami.",
     "status": {
       "friends": "Ami",
@@ -723,8 +751,7 @@
   },
   "messages": {
     "title": "Messages",
-    "lead": "Écris à tes amis avec « Nouveau message ». Pour écrire à un autre joueur, ouvre son profil puis touche « Écrire ».",
-    "empty": "Aucune conversation pour l'instant. Ouvre le profil d'un joueur et touche « Écrire » pour commencer.",
+    "empty": "Aucune conversation pour le moment.",
     "you": "Toi",
     "back": "Conversations",
     "start": "Écris le premier message à {username}.",
@@ -741,7 +768,6 @@
     "pickFriend": "À quel ami veux-tu écrire ?",
     "noFriends": "Tu n'as pas encore d'amis : ajoute-en dans l'onglet Amis.",
     "filterFriends": "Chercher un ami",
-    "otherPlayers": "Pour écrire à un joueur qui n'est pas ton ami : cherche-le dans Amis, ouvre son profil, puis touche « Écrire ».",
     "hide": "Supprimer la conversation",
     "hideConfirm": "Supprimer cette conversation de ta liste ? L'autre joueur la garde.",
     "delete": "Supprimer",
@@ -781,5 +807,11 @@
     "dodge": "{chance} % de chances d'esquiver",
     "cleanse": "Annule les effets négatifs",
     "recharge": "Recharge 1 énergie"
+  },
+  "fullscreen": {
+    "hint": "Masque les barres du navigateur pour profiter de tout l'écran.",
+    "enter": "Plein écran",
+    "exit": "Quitter le plein écran",
+    "unsupported": "Le plein écran n'est pas disponible dans ce navigateur. Sur iPhone, installe le jeu sur ton écran d'accueil : il s'ouvrira sans barre de navigateur."
   }
 }

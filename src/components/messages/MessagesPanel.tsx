@@ -34,23 +34,36 @@ export function MessagesPanel({
   const [picking, setPicking] = useState(false);
   const [filter, setFilter] = useState("");
 
+  // La liste est rechargée dès qu'on y revient (conversation créée, supprimée, lue…), puis toutes les 15 s.
+  const [version, setVersion] = useState(0);
   useEffect(() => {
     if (current) return;
-    const timer = setInterval(async () => {
+    let cancelled = false;
+    const refresh = async () => {
       const res = await fetch("/api/messages");
-      if (res.ok) setConversations((await res.json()).conversations);
-    }, 15_000);
-    return () => clearInterval(timer);
-  }, [current]);
+      if (res.ok && !cancelled) setConversations((await res.json()).conversations);
+    };
+    const first = setTimeout(refresh, 0);
+    const timer = setInterval(refresh, 15_000);
+    return () => {
+      cancelled = true;
+      clearTimeout(first);
+      clearInterval(timer);
+    };
+  }, [current, version]);
 
   if (current)
     return (
       <ThreadView
         username={current}
-        onBack={() => setCurrent(null)}
+        onBack={() => {
+          setCurrent(null);
+          setVersion((v) => v + 1);
+        }}
         onHidden={(name) => {
           setConversations((list) => list.filter((c) => c.other.username !== name));
           setCurrent(null);
+          setVersion((v) => v + 1);
         }}
       />
     );
@@ -65,7 +78,6 @@ export function MessagesPanel({
           {picking ? t("cancelNew") : t("new")}
         </button>
       </div>
-      <p className="text-sm text-ink-soft">{t("lead")}</p>
 
       {/* Nouveau message : on choisit parmi ses amis. Pour un autre joueur : son profil, bouton « Écrire ». */}
       {picking ? (
@@ -104,7 +116,6 @@ export function MessagesPanel({
               </ul>
             </>
           )}
-          <p className="text-xs text-ink-soft">{t("otherPlayers")}</p>
         </div>
       ) : null}
       {conversations.length === 0 ? (
@@ -165,7 +176,6 @@ function ThreadView({ username, onBack, onHidden }: { username: string; onBack: 
     } else setError(te(res.code as "server_error"));
   }
   const endRef = useRef<HTMLDivElement>(null);
-  const lastId = useRef<string | null>(null);
 
   const load = useCallback(async () => {
     const res = await fetch(`/api/messages/thread?avec=${encodeURIComponent(username)}`);
@@ -175,11 +185,8 @@ function ThreadView({ username, onBack, onHidden }: { username: string; onBack: 
     }
     const data: Thread = await res.json();
     setThread(data);
-    const newest = data.messages.at(-1)?.id ?? null;
-    if (newest !== lastId.current) {
-      lastId.current = newest;
-      router.refresh(); // met à jour les compteurs de messages non lus
-    }
+    // Des messages non lus viennent d'être lus : la notification s'efface aussitôt (navigation, onglets).
+    if (data.newlyRead > 0) router.refresh();
   }, [username, te, router]);
 
   useEffect(() => {

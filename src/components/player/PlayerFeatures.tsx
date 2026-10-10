@@ -3,7 +3,6 @@ import type { ReactNode } from "react";
 import { InteractiveCard } from "@/components/card/InteractiveCard";
 import { sampleOf } from "@/components/card/sample-cards";
 import { SlideDeck } from "@/components/ui/SlideDeck";
-import { GAME_CONFIG } from "@/config/game.config";
 import { isOfferActive, OFFERS } from "@/config/shop";
 import { RANK_REWARDS, rankFor, RANKS, rankIndex } from "@/config/ranks";
 import type { Player } from "@/lib/server/players";
@@ -51,12 +50,11 @@ export async function PlayerFeatures({
   );
 }
 
-async function SlideFrame({ lead, tint, soon = false, children }: { lead: string; tint: string; soon?: boolean; children: ReactNode }) {
+async function SlideFrame({ tint, soon = false, children }: { tint: string; soon?: boolean; children: ReactNode }) {
   const t = await getTranslations("playerHome");
   return (
     <section className="rounded-[1.75rem] border-2 border-ink bg-surface p-4 shadow-[0_3px_0_0_var(--mm-shadow)] sm:p-6">
       <div className="flex items-start justify-between gap-3">
-        <p className="text-ink-soft sm:text-lg">{lead}</p>
         {soon ? (
           <span className="shrink-0 rounded-full border-2 border-ink bg-sticker px-3 py-1 text-xs font-extrabold text-[#1a1238]">{t("soon")}</span>
         ) : null}
@@ -68,10 +66,9 @@ async function SlideFrame({ lead, tint, soon = false, children }: { lead: string
 
 /** Boosters : ouvrir tout de suite, acheter en MemeMoney, et un clin d'œil vers la Boutique. */
 async function BoostersSlide({ state }: { state: BoosterStateView }) {
-  const t = await getTranslations("playerHome");
   const doubleOffer = OFFERS.some((o) => o.kind === "first_purchase_double" && isOfferActive(o, new Date()));
   return (
-    <SlideFrame lead={t("boosters.lead", { count: GAME_CONFIG.DAILY_FREE_BOOSTERS, size: GAME_CONFIG.BOOSTER_SIZE })} tint="bg-[#ffe3ec]">
+    <SlideFrame tint="bg-[#ffe3ec]">
       <BoostersPanel state={state} doubleOffer={doubleOffer} />
     </SlideFrame>
   );
@@ -85,7 +82,7 @@ async function BattlesSlide({ player }: { player: Player }) {
   const rank = rankFor(player.trophies);
   const next = RANKS[rankIndex(player.trophies) + 1];
   return (
-    <SlideFrame lead={t("lead")} tint="bg-[#fff6c9]" soon>
+    <SlideFrame tint="bg-[#fff6c9]" soon>
       <div className="mx-auto grid max-w-lg gap-5">
         <div className="flex items-center gap-3">
           <RankShield rank={rank} size={44} />
@@ -120,10 +117,8 @@ async function BattlesSlide({ player }: { player: Player }) {
 
 /** La collection du joueur, directement consultable. */
 async function CollectionSlide({ items, resaleLeftCents }: { items: CollectionItem[]; resaleLeftCents: number }) {
-  const t = await getTranslations("playerHome.collection");
   return (
     <section className="rounded-[1.75rem] border-2 border-ink bg-surface p-4 shadow-[0_3px_0_0_var(--mm-shadow)] sm:p-6">
-      <p className="mb-4 text-ink-soft sm:text-lg">{t("lead")}</p>
       <CollectionBrowser items={items} resaleLeftCents={resaleLeftCents} />
     </section>
   );

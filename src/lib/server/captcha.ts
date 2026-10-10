@@ -1,15 +1,21 @@
 import "server-only";
 import { headers } from "next/headers";
+import { TURNSTILE_TEST_SECRET_KEY } from "@/lib/env.public";
 import { clientIp } from "./rate-limit";
 
 /**
  * Vérifie le jeton anti-robot Cloudflare Turnstile auprès de Cloudflare.
- * Sans TURNSTILE_SECRET_KEY (développement local), la vérification est désactivée.
+ * En développement sans clé : clé secrète de test de Cloudflare (toujours validée).
+ * En production sans clé : vérification désactivée (avertissement dans les journaux).
  * Un jeton ne sert qu'une fois : le formulaire en redemande un après chaque envoi.
  */
 export async function verifyCaptcha(token: FormDataEntryValue | string | null | undefined): Promise<boolean> {
-  const secret = process.env.TURNSTILE_SECRET_KEY;
-  if (!secret) return true;
+  const secret =
+    process.env.TURNSTILE_SECRET_KEY || (process.env.NODE_ENV !== "production" ? TURNSTILE_TEST_SECRET_KEY : "");
+  if (!secret) {
+    if (process.env.NODE_ENV === "production") console.warn("[captcha] TURNSTILE_SECRET_KEY manquante : captcha désactivé en production.");
+    return true;
+  }
   if (typeof token !== "string" || token.length === 0 || token.length > 2048) return false;
   try {
     const body = new URLSearchParams({ secret, response: token });

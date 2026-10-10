@@ -32,6 +32,8 @@ export interface Thread {
   blocked: "by_me" | "by_them" | null;
   /** Messages encore possibles avant une réponse (joueur non ami), sinon null. */
   remaining: number | null;
+  /** Messages reçus qui viennent d'être marqués comme lus (une notification vient d'être consommée). */
+  newlyRead: number;
 }
 
 /** Conversations du joueur, la plus récente d'abord, avec le nombre de messages non lus. */
@@ -104,7 +106,7 @@ async function status(playerId: string, otherId: string): Promise<Pick<Thread, "
 export async function getThread(player: Player, username: string): Promise<Thread> {
   const other = await findPlayer(username);
   if (other.id === player.id) throw new ApiError(409, "friend_self");
-  const [rows] = await Promise.all([
+  const [rows, read] = await Promise.all([
     sql()<{ id: string; sender_id: string; body: string; created_at: Date; read_at: Date | null }[]>`
       select id, sender_id, body, created_at, read_at from public.messages
       where least(sender_id, recipient_id) = least(${player.id}::uuid, ${other.id}::uuid)
@@ -116,12 +118,13 @@ export async function getThread(player: Player, username: string): Promise<Threa
       order by created_at desc
       limit ${MESSAGE_RULES.PAGE}
     `,
-    sql()`update public.messages set read_at = now() where recipient_id = ${player.id} and sender_id = ${other.id} and read_at is null`,
+    sql()`update public.messages set read_at = now() where recipient_id = ${player.id} and sender_id = ${other.id} and read_at is null returning id`,
   ]);
   return {
     other,
     messages: rows.reverse().map((m) => ({ id: m.id, fromMe: m.sender_id === player.id, body: m.body, createdAt: m.created_at.toISOString(), read: m.read_at !== null })),
     ...(await status(player.id, other.id)),
+    newlyRead: read.length,
   };
 }
 

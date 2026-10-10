@@ -120,7 +120,7 @@ export function SlideDeck({
         aria-label={t("label")}
         onKeyDown={onTabKey}
         className={`mx-auto flex w-full rounded-full border-2 border-ink bg-surface p-1 shadow-[0_3px_0_0_var(--mm-shadow)] ${
-          scrollable ? "mm-tabs-scroll max-w-3xl overflow-x-auto" : "max-w-lg"
+          scrollable ? "mm-tabs-scroll max-w-5xl overflow-x-auto" : "max-w-xl"
         }`}
       >
         {slides.map((slide, i) => (
