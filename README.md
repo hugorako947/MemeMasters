@@ -241,9 +241,9 @@ Les règles (durée, énergie, tours, délai d'apparition) sont dans `src/lib/ba
 
 Ajoutez une entrée en haut de `src/content/news.ts` (date, type, titre et texte en français, autres langues facultatives). Elle apparaît dans Infos → News.
 
-## Messages de contact
+## Messages de contact et signalements
 
-Les messages envoyés depuis `/contact` sont dans la table `contact_messages` (tableau de bord Supabase → Table Editor). Passez `status` à `handled` une fois traités.
+Les messages envoyés depuis `/contact` sont dans la table `contact_messages` (tableau de bord Supabase → Table Editor). Passez `status` à `handled` une fois traités. Les signalements de joueurs sont dans la table `player_reports` (motif, précisions, joueur signalé), à traiter de la même façon.
 
 ## Personnaliser le jeu
 

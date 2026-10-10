@@ -148,7 +148,12 @@
         "all": "Desde tu registro"
       }
     },
-    "seeRanks": "Ver todos los rangos"
+    "seeRanks": "Ver todos los rangos",
+    "tabs": {
+      "profile": "Perfil",
+      "friends": "Amigos",
+      "messages": "Mensajes"
+    }
   },
   "settings": {
     "title": "Ajustes",
@@ -170,7 +175,8 @@
       "light": "Claro",
       "dark": "Oscuro",
       "inverted": "Invertido",
-      "custom": "Personalizado"
+      "custom": "Personalizado",
+      "random": "Aleatorio"
     },
     "accentTitle": "Color principal",
     "baseTitle": "Fondo",
@@ -191,7 +197,9 @@
     "helpTitle": "Ayuda y contacto",
     "helpLead": "¿Una pregunta, un error o un problema con tu cuenta? Escríbenos.",
     "helpButton": "Contáctanos",
-    "appTitle": "Aplicación"
+    "appTitle": "Aplicación",
+    "randomHint": "Cada clic genera una nueva paleta de colores para todo el juego.",
+    "randomAgain": "Nuevos colores"
   },
   "rarities": {
     "title": "Las 7 rarezas"
@@ -250,7 +258,9 @@
     "already_requested": "Solicitud ya enviada.",
     "friends_limit": "Has alcanzado el número máximo de amigos.",
     "pending_limit": "Demasiadas solicitudes pendientes: espera a que acepten algunas.",
-    "request_not_found": "Esta solicitud ya no existe."
+    "request_not_found": "Esta solicitud ya no existe.",
+    "blocked": "No es posible: uno de vosotros ha bloqueado al otro.",
+    "message_limit": "Espera una respuesta antes de enviar más mensajes."
   },
   "statName": {
     "hp": "Puntos de salud",
@@ -439,7 +449,10 @@
     "count": "{count} / {max} caracteres (mínimo {min})",
     "submit": "Enviar",
     "sent": "¡Mensaje enviado! Te responderemos por correo lo antes posible.",
-    "direct": "También puedes escribirnos directamente a"
+    "direct": "También puedes escribirnos directamente a",
+    "subject": "Especifica el asunto",
+    "subjectPlaceholder": "Por ejemplo: una idea de carta nueva",
+    "subjectHint": "Obligatorio cuando el asunto es «Otro» (de 3 a 80 caracteres)."
   },
   "slides": {
     "label": "Secciones"
@@ -658,11 +671,10 @@
     },
     "cta": {
       "title": "Juega también en tu móvil",
-      "scan": "Escanea el código QR con tu móvil para instalar el juego en dos gestos.",
+      "scan": "Escanea el código QR con tu móvil para instalar el juego.",
       "tap": "Instala el juego en tu pantalla de inicio en dos gestos.",
       "button": "Instalar la aplicación"
     },
-    "localHint": "Prueba local: tu móvil debe estar en la misma red Wi-Fi que este ordenador ({url}). Instalarlo como app requiere una dirección HTTPS: consulta el README.",
     "httpWarning": "Navegas sin HTTPS: puedes jugar desde este móvil, pero instalarlo como app solo es posible con una dirección segura (https://), cuando el sitio esté en línea o con un túnel de prueba."
   },
   "dup": {
@@ -695,7 +707,8 @@
     "upgradeButton": "Pasar a {level}"
   },
   "notifications": {
-    "new": "Nuevo"
+    "new": "Nuevo",
+    "count": "{count, plural, one {# novedad} other {# novedades}}"
   },
   "friends": {
     "title": "{count, plural, =0 {Amigos} other {Amigos (#)}}",
@@ -718,5 +731,48 @@
       "friends": "Amigo",
       "outgoing": "Solicitud enviada"
     }
+  },
+  "messages": {
+    "title": "Mensajes",
+    "lead": "Escribe a tus amigos o a otros jugadores. Para escribir a alguien, abre su perfil y toca «Escribir».",
+    "empty": "Aún no hay conversaciones. Abre el perfil de un jugador y toca «Escribir» para empezar.",
+    "you": "Tú",
+    "back": "Conversaciones",
+    "start": "Escribe el primer mensaje a {username}.",
+    "read": "Leído",
+    "blockedByMe": "Has bloqueado a este jugador: desbloquéalo desde su perfil para escribirle.",
+    "blockedByThem": "No puedes escribir a este jugador.",
+    "limit": "Has enviado 3 mensajes sin respuesta: espera a que este jugador responda o sea tu amigo.",
+    "notFriend": "{count, plural, one {No sois amigos: # mensaje más antes de su respuesta.} other {No sois amigos: # mensajes más antes de su respuesta.}}",
+    "placeholder": "Escribe tu mensaje…",
+    "send": "Enviar",
+    "write": "Escribir"
+  },
+  "block": {
+    "block": "Bloquear",
+    "unblock": "Desbloquear",
+    "confirm": "Bloquear",
+    "cancel": "Cancelar",
+    "confirmText": "¿Bloquear a este jugador?",
+    "isBlocked": "Has bloqueado a este jugador: ya no puede escribirte ni enviarte solicitudes de amistad.",
+    "listTitle": "{count, plural, one {# jugador bloqueado} other {# jugadores bloqueados}}"
+  },
+  "report": {
+    "button": "Denunciar",
+    "title": "Denunciar a este jugador",
+    "reason": "Motivo",
+    "reasons": {
+      "spam": "Spam o publicidad",
+      "harassment": "Acoso o insultos",
+      "hate": "Discurso de odio",
+      "inappropriate_name": "Nombre inapropiado",
+      "cheating": "Trampas",
+      "other": "Otro"
+    },
+    "details": "Detalles (opcional)",
+    "submit": "Enviar la denuncia",
+    "cancel": "Cancelar",
+    "sent": "Gracias: tu denuncia se ha enviado al equipo.",
+    "close": "Cerrar"
   }
 }

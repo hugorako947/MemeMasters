@@ -6,7 +6,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set search_path = public, extensions;
 
-select plan(32);
+select plan(36);
 
 -- ---------------------------------------------------------------- données
 insert into auth.users (id, email) values
@@ -52,6 +52,7 @@ insert into public.friendships (requester_id, addressee_id, status)
 set local role anon;
 select throws_ok('select * from public.contact_messages', '42501', null, 'anonyme : messages de contact interdits');
 select is((select count(*)::int from public.friendships), 0, 'anonyme : ne voit aucune relation d''amitié');
+select is((select count(*)::int from public.messages), 0, 'anonyme : ne lit aucun message');
 select is((select count(*)::int from public.cards where slug in ('carte-active', 'carte-retiree')), 1, 'anonyme : voit seulement les cartes actives');
 select is((select count(*)::int from public.profiles), 0, 'anonyme : ne voit aucun profil');
 select is((select count(*)::int from public.player_wallets), 0, 'anonyme : ne voit aucun portefeuille');
@@ -74,6 +75,9 @@ select is((select count(*)::int from public.admin_audit_log), 0, 'joueur : pas d
 select throws_ok('select * from public.contact_messages', '42501', null, 'joueur : ne lit pas les messages de contact');
 select ok((select count(*) from public.friendships) >= 0, 'joueur : lit la table des amis (filtrée par RLS)');
 select throws_ok($$insert into public.friendships (requester_id, addressee_id) select id, id from public.profiles limit 1$$, '42501', null, 'joueur : ne crée pas de relation directement');
+select throws_ok('select * from public.player_reports', '42501', null, 'joueur : ne lit pas les signalements');
+select throws_ok($$insert into public.messages (sender_id, recipient_id, body) select a.id, b.id, 'x' from public.profiles a, public.profiles b where a.id <> b.id limit 1$$, '42501', null, 'joueur : n''écrit pas de message directement');
+select throws_ok($$insert into public.player_blocks (blocker_id, blocked_id) select a.id, b.id from public.profiles a, public.profiles b where a.id <> b.id limit 1$$, '42501', null, 'joueur : ne bloque pas directement');
 select is((select count(*)::int from public.player_rankings), 3, 'joueur : lit le classement des joueurs');
 
 select throws_ok(

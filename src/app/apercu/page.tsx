@@ -71,22 +71,31 @@ export default async function PreviewPage({ searchParams }: PageProps<"/apercu">
     asOf: new Date(now).toISOString(),
   };
   return (
-    <AppShell player={player} badges={{ home: true, boosters: true, infos: true, news: true, shop: true, profile: true }}>
+    <AppShell player={player} badges={{ home: 3, boosters: 3, infos: 2, news: 2, shop: 1, profile: 3, friends: 1, messages: 2 }}>
       {view === "profil" ? (
         <ProfileView
           profile={profile}
           viewer={player}
-          friends={{
-            friends: [
-              { id: "f1", username: "MemeLord", trophies: 2410, since: new Date().toISOString() },
-              { id: "f2", username: "PixelCat", trophies: 980, since: new Date().toISOString() },
+          social={{
+            friends: {
+              friends: [
+                { id: "f1", username: "MemeLord", trophies: 2410, since: new Date().toISOString() },
+                { id: "f2", username: "PixelCat", trophies: 980, since: new Date().toISOString() },
+              ],
+              incoming: [{ requestId: "r1", from: { id: "f3", username: "Brainrotix", trophies: 1630 }, createdAt: new Date().toISOString() }],
+              outgoing: [{ requestId: "r2", to: { id: "f4", username: "Tralala", trophies: 3120 }, createdAt: new Date().toISOString() }],
+            },
+            blocked: [{ id: "b1", username: "SpamBot3000", trophies: 0 }],
+            conversations: [
+              { other: { id: "f1", username: "MemeLord", trophies: 2410 }, last: { body: "On se fait une partie ce soir ?", createdAt: new Date().toISOString(), fromMe: false }, unread: 2 },
+              { other: { id: "f2", username: "PixelCat", trophies: 980 }, last: { body: "Merci pour le tuyau !", createdAt: new Date().toISOString(), fromMe: true }, unread: 0 },
             ],
-            incoming: [{ requestId: "r1", from: { id: "f3", username: "Brainrotix", trophies: 1630 }, createdAt: new Date().toISOString() }],
-            outgoing: [{ requestId: "r2", to: { id: "f4", username: "Tralala", trophies: 3120 }, createdAt: new Date().toISOString() }],
+            badges: { friends: 1, messages: 2 },
+            initialTab: typeof params.onglet === "string" ? params.onglet : undefined,
           }}
         />
       ) : view === "infos" ? (
-        <InfosView boards={fakeBoards(player.trophies)} trophies={player.trophies} highestRank={player.highestRank} newsBadge initial={typeof params.onglet === "string" ? params.onglet : undefined} param="onglet" />
+        <InfosView boards={fakeBoards(player.trophies)} trophies={player.trophies} highestRank={player.highestRank} newsBadge={2} initial={typeof params.onglet === "string" ? params.onglet : undefined} param="onglet" />
       ) : view === "boutique" ? (
         <ShopView country={typeof params.pays === "string" ? params.pays : "FR"} hasPurchased={false} />
       ) : view === "reglages" ? (
@@ -103,7 +112,7 @@ export default async function PreviewPage({ searchParams }: PageProps<"/apercu">
               firstObtainedAt: null,
             }))}
             resaleLeftCents={1650}
-            boostersBadge
+            boostersBadge={3}
             boosters={{ freeLeft: 2, freePerDay: 3, dailyReserve: 1, special: 1, verySpecial: 0, memeMoney: player.memeMoney }}
             initial={typeof params.onglet === "string" ? params.onglet : undefined}
             param="onglet"

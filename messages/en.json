@@ -148,7 +148,12 @@
         "all": "Since you joined"
       }
     },
-    "seeRanks": "See all ranks"
+    "seeRanks": "See all ranks",
+    "tabs": {
+      "profile": "Profile",
+      "friends": "Friends",
+      "messages": "Messages"
+    }
   },
   "settings": {
     "title": "Settings",
@@ -170,7 +175,8 @@
       "light": "Light",
       "dark": "Dark",
       "inverted": "Inverted",
-      "custom": "Custom"
+      "custom": "Custom",
+      "random": "Random"
     },
     "accentTitle": "Main color",
     "baseTitle": "Background",
@@ -191,7 +197,9 @@
     "helpTitle": "Help and contact",
     "helpLead": "A question, a bug or an issue with your account? Write to us.",
     "helpButton": "Contact us",
-    "appTitle": "App"
+    "appTitle": "App",
+    "randomHint": "Each click rolls a new color palette for the whole game.",
+    "randomAgain": "New colors"
   },
   "rarities": {
     "title": "The 7 rarities"
@@ -250,7 +258,9 @@
     "already_requested": "Request already sent.",
     "friends_limit": "You've reached the maximum number of friends.",
     "pending_limit": "Too many pending requests: wait for some to be accepted.",
-    "request_not_found": "This request no longer exists."
+    "request_not_found": "This request no longer exists.",
+    "blocked": "Not possible: one of you has blocked the other.",
+    "message_limit": "Wait for a reply before sending more messages."
   },
   "statName": {
     "hp": "Hit points",
@@ -439,7 +449,10 @@
     "count": "{count} / {max} characters (minimum {min})",
     "submit": "Send",
     "sent": "Message sent! We'll reply by email as soon as possible.",
-    "direct": "You can also write to us directly at"
+    "direct": "You can also write to us directly at",
+    "subject": "Specify the subject",
+    "subjectPlaceholder": "For example: an idea for a new card",
+    "subjectHint": "Required when the subject is “Other” (3 to 80 characters)."
   },
   "slides": {
     "label": "Sections"
@@ -658,11 +671,10 @@
     },
     "cta": {
       "title": "Play on your phone too",
-      "scan": "Scan the QR code with your phone to install the game in two taps.",
+      "scan": "Scan the QR code with your phone to install the game.",
       "tap": "Install the game on your home screen in two taps.",
       "button": "Install the app"
     },
-    "localHint": "Local test: your phone must be on the same Wi-Fi as this computer ({url}). Installing as an app requires an HTTPS address: see the README.",
     "httpWarning": "You're browsing without HTTPS: you can play from this phone, but installing it as an app requires a secure address (https://), once the site is online or through a test tunnel."
   },
   "dup": {
@@ -695,7 +707,8 @@
     "upgradeButton": "Upgrade to {level}"
   },
   "notifications": {
-    "new": "New"
+    "new": "New",
+    "count": "{count, plural, one {# new item} other {# new items}}"
   },
   "friends": {
     "title": "{count, plural, =0 {Friends} other {Friends (#)}}",
@@ -718,5 +731,48 @@
       "friends": "Friend",
       "outgoing": "Request sent"
     }
+  },
+  "messages": {
+    "title": "Messages",
+    "lead": "Write to your friends or other players. To write to someone, open their profile and tap “Write”.",
+    "empty": "No conversations yet. Open a player's profile and tap “Write” to start.",
+    "you": "You",
+    "back": "Conversations",
+    "start": "Write the first message to {username}.",
+    "read": "Read",
+    "blockedByMe": "You blocked this player: unblock them from their profile to write.",
+    "blockedByThem": "You can't write to this player.",
+    "limit": "You've sent 3 messages without a reply: wait until this player replies or becomes your friend.",
+    "notFriend": "{count, plural, one {You're not friends: # more message before they reply.} other {You're not friends: # more messages before they reply.}}",
+    "placeholder": "Write your message…",
+    "send": "Send",
+    "write": "Write"
+  },
+  "block": {
+    "block": "Block",
+    "unblock": "Unblock",
+    "confirm": "Block",
+    "cancel": "Cancel",
+    "confirmText": "Block this player?",
+    "isBlocked": "You blocked this player: they can no longer write to you or send you friend requests.",
+    "listTitle": "{count, plural, one {# blocked player} other {# blocked players}}"
+  },
+  "report": {
+    "button": "Report",
+    "title": "Report this player",
+    "reason": "Reason",
+    "reasons": {
+      "spam": "Spam or advertising",
+      "harassment": "Harassment or insults",
+      "hate": "Hate speech",
+      "inappropriate_name": "Inappropriate username",
+      "cheating": "Cheating",
+      "other": "Other"
+    },
+    "details": "Details (optional)",
+    "submit": "Send report",
+    "cancel": "Cancel",
+    "sent": "Thank you: your report has been sent to the team.",
+    "close": "Close"
   }
 }

@@ -1351,6 +1351,25 @@ body:has(> dialog.mm-detail[open]) #mm-app {
   right: auto;
   left: 0.35rem;
 }
+/* Avec un nombre : pastille ronde un peu plus grande, chiffre blanc. */
+.mm-dot--count {
+  top: -0.15rem;
+  right: 0.1rem;
+  display: grid;
+  place-items: center;
+  min-width: 1.15rem;
+  height: 1.15rem;
+  width: auto;
+  padding: 0 0.28rem;
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1;
+  color: #ffffff;
+}
+[dir="rtl"] .mm-dot--count {
+  right: auto;
+  left: 0.1rem;
+}
 /* Bandeau d'onglets défilant : pas de barre de défilement visible. */
 .mm-tabs-scroll {
   scrollbar-width: none;

@@ -103,3 +103,17 @@ describe("redirection après connexion", () => {
     expect(safeNextPath(null)).toBe("/");
   });
 });
+
+import { contactSchema } from "./contact";
+
+describe("contact : sujet « Autre »", () => {
+  const base = { email: "joueur@exemple.fr", message: "Bonjour, j'ai une question." };
+  it("exige de préciser le sujet quand il est « Autre »", () => {
+    expect(contactSchema.safeParse({ ...base, category: "other" }).success).toBe(false);
+    expect(contactSchema.safeParse({ ...base, category: "other", subject: "ok" }).success).toBe(false);
+    expect(contactSchema.safeParse({ ...base, category: "other", subject: "Idée de carte" }).success).toBe(true);
+  });
+  it("ne demande rien de plus pour les autres sujets", () => {
+    expect(contactSchema.safeParse({ ...base, category: "bug" }).success).toBe(true);
+  });
+});

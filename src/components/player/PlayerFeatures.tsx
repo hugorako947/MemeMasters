@@ -23,7 +23,7 @@ export async function PlayerFeatures({
   collection,
   boosters,
   resaleLeftCents,
-  boostersBadge = false,
+  boostersBadge = 0,
   initial,
   param,
 }: {
@@ -31,7 +31,7 @@ export async function PlayerFeatures({
   collection: CollectionItem[];
   boosters: BoosterStateView;
   resaleLeftCents: number;
-  boostersBadge?: boolean;
+  boostersBadge?: number;
   initial?: string;
   param?: string;
 }) {

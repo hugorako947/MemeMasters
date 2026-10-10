@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Field, FormMessage, RequiredNote } from "@/components/ui/Field";
 import { postJson } from "@/lib/client/api";
 import { looksLikeEmail } from "@/lib/validation/auth";
-import { CONTACT_CATEGORIES, CONTACT_MESSAGE_MAX, CONTACT_MESSAGE_MIN, type ContactCategory } from "@/lib/validation/contact";
+import { CONTACT_CATEGORIES, CONTACT_MESSAGE_MAX, CONTACT_MESSAGE_MIN, CONTACT_SUBJECT_MAX, CONTACT_SUBJECT_MIN, type ContactCategory } from "@/lib/validation/contact";
 
 export function ContactForm({ defaultEmail }: { defaultEmail: string }) {
   const t = useTranslations("contact");
@@ -14,19 +14,22 @@ export function ContactForm({ defaultEmail }: { defaultEmail: string }) {
   const [email, setEmail] = useState(defaultEmail);
   const [category, setCategory] = useState<ContactCategory | "">("");
   const [message, setMessage] = useState("");
+  const [subject, setSubject] = useState("");
+  const needsSubject = category === "other";
   const [website, setWebsite] = useState("");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
   const length = message.trim().length;
-  const ready = looksLikeEmail(email) && category !== "" && length >= CONTACT_MESSAGE_MIN && length <= CONTACT_MESSAGE_MAX;
+  const subjectOk = !needsSubject || subject.trim().length >= CONTACT_SUBJECT_MIN;
+  const ready = looksLikeEmail(email) && category !== "" && subjectOk && length >= CONTACT_MESSAGE_MIN && length <= CONTACT_MESSAGE_MAX;
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
     if (!ready) return;
     setPending(true);
     setError(null);
-    const result = await postJson("/api/contact", { email, category, message, website });
+    const result = await postJson("/api/contact", { email, category, subject: needsSubject ? subject : undefined, message, website });
     setPending(false);
     if (result.ok) setSent(true);
     else setError(te(result.code as "server_error"));
@@ -72,6 +75,19 @@ export function ContactForm({ defaultEmail }: { defaultEmail: string }) {
           ))}
         </select>
       </div>
+      {needsSubject ? (
+        <Field
+          label={t("subject")}
+          name="subject"
+          value={subject}
+          onChange={(e) => setSubject(e.target.value)}
+          maxLength={CONTACT_SUBJECT_MAX}
+          placeholder={t("subjectPlaceholder")}
+          hint={t("subjectHint")}
+          required
+          autoFocus
+        />
+      ) : null}
       <div className="grid gap-1.5">
         <label htmlFor="f-message" className="text-sm font-bold">
           {t("message")}

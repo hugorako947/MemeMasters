@@ -72,6 +72,10 @@ export async function searchPlayers(playerId: string, query: string): Promise<Ar
       on least(f.requester_id, f.addressee_id) = least(p.id, ${playerId}::uuid)
      and greatest(f.requester_id, f.addressee_id) = greatest(p.id, ${playerId}::uuid)
     where p.id <> ${playerId} and p.username ilike ${q.replace(/[%_\\]/g, "\\$&") + "%"}
+      and not exists (
+        select 1 from public.player_blocks b
+        where (b.blocker_id = ${playerId} and b.blocked_id = p.id) or (b.blocker_id = p.id and b.blocked_id = ${playerId})
+      )
     order by length(p.username), p.username
     limit 10
   `;
@@ -92,6 +96,11 @@ export async function sendRequest(player: Player, username: string): Promise<{ s
     const [target] = await tx<{ id: string }[]>`select id from public.profiles where username = ${username}`;
     if (!target) throw new ApiError(404, "player_not_found");
     if (target.id === player.id) throw new ApiError(409, "friend_self");
+    const [blocked] = await tx`
+      select 1 from public.player_blocks
+      where (blocker_id = ${player.id} and blocked_id = ${target.id}) or (blocker_id = ${target.id} and blocked_id = ${player.id})
+    `;
+    if (blocked) throw new ApiError(403, "blocked");
     const [existing] = await tx<{ id: string; status: string; requester_id: string }[]>`
       select id, status, requester_id from public.friendships
       where least(requester_id, addressee_id) = least(${player.id}::uuid, ${target.id}::uuid)

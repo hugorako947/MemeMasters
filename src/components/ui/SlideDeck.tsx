@@ -11,8 +11,8 @@ export interface Slide {
   label: string;
   icon?: ReactNode;
   content: ReactNode;
-  /** Point rouge de notification sur l'onglet. */
-  badge?: boolean;
+  /** Nombre de notifications sur l'onglet (0 ou absent : rien). */
+  badge?: number;
 }
 
 /**
@@ -137,14 +137,16 @@ export function SlideDeck({
             tabIndex={i === index ? 0 : -1}
             onClick={() => go(i)}
             className={`relative flex min-h-11 items-center justify-center gap-1.5 rounded-full text-xs font-extrabold transition-colors sm:text-sm ${
-              scrollable ? "shrink-0 px-3.5" : "min-w-0 flex-1 px-1.5 sm:px-2"
+              // Nombreux onglets : parts égales quand ils tiennent (basis-0 + flex-1), défilement sinon
+              // (un onglet ne rétrécit jamais sous la largeur de son texte).
+              scrollable ? "flex-1 basis-0 whitespace-nowrap px-3" : "min-w-0 flex-1 px-1.5 sm:px-2"
             } ${
               i === index ? "bg-candy text-[var(--mm-accent-ink)]" : "text-ink-soft hover:text-ink"
             }`}
           >
             {slide.icon}
             {slide.label}
-            {slide.badge ? <NotificationDot /> : null}
+            {slide.badge ? <NotificationDot count={slide.badge} /> : null}
           </button>
         ))}
       </div>

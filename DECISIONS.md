@@ -233,3 +233,21 @@ Chaque entrée : la décision, puis la raison.
 - **Amis** (dans le Profil) : recherche par début de pseudo, demande d'ami, acceptation, refus, annulation, retrait (avec confirmation). Deux demandes croisées créent l'amitié directement. Sur le profil d'un autre joueur : bouton Ajouter / Demande envoyée / Accepter / Ami. Limites : 200 amis, 50 demandes en attente, 20 demandes par heure. Une seule relation par paire de joueurs (index unique). Lecture protégée par RLS ; écriture uniquement côté serveur.
 - **Notifications (point rouge)** : Accueil et onglet Boosters (boosters gratuits revenus), Infos et onglet News (news non lue), Boutique (nouvelle offre), Profil (demandes d'ami reçues). Elles s'effacent quand on consulte la page (mémorisé dans `player_private.seen`, donc sur tous les appareils) ou, pour les amis, quand on a répondu.
 - **Accueil visiteur** : l'éventail de cartes reste dans sa colonne (plus de chevauchement avec « Inscription ») ; entre 1024 et 1279 px, il passe sous les boutons ; le grand titre s'adapte à la colonne.
+
+## Onglets répartis, thème aléatoire, compteurs de notifications (demande du propriétaire)
+
+- **Onglets d'Infos répartis à parts égales** sur toute la largeur du bandeau ; ils ne défilent que s'ils ne tiennent pas (téléphone). Classement reste l'onglet ouvert par défaut, sans être forcé au centre.
+- **Thème « Aléatoire »** : chaque clic tire une graine (#xxxxxx) qui génère toute la palette de l'interface (fond, surfaces, texte, accent, pastilles, liens, ombres), en ambiance claire ou sombre au hasard. Même graine, mêmes couleurs sur tous les appareils (rangée dans `theme_accent`). Lisibilité garantie : un test vérifie sur 300 tirages un contraste d'au moins 4,5 entre le texte et le fond. Les cartes gardent leurs vraies couleurs.
+- **Notifications chiffrées** : la pastille rouge affiche le nombre de nouveautés (« 9+ » au-delà) : boosters gratuits à ouvrir, news non lues, nouvelles offres, demandes d'ami reçues.
+- **`.gitattributes`** : fins de ligne uniformes (LF), plus d'avertissement « LF will be replaced by CRLF » sous Windows.
+
+## Messagerie, blocage, signalement, contact « Autre », QR code (demande du propriétaire)
+
+- **Profil = espace social en 3 pages** : Profil (rang, statistiques, graphique), Amis (amis, demandes, joueurs bloqués), Messages. Le point rouge du Profil additionne demandes d'ami reçues et messages non lus ; chaque onglet a son propre compteur.
+- **Messagerie** : conversations privées à deux, avec amis ou non. Liste des conversations (dernier message, non lus), conversation (bulles, heure, « Lu »), envoi avec Entrée. Nouveaux messages récupérés toutes les 4 s quand une conversation est ouverte (15 s sinon) ; Supabase Realtime pourra remplacer cette vérification plus tard. On écrit à quelqu'un depuis son profil (« Écrire »), qui ouvre directement la conversation (`/profil/{moi}?vue=messages&avec={lui}`).
+- **Anti-abus des messages** : 500 caractères au plus, 20 messages par minute ; à un joueur non ami, 3 messages au plus tant qu'il n'a pas répondu ; aucun message entre joueurs bloqués.
+- **Bloquer** (profil d'un joueur, avec confirmation) : supprime l'amitié et les demandes en cours, empêche demandes et messages dans les deux sens, masque les deux joueurs l'un à l'autre dans la recherche. Liste des joueurs bloqués dans l'onglet Amis, avec « Débloquer ».
+- **Signaler** (profil d'un joueur, ou depuis une conversation) : motif (spam, harcèlement, propos haineux, pseudo inapproprié, triche, autre) et précisions facultatives. Enregistré dans `player_reports`, traité par l'équipe depuis Supabase (`status` à passer à `handled`). 5 signalements par jour au plus contre un même joueur.
+- **Retirer un ami depuis son profil** : confirmation « Confirmer » (rouge) / « Garder » (blanc), comme dans la liste d'amis.
+- **Contact** : le sujet « Autre » fait apparaître un champ obligatoire « Précise le sujet » (3 à 80 caractères), vérifié aussi côté serveur et enregistré avec le message.
+- **QR code** : phrase raccourcie, aide « test local » retirée de l'encart ; sous le texte sur l'accueil, à gauche du texte dans les Réglages.

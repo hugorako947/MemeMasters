@@ -50,7 +50,7 @@ export async function SettingsView({ player, email }: { player: Player; email: s
       {/* L'application : avec les autres préférences de l'appareil (langue, thème). */}
       <Panel className="grid gap-3">
         <h2 className="text-xl font-extrabold">{t("appTitle")}</h2>
-        <PlayOnPhone compact />
+        <PlayOnPhone layout="row" />
       </Panel>
 
       {/* Aide : dans les réglages, là où l'on cherche naturellement du support. */}

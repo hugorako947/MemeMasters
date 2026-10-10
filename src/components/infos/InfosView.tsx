@@ -20,14 +20,14 @@ export async function InfosView({
   highestRank,
   initial,
   param,
-  newsBadge = false,
+  newsBadge = 0,
 }: {
   boards: Record<LeaderboardScope, Leaderboard>;
   trophies: number;
   highestRank: number;
   initial: string | undefined;
   param?: string;
-  newsBadge?: boolean;
+  newsBadge?: number;
 }) {
   const t = await getTranslations("infos");
   const tr = await getTranslations("rank");

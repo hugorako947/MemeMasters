@@ -4,7 +4,9 @@ import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import { useEffect } from "react";
 import { LOCALE_COOKIE, isAvailable } from "@/lib/i18n/locales";
-import { THEME_COOKIES, themeAttributes, type Appearance } from "@/lib/theme/theme";
+import { randomPalette, THEME_COOKIES, themeAttributes, type Appearance } from "@/lib/theme/theme";
+
+const PALETTE_KEYS = Object.keys(randomPalette("#000001"));
 
 const YEAR = 60 * 60 * 24 * 365;
 
@@ -26,8 +28,8 @@ export function applyAppearance(a: Appearance) {
   root.dataset.theme = attrs["data-theme"];
   if (attrs["data-base"]) root.dataset.base = attrs["data-base"];
   else delete root.dataset.base;
-  root.style.removeProperty("--color-candy");
-  root.style.removeProperty("--mm-accent-ink");
+  // Retire toutes les couleurs posées par un thème précédent (personnalisé ou aléatoire).
+  for (const key of PALETTE_KEYS) root.style.removeProperty(key);
   for (const [k, v] of Object.entries(attrs.style ?? {})) root.style.setProperty(k, v);
   writeCookie(THEME_COOKIES.theme, a.theme);
   writeCookie(THEME_COOKIES.accent, a.accent);

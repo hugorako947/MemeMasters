@@ -12,7 +12,7 @@ interface NavItem {
   label: string;
   icon: ReactNode;
   match: (path: string) => boolean;
-  badge?: boolean;
+  badge?: number;
 }
 
 /**
@@ -26,7 +26,7 @@ export function BottomNav({
 }: {
   username: string;
   /** Points rouges : quelque chose de nouveau sur cette page. */
-  badges?: Partial<Record<"shop" | "infos" | "home" | "profile", boolean>>;
+  badges?: Partial<Record<"shop" | "infos" | "home" | "profile", number>>;
 }) {
   const t = useTranslations("nav");
   const path = usePathname();
@@ -43,7 +43,7 @@ export function BottomNav({
         >
           {item.icon}
           <span>{item.label}</span>
-          {item.badge && !active ? <NotificationDot /> : null}
+          {item.badge && !active ? <NotificationDot count={item.badge} /> : null}
         </Link>
       </li>
     );
@@ -70,7 +70,7 @@ export function BottomNav({
         {left.map(side)}
         <li className="px-1">
           <Link href="/" aria-current={homeActive ? "page" : undefined} className="mm-nav-home">
-            {badges.home && !homeActive ? <NotificationDot className="!right-1 !top-1" /> : null}
+            {badges.home && !homeActive ? <NotificationDot count={badges.home} className="!-right-1 !-top-1" /> : null}
             <span className="grid place-items-center gap-0.5 text-[0.7rem] font-extrabold">
               <span className="scale-125">
                 <HomeIcon />

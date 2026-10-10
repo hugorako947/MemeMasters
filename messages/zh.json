@@ -148,7 +148,12 @@
         "all": "自注册以来"
       }
     },
-    "seeRanks": "查看所有段位"
+    "seeRanks": "查看所有段位",
+    "tabs": {
+      "profile": "资料",
+      "friends": "好友",
+      "messages": "消息"
+    }
   },
   "settings": {
     "title": "设置",
@@ -170,7 +175,8 @@
       "light": "浅色",
       "dark": "深色",
       "inverted": "反色",
-      "custom": "自定义"
+      "custom": "自定义",
+      "random": "随机"
     },
     "accentTitle": "主色",
     "baseTitle": "背景",
@@ -191,7 +197,9 @@
     "helpTitle": "帮助与联系",
     "helpLead": "有问题、遇到错误或账号出了状况？给我们留言。",
     "helpButton": "联系我们",
-    "appTitle": "应用"
+    "appTitle": "应用",
+    "randomHint": "每点一次，整个游戏都会随机换一套新配色。",
+    "randomAgain": "换一套颜色"
   },
   "rarities": {
     "title": "7 种稀有度"
@@ -250,7 +258,9 @@
     "already_requested": "请求已发送。",
     "friends_limit": "好友数量已达上限。",
     "pending_limit": "待处理的请求太多：请等一些被接受后再试。",
-    "request_not_found": "这个请求已不存在。"
+    "request_not_found": "这个请求已不存在。",
+    "blocked": "无法操作：你们中有一方屏蔽了对方。",
+    "message_limit": "请等对方回复后再发送更多消息。"
   },
   "statName": {
     "hp": "生命值",
@@ -439,7 +449,10 @@
     "count": "{count} / {max} 个字符（至少 {min} 个）",
     "submit": "发送",
     "sent": "留言已发送！我们会尽快通过邮件回复你。",
-    "direct": "你也可以直接发邮件至"
+    "direct": "你也可以直接发邮件至",
+    "subject": "请说明主题",
+    "subjectPlaceholder": "例如：新卡牌的创意",
+    "subjectHint": "主题为“其他”时必填（3 到 80 个字符）。"
   },
   "slides": {
     "label": "栏目"
@@ -658,11 +671,10 @@
     },
     "cta": {
       "title": "也可以在手机上玩",
-      "scan": "用手机扫描二维码，两步安装游戏。",
+      "scan": "用手机扫描二维码即可安装游戏。",
       "tap": "两步把游戏安装到主屏幕。",
       "button": "安装应用"
     },
-    "localHint": "本地测试：手机需要和这台电脑连接同一个 Wi-Fi（{url}）。安装为应用需要 HTTPS 地址：请查看 README。",
     "httpWarning": "当前没有使用 HTTPS：你可以在这台手机上玩，但只有在安全地址（https://）下才能安装为应用，也就是网站上线后或通过测试隧道。"
   },
   "dup": {
@@ -695,7 +707,8 @@
     "upgradeButton": "升级为{level}"
   },
   "notifications": {
-    "new": "新"
+    "new": "新",
+    "count": "{count, plural, other {# 条新内容}}"
   },
   "friends": {
     "title": "{count, plural, =0 {好友} other {好友（#）}}",
@@ -718,5 +731,48 @@
       "friends": "好友",
       "outgoing": "请求已发送"
     }
+  },
+  "messages": {
+    "title": "消息",
+    "lead": "给好友或其他玩家写消息。打开对方的资料，点击“写消息”即可。",
+    "empty": "还没有对话。打开一位玩家的资料，点击“写消息”开始聊天。",
+    "you": "你",
+    "back": "对话列表",
+    "start": "给 {username} 写第一条消息吧。",
+    "read": "已读",
+    "blockedByMe": "你已屏蔽这位玩家：请在其资料中解除屏蔽后再写消息。",
+    "blockedByThem": "你无法给这位玩家写消息。",
+    "limit": "你已发送 3 条未获回复的消息：请等待对方回复或成为好友。",
+    "notFriend": "{count, plural, other {你们还不是好友：在对方回复前还能发送 # 条消息。}}",
+    "placeholder": "输入消息…",
+    "send": "发送",
+    "write": "写消息"
+  },
+  "block": {
+    "block": "屏蔽",
+    "unblock": "解除屏蔽",
+    "confirm": "屏蔽",
+    "cancel": "取消",
+    "confirmText": "屏蔽这位玩家？",
+    "isBlocked": "你已屏蔽这位玩家：对方无法再给你写消息或发送好友请求。",
+    "listTitle": "{count, plural, other {已屏蔽 # 位玩家}}"
+  },
+  "report": {
+    "button": "举报",
+    "title": "举报这位玩家",
+    "reason": "原因",
+    "reasons": {
+      "spam": "垃圾信息或广告",
+      "harassment": "骚扰或辱骂",
+      "hate": "仇恨言论",
+      "inappropriate_name": "不当用户名",
+      "cheating": "作弊",
+      "other": "其他"
+    },
+    "details": "补充说明（选填）",
+    "submit": "提交举报",
+    "cancel": "取消",
+    "sent": "谢谢：你的举报已提交给团队。",
+    "close": "关闭"
   }
 }

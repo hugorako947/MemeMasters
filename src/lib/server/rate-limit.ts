@@ -26,6 +26,9 @@ export const RATE_LIMITS = {
   friendsRequest: { scope: "friends_request", limit: 20, windowSeconds: 3600 },
   friendsAction: { scope: "friends_action", limit: 60, windowSeconds: 60 },
   seen: { scope: "seen", limit: 60, windowSeconds: 60 },
+  report: { scope: "report", limit: 10, windowSeconds: 3600 },
+  messageSend: { scope: "message_send", limit: 20, windowSeconds: 60 },
+  messageRead: { scope: "message_read", limit: 120, windowSeconds: 60 },
 } as const satisfies Record<string, RateLimitRule>;
 
 /**

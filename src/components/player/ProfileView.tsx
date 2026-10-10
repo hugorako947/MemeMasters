@@ -1,7 +1,12 @@
 import Link from "next/link";
-import { FriendButton } from "@/components/friends/FriendButton";
 import { FriendsPanel } from "@/components/friends/FriendsPanel";
+import { MessagesPanel } from "@/components/messages/MessagesPanel";
+import { BlockedList, PlayerActions } from "@/components/moderation/PlayerActions";
+import { SlideDeck } from "@/components/ui/SlideDeck";
 import type { FriendsOverview, Relation } from "@/lib/server/friends";
+import type { Conversation } from "@/lib/server/messages";
+
+export const PROFILE_TABS = ["profil", "amis", "messages"] as const;
 import { getFormatter, getTranslations } from "next-intl/server";
 import { RankShield, TrophyIcon } from "@/components/player/RankBadge";
 import { TrophyChart } from "@/components/player/TrophyChart";
@@ -10,17 +15,27 @@ import { progressToNextRank, RANKS, rankFor } from "@/config/ranks";
 import type { Player, PublicProfile } from "@/lib/server/players";
 
 /** Profil d'un joueur : rang, statistiques de bataille, progression des trophées. */
+export interface OwnSocial {
+  friends: FriendsOverview;
+  blocked: Array<{ id: string; username: string; trophies: number }>;
+  conversations: Conversation[];
+  badges: { friends: number; messages: number };
+  initialTab?: string;
+  openWith?: string;
+}
+
 export async function ProfileView({
   profile,
-  friends,
-  relation,
+  viewer,
+  social,
+  other,
 }: {
   profile: PublicProfile;
   viewer: Player;
-  /** Son propre profil : panneau d'amis. */
-  friends?: FriendsOverview;
-  /** Profil d'un autre joueur : relation d'amitié. */
-  relation?: Relation;
+  /** Son propre profil : pages Profil, Amis et Messages. */
+  social?: OwnSocial;
+  /** Profil d'un autre joueur : amitié, message, signalement, blocage. */
+  other?: { relation: Relation; blockedByMe: boolean };
 }) {
   const t = await getTranslations("profile");
   const tr = await getTranslations("rank");
@@ -34,22 +49,8 @@ export async function ProfileView({
   const ratio =
     games === 0 ? "—" : profile.losses === 0 ? format.number(profile.wins) : format.number(profile.wins / profile.losses, { maximumFractionDigits: 2 });
 
-  return (
-    <div className="grid gap-6">
-      <header>
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-          <h1 className="font-display text-5xl leading-none break-all">{profile.username}</h1>
-        </div>
-        <p className="mt-2 text-ink-soft">
-          {t("memberSince", { date: format.dateTime(profile.createdAt, { day: "numeric", month: "long", year: "numeric" }) })}
-        </p>
-        {relation ? (
-          <div className="mt-3">
-            <FriendButton relation={relation} target={{ id: profile.id, username: profile.username }} />
-          </div>
-        ) : null}
-      </header>
-
+  const statsBlock = (
+    <>
       <Panel className="grid gap-4 sm:grid-cols-[auto_1fr] sm:items-center">
         <Link
           href="/infos?vue=rangs"
@@ -109,7 +110,52 @@ export async function ProfileView({
         />
       </Panel>
 
-      {friends ? <FriendsPanel overview={friends} /> : null}
+    </>
+  );
+
+  return (
+    <div className="grid gap-6">
+      <header>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+          <h1 className="font-display text-5xl leading-none break-all">{profile.username}</h1>
+        </div>
+        <p className="mt-2 text-ink-soft">
+          {t("memberSince", { date: format.dateTime(profile.createdAt, { day: "numeric", month: "long", year: "numeric" }) })}
+        </p>
+        {other ? (
+          <div className="mt-4">
+            <PlayerActions relation={other.relation} blockedByMe={other.blockedByMe} target={{ id: profile.id, username: profile.username }} myUsername={viewer.username} />
+          </div>
+        ) : null}
+      </header>
+      {social ? (
+        <SlideDeck
+          initial={Math.max(0, PROFILE_TABS.indexOf((social.initialTab ?? "profil") as (typeof PROFILE_TABS)[number]))}
+          slides={[
+            { key: "profil", label: t("tabs.profile"), content: <div className="grid gap-6">{statsBlock}</div> },
+            {
+              key: "amis",
+              label: t("tabs.friends"),
+              badge: social.badges.friends,
+              content: (
+                <div className="grid gap-5">
+                  <FriendsPanel overview={social.friends} />
+                  <BlockedList players={social.blocked} />
+                </div>
+              ),
+            },
+            {
+              key: "messages",
+              label: t("tabs.messages"),
+              badge: social.badges.messages,
+              content: <MessagesPanel initial={social.conversations} openWith={social.openWith} />,
+            },
+          ]}
+        />
+      ) : (
+        statsBlock
+      )}
+
     </div>
   );
 }

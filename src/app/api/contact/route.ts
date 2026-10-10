@@ -15,8 +15,8 @@ export const POST = withErrors(async (request: Request) => {
   const user = await getAuthUser();
   const player = user ? await getPlayer(user.id) : null;
   await sql()`
-    insert into public.contact_messages (player_id, email, category, message, locale)
-    values (${player?.id ?? null}, ${data.email}, ${data.category}, ${data.message}, ${await getLocale()})
+    insert into public.contact_messages (player_id, email, category, subject, message, locale)
+    values (${player?.id ?? null}, ${data.email}, ${data.category}, ${data.category === "other" ? (data.subject ?? null) : null}, ${data.message}, ${await getLocale()})
   `;
   return NextResponse.json({ ok: true }, { status: 201 });
 });
