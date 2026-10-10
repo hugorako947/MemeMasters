@@ -353,7 +353,10 @@
     "legal": "Back to the legal notice",
     "terms": "Back to the terms of use",
     "privacy": "Back to privacy",
-    "community": "Back to the community rules"
+    "community": "Back to the community rules",
+    "myFriends": "Back to my friends",
+    "myMessages": "Back to my messages",
+    "leaderboard": "Back to the ranking"
   },
   "rank": {
     "bronze": "Bronze",
@@ -774,13 +777,5 @@
     "cancel": "Cancel",
     "sent": "Thank you: your report has been sent to the team.",
     "close": "Close"
-  },
-  "breadcrumb": {
-    "label": "Breadcrumb",
-    "myProfile": "My profile",
-    "friends": "Friends",
-    "messages": "Messages",
-    "infos": "Info",
-    "leaderboard": "Ranking"
   }
 }

@@ -353,7 +353,10 @@
     "legal": "Volver al aviso legal",
     "terms": "Volver a las condiciones de uso",
     "privacy": "Volver a la privacidad",
-    "community": "Volver a las normas de la comunidad"
+    "community": "Volver a las normas de la comunidad",
+    "myFriends": "Volver a mis amigos",
+    "myMessages": "Volver a mis mensajes",
+    "leaderboard": "Volver a la clasificación"
   },
   "rank": {
     "bronze": "Bronce",
@@ -774,13 +777,5 @@
     "cancel": "Cancelar",
     "sent": "Gracias: tu denuncia se ha enviado al equipo.",
     "close": "Cerrar"
-  },
-  "breadcrumb": {
-    "label": "Ruta de navegación",
-    "myProfile": "Mi perfil",
-    "friends": "Amigos",
-    "messages": "Mensajes",
-    "infos": "Info",
-    "leaderboard": "Clasificación"
   }
 }

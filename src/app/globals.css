@@ -1381,3 +1381,11 @@ body:has(> dialog.mm-detail[open]) #mm-app {
 .mm-tabs-scroll::-webkit-scrollbar {
   display: none;
 }
+
+/* Thème aléatoire : les formulaires et barres de défilement suivent l'ambiance tirée. */
+[data-theme="random"][data-base="dark"] {
+  color-scheme: dark;
+}
+[data-theme="random"][data-base="light"] {
+  color-scheme: light;
+}

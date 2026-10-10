@@ -64,7 +64,12 @@ export function inkOn(hex: string): string {
 
 /** Attributs à poser sur <html> pour appliquer le thème. */
 export function themeAttributes(a: Appearance): { "data-theme": Theme; "data-base"?: ThemeBase; style?: Record<string, string> } {
-  if (a.theme === "random") return { "data-theme": "random", style: randomPalette(a.accent ?? "#5ec0de") };
+  if (a.theme === "random") {
+    const seed = a.accent ?? "#5ec0de";
+    // Ambiance claire ou sombre passée par data-base (le CSS en déduit color-scheme),
+    // pour que la palette ne contienne que des variables --… (valides pour React comme pour le navigateur).
+    return { "data-theme": "random", "data-base": randomIsDark(seed) ? "dark" : "light", style: randomPalette(seed) };
+  }
   if (a.theme !== "custom" || !a.accent) return { "data-theme": a.theme };
   return {
     "data-theme": "custom",
@@ -96,12 +101,21 @@ function hsl(h: number, s: number, l: number): string {
  * les appareils). Ambiance claire ou sombre au hasard ; le texte reste toujours
  * lisible (fond très clair et texte très sombre, ou l'inverse).
  */
-export function randomPalette(seed: string): Record<string, string> {
+function seededRandom(seed: string): () => number {
   let x = parseInt(seed.slice(1), 16) || 1;
-  const rand = () => {
+  return () => {
     x = (x * 1103515245 + 12345) & 0x7fffffff;
     return x / 0x7fffffff;
   };
+}
+
+/** Le thème aléatoire tiré par cette graine est-il sombre ? (même tirage que la palette) */
+export function randomIsDark(seed: string): boolean {
+  return seededRandom(seed)() < 0.4;
+}
+
+export function randomPalette(seed: string): Record<string, string> {
+  const rand = seededRandom(seed);
   const dark = rand() < 0.4;
   const h = Math.floor(rand() * 360);
   const accent = (h + 90 + Math.floor(rand() * 180)) % 360;
@@ -120,6 +134,5 @@ export function randomPalette(seed: string): Record<string, string> {
     "--color-link": dark ? hsl((accent + 180) % 360, 80, 72) : hsl((accent + 180) % 360, 80, 38),
     "--mm-shadow": dark ? "#000000" : ink,
     "--mm-accent-ink": inkOn(candy),
-    "color-scheme": dark ? "dark" : "light",
   };
 }

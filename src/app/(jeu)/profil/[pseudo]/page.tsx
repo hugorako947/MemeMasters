@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { ProfileBreadcrumb } from "@/components/layout/Breadcrumb";
+import { ProfileBackLink } from "@/components/layout/Breadcrumb";
 import { ProfileView } from "@/components/player/ProfileView";
 import { requirePlayer } from "@/lib/server/auth";
 import { getFriendsOverview, relationWith } from "@/lib/server/friends";
@@ -58,7 +58,7 @@ export default async function ProfilePage({ params, searchParams }: PageProps<"/
   const origin = depuis === "amis" || depuis === "messages" || depuis === "classement" ? depuis : null;
   return (
     <div className="grid gap-4">
-      {origin ? <ProfileBreadcrumb origin={origin} myUsername={player.username} current={profile.username} /> : null}
+      {origin ? <ProfileBackLink origin={origin} myUsername={player.username} /> : null}
       <ProfileView profile={profile} viewer={player} other={{ relation, blockedByMe }} />
     </div>
   );

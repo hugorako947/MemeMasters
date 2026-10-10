@@ -353,7 +353,10 @@
     "legal": "返回法律声明",
     "terms": "返回使用条款",
     "privacy": "返回隐私",
-    "community": "返回社区规则"
+    "community": "返回社区规则",
+    "myFriends": "返回我的好友",
+    "myMessages": "返回我的消息",
+    "leaderboard": "返回排行榜"
   },
   "rank": {
     "bronze": "青铜",
@@ -774,13 +777,5 @@
     "cancel": "取消",
     "sent": "谢谢：你的举报已提交给团队。",
     "close": "关闭"
-  },
-  "breadcrumb": {
-    "label": "导航路径",
-    "myProfile": "我的资料",
-    "friends": "好友",
-    "messages": "消息",
-    "infos": "信息",
-    "leaderboard": "排行榜"
   }
 }

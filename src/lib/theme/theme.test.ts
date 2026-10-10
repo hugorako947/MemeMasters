@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { inkOn, newSeed, parseAppearance, randomPalette, themeAttributes } from "./theme";
+import { inkOn, newSeed, parseAppearance, randomIsDark, randomPalette, themeAttributes } from "./theme";
 
 describe("thèmes", () => {
   it("prend le thème clair par défaut, et ignore les valeurs inconnues", () => {
@@ -61,5 +61,21 @@ describe("thème aléatoire", () => {
     const attrs = themeAttributes({ theme: "random", accent: "#12ab9f", base: null });
     expect(attrs["data-theme"]).toBe("random");
     expect(attrs.style?.["--color-paper"]).toMatch(/^#[0-9a-f]{6}$/);
+  });
+});
+
+
+describe("thème aléatoire : palette valide pour React et pour le navigateur", () => {
+  it("ne contient que des variables CSS (--…), jamais de propriété comme color-scheme", () => {
+    for (const seed of ["#000001", "#5ec0de", "#abcdef", "#123456"]) {
+      expect(Object.keys(randomPalette(seed)).every((k) => k.startsWith("--"))).toBe(true);
+    }
+  });
+
+  it("passe l'ambiance claire ou sombre par data-base, cohérente avec la palette", () => {
+    for (const seed of ["#000001", "#5ec0de", "#abcdef", "#123456"]) {
+      const attrs = themeAttributes({ theme: "random", accent: seed, base: null });
+      expect(attrs["data-base"]).toBe(randomIsDark(seed) ? "dark" : "light");
+    }
   });
 });

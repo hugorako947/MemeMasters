@@ -353,7 +353,10 @@
     "legal": "Retour aux mentions légales",
     "terms": "Retour aux conditions d'utilisation",
     "privacy": "Retour à la confidentialité",
-    "community": "Retour aux règles de la communauté"
+    "community": "Retour aux règles de la communauté",
+    "myFriends": "Retour à mes amis",
+    "myMessages": "Retour à mes messages",
+    "leaderboard": "Retour au classement"
   },
   "rank": {
     "bronze": "Bronze",
@@ -774,13 +777,5 @@
     "cancel": "Annuler",
     "sent": "Merci : ton signalement a été transmis à l'équipe.",
     "close": "Fermer"
-  },
-  "breadcrumb": {
-    "label": "Fil d'Ariane",
-    "myProfile": "Mon profil",
-    "friends": "Amis",
-    "messages": "Messages",
-    "infos": "Infos",
-    "leaderboard": "Classement"
   }
 }
