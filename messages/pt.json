@@ -774,5 +774,13 @@
     "cancel": "Cancelar",
     "sent": "Obrigado: sua denúncia foi enviada à equipe.",
     "close": "Fechar"
+  },
+  "breadcrumb": {
+    "label": "Trilha de navegação",
+    "myProfile": "Meu perfil",
+    "friends": "Amigos",
+    "messages": "Mensagens",
+    "infos": "Info",
+    "leaderboard": "Ranking"
   }
 }

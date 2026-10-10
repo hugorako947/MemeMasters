@@ -33,9 +33,9 @@ export async function PlayOnPhone({ layout = "stacked" }: { layout?: "stacked" |
       {text}
     </div>
   ) : (
-    <div className="grid justify-items-start gap-3 rounded-[1.5rem] border-2 border-ink bg-surface p-4 shadow-[0_3px_0_0_var(--mm-shadow)]">
+    <div className="grid gap-3 rounded-[1.5rem] border-2 border-ink bg-surface p-4 shadow-[0_3px_0_0_var(--mm-shadow)]">
       {text}
-      {qr}
+      <div className="justify-self-center">{qr}</div>
     </div>
   );
 }

@@ -43,8 +43,8 @@ export function ReportButton({ playerId, compact = false }: { playerId: string; 
       </button>
       {open
         ? createPortal(
-            <dialog ref={ref} className="mm-detail" onClose={() => setOpen(false)} aria-label={t("title")}>
-              <form onSubmit={submit} className="grid w-[min(28rem,92vw)] gap-4 rounded-[1.5rem] border-2 border-ink bg-paper p-5 shadow-[0_5px_0_0_var(--mm-shadow)]">
+            <dialog ref={ref} className="mm-detail mm-detail--narrow" onClose={() => setOpen(false)} aria-label={t("title")}>
+              <form onSubmit={submit} className="grid w-full gap-4 rounded-[1.5rem] border-2 border-ink bg-paper p-5 shadow-[0_5px_0_0_var(--mm-shadow)]">
                 <h2 className="font-display text-3xl leading-none">{t("title")}</h2>
                 {state === "sent" ? (
                   <>

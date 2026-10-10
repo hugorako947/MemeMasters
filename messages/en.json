@@ -774,5 +774,13 @@
     "cancel": "Cancel",
     "sent": "Thank you: your report has been sent to the team.",
     "close": "Close"
+  },
+  "breadcrumb": {
+    "label": "Breadcrumb",
+    "myProfile": "My profile",
+    "friends": "Friends",
+    "messages": "Messages",
+    "infos": "Info",
+    "leaderboard": "Ranking"
   }
 }

@@ -774,5 +774,13 @@
     "cancel": "Annuler",
     "sent": "Merci : ton signalement a été transmis à l'équipe.",
     "close": "Fermer"
+  },
+  "breadcrumb": {
+    "label": "Fil d'Ariane",
+    "myProfile": "Mon profil",
+    "friends": "Amis",
+    "messages": "Messages",
+    "infos": "Infos",
+    "leaderboard": "Classement"
   }
 }

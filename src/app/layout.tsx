@@ -51,7 +51,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const { style, ...themeAttrs } = themeAttributes(appearance);
   return (
     <html lang={locale} dir={isLocale(locale) ? localeDir(locale) : "ltr"} {...themeAttrs} style={style}>
-      <body className="min-h-dvh antialiased">
+      {/* suppressHydrationWarning : certaines extensions du navigateur (convertisseurs, traducteurs,
+          gestionnaires de mots de passe…) ajoutent des attributs au <body> avant que React ne démarre.
+          Cela ne concerne que les attributs de cette balise, pas son contenu. */}
+      <body className="min-h-dvh antialiased" suppressHydrationWarning>
         <NextIntlClientProvider>
           {/* Respecte prefers-reduced-motion pour toutes les animations Motion. */}
           <MotionConfig reducedMotion="user">

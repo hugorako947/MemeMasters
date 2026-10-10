@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { ProfileBreadcrumb } from "@/components/layout/Breadcrumb";
 import { ProfileView } from "@/components/player/ProfileView";
 import { requirePlayer } from "@/lib/server/auth";
 import { getFriendsOverview, relationWith } from "@/lib/server/friends";
@@ -53,6 +54,12 @@ export default async function ProfilePage({ params, searchParams }: PageProps<"/
       />
     );
   }
-  const [relation, blockedByMe] = await Promise.all([relationWith(player.id, profile.id), hasBlocked(player.id, profile.id)]);
-  return <ProfileView profile={profile} viewer={player} other={{ relation, blockedByMe }} />;
+  const [relation, blockedByMe, { depuis }] = await Promise.all([relationWith(player.id, profile.id), hasBlocked(player.id, profile.id), searchParams]);
+  const origin = depuis === "amis" || depuis === "messages" || depuis === "classement" ? depuis : null;
+  return (
+    <div className="grid gap-4">
+      {origin ? <ProfileBreadcrumb origin={origin} myUsername={player.username} current={profile.username} /> : null}
+      <ProfileView profile={profile} viewer={player} other={{ relation, blockedByMe }} />
+    </div>
+  );
 }

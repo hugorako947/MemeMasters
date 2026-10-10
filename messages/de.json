@@ -774,5 +774,13 @@
     "cancel": "Abbrechen",
     "sent": "Danke: Deine Meldung wurde an das Team weitergeleitet.",
     "close": "Schließen"
+  },
+  "breadcrumb": {
+    "label": "Brotkrümelnavigation",
+    "myProfile": "Mein Profil",
+    "friends": "Freunde",
+    "messages": "Nachrichten",
+    "infos": "Infos",
+    "leaderboard": "Rangliste"
   }
 }

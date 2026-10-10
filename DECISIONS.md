@@ -251,3 +251,11 @@ Chaque entrée : la décision, puis la raison.
 - **Retirer un ami depuis son profil** : confirmation « Confirmer » (rouge) / « Garder » (blanc), comme dans la liste d'amis.
 - **Contact** : le sujet « Autre » fait apparaître un champ obligatoire « Précise le sujet » (3 à 80 caractères), vérifié aussi côté serveur et enregistré avec le message.
 - **QR code** : phrase raccourcie, aide « test local » retirée de l'encart ; sous le texte sur l'accueil, à gauche du texte dans les Réglages.
+
+## Retouches : QR code, fenêtre de signalement, fil d'Ariane, extensions du navigateur
+
+- **QR code de l'accueil** centré dans son encart.
+- **Fenêtre « Signaler ce joueur »** : cadre étroit centré (`.mm-detail--narrow`), au lieu du cadre large des fiches de cartes.
+- **Fil d'Ariane** sur le profil d'un autre joueur ouvert depuis ses amis (Mon profil › Amis › pseudo), ses messages (Mon profil › Messages › pseudo) ou le classement (Infos › Classement › pseudo). Sans origine connue, pas de fil d'Ariane (la navigation du bas suffit).
+- **Œil du mot de passe** : œil barré quand le mot de passe est affiché en clair (le bouton sert alors à le masquer), œil ouvert quand il est masqué. C'est la convention des grands services (Google, Microsoft, Apple) : l'icône montre l'action proposée.
+- **Erreur d'hydratation** causée par une extension du navigateur qui ajoute un attribut au `<body>` (`data-smart-converter-loaded`) avant le démarrage de React : `suppressHydrationWarning` sur `<body>`, qui ne vaut que pour les attributs de cette balise (pas pour son contenu). Vérifié en simulant l'extension.

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { AppShell } from "@/components/layout/AppShell";
 import { PlayerFeatures } from "@/components/player/PlayerFeatures";
 import { ProfileView } from "@/components/player/ProfileView";
+import { ProfileBreadcrumb } from "@/components/layout/Breadcrumb";
 import { SettingsView } from "@/components/player/SettingsView";
 import { ShopView } from "@/components/player/ShopView";
 import { InfosView } from "@/components/infos/InfosView";
@@ -15,7 +16,7 @@ import { parseAppearance, THEME_COOKIES } from "@/lib/theme/theme";
 /**
  * Aperçu des pages joueur avec des données fictives, pour travailler le design
  * sans compte ni base de données. DÉVELOPPEMENT UNIQUEMENT : introuvable en production.
- *   /apercu?vue=accueil | profil | reglages | boutique | infos&onglet=…&trophees=1240&pays=FR
+ *   /apercu?vue=accueil | profil | reglages | boutique | joueur | infos&onglet=…&trophees=1240&pays=FR
  */
 export default async function PreviewPage({ searchParams }: PageProps<"/apercu">) {
   if (process.env.NODE_ENV === "production") notFound();
@@ -94,6 +95,15 @@ export default async function PreviewPage({ searchParams }: PageProps<"/apercu">
             initialTab: typeof params.onglet === "string" ? params.onglet : undefined,
           }}
         />
+      ) : view === "joueur" ? (
+        <div className="grid gap-4">
+          <ProfileBreadcrumb origin="amis" myUsername={player.username} current="MemeLord" />
+          <ProfileView
+            profile={{ ...profile, id: "00000000-0000-4000-8000-0000000000aa", username: "MemeLord" }}
+            viewer={player}
+            other={{ relation: { kind: "friends" }, blockedByMe: false }}
+          />
+        </div>
       ) : view === "infos" ? (
         <InfosView boards={fakeBoards(player.trophies)} trophies={player.trophies} highestRank={player.highestRank} newsBadge={2} initial={typeof params.onglet === "string" ? params.onglet : undefined} param="onglet" />
       ) : view === "boutique" ? (

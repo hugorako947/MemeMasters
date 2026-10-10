@@ -136,7 +136,7 @@ function ThreadView({ username, onBack }: { username: string; onBack: () => void
         </button>
         {thread ? (
           <span className="flex items-center gap-2">
-            <Link href={`/profil/${encodeURIComponent(thread.other.username)}`} className="flex items-center gap-2 font-extrabold hover:underline">
+            <Link href={`/profil/${encodeURIComponent(thread.other.username)}?depuis=messages`} className="flex items-center gap-2 font-extrabold hover:underline">
               <RankShield rank={rankFor(thread.other.trophies)} size={26} />
               {thread.other.username}
             </Link>

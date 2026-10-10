@@ -671,6 +671,10 @@ body:has(> dialog.mm-detail[open]) #mm-app {
   color: var(--color-ink);
   overflow: visible;
 }
+/* Fenêtre étroite (signalement…) : centrée, à la largeur de son contenu. */
+.mm-detail.mm-detail--narrow {
+  width: min(100% - 1.5rem, 28rem);
+}
 .mm-detail::backdrop {
   background: rgb(26 18 56 / 0.42);
   backdrop-filter: blur(14px) saturate(1.3);

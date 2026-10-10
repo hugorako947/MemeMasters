@@ -774,5 +774,13 @@
     "cancel": "Cancelar",
     "sent": "Gracias: tu denuncia se ha enviado al equipo.",
     "close": "Cerrar"
+  },
+  "breadcrumb": {
+    "label": "Ruta de navegación",
+    "myProfile": "Mi perfil",
+    "friends": "Amigos",
+    "messages": "Mensajes",
+    "infos": "Info",
+    "leaderboard": "Clasificación"
   }
 }

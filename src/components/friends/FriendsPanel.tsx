@@ -163,7 +163,7 @@ function PlayerRow({ player, highlight = false, children }: { player: FriendLite
   const rank = rankFor(player.trophies);
   return (
     <li className={`flex flex-wrap items-center justify-between gap-3 rounded-xl px-3 py-2 ${highlight ? "border-2 border-candy bg-[color-mix(in_srgb,var(--color-candy),transparent_90%)]" : "bg-paper"}`}>
-      <Link href={`/profil/${encodeURIComponent(player.username)}`} className="flex min-h-10 min-w-0 items-center gap-2.5 font-bold hover:underline">
+      <Link href={`/profil/${encodeURIComponent(player.username)}?depuis=amis`} className="flex min-h-10 min-w-0 items-center gap-2.5 font-bold hover:underline">
         <RankShield rank={rank} size={26} />
         <span className="truncate">{player.username}</span>
         <span className="flex items-center gap-1 text-sm font-semibold text-ink-soft">

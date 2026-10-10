@@ -64,7 +64,7 @@ export function LeaderboardPanel({
               <span className="text-center font-display text-xl">{row.position}</span>
               <RankShield rank={rank} size={22} />
               <span className="flex min-w-0 items-center gap-2">
-                <Link href={`/profil/${encodeURIComponent(row.username)}`} className="inline-flex min-h-10 min-w-0 items-center truncate font-bold hover:underline" title={tr(rank)}>
+                <Link href={`/profil/${encodeURIComponent(row.username)}?depuis=classement`} className="inline-flex min-h-10 min-w-0 items-center truncate font-bold hover:underline" title={tr(rank)}>
                   {row.username}
                 </Link>
                 {row.isMe ? (
