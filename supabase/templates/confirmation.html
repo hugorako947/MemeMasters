@@ -1,4 +1,129 @@
-<h2>Bienvenue !</h2>
-<p>Confirme ton adresse e-mail pour activer ton compte :</p>
-<p><a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&suivant=/bienvenue">Activer mon compte</a></p>
-<p>Si tu n'as pas créé de compte, ignore simplement ce message.</p>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Active ton compte MemeMasters</title>
+  <!--[if mso]>
+  <noscript>
+    <xml>
+      <o:OfficeDocumentSettings>
+        <o:PixelsPerInch>96</o:PixelsPerInch>
+      </o:OfficeDocumentSettings>
+    </xml>
+  </noscript>
+  <![endif]-->
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #0b0d14;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color: #e2e8f0;
+      -webkit-font-smoothing: antialiased;
+    }
+    a {
+      color: #8b5cf6;
+      text-decoration: none;
+    }
+    @media only screen and (max-width: 600px) {
+      .container {
+        width: 100% !important;
+        padding: 16px !important;
+      }
+      .content {
+        padding: 24px 20px !important;
+      }
+    }
+  </style>
+</head>
+<body style="margin: 0; padding: 24px 0; background-color: #0b0d14;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #0b0d14;">
+    <tr>
+      <td align="center" style="padding: 16px;">
+        <table role="presentation" class="container" width="560" cellspacing="0" cellpadding="0" border="0" style="max-width: 560px; width: 100%; margin: 0 auto;">
+          
+          <!-- En-tête avec Branding MemeMasters -->
+          <tr>
+            <td align="center" style="padding: 24px 0 20px 0;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                <tr>
+                  <td align="center">
+                    <div style="display: inline-block; padding: 8px 18px; border-radius: 9999px; background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(245, 158, 11, 0.2)); border: 1px solid rgba(139, 92, 246, 0.4);">
+                      <span style="font-size: 20px; font-weight: 900; letter-spacing: 1px; color: #a78bfa; text-transform: uppercase;">
+                        👑 MEME MASTERS
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Carte Principale -->
+          <tr>
+            <td>
+              <table role="presentation" class="content" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #141724; border-radius: 20px; border: 1px solid #262b40; padding: 36px 32px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);">
+                <tr>
+                  <td>
+                    <!-- Titre -->
+                    <h1 style="margin: 0 0 16px 0; font-size: 24px; font-weight: 800; color: #ffffff; text-align: center; line-height: 1.3;">
+                      Bienvenue dans l'arène ! 🎉
+                    </h1>
+
+                    <!-- Message d'introduction -->
+                    <p style="margin: 0 0 20px 0; font-size: 15px; line-height: 1.6; color: #cbd5e1; text-align: center;">
+                      Merci d'avoir rejoint <strong>MemeMasters</strong> ! Ton aventure de duelliste de cartes commence dès maintenant.
+                    </p>
+
+                    <p style="margin: 0 0 28px 0; font-size: 14px; line-height: 1.6; color: #94a3b8; text-align: center;">
+                      Pour certifier ton compte et débloquer tes récompenses de départ, confirme ton adresse e-mail en cliquant sur le bouton ci-dessous :
+                    </p>
+
+                    <!-- Bouton d'action CTA -->
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin: 28px 0;">
+                      <tr>
+                        <td align="center">
+                          <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&suivant=/bienvenue"
+                             target="_blank"
+                             style="display: inline-block; padding: 14px 32px; font-size: 16px; font-weight: 700; color: #ffffff; background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%); border-radius: 12px; text-decoration: none; text-align: center; box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4); border: 1px solid #a78bfa;">
+                            ✨ Activer mon compte joueur
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Lien de secours -->
+                    <div style="background-color: #0b0d14; border-radius: 12px; padding: 16px; margin: 24px 0; border: 1px solid #1e2438;">
+                      <p style="margin: 0 0 8px 0; font-size: 12px; color: #94a3b8;">
+                        Si le bouton ne fonctionne pas, copie et colle ce lien dans ton navigateur :
+                      </p>
+                      <p style="margin: 0; font-size: 12px; word-break: break-all; color: #a78bfa; line-height: 1.4;">
+                        {{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&suivant=/bienvenue
+                      </p>
+                    </div>
+
+                    <!-- Note informative -->
+                    <p style="margin: 24px 0 0 0; font-size: 13px; line-height: 1.6; color: #64748b; text-align: center; border-top: 1px solid #1e2438; padding-top: 20px;">
+                      Si tu n'as jamais créé de compte sur MemeMasters, ignore simplement ce message.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Pied de page -->
+          <tr>
+            <td align="center" style="padding: 24px 16px; font-size: 12px; color: #475569; text-align: center; line-height: 1.5;">
+              <p style="margin: 0 0 6px 0;">MemeMasters • Le jeu de cartes à collectionner stratégique</p>
+              <p style="margin: 0;">Ce message a été envoyé pour valider l'inscription d'un nouveau duelliste.</p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
