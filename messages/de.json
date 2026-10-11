@@ -868,5 +868,22 @@
     "contest": "Wenn du glaubst, dass es ein Fehler ist, schreib uns und erkläre die Situation.",
     "contact": "Kontakt",
     "signOut": "Abmelden"
+  },
+  "breadcrumb": {
+    "label": "Brotkrumen-Navigation",
+    "home": "Startseite",
+    "connexion": "Anmelden",
+    "inscription": "Registrieren",
+    "mot-de-passe-oublie": "Passwort vergessen",
+    "nouveau-mot-de-passe": "Neues Passwort",
+    "bienvenue": "Willkommen",
+    "profil": "Profil",
+    "parametres": "Einstellungen",
+    "raretes": "Seltenheiten",
+    "mentions-legales": "Impressum",
+    "conditions-utilisation": "Nutzungsbedingungen",
+    "confidentialite": "Datenschutz",
+    "regles-communaute": "Community-Regeln",
+    "hors-ligne": "Offline"
   }
 }

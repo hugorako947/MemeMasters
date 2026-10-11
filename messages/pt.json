@@ -868,5 +868,22 @@
     "contest": "Se acha que é um erro, escreva para nós explicando a situação.",
     "contact": "Fale conosco",
     "signOut": "Sair"
+  },
+  "breadcrumb": {
+    "label": "Navegação estrutural",
+    "home": "Início",
+    "connexion": "Entrar",
+    "inscription": "Cadastrar",
+    "mot-de-passe-oublie": "Esqueci a senha",
+    "nouveau-mot-de-passe": "Nova senha",
+    "bienvenue": "Boas-vindas",
+    "profil": "Perfil",
+    "parametres": "Configurações",
+    "raretes": "Raridades",
+    "mentions-legales": "Aviso legal",
+    "conditions-utilisation": "Termos de uso",
+    "confidentialite": "Política de privacidade",
+    "regles-communaute": "Regras da comunidade",
+    "hors-ligne": "Offline"
   }
 }

@@ -868,5 +868,22 @@
     "contest": "Si tu penses qu'il s'agit d'une erreur, écris-nous en expliquant la situation.",
     "contact": "Nous contacter",
     "signOut": "Se déconnecter"
+  },
+  "breadcrumb": {
+    "label": "Fil d'Ariane",
+    "home": "Accueil",
+    "connexion": "Connexion",
+    "inscription": "Inscription",
+    "mot-de-passe-oublie": "Mot de passe oublié",
+    "nouveau-mot-de-passe": "Nouveau mot de passe",
+    "bienvenue": "Bienvenue",
+    "profil": "Profil",
+    "parametres": "Réglages",
+    "raretes": "Raretés",
+    "mentions-legales": "Mentions légales",
+    "conditions-utilisation": "Conditions d'utilisation",
+    "confidentialite": "Politique de confidentialité",
+    "regles-communaute": "Règles de la communauté",
+    "hors-ligne": "Hors-ligne"
   }
 }

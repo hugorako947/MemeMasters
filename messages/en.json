@@ -868,5 +868,22 @@
     "contest": "If you think this is a mistake, write to us explaining the situation.",
     "contact": "Contact us",
     "signOut": "Sign out"
+  },
+  "breadcrumb": {
+    "label": "Breadcrumbs",
+    "home": "Home",
+    "connexion": "Sign in",
+    "inscription": "Sign up",
+    "mot-de-passe-oublie": "Forgot password",
+    "nouveau-mot-de-passe": "New password",
+    "bienvenue": "Welcome",
+    "profil": "Profile",
+    "parametres": "Settings",
+    "raretes": "Rarities",
+    "mentions-legales": "Legal notice",
+    "conditions-utilisation": "Terms of service",
+    "confidentialite": "Privacy policy",
+    "regles-communaute": "Community rules",
+    "hors-ligne": "Offline"
   }
 }

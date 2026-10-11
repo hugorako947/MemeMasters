@@ -868,5 +868,22 @@
     "contest": "إذا كنت تعتقد أن ذلك خطأ، راسلنا موضحًا الموقف.",
     "contact": "تواصل معنا",
     "signOut": "تسجيل الخروج"
+  },
+  "breadcrumb": {
+    "label": "مسار التنقل",
+    "home": "الرئيسية",
+    "connexion": "تسجيل الدخول",
+    "inscription": "إنشاء حساب",
+    "mot-de-passe-oublie": "نسيت كلمة المرور",
+    "nouveau-mot-de-passe": "كلمة مرور جديدة",
+    "bienvenue": "مرحبًا",
+    "profil": "الملف الشخصي",
+    "parametres": "الإعدادات",
+    "raretes": "الندرة",
+    "mentions-legales": "إشعار قانوني",
+    "conditions-utilisation": "شروط الخدمة",
+    "confidentialite": "سياسة الخصوصية",
+    "regles-communaute": "قواعد المجتمع",
+    "hors-ligne": "غير متصل"
   }
 }

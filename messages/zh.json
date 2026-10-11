@@ -868,5 +868,22 @@
     "contest": "如果你认为这是误判，请写信给我们说明情况。",
     "contact": "联系我们",
     "signOut": "退出登录"
+  },
+  "breadcrumb": {
+    "label": "面包屑导航",
+    "home": "首页",
+    "connexion": "登录",
+    "inscription": "注册",
+    "mot-de-passe-oublie": "忘记密码",
+    "nouveau-mot-de-passe": "新密码",
+    "bienvenue": "欢迎",
+    "profil": "个人资料",
+    "parametres": "设置",
+    "raretes": "稀有度",
+    "mentions-legales": "法律声明",
+    "conditions-utilisation": "使用条款",
+    "confidentialite": "隐私政策",
+    "regles-communaute": "社区规则",
+    "hors-ligne": "离线"
   }
 }

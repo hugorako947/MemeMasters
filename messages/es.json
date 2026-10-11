@@ -868,5 +868,22 @@
     "contest": "Si crees que es un error, escríbenos explicando la situación.",
     "contact": "Contactarnos",
     "signOut": "Cerrar sesión"
+  },
+  "breadcrumb": {
+    "label": "Miga de pan",
+    "home": "Inicio",
+    "connexion": "Iniciar sesión",
+    "inscription": "Registrarse",
+    "mot-de-passe-oublie": "Contraseña olvidada",
+    "nouveau-mot-de-passe": "Nueva contraseña",
+    "bienvenue": "Bienvenida",
+    "profil": "Perfil",
+    "parametres": "Ajustes",
+    "raretes": "Rarezas",
+    "mentions-legales": "Aviso legal",
+    "conditions-utilisation": "Términos de servicio",
+    "confidentialite": "Política de privacidad",
+    "regles-communaute": "Normas de la comunidad",
+    "hors-ligne": "Sin conexión"
   }
 }
