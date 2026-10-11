@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { progressChallenge } from "@/lib/server/challenges";
 import { z } from "zod";
 import { apiPlayer } from "@/lib/server/auth";
 import { sellCards } from "@/lib/server/duplicates";
@@ -19,5 +20,7 @@ export const POST = withErrors(async (request: Request) => {
   const { player } = await apiPlayer();
   if (!(await consumeRateLimit(RATE_LIMITS.collection, player.id))) throw new ApiError(429, "rate_limited");
   const { lines } = await readJson(request, schema);
-  return NextResponse.json(await sellCards(player, lines));
+  const result = await sellCards(player, lines);
+  await progressChallenge(player, "sell_copies", lines.reduce((n, l) => n + l.count, 0));
+  return NextResponse.json(result);
 });

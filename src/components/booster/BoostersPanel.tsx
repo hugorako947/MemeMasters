@@ -65,7 +65,7 @@ export function BoostersPanel({ state, doubleOffer }: { state: BoosterStateView;
   ];
 
   return (
-    <div className="grid items-center gap-6 md:grid-cols-[auto_1fr] md:gap-10">
+    <div className="mm-online-only grid items-center gap-6 md:grid-cols-[auto_1fr] md:gap-10">
       <div className="grid justify-items-center gap-3">
         <button
           type="button"

@@ -50,6 +50,8 @@ export default async function PreviewPage({ searchParams }: PageProps<"/apercu">
     appearance,
     createdAt: new Date(now - 75 * day),
     consentUpToDate: true,
+    role: "superadmin",
+    ban: null,
   };
   // Courbe fictive : montée irrégulière jusqu'au total actuel.
   const history = Array.from({ length: 60 }, (_, i) => ({
@@ -92,6 +94,7 @@ export default async function PreviewPage({ searchParams }: PageProps<"/apercu">
               { other: { id: "f2", username: "PixelCat", trophies: 980 }, last: { body: "Merci pour le tuyau !", createdAt: new Date().toISOString(), fromMe: true }, unread: 0 },
             ],
             badges: { friends: 1, messages: 2 },
+            counts: { accounts: 1284, online: 57 },
             initialTab: typeof params.onglet === "string" ? params.onglet : undefined,
           }}
         />
@@ -105,7 +108,7 @@ export default async function PreviewPage({ searchParams }: PageProps<"/apercu">
           />
         </div>
       ) : view === "infos" ? (
-        <InfosView boards={fakeBoards(player.trophies)} trophies={player.trophies} highestRank={player.highestRank} newsBadge={2} initial={typeof params.onglet === "string" ? params.onglet : undefined} param="onglet" />
+        <InfosView counts={{ accounts: 1284, online: 57 }} boards={fakeBoards(player.trophies)} trophies={player.trophies} highestRank={player.highestRank} newsBadge={2} initial={typeof params.onglet === "string" ? params.onglet : undefined} param="onglet" />
       ) : view === "boutique" ? (
         <ShopView country={typeof params.pays === "string" ? params.pays : "FR"} hasPurchased={false} />
       ) : view === "reglages" ? (
@@ -123,6 +126,7 @@ export default async function PreviewPage({ searchParams }: PageProps<"/apercu">
             }))}
             resaleLeftCents={1650}
             boostersBadge={3}
+            challenge={{ id: "c1", type: "new_cards", difficulty: "medium", progress: 4, target: 6, reward: 2, completed: false, claimed: false }}
             boosters={{ freeLeft: 2, freePerDay: 3, dailyReserve: 1, special: 1, verySpecial: 0, memeMoney: player.memeMoney }}
             initial={typeof params.onglet === "string" ? params.onglet : undefined}
             param="onglet"

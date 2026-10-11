@@ -37,7 +37,7 @@ export function CardActions({ card, quantity, level, resaleLeftCents }: { card: 
   }
 
   return (
-    <>
+    <div className="mm-online-only contents">
       {next ? (
         <button
           type="button"
@@ -71,6 +71,6 @@ export function CardActions({ card, quantity, level, resaleLeftCents }: { card: 
       ) : sale.limited ? (
         <p className="text-center text-xs text-ink-soft">{t("capPartial", { count: sale.count, total: extra })}</p>
       ) : null}
-    </>
+    </div>
   );
 }

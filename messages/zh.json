@@ -192,15 +192,20 @@
     "helpButton": "联系我们",
     "appTitle": "应用",
     "randomHint": "每点一次，整个游戏都会随机换一套新配色。",
-    "randomAgain": "换一套颜色"
+    "randomAgain": "换一套颜色",
+    "adminTitle": "管理",
+    "superAdmin": "超级管理员",
+    "admin": "管理员",
+    "openDashboard": "打开控制面板"
   },
   "rarities": {
     "title": "7 种稀有度"
   },
   "offline": {
-    "title": "无网络连接",
+    "title": "离线模式",
     "lead": "你已离线。访问过的页面仍可查看，其余内容会在恢复网络后回来。",
-    "retry": "重试"
+    "retry": "重试",
+    "text": "你可以查看收藏和已访问过的页面。卡包、好友、消息、商店和挑战会在联网后恢复。"
   },
   "errors": {
     "invalid_input": "部分字段无效。",
@@ -255,7 +260,9 @@
     "blocked": "无法操作：你们中有一方屏蔽了对方。",
     "message_limit": "请等对方回复后再发送更多消息。",
     "captcha_failed": "人机验证未通过，请稍后重试。",
-    "message_not_found": "这条消息已不存在。"
+    "message_not_found": "这条消息已不存在。",
+    "banned": "此账号已被停用。",
+    "challenge_not_ready": "今日挑战尚未完成。"
   },
   "statName": {
     "hp": "生命值",
@@ -612,11 +619,29 @@
       "rarity": "稀有度",
       "name": "名称",
       "recent": "最新获得",
-      "quantity": "数量"
+      "quantity": "数量",
+      "total": "属性总和",
+      "hp": "生命值",
+      "atk": "攻击",
+      "def": "防御",
+      "spd": "速度",
+      "special": "特技威力"
     },
     "empty": "没有符合条件的卡牌。",
     "firstBooster": "你的收藏还是空的：去“卡包”页打开你的第一个卡包吧！",
-    "quantity": "×{count}"
+    "quantity": "×{count}",
+    "sortGeneral": "常规",
+    "sortStats": "属性",
+    "orderAsc": "升序",
+    "orderDesc": "降序",
+    "statShort": {
+      "total": "总和",
+      "hp": "生命",
+      "atk": "攻击",
+      "def": "防御",
+      "spd": "速度",
+      "special": "特技"
+    }
   },
   "boostersPanel": {
     "openDaily": "打开每日卡包",
@@ -813,5 +838,35 @@
     "enter": "全屏",
     "exit": "退出全屏",
     "unsupported": "此浏览器不支持全屏。在 iPhone 上，请把游戏安装到主屏幕：打开时将没有浏览器栏。"
+  },
+  "counts": {
+    "accounts": "{count, plural, other {名注册玩家}}",
+    "online": "人在线"
+  },
+  "challenge": {
+    "title": "每日挑战",
+    "difficulty": {
+      "easy": "简单",
+      "medium": "中等",
+      "hard": "困难"
+    },
+    "types": {
+      "open_boosters": "{count, plural, other {打开 # 个卡包}}",
+      "new_cards": "{count, plural, other {获得 # 张还没有的卡牌}}",
+      "sell_copies": "出售 {count} 张多余的卡牌",
+      "evolve_card": "让一张卡牌进化",
+      "send_messages": "{count, plural, other {发送 # 条消息}}",
+      "add_friend": "结交一位新好友"
+    },
+    "reward": "奖励：{count, plural, other {额外 # 个卡包}}",
+    "claim": "{count, plural, other {领取 # 个卡包}}",
+    "claimed": "挑战完成！明天还有新挑战。"
+  },
+  "banned": {
+    "title": "账号已停用",
+    "since": "你的账号于 {date} 被停用。",
+    "contest": "如果你认为这是误判，请写信给我们说明情况。",
+    "contact": "联系我们",
+    "signOut": "退出登录"
   }
 }

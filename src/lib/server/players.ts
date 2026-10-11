@@ -30,9 +30,16 @@ export interface Player {
   createdAt: Date;
   /** Vrai si le joueur a attesté sa majorité et accepté la version actuelle des conditions. */
   consentUpToDate: boolean;
+  /** Rôle : joueur, admin (nommé), ou Super Admin (créateur, désigné par SUPER_ADMIN_IDS). */
+  role: "player" | "admin" | "superadmin";
+  /** Bannissement en cours, le cas échéant. */
+  ban: { at: Date; reason: string | null } | null;
 }
 
 interface PlayerRow {
+  role: string | null;
+  banned_at: Date | null;
+  ban_reason: string | null;
   id: string;
   username: string;
   trophies: number;
@@ -72,6 +79,8 @@ function toPlayer(r: PlayerRow): Player {
     appearance: { theme: r.theme, accent: r.theme_accent, base: r.theme_base },
     createdAt: r.created_at,
     consentUpToDate: r.age_confirmed_at !== null && r.terms_version === LEGAL.TERMS_VERSION,
+    role: isSuperAdminId(r.id) ? "superadmin" : r.role === "admin" ? "admin" : "player",
+    ban: r.banned_at ? { at: r.banned_at, reason: r.ban_reason } : null,
   };
 }
 
@@ -79,6 +88,7 @@ function toPlayer(r: PlayerRow): Player {
 export const getPlayer = cache(async (userId: string): Promise<Player | null> => {
   const rows = await sql()<PlayerRow[]>`
     select p.id, p.username::text as username, p.trophies, p.highest_rank, p.wins, p.losses, p.draws,
+           pp.role, pp.banned_at, pp.ban_reason,
            p.ranked_games, p.avatar_card_id, p.created_at, pp.timezone, pp.timezone_changed_at,
            pp.locale, pp.theme, pp.theme_accent, pp.theme_base,
            pp.age_confirmed_at, pp.terms_version, coalesce(w.meme_money, 0) as meme_money
@@ -281,4 +291,18 @@ export async function deleteAccount(userId: string): Promise<void> {
 export async function hasPaidPurchase(userId: string): Promise<boolean> {
   const rows = await sql()`select 1 from public.purchases where player_id = ${userId} and status = 'paid' limit 1`;
   return rows.length > 0;
+}
+
+/**
+ * Super Admin (créateur du jeu) : identifiants de comptes listés dans la
+ * variable d'environnement SUPER_ADMIN_IDS (séparés par des virgules). Seul
+ * celui qui contrôle l'hébergement peut la modifier : impossible de devenir
+ * Super Admin depuis le jeu.
+ */
+export function isSuperAdminId(id: string): boolean {
+  return (process.env.SUPER_ADMIN_IDS ?? "")
+    .split(",")
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean)
+    .includes(id.toLowerCase());
 }

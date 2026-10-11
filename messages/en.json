@@ -192,15 +192,20 @@
     "helpButton": "Contact us",
     "appTitle": "App",
     "randomHint": "Each click rolls a new color palette for the whole game.",
-    "randomAgain": "New colors"
+    "randomAgain": "New colors",
+    "adminTitle": "Administration",
+    "superAdmin": "Super Admin",
+    "admin": "Admin",
+    "openDashboard": "Open the dashboard"
   },
   "rarities": {
     "title": "The 7 rarities"
   },
   "offline": {
-    "title": "No connection",
+    "title": "Offline mode",
     "lead": "You're offline. Pages you've already visited are still available; everything else comes back as soon as you're online.",
-    "retry": "Try again"
+    "retry": "Try again",
+    "text": "You can browse your collection and pages you've already visited. Boosters, friends, messages, shop and challenges come back with the network."
   },
   "errors": {
     "invalid_input": "Some fields are not valid.",
@@ -255,7 +260,9 @@
     "blocked": "Not possible: one of you has blocked the other.",
     "message_limit": "Wait for a reply before sending more messages.",
     "captcha_failed": "The anti-bot check didn't go through. Try again in a moment.",
-    "message_not_found": "This message no longer exists."
+    "message_not_found": "This message no longer exists.",
+    "banned": "This account is suspended.",
+    "challenge_not_ready": "Today's challenge isn't complete yet."
   },
   "statName": {
     "hp": "Hit points",
@@ -612,11 +619,29 @@
       "rarity": "Rarity",
       "name": "Name",
       "recent": "Most recent",
-      "quantity": "Quantity"
+      "quantity": "Quantity",
+      "total": "Total stats",
+      "hp": "Hit points",
+      "atk": "Attack",
+      "def": "Defense",
+      "spd": "Speed",
+      "special": "Special power"
     },
     "empty": "No card matches.",
     "firstBooster": "Your collection is empty: open your first booster in the Boosters tab!",
-    "quantity": "×{count}"
+    "quantity": "×{count}",
+    "sortGeneral": "General",
+    "sortStats": "Stats",
+    "orderAsc": "Ascending order",
+    "orderDesc": "Descending order",
+    "statShort": {
+      "total": "Total",
+      "hp": "HP",
+      "atk": "ATK",
+      "def": "DEF",
+      "spd": "SPD",
+      "special": "SPE"
+    }
   },
   "boostersPanel": {
     "openDaily": "Open a daily booster",
@@ -813,5 +838,35 @@
     "enter": "Full screen",
     "exit": "Exit full screen",
     "unsupported": "Full screen isn't available in this browser. On iPhone, install the game on your home screen: it will open without a browser bar."
+  },
+  "counts": {
+    "accounts": "{count, plural, one {registered player} other {registered players}}",
+    "online": "online"
+  },
+  "challenge": {
+    "title": "Daily challenge",
+    "difficulty": {
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard"
+    },
+    "types": {
+      "open_boosters": "{count, plural, one {Open # booster} other {Open # boosters}}",
+      "new_cards": "{count, plural, one {Get # card you didn't have} other {Get # cards you didn't have}}",
+      "sell_copies": "Sell {count} extra copies",
+      "evolve_card": "Evolve a card",
+      "send_messages": "{count, plural, one {Send # message} other {Send # messages}}",
+      "add_friend": "Make a new friend"
+    },
+    "reward": "Reward: {count, plural, one {# extra booster} other {# extra boosters}}",
+    "claim": "Claim {count, plural, one {# booster} other {# boosters}}",
+    "claimed": "Challenge complete! A new one awaits tomorrow."
+  },
+  "banned": {
+    "title": "Account suspended",
+    "since": "Your account was suspended on {date}.",
+    "contest": "If you think this is a mistake, write to us explaining the situation.",
+    "contact": "Contact us",
+    "signOut": "Sign out"
   }
 }

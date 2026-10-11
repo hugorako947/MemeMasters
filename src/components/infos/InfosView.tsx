@@ -6,6 +6,7 @@ import type { Leaderboard, LeaderboardScope } from "@/lib/server/leaderboard";
 import { LeaderboardPanel } from "./LeaderboardPanel";
 import { NewsList } from "./NewsList";
 import { CardGuidePanel } from "./CardGuidePanel";
+import { PlayerCounts } from "@/components/player/PlayerCounts";
 import { MemeMoneyPanel } from "./MemeMoneyPanel";
 import { RanksPanel } from "./RanksPanel";
 import { TrophiesPanel } from "./TrophiesPanel";
@@ -22,6 +23,7 @@ export async function InfosView({
   initial,
   param,
   newsBadge = 0,
+  counts,
 }: {
   boards: Record<LeaderboardScope, Leaderboard>;
   trophies: number;
@@ -29,6 +31,8 @@ export async function InfosView({
   initial: string | undefined;
   param?: string;
   newsBadge?: number;
+  /** Comptes existants et joueurs en ligne. */
+  counts?: { accounts: number; online: number };
 }) {
   const t = await getTranslations("infos");
   const tr = await getTranslations("rank");
@@ -49,7 +53,12 @@ export async function InfosView({
           {
             key: "classement",
             label: t("tabs.leaderboard"),
-            content: <LeaderboardPanel boards={boards} rankName={tr(rankFor(trophies))} window={GAME_CONFIG.TROPHIES.LEADERBOARD_AROUND} />,
+            content: (
+              <div className="grid gap-4">
+                {counts ? <PlayerCounts initial={counts} compact /> : null}
+                <LeaderboardPanel boards={boards} rankName={tr(rankFor(trophies))} window={GAME_CONFIG.TROPHIES.LEADERBOARD_AROUND} />
+              </div>
+            ),
           },
           { key: "rangs", label: t("tabs.ranks"), content: <RanksPanel trophies={trophies} highestRank={highestRank} /> },
           { key: "trophees", label: t("tabs.trophies"), content: <TrophiesPanel trophies={trophies} /> },

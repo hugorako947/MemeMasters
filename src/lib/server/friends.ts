@@ -91,7 +91,7 @@ export async function searchPlayers(playerId: string, query: string): Promise<Ar
  * Envoie une demande d'ami. Si l'autre joueur nous avait déjà envoyé une
  * demande, elle est acceptée directement (les deux le veulent).
  */
-export async function sendRequest(player: Player, username: string): Promise<{ status: "sent" | "accepted" }> {
+export async function sendRequest(player: Player, username: string): Promise<{ status: "sent" | "accepted"; otherId: string }> {
   return sql().begin(async (tx) => {
     const [target] = await tx<{ id: string }[]>`select id from public.profiles where username = ${username}`;
     if (!target) throw new ApiError(404, "player_not_found");
@@ -117,24 +117,25 @@ export async function sendRequest(player: Player, username: string): Promise<{ s
     if (friends >= FRIENDS_LIMITS.MAX_FRIENDS) throw new ApiError(409, "friends_limit");
     if (existing) {
       await tx`update public.friendships set status = 'accepted', responded_at = now() where id = ${existing.id}`;
-      return { status: "accepted" };
+      return { status: "accepted", otherId: target.id };
     }
     if (pending >= FRIENDS_LIMITS.MAX_PENDING_OUT) throw new ApiError(409, "pending_limit");
     await tx`insert into public.friendships (requester_id, addressee_id) values (${player.id}, ${target.id})`;
-    return { status: "sent" };
+    return { status: "sent", otherId: target.id };
   });
 }
 
 /** Accepte ou refuse une demande reçue. */
-export async function respondRequest(player: Player, requestId: string, accept: boolean): Promise<void> {
+export async function respondRequest(player: Player, requestId: string, accept: boolean): Promise<{ requesterId: string }> {
   const rows = accept
-    ? await sql()`
+    ? await sql()<{ requester_id: string }[]>`
         update public.friendships set status = 'accepted', responded_at = now()
-        where id = ${requestId} and addressee_id = ${player.id} and status = 'pending' returning id`
-    : await sql()`
+        where id = ${requestId} and addressee_id = ${player.id} and status = 'pending' returning requester_id`
+    : await sql()<{ requester_id: string }[]>`
         delete from public.friendships
-        where id = ${requestId} and addressee_id = ${player.id} and status = 'pending' returning id`;
+        where id = ${requestId} and addressee_id = ${player.id} and status = 'pending' returning requester_id`;
   if (rows.length === 0) throw new ApiError(404, "request_not_found");
+  return { requesterId: rows[0].requester_id };
 }
 
 /** Retire un ami, ou annule une demande envoyée (ou reçue). */

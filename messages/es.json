@@ -192,15 +192,20 @@
     "helpButton": "Contáctanos",
     "appTitle": "Aplicación",
     "randomHint": "Cada clic genera una nueva paleta de colores para todo el juego.",
-    "randomAgain": "Nuevos colores"
+    "randomAgain": "Nuevos colores",
+    "adminTitle": "Administración",
+    "superAdmin": "Superadmin",
+    "admin": "Admin",
+    "openDashboard": "Abrir el panel"
   },
   "rarities": {
     "title": "Las 7 rarezas"
   },
   "offline": {
-    "title": "Sin conexión",
+    "title": "Modo sin conexión",
     "lead": "Estás sin conexión. Las páginas ya visitadas siguen disponibles; el resto volverá en cuanto haya red.",
-    "retry": "Reintentar"
+    "retry": "Reintentar",
+    "text": "Puedes ver tu colección y las páginas ya visitadas. Sobres, amigos, mensajes, tienda y retos vuelven con la red."
   },
   "errors": {
     "invalid_input": "Algunos campos no son válidos.",
@@ -255,7 +260,9 @@
     "blocked": "No es posible: uno de vosotros ha bloqueado al otro.",
     "message_limit": "Espera una respuesta antes de enviar más mensajes.",
     "captcha_failed": "La verificación antirrobots no se completó. Inténtalo de nuevo en un momento.",
-    "message_not_found": "Este mensaje ya no existe."
+    "message_not_found": "Este mensaje ya no existe.",
+    "banned": "Esta cuenta está suspendida.",
+    "challenge_not_ready": "El reto del día aún no está completado."
   },
   "statName": {
     "hp": "Puntos de salud",
@@ -612,11 +619,29 @@
       "rarity": "Rareza",
       "name": "Nombre",
       "recent": "Más recientes",
-      "quantity": "Cantidad"
+      "quantity": "Cantidad",
+      "total": "Estadísticas totales",
+      "hp": "Puntos de salud",
+      "atk": "Ataque",
+      "def": "Defensa",
+      "spd": "Velocidad",
+      "special": "Poder especial"
     },
     "empty": "Ninguna carta coincide.",
     "firstBooster": "Tu colección está vacía: ¡abre tu primer sobre en la pestaña Sobres!",
-    "quantity": "×{count}"
+    "quantity": "×{count}",
+    "sortGeneral": "General",
+    "sortStats": "Estadísticas",
+    "orderAsc": "Orden ascendente",
+    "orderDesc": "Orden descendente",
+    "statShort": {
+      "total": "Total",
+      "hp": "PS",
+      "atk": "ATQ",
+      "def": "DEF",
+      "spd": "VEL",
+      "special": "ESP"
+    }
   },
   "boostersPanel": {
     "openDaily": "Abrir un sobre diario",
@@ -813,5 +838,35 @@
     "enter": "Pantalla completa",
     "exit": "Salir de pantalla completa",
     "unsupported": "La pantalla completa no está disponible en este navegador. En iPhone, instala el juego en tu pantalla de inicio: se abrirá sin barra del navegador."
+  },
+  "counts": {
+    "accounts": "{count, plural, one {jugador registrado} other {jugadores registrados}}",
+    "online": "en línea"
+  },
+  "challenge": {
+    "title": "Reto del día",
+    "difficulty": {
+      "easy": "Fácil",
+      "medium": "Medio",
+      "hard": "Difícil"
+    },
+    "types": {
+      "open_boosters": "{count, plural, one {Abre # sobre} other {Abre # sobres}}",
+      "new_cards": "{count, plural, one {Consigue # carta que no tenías} other {Consigue # cartas que no tenías}}",
+      "sell_copies": "Vende {count} ejemplares de sobra",
+      "evolve_card": "Haz evolucionar una carta",
+      "send_messages": "{count, plural, one {Envía # mensaje} other {Envía # mensajes}}",
+      "add_friend": "Haz un nuevo amigo"
+    },
+    "reward": "Recompensa: {count, plural, one {# sobre extra} other {# sobres extra}}",
+    "claim": "Recoger {count, plural, one {# sobre} other {# sobres}}",
+    "claimed": "¡Reto superado! Mañana te espera uno nuevo."
+  },
+  "banned": {
+    "title": "Cuenta suspendida",
+    "since": "Tu cuenta fue suspendida el {date}.",
+    "contest": "Si crees que es un error, escríbenos explicando la situación.",
+    "contact": "Contactarnos",
+    "signOut": "Cerrar sesión"
   }
 }

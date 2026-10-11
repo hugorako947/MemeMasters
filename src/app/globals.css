@@ -1455,3 +1455,10 @@ body:has(> dialog.mm-detail[open]) #mm-app {
 [data-theme="random"][data-base="light"] {
   color-scheme: light;
 }
+
+/* Hors ligne : ce qui demande le serveur est grisé et désactivé. */
+[data-offline="true"] .mm-online-only {
+  opacity: 0.45;
+  filter: grayscale(1);
+  pointer-events: none;
+}

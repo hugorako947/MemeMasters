@@ -71,7 +71,7 @@ export function MessagesPanel({
   const shownFriends = friends.filter((f) => f.username.toLowerCase().includes(filter.trim().toLowerCase()));
 
   return (
-    <section className="grid gap-3 rounded-[1.5rem] border-2 border-ink bg-surface p-4 shadow-[0_3px_0_0_var(--mm-shadow)] sm:p-5">
+    <section className="mm-online-only grid gap-3 rounded-[1.5rem] border-2 border-ink bg-surface p-4 shadow-[0_3px_0_0_var(--mm-shadow)] sm:p-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="font-display text-3xl leading-none">{t("title")}</h2>
         <button type="button" onClick={() => setPicking((p) => !p)} aria-expanded={picking} className="mm-btn mm-btn--primary min-h-10 px-4 text-sm">

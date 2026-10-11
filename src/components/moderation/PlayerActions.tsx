@@ -43,7 +43,7 @@ export function PlayerActions({
   }
 
   return (
-    <div className="grid justify-items-start gap-3">
+    <div className="mm-online-only grid justify-items-start gap-3">
       <FriendButton relation={relation} target={target} />
       <div className="flex flex-wrap items-center gap-2">
         <Link

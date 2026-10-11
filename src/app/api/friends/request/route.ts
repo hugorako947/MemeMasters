@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { friendshipChallenge } from "@/lib/server/challenges";
 import { z } from "zod";
 import { apiPlayer } from "@/lib/server/auth";
 import { sendRequest } from "@/lib/server/friends";
@@ -11,5 +12,7 @@ export const POST = withErrors(async (request: Request) => {
   const { player } = await apiPlayer();
   if (!(await consumeRateLimit(RATE_LIMITS.friendsRequest, player.id))) throw new ApiError(429, "rate_limited");
   const { username } = await readJson(request, z.object({ username: z.string().trim().min(3).max(20) }));
-  return NextResponse.json(await sendRequest(player, username));
+  const result = await sendRequest(player, username);
+  if (result.status === "accepted") await friendshipChallenge(player, result.otherId);
+  return NextResponse.json({ status: result.status });
 });

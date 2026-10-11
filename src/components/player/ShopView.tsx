@@ -29,7 +29,7 @@ export async function ShopView({ country, hasPurchased }: { country: string | nu
   const money = (n: number) => format.number(n, { style: "currency", currency });
 
   return (
-    <div className="grid gap-6">
+    <div className="mm-online-only grid gap-6">
       <h1 className="font-display text-5xl leading-none">{t("title")}</h1>
 
       {blocked ? (

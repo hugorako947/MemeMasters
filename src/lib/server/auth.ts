@@ -1,6 +1,6 @@
 import "server-only";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { cache } from "react";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { ApiError } from "./http";
@@ -48,7 +48,19 @@ export async function requirePlayer(): Promise<{ user: AuthUser; player: Player 
   const user = await requireUser();
   const player = await getPlayer(user.id);
   if (!player || !player.consentUpToDate) redirect("/bienvenue");
+  if (player.ban) redirect("/banni");
   return { user, player };
+}
+
+/**
+ * Tableau de bord : réservé aux admins et au Super Admin. Pour les autres, la
+ * page « n'existe pas » (404) : sa présence n'est même pas révélée.
+ */
+export async function requireAdmin(level: "admin" | "superadmin" = "admin"): Promise<{ user: AuthUser; player: Player }> {
+  const ctx = await requirePlayer();
+  const ok = level === "superadmin" ? ctx.player.role === "superadmin" : ctx.player.role !== "player";
+  if (!ok) notFound();
+  return ctx;
 }
 
 /** Routes API : exige une session, sinon 401. */
@@ -64,5 +76,6 @@ export async function apiPlayer(): Promise<{ user: AuthUser; player: Player }> {
   const player = await getPlayer(user.id);
   if (!player) throw new ApiError(403, "profile_required");
   if (!player.consentUpToDate) throw new ApiError(403, "consent_required");
+  if (player.ban) throw new ApiError(403, "banned");
   return { user, player };
 }

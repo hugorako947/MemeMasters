@@ -151,6 +151,13 @@ npx supabase db push # applique les nouvelles migrations
 npm run dev
 ```
 
+Pour savoir si une migration est nécessaire, sans rien modifier :
+
+```bash
+npm run db:check     # liste les migrations que « db push » appliquerait
+npm run db:status    # tableau : migrations locales / déjà appliquées sur Supabase
+```
+
 Si une bibliothèque manque, `npm run dev` s'arrête avec le message « dépendance(s) manquante(s) » et la commande à lancer.
 
 ## Installer le jeu sur un téléphone
@@ -240,6 +247,22 @@ Les règles (durée, énergie, tours, délai d'apparition) sont dans `src/lib/ba
 ## Publier une news
 
 Ajoutez une entrée en haut de `src/content/news.ts` (date, type, titre et texte en français, autres langues facultatives). Elle apparaît dans Infos → News.
+
+## Tableau de bord d'administration
+
+Adresse : `/admin` (lien dans **Réglages → Administration**, visible seulement des admins). Pour tout autre joueur, cette adresse renvoie une page « introuvable ».
+
+**Devenir Super Admin (une seule fois)**
+
+1. Créez votre compte dans le jeu, comme un joueur.
+2. Dans Supabase → **Authentication → Users**, copiez le **User UID** de votre compte.
+3. Mettez-le dans `SUPER_ADMIN_IDS` (`.env.local` en local, et Vercel → Environment Variables en ligne), puis redéployez.
+
+Aucune page ni aucun mot de passe spécial : le serveur vous reconnaît à l'identifiant de votre compte, que seul celui qui contrôle l'hébergement peut configurer. Activez aussi la double authentification sur vos comptes Supabase, Vercel et GitHub, car ce sont eux qui protègent vraiment votre accès.
+
+**Nommer des admins** : tableau de bord → Joueurs → recherchez le pseudo → « Nommer admin ». Un admin gère joueurs, signalements, contact, cartes, news et défis ; seul le Super Admin nomme ou révoque des admins et supprime des comptes. Chaque action est inscrite dans le **Journal**.
+
+**Sections** : Vue d'ensemble (comptes, joueurs en ligne, inscriptions, activité, signalements et messages à traiter), Joueurs (ressources, trophées, bannissement avec motif, rôle, suppression), Signalements, Contact, Cartes (création, modification, rééquilibrage, annonce automatique dans les news), News (publication avec notification à tous les joueurs), Défis (objectifs, récompenses, probabilité, activation), Configuration (réglages du code, en lecture seule), Journal.
 
 ## Anti-robot (captcha)
 

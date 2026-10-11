@@ -1,10 +1,11 @@
 import "server-only";
-import { NEWS } from "@/content/news";
 import { isOfferActive, OFFERS } from "@/config/shop";
 import { gameDate } from "@/lib/time/game-day";
 import { getBoosterState } from "./boosters";
 import { sql } from "./db";
+import { getDailyChallenge } from "./challenges";
 import { incomingCount } from "./friends";
+import { latestNewsAt, unreadNewsCount } from "./news";
 import { unreadMessages } from "./messages";
 import type { Player } from "./players";
 
@@ -24,8 +25,8 @@ export interface Badges {
 }
 
 /** Valeur « vue » de chaque notification à l'instant présent. */
-export function currentSeenValue(key: SeenKey, player: Player): string {
-  if (key === "news") return NEWS[0]?.date ?? "";
+export async function currentSeenValue(key: SeenKey, player: Player): Promise<string> {
+  if (key === "news") return latestNewsAt();
   if (key === "boosters") return gameDate(player.timezone);
   return OFFERS.filter((o) => isOfferActive(o, new Date()))
     .map((o) => o.code)
@@ -41,17 +42,19 @@ export async function getBadges(player: Player): Promise<Badges> {
     unreadMessages(player.id),
   ]);
   const seen = row?.seen ?? {};
-  const boostersNew = seen.boosters !== currentSeenValue("boosters", player) ? boosters.freeLeft : 0;
-  const unreadNews = NEWS.filter((n) => n.date > (seen.news ?? "")).length;
+  const boostersNew = seen.boosters !== (await currentSeenValue("boosters", player)) ? boosters.freeLeft : 0;
+  const [unreadNews, challenge] = await Promise.all([unreadNewsCount(seen.news), getDailyChallenge(player)]);
+  // Défi du jour terminé mais pas encore récupéré : une notification sur l'Accueil.
+  const challengeReady = challenge && challenge.completed && !challenge.claimed ? 1 : 0;
   const seenOffers = new Set((seen.shop ?? "").split(",").filter(Boolean));
-  const newOffers = currentSeenValue("shop", player).split(",").filter((code) => code && !seenOffers.has(code)).length;
-  return { home: boostersNew, boosters: boostersNew, infos: unreadNews, news: unreadNews, shop: newOffers, profile: incoming + unread, friends: incoming, messages: unread };
+  const newOffers = (await currentSeenValue("shop", player)).split(",").filter((code) => code && !seenOffers.has(code)).length;
+  return { home: boostersNew + challengeReady, boosters: boostersNew, infos: unreadNews, news: unreadNews, shop: newOffers, profile: incoming + unread, friends: incoming, messages: unread };
 }
 
 export async function markSeen(player: Player, key: SeenKey): Promise<void> {
   await sql()`
     update public.player_private
-    set seen = seen || jsonb_build_object(${key}::text, ${currentSeenValue(key, player)}::text)
+    set seen = seen || jsonb_build_object(${key}::text, ${await currentSeenValue(key, player)}::text)
     where player_id = ${player.id}
   `;
 }

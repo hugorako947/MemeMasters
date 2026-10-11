@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { FriendsPanel } from "@/components/friends/FriendsPanel";
+import { PlayerCounts } from "@/components/player/PlayerCounts";
 import { MessagesPanel } from "@/components/messages/MessagesPanel";
 import { BlockedList, PlayerActions } from "@/components/moderation/PlayerActions";
 import { SlideDeck } from "@/components/ui/SlideDeck";
@@ -20,6 +21,7 @@ export interface OwnSocial {
   blocked: Array<{ id: string; username: string; trophies: number }>;
   conversations: Conversation[];
   badges: { friends: number; messages: number };
+  counts: { accounts: number; online: number };
   initialTab?: string;
   openWith?: string;
 }
@@ -139,6 +141,7 @@ export async function ProfileView({
               badge: social.badges.friends,
               content: (
                 <div className="grid gap-5">
+                  <PlayerCounts initial={social.counts} compact />
                   <FriendsPanel overview={social.friends} />
                   <BlockedList players={social.blocked} />
                 </div>

@@ -23,6 +23,20 @@ export async function SettingsView({ player, email }: { player: Player; email: s
 
   return (
     <div className="grid gap-6">
+      {/* Administration : visible uniquement par les admins et le Super Admin. */}
+      {player.role !== "player" ? (
+        <Panel className="grid gap-3 border-[#1a1238]">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="text-xl font-extrabold">{t("adminTitle")}</h2>
+            <span className="rounded-full bg-[#1a1238] px-3 py-1 text-xs font-extrabold text-white">
+              {player.role === "superadmin" ? t("superAdmin") : t("admin")}
+            </span>
+          </div>
+          <ButtonLink href="/admin" className="justify-self-start px-5">
+            {t("openDashboard")}
+          </ButtonLink>
+        </Panel>
+      ) : null}
       <h1 className="font-display text-5xl leading-none">{t("title")}</h1>
 
       <Panel className="grid gap-3">

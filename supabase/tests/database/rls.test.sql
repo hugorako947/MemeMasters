@@ -6,7 +6,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set search_path = public, extensions;
 
-select plan(36);
+select plan(38);
 
 -- ---------------------------------------------------------------- données
 insert into auth.users (id, email) values
@@ -53,6 +53,8 @@ set local role anon;
 select throws_ok('select * from public.contact_messages', '42501', null, 'anonyme : messages de contact interdits');
 select is((select count(*)::int from public.friendships), 0, 'anonyme : ne voit aucune relation d''amitié');
 select is((select count(*)::int from public.messages), 0, 'anonyme : ne lit aucun message');
+select ok((select count(*) from public.news) >= 0, 'anonyme : lit les news');
+select throws_ok($$insert into public.news (kind, title, body) values ('news', '{"fr":"x"}', '{"fr":"x"}')$$, '42501', null, 'anonyme : ne publie pas de news');
 select is((select count(*)::int from public.cards where slug in ('carte-active', 'carte-retiree')), 1, 'anonyme : voit seulement les cartes actives');
 select is((select count(*)::int from public.profiles), 0, 'anonyme : ne voit aucun profil');
 select is((select count(*)::int from public.player_wallets), 0, 'anonyme : ne voit aucun portefeuille');

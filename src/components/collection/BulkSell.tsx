@@ -35,7 +35,7 @@ export function BulkSell({ items, resaleLeftCents }: { items: BulkItem[]; resale
   }
 
   return (
-    <div className="grid gap-2">
+    <div className="mm-online-only grid gap-2">
       {!open ? (
         <button type="button" onClick={() => setOpen(true)} disabled={cards === 0} className="mm-btn mm-btn--secondary min-h-10 justify-self-start gap-1.5 px-4 text-sm">
           <MemeCoin /> {cards === 0 ? t("none") : t("button")}

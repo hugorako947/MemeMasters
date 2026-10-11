@@ -5,7 +5,7 @@ import type { Level } from "@/lib/economy/duplicates";
 import type { Card } from "@/lib/validation/card";
 import { sql } from "./db";
 
-interface CardRow {
+export interface CardRow {
   id: string;
   slug: string;
   name: string;

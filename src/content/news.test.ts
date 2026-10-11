@@ -1,15 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { rankBounds } from "@/config/ranks";
 import { contactSchema } from "@/lib/validation/contact";
-import { localized, NEWS } from "./news";
+import { localized } from "@/lib/news";
 
 describe("news", () => {
-  it("sont triées de la plus récente à la plus ancienne, avec des identifiants uniques", () => {
-    const dates = NEWS.map((n) => n.date);
-    expect([...dates].sort().reverse()).toEqual(dates);
-    expect(new Set(NEWS.map((n) => n.id)).size).toBe(NEWS.length);
-  });
-
   it("retombent sur le français quand une langue manque", () => {
     expect(localized({ fr: "Bonjour", en: "Hello" }, "en")).toEqual({ text: "Hello", lang: "en" });
     expect(localized({ fr: "Bonjour" }, "zh")).toEqual({ text: "Bonjour", lang: "fr" });

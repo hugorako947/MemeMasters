@@ -11,6 +11,7 @@ import { isLocale, localeDir } from "@/lib/i18n/locales";
 import { parseAppearance, THEME_COOKIES, themeAttributes } from "@/lib/theme/theme";
 import { publicEnv } from "@/lib/env.public";
 import { NavigationTracker } from "@/components/layout/NavigationTracker";
+import { OfflineBanner } from "@/components/pwa/OfflineBanner";
 import { PwaProvider } from "@/components/pwa/PwaProvider";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -58,6 +59,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <NextIntlClientProvider>
           {/* Respecte prefers-reduced-motion pour toutes les animations Motion. */}
           <MotionConfig reducedMotion="user">
+            <OfflineBanner />
             <PwaProvider>
               {/* Tout le site est dans #mm-app : flouté quand une fiche de carte est ouverte. */}
               <NavigationTracker />

@@ -192,15 +192,20 @@
     "helpButton": "Kontaktiere uns",
     "appTitle": "App",
     "randomHint": "Jeder Klick würfelt eine neue Farbpalette für das ganze Spiel aus.",
-    "randomAgain": "Neue Farben"
+    "randomAgain": "Neue Farben",
+    "adminTitle": "Verwaltung",
+    "superAdmin": "Super-Admin",
+    "admin": "Admin",
+    "openDashboard": "Dashboard öffnen"
   },
   "rarities": {
     "title": "Die 7 Seltenheiten"
   },
   "offline": {
-    "title": "Keine Verbindung",
+    "title": "Offline-Modus",
     "lead": "Du bist offline. Bereits besuchte Seiten bleiben verfügbar; alles andere kommt zurück, sobald du wieder online bist.",
-    "retry": "Erneut versuchen"
+    "retry": "Erneut versuchen",
+    "text": "Du kannst deine Sammlung und bereits besuchte Seiten ansehen. Booster, Freunde, Nachrichten, Shop und Aufgaben kommen mit dem Netz zurück."
   },
   "errors": {
     "invalid_input": "Einige Felder sind ungültig.",
@@ -255,7 +260,9 @@
     "blocked": "Nicht möglich: Einer von euch hat den anderen blockiert.",
     "message_limit": "Warte auf eine Antwort, bevor du weitere Nachrichten sendest.",
     "captcha_failed": "Die Anti-Bot-Prüfung ist fehlgeschlagen. Versuch es gleich noch einmal.",
-    "message_not_found": "Diese Nachricht existiert nicht mehr."
+    "message_not_found": "Diese Nachricht existiert nicht mehr.",
+    "banned": "Dieses Konto ist gesperrt.",
+    "challenge_not_ready": "Die Tagesaufgabe ist noch nicht erledigt."
   },
   "statName": {
     "hp": "Kraftpunkte",
@@ -612,11 +619,29 @@
       "rarity": "Seltenheit",
       "name": "Name",
       "recent": "Neueste",
-      "quantity": "Anzahl"
+      "quantity": "Anzahl",
+      "total": "Gesamtwerte",
+      "hp": "Kraftpunkte",
+      "atk": "Angriff",
+      "def": "Verteidigung",
+      "spd": "Tempo",
+      "special": "Spezialstärke"
     },
     "empty": "Keine Karte passt.",
     "firstBooster": "Deine Sammlung ist leer: Öffne deinen ersten Booster im Tab „Booster“!",
-    "quantity": "×{count}"
+    "quantity": "×{count}",
+    "sortGeneral": "Allgemein",
+    "sortStats": "Werte",
+    "orderAsc": "Aufsteigend",
+    "orderDesc": "Absteigend",
+    "statShort": {
+      "total": "Gesamt",
+      "hp": "KP",
+      "atk": "ANG",
+      "def": "VER",
+      "spd": "TEM",
+      "special": "SPZ"
+    }
   },
   "boostersPanel": {
     "openDaily": "Einen Tages-Booster öffnen",
@@ -813,5 +838,35 @@
     "enter": "Vollbild",
     "exit": "Vollbild beenden",
     "unsupported": "Vollbild ist in diesem Browser nicht verfügbar. Auf dem iPhone installierst du das Spiel auf dem Startbildschirm: Es öffnet sich dann ohne Browserleiste."
+  },
+  "counts": {
+    "accounts": "{count, plural, one {registrierter Spieler} other {registrierte Spieler}}",
+    "online": "online"
+  },
+  "challenge": {
+    "title": "Tagesaufgabe",
+    "difficulty": {
+      "easy": "Leicht",
+      "medium": "Mittel",
+      "hard": "Schwer"
+    },
+    "types": {
+      "open_boosters": "{count, plural, one {Öffne # Booster} other {Öffne # Booster}}",
+      "new_cards": "{count, plural, one {Erhalte # Karte, die du noch nicht hattest} other {Erhalte # Karten, die du noch nicht hattest}}",
+      "sell_copies": "Verkaufe {count} überzählige Exemplare",
+      "evolve_card": "Entwickle eine Karte",
+      "send_messages": "{count, plural, one {Sende # Nachricht} other {Sende # Nachrichten}}",
+      "add_friend": "Finde einen neuen Freund"
+    },
+    "reward": "Belohnung: {count, plural, one {# Extra-Booster} other {# Extra-Booster}}",
+    "claim": "{count, plural, one {# Booster abholen} other {# Booster abholen}}",
+    "claimed": "Aufgabe geschafft! Morgen wartet eine neue."
+  },
+  "banned": {
+    "title": "Konto gesperrt",
+    "since": "Dein Konto wurde am {date} gesperrt.",
+    "contest": "Wenn du glaubst, dass es ein Fehler ist, schreib uns und erkläre die Situation.",
+    "contact": "Kontakt",
+    "signOut": "Abmelden"
   }
 }

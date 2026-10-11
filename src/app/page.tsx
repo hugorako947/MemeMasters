@@ -5,7 +5,10 @@ import { RarityShowcase } from "@/components/card/RarityShowcase";
 import { SAMPLE_CARDS } from "@/components/card/sample-cards";
 import { FeatureShowcase } from "@/components/home/FeatureShowcase";
 import { PublicShell } from "@/components/layout/PublicShell";
+import { FullscreenToggle } from "@/components/install/FullscreenToggle";
 import { PlayOnPhone } from "@/components/install/PlayOnPhone";
+import { PlayerCounts } from "@/components/player/PlayerCounts";
+import { playerCounts } from "@/lib/server/presence";
 import { GAME_CONFIG } from "@/config/game.config";
 import { AppShell } from "@/components/layout/AppShell";
 import { PlayerFeatures } from "@/components/player/PlayerFeatures";
@@ -15,6 +18,7 @@ import { getBoosterState } from "@/lib/server/boosters";
 import { getCollection } from "@/lib/server/cards";
 import { resaleLeftCents } from "@/lib/server/duplicates";
 import { getBadges } from "@/lib/server/notifications";
+import { getDailyChallenge } from "@/lib/server/challenges";
 import { getPlayer } from "@/lib/server/players";
 
 export default async function HomePage({ searchParams }: PageProps<"/">) {
@@ -23,17 +27,18 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
   const player = await getPlayer(user.id);
   if (!player || !player.consentUpToDate) redirect("/bienvenue");
   const { vue } = await searchParams;
-  const [collection, boosters, resaleLeft, badges] = await Promise.all([
+  const [collection, boosters, resaleLeft, badges, challenge] = await Promise.all([
     getCollection(player.id),
     getBoosterState(player),
     resaleLeftCents(player),
     getBadges(player),
+    getDailyChallenge(player),
   ]);
   return (
     <AppShell player={player} badges={badges}>
       <div className="grid gap-6">
         <h1 className="font-display text-4xl leading-none md:text-5xl">{(await getTranslations("playerHome"))("title", { username: player.username })}</h1>
-        <PlayerFeatures player={player} collection={collection} boosters={boosters} resaleLeftCents={resaleLeft} boostersBadge={badges.boosters} initial={typeof vue === "string" ? vue : undefined} />
+        <PlayerFeatures player={player} collection={collection} boosters={boosters} resaleLeftCents={resaleLeft} boostersBadge={badges.boosters} challenge={challenge} initial={typeof vue === "string" ? vue : undefined} />
       </div>
     </AppShell>
   );
@@ -48,6 +53,7 @@ const byRarity = (rarity: string) => SAMPLE_CARDS.find((c) => c.rarity === rarit
 async function GuestHome() {
   const t = await getTranslations("home");
   const fan = [byRarity("epique"), byRarity("godlevel"), byRarity("legendaire")];
+  const counts = await playerCounts();
   return (
     <PublicShell hideLogo back={false}>
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-10">
@@ -67,6 +73,13 @@ async function GuestHome() {
                   <ButtonLink href="/inscription" variant="secondary" className="sm:min-w-44">
                     {t("createAccount")}
                   </ButtonLink>
+                </div>
+                {/* Plein écran dès l'arrivée (masqué là où le navigateur ne le permet pas, comme sur iPhone). */}
+                <div className="mt-3">
+                  <FullscreenToggle compact />
+                </div>
+                <div className="mt-5">
+                  <PlayerCounts initial={counts} />
                 </div>
                 <div className="mt-6">
                   <PlayOnPhone />

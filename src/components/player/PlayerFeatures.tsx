@@ -3,6 +3,8 @@ import type { ReactNode } from "react";
 import { InteractiveCard } from "@/components/card/InteractiveCard";
 import { sampleOf } from "@/components/card/sample-cards";
 import { SlideDeck } from "@/components/ui/SlideDeck";
+import { DailyChallengeCard } from "@/components/challenges/DailyChallengeCard";
+import type { DailyChallenge } from "@/lib/server/challenges";
 import { isOfferActive, OFFERS } from "@/config/shop";
 import { RANK_REWARDS, rankFor, RANKS, rankIndex } from "@/config/ranks";
 import type { Player } from "@/lib/server/players";
@@ -23,6 +25,7 @@ export async function PlayerFeatures({
   boosters,
   resaleLeftCents,
   boostersBadge = 0,
+  challenge = null,
   initial,
   param,
 }: {
@@ -31,6 +34,7 @@ export async function PlayerFeatures({
   boosters: BoosterStateView;
   resaleLeftCents: number;
   boostersBadge?: number;
+  challenge?: DailyChallenge | null;
   initial?: string;
   param?: string;
 }) {
@@ -43,7 +47,7 @@ export async function PlayerFeatures({
       initial={index === -1 ? 1 : index}
       slides={[
         { key: "collection", label: t("collection.title"), content: <CollectionSlide items={collection} resaleLeftCents={resaleLeftCents} /> },
-        { key: "boosters", label: t("boosters.title"), content: <BoostersSlide state={boosters} />, badge: boostersBadge },
+        { key: "boosters", label: t("boosters.title"), content: <BoostersSlide state={boosters} challenge={challenge} />, badge: boostersBadge },
         { key: "batailles", label: t("battles.title"), content: <BattlesSlide player={player} /> },
       ]}
     />
@@ -65,10 +69,11 @@ async function SlideFrame({ tint, soon = false, children }: { tint: string; soon
 }
 
 /** Boosters : ouvrir tout de suite, acheter en MemeMoney, et un clin d'œil vers la Boutique. */
-async function BoostersSlide({ state }: { state: BoosterStateView }) {
+async function BoostersSlide({ state, challenge }: { state: BoosterStateView; challenge: DailyChallenge | null }) {
   const doubleOffer = OFFERS.some((o) => o.kind === "first_purchase_double" && isOfferActive(o, new Date()));
   return (
     <SlideFrame tint="bg-[#ffe3ec]">
+      {challenge ? <DailyChallengeCard challenge={challenge} /> : null}
       <BoostersPanel state={state} doubleOffer={doubleOffer} />
     </SlideFrame>
   );

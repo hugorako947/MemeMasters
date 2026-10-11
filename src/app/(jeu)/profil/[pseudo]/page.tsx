@@ -8,6 +8,7 @@ import { getFriendsOverview, relationWith } from "@/lib/server/friends";
 import { listConversations } from "@/lib/server/messages";
 import { blockedPlayers, hasBlocked } from "@/lib/server/moderation";
 import { getBadges } from "@/lib/server/notifications";
+import { playerCounts } from "@/lib/server/presence";
 import { getPublicProfile } from "@/lib/server/players";
 
 /** Les pseudos n'utilisent que [A-Za-z0-9_] : un paramètre mal encodé n'est pas un profil. */
@@ -33,11 +34,12 @@ export default async function ProfilePage({ params, searchParams }: PageProps<"/
   const isMe = profile.id === player.id;
   if (isMe) {
     const { vue, avec } = await searchParams;
-    const [friends, blocked, conversations, badges] = await Promise.all([
+    const [friends, blocked, conversations, badges, counts] = await Promise.all([
       getFriendsOverview(player.id),
       blockedPlayers(player.id),
       listConversations(player.id),
       getBadges(player),
+      playerCounts(),
     ]);
     return (
       <ProfileView
@@ -48,6 +50,7 @@ export default async function ProfilePage({ params, searchParams }: PageProps<"/
           blocked,
           conversations,
           badges: { friends: badges.friends, messages: badges.messages },
+          counts,
           initialTab: typeof vue === "string" ? vue : undefined,
           openWith: typeof avec === "string" ? avec.slice(0, 20) : undefined,
         }}

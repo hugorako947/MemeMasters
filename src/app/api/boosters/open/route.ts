@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { progressChallenge } from "@/lib/server/challenges";
 import { z } from "zod";
 import { ApiError, assertSameOrigin, readJson, withErrors } from "@/lib/server/http";
 import { apiPlayer } from "@/lib/server/auth";
@@ -12,5 +13,9 @@ export const POST = withErrors(async (request: Request) => {
   const { player } = await apiPlayer();
   if (!(await consumeRateLimit(RATE_LIMITS.boosterOpen, player.id))) throw new ApiError(429, "rate_limited");
   const { kind } = await readJson(request, z.object({ kind: z.enum(BOOSTER_KINDS) }));
-  return NextResponse.json(await openBooster(player, kind));
+  const result = await openBooster(player, kind);
+  // Défi du jour : boosters ouverts et nouvelles cartes obtenues.
+  await progressChallenge(player, "open_boosters", 1);
+  await progressChallenge(player, "new_cards", result.newCardIds.length);
+  return NextResponse.json(result);
 });

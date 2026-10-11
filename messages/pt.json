@@ -192,15 +192,20 @@
     "helpButton": "Fale conosco",
     "appTitle": "Aplicativo",
     "randomHint": "Cada clique sorteia uma nova paleta de cores para todo o jogo.",
-    "randomAgain": "Novas cores"
+    "randomAgain": "Novas cores",
+    "adminTitle": "Administração",
+    "superAdmin": "Super Admin",
+    "admin": "Admin",
+    "openDashboard": "Abrir o painel"
   },
   "rarities": {
     "title": "As 7 raridades"
   },
   "offline": {
-    "title": "Sem conexão",
+    "title": "Modo offline",
     "lead": "Você está offline. As páginas já visitadas continuam disponíveis; o resto volta assim que a conexão voltar.",
-    "retry": "Tentar de novo"
+    "retry": "Tentar de novo",
+    "text": "Você pode ver sua coleção e as páginas já visitadas. Pacotes, amigos, mensagens, loja e desafios voltam com a rede."
   },
   "errors": {
     "invalid_input": "Alguns campos não são válidos.",
@@ -255,7 +260,9 @@
     "blocked": "Não é possível: um de vocês bloqueou o outro.",
     "message_limit": "Espere uma resposta antes de enviar mais mensagens.",
     "captcha_failed": "A verificação antirrobô não foi concluída. Tente de novo em instantes.",
-    "message_not_found": "Esta mensagem não existe mais."
+    "message_not_found": "Esta mensagem não existe mais.",
+    "banned": "Esta conta está suspensa.",
+    "challenge_not_ready": "O desafio do dia ainda não foi concluído."
   },
   "statName": {
     "hp": "Pontos de vida",
@@ -612,11 +619,29 @@
       "rarity": "Raridade",
       "name": "Nome",
       "recent": "Mais recentes",
-      "quantity": "Quantidade"
+      "quantity": "Quantidade",
+      "total": "Atributos totais",
+      "hp": "Pontos de vida",
+      "atk": "Ataque",
+      "def": "Defesa",
+      "spd": "Velocidade",
+      "special": "Poder especial"
     },
     "empty": "Nenhuma carta corresponde.",
     "firstBooster": "Sua coleção está vazia: abra seu primeiro pacote na aba Pacotes!",
-    "quantity": "×{count}"
+    "quantity": "×{count}",
+    "sortGeneral": "Geral",
+    "sortStats": "Atributos",
+    "orderAsc": "Ordem crescente",
+    "orderDesc": "Ordem decrescente",
+    "statShort": {
+      "total": "Total",
+      "hp": "PV",
+      "atk": "ATQ",
+      "def": "DEF",
+      "spd": "VEL",
+      "special": "ESP"
+    }
   },
   "boostersPanel": {
     "openDaily": "Abrir um pacote diário",
@@ -813,5 +838,35 @@
     "enter": "Tela cheia",
     "exit": "Sair da tela cheia",
     "unsupported": "A tela cheia não está disponível neste navegador. No iPhone, instale o jogo na tela inicial: ele abrirá sem barra do navegador."
+  },
+  "counts": {
+    "accounts": "{count, plural, one {jogador cadastrado} other {jogadores cadastrados}}",
+    "online": "online"
+  },
+  "challenge": {
+    "title": "Desafio do dia",
+    "difficulty": {
+      "easy": "Fácil",
+      "medium": "Médio",
+      "hard": "Difícil"
+    },
+    "types": {
+      "open_boosters": "{count, plural, one {Abra # pacote} other {Abra # pacotes}}",
+      "new_cards": "{count, plural, one {Consiga # carta que você não tinha} other {Consiga # cartas que você não tinha}}",
+      "sell_copies": "Venda {count} exemplares sobrando",
+      "evolve_card": "Faça uma carta evoluir",
+      "send_messages": "{count, plural, one {Envie # mensagem} other {Envie # mensagens}}",
+      "add_friend": "Faça um novo amigo"
+    },
+    "reward": "Recompensa: {count, plural, one {# pacote extra} other {# pacotes extras}}",
+    "claim": "Pegar {count, plural, one {# pacote} other {# pacotes}}",
+    "claimed": "Desafio concluído! Um novo te espera amanhã."
+  },
+  "banned": {
+    "title": "Conta suspensa",
+    "since": "Sua conta foi suspensa em {date}.",
+    "contest": "Se acha que é um erro, escreva para nós explicando a situação.",
+    "contact": "Fale conosco",
+    "signOut": "Sair"
   }
 }

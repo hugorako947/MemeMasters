@@ -7,6 +7,7 @@ import { rankFor } from "@/config/ranks";
 import { getBadges, type Badges } from "@/lib/server/notifications";
 import type { Player } from "@/lib/server/players";
 import { BackLink } from "./BackLink";
+import { Presence } from "@/components/player/Presence";
 import { BottomNav } from "./BottomNav";
 import { PreferenceSync } from "./PreferenceSync";
 import { SiteFooter } from "./SiteFooter";
@@ -79,6 +80,7 @@ export async function AppShell({ player, back, children, badges }: { player: Pla
         </main>
       </div>
 
+      <Presence />
       <BottomNav username={player.username} badges={{ shop: dots.shop, infos: dots.infos, home: dots.home, profile: dots.profile }} />
       <SiteFooter />
     </div>

@@ -50,7 +50,7 @@ export function FriendsPanel({ overview }: { overview: FriendsOverview }) {
   const shown = query.trim().length >= 2 ? results : [];
 
   return (
-    <section className="grid gap-5 rounded-[1.5rem] border-2 border-ink bg-surface p-5 shadow-[0_3px_0_0_var(--mm-shadow)]" aria-labelledby="amis">
+    <section className="mm-online-only grid gap-5 rounded-[1.5rem] border-2 border-ink bg-surface p-5 shadow-[0_3px_0_0_var(--mm-shadow)]" aria-labelledby="amis">
       <h2 id="amis" className="font-display text-3xl leading-none">
         {t("title", { count: overview.friends.length })}
       </h2>
