@@ -17,14 +17,15 @@ describe("langues", () => {
     expect(negotiateLocale({ cookie: "en", acceptLanguage: "fr-FR", country: "FR" })).toBe("en");
   });
 
-  it("utilise ensuite la langue du navigateur", () => {
-    expect(negotiateLocale({ acceptLanguage: "en-US,en;q=0.9", country: "FR" })).toBe("en");
-    expect(negotiateLocale({ acceptLanguage: "fr-CA", country: "US" })).toBe("fr");
-  });
-
-  it("puis la langue du pays", () => {
+  it("utilise ensuite la langue du pays (géo-IP)", () => {
+    expect(negotiateLocale({ acceptLanguage: "en-US,en;q=0.9", country: "FR" })).toBe("fr");
     expect(negotiateLocale({ country: "FR" })).toBe("fr");
     expect(negotiateLocale({ country: "SN" })).toBe("fr");
+  });
+
+  it("puis la langue du navigateur", () => {
+    expect(negotiateLocale({ acceptLanguage: "fr-CA" })).toBe("fr");
+    expect(negotiateLocale({ acceptLanguage: "de-DE,de;q=0.9,en;q=0.5" })).toBe("de");
   });
 
   it("passe à l'anglais si la langue détectée n'est pas encore traduite", () => {

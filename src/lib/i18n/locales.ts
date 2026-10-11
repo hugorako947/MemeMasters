@@ -68,18 +68,18 @@ export function parseAcceptLanguage(header: string | null): string[] {
 /**
  * Choisit la langue d'affichage :
  * 1. le choix du joueur (cookie, enregistré dans les réglages) ;
- * 2. la langue du navigateur, si elle est traduite ;
- * 3. la langue du pays où se trouve le joueur, si elle est traduite ;
+ * 2. la langue du pays où se trouve le joueur (géo-IP), si elle est traduite ;
+ * 3. la langue du navigateur, si elle est traduite ;
  * 4. l'anglais si une langue a été détectée mais n'est pas encore traduite ;
  * 5. sinon le français.
  */
 export function negotiateLocale(input: { cookie?: string | null; acceptLanguage?: string | null; country?: string | null }): Locale {
   if (isAvailable(input.cookie)) return input.cookie;
+  const fromCountry = input.country ? COUNTRY_LANGUAGE[input.country.toUpperCase()] : undefined;
+  if (fromCountry && isAvailable(fromCountry)) return fromCountry;
   const browser = parseAcceptLanguage(input.acceptLanguage ?? null);
   const fromBrowser = browser.find((lang) => isAvailable(lang));
   if (fromBrowser && isLocale(fromBrowser)) return fromBrowser;
-  const fromCountry = input.country ? COUNTRY_LANGUAGE[input.country.toUpperCase()] : undefined;
-  if (fromCountry && isAvailable(fromCountry)) return fromCountry;
   if (browser.length > 0 || fromCountry) return FALLBACK_LOCALE;
   return DEFAULT_LOCALE;
 }

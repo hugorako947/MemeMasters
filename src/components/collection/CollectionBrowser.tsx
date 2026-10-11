@@ -135,9 +135,9 @@ export function CollectionBrowser({ items, resaleLeftCents }: { items: Collectio
               onClick={() => setAscending((v) => !v)}
               aria-label={ascending ? t("orderAsc") : t("orderDesc")}
               title={ascending ? t("orderAsc") : t("orderDesc")}
-              className="grid min-h-10 min-w-10 place-items-center rounded-full border-2 border-ink bg-surface text-base font-extrabold"
+              className="grid min-h-10 min-w-10 place-items-center rounded-full border-2 border-ink bg-gradient-to-b from-sticker to-[#ffd940] text-base font-extrabold text-[#1a1238] shadow-[0_2px_0_0_var(--mm-shadow)] transition-all duration-200 hover:scale-110 hover:shadow-[0_3px_0_0_var(--mm-shadow)] active:scale-95 active:shadow-none"
             >
-              {ascending ? "↑" : "↓"}
+              <span className={`inline-block transition-transform duration-300 ${ascending ? "rotate-180" : "rotate-0"}`}>↓</span>
             </button>
           </div>
         </div>
