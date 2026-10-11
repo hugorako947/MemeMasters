@@ -1,4 +1,5 @@
 import { getFormatter, getTranslations } from "next-intl/server";
+import { PlayerCounts } from "@/components/player/PlayerCounts";
 import type { ReactNode } from "react";
 import { InteractiveCard } from "@/components/card/InteractiveCard";
 import { sampleOf } from "@/components/card/sample-cards";
@@ -26,6 +27,7 @@ export async function PlayerFeatures({
   resaleLeftCents,
   boostersBadge = 0,
   challenge = null,
+  counts,
   initial,
   param,
 }: {
@@ -35,6 +37,7 @@ export async function PlayerFeatures({
   resaleLeftCents: number;
   boostersBadge?: number;
   challenge?: DailyChallenge | null;
+  counts?: { accounts: number; online: number };
   initial?: string;
   param?: string;
 }) {
@@ -48,7 +51,7 @@ export async function PlayerFeatures({
       slides={[
         { key: "collection", label: t("collection.title"), content: <CollectionSlide items={collection} resaleLeftCents={resaleLeftCents} /> },
         { key: "boosters", label: t("boosters.title"), content: <BoostersSlide state={boosters} challenge={challenge} />, badge: boostersBadge },
-        { key: "batailles", label: t("battles.title"), content: <BattlesSlide player={player} /> },
+        { key: "batailles", label: t("battles.title"), content: <BattlesSlide player={player} counts={counts} /> },
       ]}
     />
   );
@@ -80,7 +83,7 @@ async function BoostersSlide({ state, challenge }: { state: BoosterStateView; ch
 }
 
 /** Rang, trophées, prochaine récompense, et un duel pour donner envie. */
-async function BattlesSlide({ player }: { player: Player }) {
+async function BattlesSlide({ player, counts }: { player: Player; counts?: { accounts: number; online: number } }) {
   const t = await getTranslations("playerHome.battles");
   const tr = await getTranslations("rank");
   const format = await getFormatter();
@@ -89,6 +92,7 @@ async function BattlesSlide({ player }: { player: Player }) {
   return (
     <SlideFrame tint="bg-[#fff6c9]" soon>
       <div className="mx-auto grid max-w-lg gap-5">
+        {counts ? <PlayerCounts initial={counts} compact /> : null}
         <div className="flex items-center gap-3">
           <RankShield rank={rank} size={44} />
           <p className="flex flex-1 items-baseline justify-between text-lg font-extrabold">

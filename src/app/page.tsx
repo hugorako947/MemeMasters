@@ -27,18 +27,19 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
   const player = await getPlayer(user.id);
   if (!player || !player.consentUpToDate) redirect("/bienvenue");
   const { vue } = await searchParams;
-  const [collection, boosters, resaleLeft, badges, challenge] = await Promise.all([
+  const [collection, boosters, resaleLeft, badges, challenge, counts] = await Promise.all([
     getCollection(player.id),
     getBoosterState(player),
     resaleLeftCents(player),
     getBadges(player),
     getDailyChallenge(player),
+    playerCounts(),
   ]);
   return (
     <AppShell player={player} badges={badges}>
       <div className="grid gap-6">
         <h1 className="font-display text-4xl leading-none md:text-5xl">{(await getTranslations("playerHome"))("title", { username: player.username })}</h1>
-        <PlayerFeatures player={player} collection={collection} boosters={boosters} resaleLeftCents={resaleLeft} boostersBadge={badges.boosters} challenge={challenge} initial={typeof vue === "string" ? vue : undefined} />
+        <PlayerFeatures player={player} collection={collection} boosters={boosters} resaleLeftCents={resaleLeft} boostersBadge={badges.boosters} challenge={challenge} counts={counts} initial={typeof vue === "string" ? vue : undefined} />
       </div>
     </AppShell>
   );
