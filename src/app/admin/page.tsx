@@ -3,14 +3,17 @@ import Link from "next/link";
 import { GAME_CONFIG } from "@/config/game.config";
 import { RANK_REWARDS, RANKS } from "@/config/ranks";
 import { RARITIES } from "@/config/rarities";
+import { VIBES } from "@/config/vibes";
 import { adminCards, listAudit, listContact, listReports, overview, playerDetail, searchPlayers } from "@/lib/server/admin";
 import { requireAdmin } from "@/lib/server/auth";
 import { sql } from "@/lib/server/db";
 import { listNews } from "@/lib/server/news";
+import { staffRoleLabel } from "@/lib/server/players";
 import type { Card } from "@/lib/validation/card";
 import {
   banPlayer,
   createNews,
+  deleteCard,
   deleteNews,
   deletePlayer,
   saveCard,
@@ -21,6 +24,7 @@ import {
   updateChallenge,
   updatePlayerResources,
 } from "./actions";
+import { CardArtPicker } from "./CardArtPicker";
 import { Box, dateFr, Field, Stat, Table } from "./ui";
 
 export const metadata: Metadata = { title: "Tableau de bord", robots: { index: false } };
@@ -140,7 +144,7 @@ async function Players({ q, id, isSuper }: { q: string; id: string; isSuper: boo
         <Box title={p.username} aside={<Link href="/admin?section=joueurs" className="text-sm font-bold hover:underline">← Tous les joueurs</Link>}>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-6">
             <Stat label="E-mail" value={<span className="break-all text-base">{p.email ?? "—"}</span>} />
-            <Stat label="Rôle" value={p.role === "admin" ? "Admin" : "Joueur"} />
+            <Stat label="Rôle" value={staffRoleLabel(p.id, p.role)} />
             <Stat label="Statut" value={p.banned_at ? "Banni" : "Actif"} tone={p.banned_at ? "alert" : undefined} />
             <Stat label="Inscrit le" value={<span className="text-base">{dateFr(p.created_at)}</span>} />
             <Stat label="Dernière activité" value={<span className="text-base">{dateFr(p.last_seen_at)}</span>} />
@@ -206,7 +210,7 @@ async function Players({ q, id, isSuper }: { q: string; id: string; isSuper: boo
           ) : null}
         </Box>
 
-        {isSuper ? (
+        {isSuper && staffRoleLabel(p.id, p.role) !== "Super Admin" ? (
           <Box title="Super Admin">
             <form action={setRole} className="flex flex-wrap items-center gap-3">
               <input type="hidden" name="id" value={p.id} />
@@ -252,7 +256,7 @@ async function Players({ q, id, isSuper }: { q: string; id: string; isSuper: boo
             <td className="break-all">{r.email ?? "—"}</td>
             <td>{r.trophies}</td>
             <td>{r.meme_money}</td>
-            <td>{r.role === "admin" ? "Admin" : "Joueur"}</td>
+            <td>{staffRoleLabel(r.id, r.role)}</td>
             <td>{r.banned_at ? "Banni" : "Actif"}</td>
             <td>{dateFr(r.last_seen_at)}</td>
           </tr>
@@ -361,7 +365,7 @@ async function Cards({ id, isNew }: { id: string; isNew: boolean }) {
 }
 
 function CardForm({ card }: { card: (Card & { isActive?: boolean; isDroppable?: boolean }) | null }) {
-  const d = card?.defenseAbility.effect;
+  const d = card?.defenseAbility?.effect;
   const defenseValue = d && "percent" in d ? d.percent : d && "chance" in d ? d.chance : 10;
   return (
     <Box title={card ? `Modifier : ${card.name}` : "Nouvelle carte"} aside={<Link href="/admin?section=cartes" className="text-sm font-bold underline">← Toutes les cartes</Link>}>
@@ -374,6 +378,16 @@ function CardForm({ card }: { card: (Card & { isActive?: boolean; isDroppable?: 
             {RARITIES.map((r) => (
               <option key={r} value={r}>
                 {r}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-bold">
+          Vibe
+          <select name="vibe" defaultValue={card?.vibe ?? "chaos"} className="min-h-10 rounded-xl border-2 border-ink bg-surface px-3 font-normal">
+            {VIBES.map((vibe) => (
+              <option key={vibe} value={vibe}>
+                {vibe}
               </option>
             ))}
           </select>
@@ -402,7 +416,13 @@ function CardForm({ card }: { card: (Card & { isActive?: boolean; isDroppable?: 
             <option value="recharge">Recharge 1 énergie</option>
           </select>
         </label>
-        <Field label="Défense : valeur (5–40)" name="defenseValue" type="number" defaultValue={defenseValue} min={0} max={60} />
+        <Field label="Défense : valeur (soin 5–20, renvoi 10–50, esquive 5–40)" name="defenseValue" type="number" defaultValue={defenseValue} min={0} max={60} />
+        <CardArtPicker
+          artSeed={card?.artSeed ?? 1}
+          vibe={card?.vibe ?? "chaos"}
+          rarity={card?.rarity ?? "commune"}
+          imageUrl={card?.imageUrl ?? null}
+        />
         <label className="flex items-center gap-2 text-sm font-bold">
           <input type="checkbox" name="active" defaultChecked={card ? card.isActive !== false : true} className="size-4" /> Active dans le jeu
         </label>
@@ -416,7 +436,18 @@ function CardForm({ card }: { card: (Card & { isActive?: boolean; isDroppable?: 
           {card ? "Enregistrer la carte" : "Créer la carte"}
         </button>
       </form>
-      <p className="text-xs text-ink-soft">L&apos;illustration est générée automatiquement. Les modifications s&apos;appliquent immédiatement à tous les joueurs.</p>
+      {card ? (
+        <form action={deleteCard} className="grid gap-3 border-t-2 border-dashed border-line pt-4 sm:grid-cols-[1fr_auto]">
+          <input type="hidden" name="id" value={card.id} />
+          <Field label={`Supprimer définitivement : retapez « ${card.name} »`} name="confirm" required />
+          <button type="submit" className="mm-btn mm-btn--danger min-h-10 self-end px-5">
+            Supprimer la carte
+          </button>
+        </form>
+      ) : null}
+      <p className="text-xs text-ink-soft">
+        Illustration générée automatiquement, ou image importée / photo prise sur l&apos;appareil. Les modifications s&apos;appliquent immédiatement à tous les joueurs.
+      </p>
     </Box>
   );
 }

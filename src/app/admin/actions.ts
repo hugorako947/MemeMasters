@@ -6,8 +6,10 @@ import { z } from "zod";
 import { RARITIES } from "@/config/rarities";
 import { rankIndex } from "@/config/ranks";
 import { checkBudget } from "@/lib/cards/balance";
+import { VIBES } from "@/config/vibes";
 import { audit } from "@/lib/server/admin";
 import { requireAdmin } from "@/lib/server/auth";
+import { removeCardArt, uploadCardArt } from "@/lib/server/card-art";
 import { sql } from "@/lib/server/db";
 import { deleteAccount, isSuperAdminId } from "@/lib/server/players";
 import { cardSchema } from "@/lib/validation/card";
@@ -21,6 +23,22 @@ function fail(section: string, message: string, extra = ""): never {
   redirect(`/admin?section=${section}${extra}&erreur=${encodeURIComponent(message)}`);
 }
 const int = (min: number, max: number) => z.coerce.number().int().min(min).max(max);
+
+function isControlFlow(error: unknown): boolean {
+  if (!error || typeof error !== "object" || !("digest" in error)) return false;
+  const digest = String((error as { digest: unknown }).digest);
+  return digest.startsWith("NEXT_REDIRECT") || digest.startsWith("NEXT_NOT_FOUND");
+}
+
+function saveCardFailMessage(error: unknown): string {
+  const code = error && typeof error === "object" && "code" in error ? String((error as { code: unknown }).code) : "";
+  const message = error instanceof Error ? error.message : "";
+  if (code === "23505") return "Une carte avec ce nom existe déjà.";
+  if (code === "42804" || /rarity|vibe/i.test(message)) return "Rareté ou vibe refusée par la base. Réessayez.";
+  if (code === "23514") return "Une valeur dépasse les limites autorisées (statistiques ou nom).";
+  if (message) return message.slice(0, 180);
+  return "Impossible d'enregistrer la carte. Réessayez.";
+}
 
 /** Garde-fous : personne ne touche au Super Admin ; seul le Super Admin agit sur un admin. */
 async function assertCanManage(actor: { id: string; role: string }, targetId: string, section: string) {
@@ -147,100 +165,175 @@ function slugify(name: string): string {
 /** Créer ou modifier une carte (avec annonce facultative dans les news). */
 export async function saveCard(form: FormData) {
   const { player: admin } = await requireAdmin();
-  const raw = Object.fromEntries(form);
-  const d = z
-    .object({
-      id: z.string().optional(),
-      name: z.string().trim().min(1).max(40),
-      description: z.string().trim().max(280),
-      rarity: z.enum(RARITIES),
-      hp: int(60, 140),
-      atk: int(20, 65),
-      def: int(20, 65),
-      spd: int(10, 100),
-      attackName: z.string().trim().min(1).max(32),
-      attackPower: int(25, 35),
-      specialName: z.string().trim().min(1).max(32),
-      specialPower: int(50, 90),
-      specialCost: int(2, 4),
-      defenseName: z.string().trim().min(1).max(32),
-      defenseKind: z.enum(DEFENSE_KINDS),
-      defenseValue: int(0, 60),
-      active: z.string().optional(),
-      droppable: z.string().optional(),
-      announce: z.string().optional(),
-    })
-    .safeParse(raw);
+  const artFile = form.get("art");
+  const art = artFile instanceof File && artFile.size > 0 ? artFile : null;
+  const raw = Object.fromEntries([...form.entries()].filter(([, value]) => typeof value === "string")) as Record<string, string>;
+  if (raw.id === "") delete raw.id;
   const extra = raw.id ? `&id=${raw.id}` : "&nouvelle=1";
-  if (!d.success) fail("cartes", "Champs invalides : " + d.error.issues.map((i) => i.path.join(".")).join(", "), extra);
-  const v = d.data;
-  const defenseEffect =
-    v.defenseKind === "heal" || v.defenseKind === "reflect"
-      ? { kind: v.defenseKind, percent: Math.max(5, Math.min(40, v.defenseValue)) }
-      : v.defenseKind === "dodge"
-        ? { kind: "dodge" as const, chance: Math.max(5, Math.min(40, v.defenseValue)) }
-        : v.defenseKind === "recharge"
-          ? { kind: "recharge" as const, amount: 1 }
-          : { kind: "cleanse" as const };
-  const existing = v.id
-    ? (await sql()<{ special_attack: { effect: unknown }; slug: string; art_seed: number }[]>`select special_attack, slug, art_seed from public.cards where id = ${v.id}`)[0]
-    : null;
-  const card = {
-    id: v.id || "00000000-0000-4000-8000-000000000000",
-    slug: existing?.slug ?? slugify(v.name),
-    name: v.name,
-    description: v.description,
-    rarity: v.rarity,
-    vibe: "chaos" as const,
-    hp: v.hp,
-    atk: v.atk,
-    def: v.def,
-    spd: v.spd,
-    normalAttack: { name: v.attackName, power: v.attackPower },
-    specialAttack: { name: v.specialName, power: v.specialPower, energyCost: v.specialCost, effect: (existing?.special_attack.effect as never) ?? { kind: "none" } },
-    defenseAbility: { name: v.defenseName, effect: defenseEffect },
-    artSeed: existing?.art_seed ?? Math.floor(Math.random() * 2_000_000_000),
-    imageUrl: null,
-  };
-  const valid = cardSchema.safeParse(card);
-  if (!valid.success) fail("cartes", "Carte invalide : " + valid.error.issues.map((i) => i.path.join(".") + " " + i.message).join(" ; "), extra);
-  const budget = checkBudget(card, card.rarity);
-  let id = v.id;
-  if (v.id) {
-    await sql()`
-      update public.cards set name = ${card.name}, description = ${card.description}, rarity = ${card.rarity},
-        hp = ${card.hp}, atk = ${card.atk}, def = ${card.def}, spd = ${card.spd},
-        normal_attack = ${JSON.stringify(card.normalAttack)}::jsonb, special_attack = ${JSON.stringify(card.specialAttack)}::jsonb,
-        defense_ability = ${JSON.stringify(card.defenseAbility)}::jsonb,
-        is_active = ${v.active === "on"}, is_droppable = ${v.droppable === "on"}, updated_at = now()
-      where id = ${v.id}
-    `;
-  } else {
-    let slug = card.slug || "carte";
-    const [{ n }] = await sql()<{ n: number }[]>`select count(*)::int as n from public.cards where slug = ${slug}`;
-    if (n > 0) slug = `${slug}-${Date.now().toString(36)}`;
-    const [row] = await sql()<{ id: string }[]>`
-      insert into public.cards (slug, name, description, rarity, vibe, hp, atk, def, spd, normal_attack, special_attack, defense_ability, art_seed, is_active, is_droppable)
-      values (${slug}, ${card.name}, ${card.description}, ${card.rarity}, 'chaos', ${card.hp}, ${card.atk}, ${card.def}, ${card.spd},
-              ${JSON.stringify(card.normalAttack)}::jsonb, ${JSON.stringify(card.specialAttack)}::jsonb, ${JSON.stringify(card.defenseAbility)}::jsonb,
-              ${card.artSeed}, ${v.active === "on"}, ${v.droppable === "on"})
-      returning id
-    `;
-    id = row.id;
+  try {
+    const d = z
+      .object({
+        id: z.uuid().optional(),
+        name: z.string().trim().min(1).max(40),
+        description: z.string().trim().max(280).optional(),
+        rarity: z.enum(RARITIES),
+        vibe: z.enum(VIBES).optional(),
+        hp: int(60, 140),
+        atk: int(20, 65),
+        def: int(20, 65),
+        spd: int(10, 100),
+        attackName: z.string().trim().min(1).max(32),
+        attackPower: int(25, 35),
+        specialName: z.string().trim().min(1).max(32),
+        specialPower: int(50, 90),
+        specialCost: int(2, 4),
+        defenseName: z.string().trim().min(1).max(32),
+        defenseKind: z.enum(DEFENSE_KINDS),
+        defenseValue: int(0, 60),
+        active: z.string().optional(),
+        droppable: z.string().optional(),
+        announce: z.string().optional(),
+        artSource: z.enum(["auto", "upload"]).optional(),
+        reshuffleArt: z.string().optional(),
+      })
+      .safeParse(raw);
+    if (!d.success) fail("cartes", "Champs invalides : " + d.error.issues.map((i) => i.path.join(".") || i.message).join(", "), extra);
+    const v = d.data;
+    const idOpt = v.id || undefined;
+    const defenseEffect =
+      v.defenseKind === "heal"
+        ? { kind: "heal" as const, percent: Math.max(5, Math.min(20, v.defenseValue)) }
+        : v.defenseKind === "reflect"
+          ? { kind: "reflect" as const, percent: Math.max(10, Math.min(50, v.defenseValue)) }
+          : v.defenseKind === "dodge"
+            ? { kind: "dodge" as const, chance: Math.max(5, Math.min(40, v.defenseValue)) }
+            : v.defenseKind === "recharge"
+              ? { kind: "recharge" as const, amount: 1 as const }
+              : { kind: "cleanse" as const };
+    const existing = idOpt
+      ? (
+          await sql()<{
+            special_attack: { effect?: unknown } | null;
+            slug: string;
+            art_seed: number;
+            vibe: (typeof VIBES)[number];
+            image_path: string | null;
+          }[]>`select special_attack, slug, art_seed, vibe, image_path from public.cards where id = ${idOpt}`
+        )[0]
+      : null;
+    if (idOpt && !existing) fail("cartes", "Carte introuvable.", extra);
+    const specialEffect = existing?.special_attack && typeof existing.special_attack === "object" && existing.special_attack.effect
+      ? existing.special_attack.effect
+      : { kind: "none" };
+    const artSeed =
+      v.reshuffleArt === "on" || !existing ? Math.floor(Math.random() * 2_000_000_000) : existing.art_seed;
+    const vibe = v.vibe ?? existing?.vibe ?? "chaos";
+    const card = {
+      id: idOpt || "00000000-0000-4000-8000-000000000000",
+      slug: existing?.slug ?? slugify(v.name),
+      name: v.name,
+      description: v.description ?? "",
+      rarity: v.rarity,
+      vibe,
+      hp: v.hp,
+      atk: v.atk,
+      def: v.def,
+      spd: v.spd,
+      normalAttack: { name: v.attackName, power: v.attackPower },
+      specialAttack: { name: v.specialName, power: v.specialPower, energyCost: v.specialCost, effect: specialEffect as never },
+      defenseAbility: { name: v.defenseName, effect: defenseEffect },
+      artSeed,
+      imageUrl: null,
+    };
+    const valid = cardSchema.safeParse(card);
+    if (!valid.success) {
+      fail("cartes", "Carte invalide : " + valid.error.issues.map((i) => i.path.join(".") + " " + i.message).join(" ; "), extra);
+    }
+    const budget = checkBudget(card, card.rarity);
+    let id = idOpt;
+    if (idOpt) {
+      await sql()`
+        update public.cards set name = ${card.name}, description = ${card.description},
+          rarity = ${card.rarity}::public.rarity, vibe = ${card.vibe}::public.vibe,
+          hp = ${card.hp}, atk = ${card.atk}, def = ${card.def}, spd = ${card.spd},
+          normal_attack = ${JSON.stringify(card.normalAttack)}::jsonb, special_attack = ${JSON.stringify(card.specialAttack)}::jsonb,
+          defense_ability = ${JSON.stringify(card.defenseAbility)}::jsonb, art_seed = ${card.artSeed},
+          is_active = ${v.active === "on"}, is_droppable = ${v.droppable === "on"}, updated_at = now()
+        where id = ${idOpt}
+      `;
+    } else {
+      let slug = card.slug || "carte";
+      const [{ n }] = await sql()<{ n: number }[]>`select count(*)::int as n from public.cards where slug = ${slug}`;
+      if (n > 0) slug = `${slug}-${Date.now().toString(36)}`;
+      const [row] = await sql()<{ id: string }[]>`
+        insert into public.cards (slug, name, description, rarity, vibe, hp, atk, def, spd, normal_attack, special_attack, defense_ability, art_seed, is_active, is_droppable)
+        values (${slug}, ${card.name}, ${card.description}, ${card.rarity}::public.rarity, ${card.vibe}::public.vibe, ${card.hp}, ${card.atk}, ${card.def}, ${card.spd},
+                ${JSON.stringify(card.normalAttack)}::jsonb, ${JSON.stringify(card.specialAttack)}::jsonb, ${JSON.stringify(card.defenseAbility)}::jsonb,
+                ${card.artSeed}, ${v.active === "on"}, ${v.droppable === "on"})
+        returning id
+      `;
+      id = row.id;
+    }
+    if (!id) fail("cartes", "La carte n'a pas pu être créée.", extra);
+
+    const artSource = v.artSource ?? (art ? "upload" : "auto");
+    if (artSource === "auto" && existing?.image_path) {
+      await removeCardArt(existing.image_path);
+      await sql()`update public.cards set image_path = null where id = ${id}`;
+    } else if (artSource === "upload" && art) {
+      const path = await uploadCardArt(id, art);
+      await sql()`update public.cards set image_path = ${path} where id = ${id}`;
+    }
+
+    if (v.announce === "on") {
+      const title = idOpt ? `Carte rééquilibrée : ${card.name}` : `Nouvelle carte : ${card.name}`;
+      const body = idOpt
+        ? `${card.name} a été modifiée : PV ${card.hp}, ATQ ${card.atk}, DÉF ${card.def}, VIT ${card.spd}.`
+        : `${card.name} rejoint le jeu en rareté ${card.rarity}. Elle peut sortir des boosters dès maintenant.`;
+      await sql()`
+        insert into public.news (kind, title, body, created_by)
+        values (${idOpt ? "change" : "news"}, ${JSON.stringify({ fr: title })}::jsonb, ${JSON.stringify({ fr: body })}::jsonb, ${admin.id})
+      `;
+    }
+    await audit(admin.id, idOpt ? "carte.modifier" : "carte.creer", id, { name: card.name, rarity: card.rarity });
+    const note = budget.withinTolerance
+      ? ""
+      : ` Attention : statistiques hors budget pour cette rareté (indice ${Math.round(budget.index)} pour ${Math.round(budget.budget)} attendu).`;
+    back("cartes", (idOpt ? "Carte enregistrée." : "Carte créée.") + note, `&id=${id}`);
+  } catch (error) {
+    if (isControlFlow(error)) throw error;
+    console.error("[admin] saveCard", error);
+    fail("cartes", saveCardFailMessage(error), extra);
   }
-  if (v.announce === "on") {
-    const title = v.id ? `Carte rééquilibrée : ${card.name}` : `Nouvelle carte : ${card.name}`;
-    const body = v.id
-      ? `${card.name} a été modifiée : PV ${card.hp}, ATQ ${card.atk}, DÉF ${card.def}, VIT ${card.spd}.`
-      : `${card.name} rejoint le jeu en rareté ${card.rarity}. Elle peut sortir des boosters dès maintenant.`;
-    await sql()`
-      insert into public.news (kind, title, body, created_by)
-      values (${v.id ? "change" : "news"}, ${JSON.stringify({ fr: title })}::jsonb, ${JSON.stringify({ fr: body })}::jsonb, ${admin.id})
+}
+
+/** Retirer une carte du jeu (collections, decks, illustration). */
+export async function deleteCard(form: FormData) {
+  const { player: admin } = await requireAdmin();
+  const d = z.object({ id: z.uuid(), confirm: z.string().trim() }).safeParse(Object.fromEntries(form));
+  if (!d.success) fail("cartes", "Confirmation invalide.");
+  try {
+    const [card] = await sql()<{ name: string; image_path: string | null }[]>`
+      select name, image_path from public.cards where id = ${d.data.id}
     `;
+    if (!card) fail("cartes", "Carte introuvable.");
+    if (card.name.toLowerCase() !== d.data.confirm.toLowerCase()) {
+      fail("cartes", "Retapez exactement le nom de la carte pour confirmer.", `&id=${d.data.id}`);
+    }
+    await sql().begin(async (tx) => {
+      await tx`delete from public.user_cards where card_id = ${d.data.id}`;
+      await tx`update public.decks set card_ids = array_remove(card_ids, ${d.data.id}::uuid)`;
+      await tx`delete from public.decks where cardinality(card_ids) < 1`;
+      await tx`delete from public.cards where id = ${d.data.id}`;
+    });
+    await removeCardArt(card.image_path);
+    await audit(admin.id, "carte.supprimer", d.data.id, { name: card.name });
+    back("cartes", `Carte « ${card.name} » supprimée.`);
+  } catch (error) {
+    if (isControlFlow(error)) throw error;
+    console.error("[admin] deleteCard", error);
+    fail("cartes", "Impossible de supprimer cette carte pour le moment.", `&id=${d.data.id}`);
   }
-  await audit(admin.id, v.id ? "carte.modifier" : "carte.creer", id ?? null, { name: card.name, rarity: card.rarity });
-  const note = budget.withinTolerance ? "" : ` Attention : statistiques hors budget pour cette rareté (indice ${Math.round(budget.index)} pour ${Math.round(budget.budget)} attendu).`;
-  back("cartes", (v.id ? "Carte enregistrée." : "Carte créée.") + note, `&id=${id}`);
 }
 
 // ------------------------------------------------------------------ news et défis

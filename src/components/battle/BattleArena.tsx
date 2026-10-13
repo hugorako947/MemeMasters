@@ -42,7 +42,16 @@ export function BattleArena({ deck, botDeck, seed: initialSeed, playerName }: { 
   const [result, setResult] = useState<BattleState["result"]>(null);
   const cards = useMemo(() => new Map([...deck, ...botDeck].map((c) => [c.id, c])), [deck, botDeck]);
   // Illustration de chaque carte (data URI), calculée une fois.
-  const art = useMemo(() => new Map([...cards.values()].map((c) => [c.id, cardArtDataUri({ seed: c.artSeed, vibe: c.vibe, rarity: c.rarity })])), [cards]);
+  const art = useMemo(
+    () =>
+      new Map(
+        [...cards.values()].map((c) => [
+          c.id,
+          c.imageUrl ?? cardArtDataUri({ seed: c.artSeed, vibe: c.vibe, rarity: c.rarity }),
+        ]),
+      ),
+    [cards],
+  );
 
   // Illustrations des cartes, préparées une fois.
   useEffect(() => {

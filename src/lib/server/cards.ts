@@ -3,6 +3,7 @@ import type { Rarity } from "@/config/rarities";
 import type { Vibe } from "@/config/vibes";
 import type { Level } from "@/lib/economy/duplicates";
 import type { Card } from "@/lib/validation/card";
+import { cardArtPublicUrl } from "./card-art";
 import { sql } from "./db";
 
 export interface CardRow {
@@ -41,8 +42,7 @@ export function toCard(r: CardRow): Card {
     specialAttack: r.special_attack,
     defenseAbility: r.defense_ability,
     artSeed: r.art_seed,
-    // Les images téléversées (Storage) arriveront avec l'administration.
-    imageUrl: null,
+    imageUrl: cardArtPublicUrl(r.image_path),
   };
 }
 

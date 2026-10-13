@@ -306,3 +306,10 @@ export function isSuperAdminId(id: string): boolean {
     .filter(Boolean)
     .includes(id.toLowerCase());
 }
+
+/** Libellé du rôle dans le tableau de bord (le Super Admin n'est pas stocké en base). */
+export function staffRoleLabel(id: string, dbRole: string): "Super Admin" | "Admin" | "Joueur" {
+  if (isSuperAdminId(id)) return "Super Admin";
+  if (dbRole === "admin" || dbRole === "superadmin") return "Admin";
+  return "Joueur";
+}
