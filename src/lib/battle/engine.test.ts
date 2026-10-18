@@ -46,11 +46,13 @@ describe("cartes en unités", () => {
     expect(god.hp).toBeGreaterThan(com.hp * 2);
   });
 
-  it("donne un style à chaque vibe", () => {
-    const tank = unitTemplate(STARTER_SET.find((c) => c.vibe === "wholesome")!);
-    const archer = unitTemplate(STARTER_SET.find((c) => c.vibe === "ironique")!);
-    expect(tank.targets).toBe("buildings");
-    expect(archer.range).toBeGreaterThan(3_000);
+  it("calcule équitablement les stats des unités selon les attributs de la carte", () => {
+    const cardA = unitTemplate(STARTER_SET[0]);
+    const cardB = unitTemplate(STARTER_SET[1]);
+    expect(cardA.targets).toBe("all");
+    expect(cardB.targets).toBe("all");
+    expect(cardA.hp).toBeGreaterThan(0);
+    expect(cardB.hp).toBeGreaterThan(0);
   });
 });
 

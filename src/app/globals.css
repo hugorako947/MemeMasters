@@ -51,13 +51,59 @@
     outline-offset: 3px;
     border-radius: 6px;
   }
-  /* Curseur sticker : flèche jaune / main rose, uniquement souris (pas le tactile). */
+  /* ==========================================================================
+     Pointeurs de souris MemeMasters
+     - Pointeur de base (flèche) conservé, adapté selon le thème et rôle
+     - Main de clic ("pointer") supprimée : conserve le curseur de base
+     - Curseur d'écriture (I-beam stylisé) pour le texte et les champs de saisie
+     - Couleurs adaptées au thème et rôle (Joueur, Admin, Super Admin)
+     ========================================================================== */
+
+  :root,
+  [data-role="player"] {
+    --mm-cursor-default: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M3 2.2 3.4 22.6l6.2-5.4 4.2 9.6 4.4-1.9-4.3-9.4 8.6-.2z' fill='%23FFD23F' stroke='%231A1238' stroke-width='2.4' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E") 3 2, default;
+    --mm-cursor-text: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='28' viewBox='0 0 24 28'%3E%3Cpath d='M6 3h12M12 3v22M6 25h12' stroke='%231A1238' stroke-width='3.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M7 3h10M12 3v22M7 25h10' stroke='%23FFD23F' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") 12 14, text;
+  }
+
+  [data-theme="dark"] {
+    --mm-cursor-default: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M3 2.2 3.4 22.6l6.2-5.4 4.2 9.6 4.4-1.9-4.3-9.4 8.6-.2z' fill='%23FFD23F' stroke='%23E0D8FF' stroke-width='2.4' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E") 3 2, default;
+    --mm-cursor-text: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='28' viewBox='0 0 24 28'%3E%3Cpath d='M6 3h12M12 3v22M6 25h12' stroke='%231A1238' stroke-width='3.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M7 3h10M12 3v22M7 25h10' stroke='%23FF3D7F' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") 12 14, text;
+  }
+
+  [data-theme="inverted"] {
+    --mm-cursor-default: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M3 2.2 3.4 22.6l6.2-5.4 4.2 9.6 4.4-1.9-4.3-9.4 8.6-.2z' fill='%2300D8E6' stroke='%23FFFFFF' stroke-width='2.4' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E") 3 2, default;
+    --mm-cursor-text: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='28' viewBox='0 0 24 28'%3E%3Cpath d='M6 3h12M12 3v22M6 25h12' stroke='%23FFFFFF' stroke-width='3.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M7 3h10M12 3v22M7 25h10' stroke='%2300D8E6' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") 12 14, text;
+  }
+
+  /* Rôle Administrateur : Bleu électrique et insigne cyber */
+  [data-role="admin"] {
+    --mm-cursor-default: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M3 2.2 3.4 22.6l6.2-5.4 4.2 9.6 4.4-1.9-4.3-9.4 8.6-.2z' fill='%232D5BFF' stroke='%231A1238' stroke-width='2.4' stroke-linejoin='round' stroke-linecap='round'/%3E%3Ccircle cx='10' cy='10' r='2.2' fill='%2300D8E6' stroke='%231A1238' stroke-width='1'/%3E%3C/svg%3E") 3 2, default;
+    --mm-cursor-text: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='28' viewBox='0 0 24 28'%3E%3Cpath d='M6 3h12M12 3v22M6 25h12' stroke='%231A1238' stroke-width='3.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M7 3h10M12 3v22M7 25h10' stroke='%232D5BFF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") 12 14, text;
+  }
+
+  [data-role="admin"][data-theme="dark"] {
+    --mm-cursor-default: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M3 2.2 3.4 22.6l6.2-5.4 4.2 9.6 4.4-1.9-4.3-9.4 8.6-.2z' fill='%232D5BFF' stroke='%23E0D8FF' stroke-width='2.4' stroke-linejoin='round' stroke-linecap='round'/%3E%3Ccircle cx='10' cy='10' r='2.2' fill='%2300D8E6' stroke='%23E0D8FF' stroke-width='1'/%3E%3C/svg%3E") 3 2, default;
+    --mm-cursor-text: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='28' viewBox='0 0 24 28'%3E%3Cpath d='M6 3h12M12 3v22M6 25h12' stroke='%23E0D8FF' stroke-width='3.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M7 3h10M12 3v22M7 25h10' stroke='%232D5BFF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") 12 14, text;
+  }
+
+  /* Rôle Super Admin : Or Majestueux et joyau rubis royal */
+  [data-role="superadmin"] {
+    --mm-cursor-default: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M3 2.2 3.4 22.6l6.2-5.4 4.2 9.6 4.4-1.9-4.3-9.4 8.6-.2z' fill='%23FFC83D' stroke='%231A1238' stroke-width='2.4' stroke-linejoin='round' stroke-linecap='round'/%3E%3Ccircle cx='10' cy='10' r='2.8' fill='%23FF3D7F' stroke='%231A1238' stroke-width='1.2'/%3E%3Cpath d='M9.2 3.5l1 2.2h-2z' fill='%23FF3D7F'/%3E%3C/svg%3E") 3 2, default;
+    --mm-cursor-text: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='28' viewBox='0 0 24 28'%3E%3Cpath d='M6 3h12M12 3v22M6 25h12' stroke='%231A1238' stroke-width='3.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M7 3h10M12 3v22M7 25h10' stroke='%23FFC83D' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='12' cy='14' r='2' fill='%23FF3D7F'/%3E%3C/svg%3E") 12 14, text;
+  }
+
+  [data-role="superadmin"][data-theme="dark"] {
+    --mm-cursor-default: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M3 2.2 3.4 22.6l6.2-5.4 4.2 9.6 4.4-1.9-4.3-9.4 8.6-.2z' fill='%23FFC83D' stroke='%23E0D8FF' stroke-width='2.4' stroke-linejoin='round' stroke-linecap='round'/%3E%3Ccircle cx='10' cy='10' r='2.8' fill='%23FF3D7F' stroke='%23E0D8FF' stroke-width='1.2'/%3E%3Cpath d='M9.2 3.5l1 2.2h-2z' fill='%23FF3D7F'/%3E%3C/svg%3E") 3 2, default;
+    --mm-cursor-text: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='28' viewBox='0 0 24 28'%3E%3Cpath d='M6 3h12M12 3v22M6 25h12' stroke='%23E0D8FF' stroke-width='3.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M7 3h10M12 3v22M7 25h10' stroke='%23FFC83D' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='12' cy='14' r='2' fill='%23FF3D7F'/%3E%3C/svg%3E") 12 14, text;
+  }
+
   @media (hover: hover) and (pointer: fine) {
     html,
     body,
     #mm-app {
-      cursor: url("/cursors/mm-arrow.svg") 3 2, auto;
+      cursor: var(--mm-cursor-default, default);
     }
+    /* Boutons et éléments d'action : garde le pointeur de base, enlève la main */
     a,
     button,
     [role="button"],
@@ -71,8 +117,21 @@
     input[type="radio"],
     input[type="file"],
     input[type="submit"] {
-      cursor: url("/cursors/mm-pointer.svg") 8 2, pointer;
+      cursor: var(--mm-cursor-default, default);
     }
+    /* Curseur d'écriture sur le texte et les champs de saisie */
+    p,
+    span,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    blockquote,
+    li,
+    td,
+    th,
     input[type="text"],
     input[type="email"],
     input[type="password"],
@@ -80,10 +139,11 @@
     input[type="number"],
     input[type="url"],
     textarea {
-      cursor: url("/cursors/mm-arrow.svg") 3 2, text;
+      cursor: var(--mm-cursor-text, text);
     }
     .mm-btn:disabled,
-    button:disabled {
+    button:disabled,
+    [aria-disabled="true"] {
       cursor: not-allowed;
     }
   }

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { LEGAL } from "@/config/legal.config";
 import { RARITIES } from "@/config/rarities";
 import { rankIndex } from "@/config/ranks";
 import { checkBudget } from "@/lib/cards/balance";
@@ -34,7 +35,7 @@ function saveCardFailMessage(error: unknown): string {
   const code = error && typeof error === "object" && "code" in error ? String((error as { code: unknown }).code) : "";
   const message = error instanceof Error ? error.message : "";
   if (code === "23505") return "Une carte avec ce nom existe déjà.";
-  if (code === "42804" || /rarity|vibe/i.test(message)) return "Rareté ou vibe refusée par la base. Réessayez.";
+  if (code === "42804" || /rarity/i.test(message)) return "Rareté refusée par la base. Réessayez.";
   if (code === "23514") return "Une valeur dépasse les limites autorisées (statistiques ou nom).";
   if (message) return message.slice(0, 180);
   return "Impossible d'enregistrer la carte. Réessayez.";
@@ -42,10 +43,12 @@ function saveCardFailMessage(error: unknown): string {
 
 /** Garde-fous : personne ne touche au Super Admin ; seul le Super Admin agit sur un admin. */
 async function assertCanManage(actor: { id: string; role: string }, targetId: string, section: string) {
-  if (isSuperAdminId(targetId)) fail(section, "Le compte du Super Admin ne peut pas être modifié ici.", `&id=${targetId}`);
+  if (isSuperAdminId(targetId)) fail(section, "Le compte du Super Admin ne peut pas être modifié.", `&id=${targetId}`);
   const [t] = await sql()<{ role: string }[]>`select role from public.player_private where player_id = ${targetId}`;
   if (!t) fail(section, "Joueur introuvable.");
-  if (t.role === "admin" && actor.role !== "superadmin") fail(section, "Seul le Super Admin peut agir sur un admin.", `&id=${targetId}`);
+  if (t.role === "admin" && actor.role !== "superadmin") {
+    fail(section, "Un administrateur ne peut pas modifier un autre administrateur. Seul le Super Admin en a le pouvoir.", `&id=${targetId}`);
+  }
 }
 
 // ------------------------------------------------------------------ joueurs
@@ -118,15 +121,65 @@ export async function setRole(form: FormData) {
   back("joueurs", d.role === "admin" ? "Joueur nommé admin." : "Rôle d'admin retiré.", `&id=${d.id}`);
 }
 
-/** Supprimer un compte : réservé au Super Admin, avec le pseudo retapé. */
+/** Créer un compte : Super Admin peut créer un joueur ou un admin ; Admin peut créer UNIQUEMENT un joueur. */
+export async function createPlayerAccount(form: FormData) {
+  const { player: admin } = await requireAdmin();
+  const raw = Object.fromEntries(form);
+  const d = z
+    .object({
+      username: z
+        .string()
+        .trim()
+        .min(3, "Le pseudo doit contenir au moins 3 caractères.")
+        .max(20, "Le pseudo ne peut dépasser 20 caractères.")
+        .regex(/^[a-zA-Z0-9_]+$/, "Lettres sans accent, chiffres et underscore uniquement."),
+      email: z.string().trim().email("Adresse e-mail valide requise."),
+      role: z.enum(["player", "admin"]).default("player"),
+      memeMoney: int(0, 10_000_000).default(50),
+      trophies: int(0, 1_000_000).default(0),
+    })
+    .parse(raw);
+
+  if (admin.role !== "superadmin" && d.role === "admin") {
+    fail("joueurs", "Un administrateur ne peut pas créer un compte administrateur. Seul le Super Admin en a le pouvoir.");
+  }
+
+  const taken = await sql()`select 1 from public.profiles where username = ${d.username}::extensions.citext limit 1`;
+  if (taken.length > 0) fail("joueurs", "Ce pseudo est déjà utilisé.");
+
+  const emailTaken = await sql()`select 1 from auth.users where email = ${d.email} limit 1`;
+  if (emailTaken.length > 0) fail("joueurs", "Un compte existe déjà avec cette adresse e-mail.");
+
+  const newUserId = crypto.randomUUID();
+  await sql().begin(async (tx) => {
+    await tx`insert into auth.users (id, email) values (${newUserId}, ${d.email})`;
+    await tx`insert into public.profiles (id, username, trophies) values (${newUserId}, ${d.username}, ${d.trophies})`;
+    await tx`
+      insert into public.player_private (player_id, timezone, role, age_confirmed_at, terms_accepted_at, terms_version)
+      values (${newUserId}, 'Europe/Paris', ${d.role}, now(), now(), ${LEGAL.TERMS_VERSION})
+    `;
+    await tx`insert into public.player_wallets (player_id, meme_money) values (${newUserId}, ${d.memeMoney})`;
+    await tx`insert into public.trophy_history (player_id, trophies, rank, reason) values (${newUserId}, ${d.trophies}, 0, 'admin_create')`;
+  });
+
+  await audit(admin.id, d.role === "admin" ? "admin.creer" : "joueur.creer", newUserId, { username: d.username, email: d.email, role: d.role });
+  back("joueurs", `Compte ${d.role === "admin" ? "administrateur" : "joueur"} « ${d.username} » créé avec succès.`, `&id=${newUserId}`);
+}
+
+/** Supprimer un compte : Super Admin peut supprimer admin ou joueur ; Admin peut supprimer uniquement les joueurs. */
 export async function deletePlayer(form: FormData) {
-  const { player: admin } = await requireAdmin("superadmin");
+  const { player: admin } = await requireAdmin();
   const d = z.object({ id: z.uuid(), confirm: z.string().trim() }).parse(Object.fromEntries(form));
-  if (isSuperAdminId(d.id)) fail("joueurs", "Impossible de supprimer le Super Admin.");
+  if (isSuperAdminId(d.id)) fail("joueurs", "Le compte du Super Admin ne peut pas être supprimé.");
+  const [t] = await sql()<{ role: string }[]>`select role from public.player_private where player_id = ${d.id}`;
+  if (!t) fail("joueurs", "Compte introuvable.");
+  if (t.role === "admin" && admin.role !== "superadmin") {
+    fail("joueurs", "Un administrateur ne peut pas supprimer un autre administrateur. Seul le Super Admin en a le pouvoir.");
+  }
   const [p] = await sql()<{ username: string }[]>`select username::text as username from public.profiles where id = ${d.id}`;
   if (!p || p.username.toLowerCase() !== d.confirm.toLowerCase()) fail("joueurs", "Pseudo de confirmation incorrect.", `&id=${d.id}`);
   await deleteAccount(d.id);
-  await audit(admin.id, "joueur.supprimer", d.id, { username: p.username });
+  await audit(admin.id, "joueur.supprimer", d.id, { username: p.username, role: t.role });
   back("joueurs", `Compte « ${p.username} » supprimé.`);
 }
 

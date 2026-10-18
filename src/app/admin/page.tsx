@@ -3,16 +3,16 @@ import Link from "next/link";
 import { GAME_CONFIG } from "@/config/game.config";
 import { RANK_REWARDS, RANKS } from "@/config/ranks";
 import { RARITIES } from "@/config/rarities";
-import { VIBES } from "@/config/vibes";
 import { adminCards, listAudit, listContact, listReports, overview, playerDetail, searchPlayers } from "@/lib/server/admin";
 import { requireAdmin } from "@/lib/server/auth";
 import { sql } from "@/lib/server/db";
 import { listNews } from "@/lib/server/news";
-import { staffRoleLabel } from "@/lib/server/players";
+import { isSuperAdminId, staffRoleLabel } from "@/lib/server/players";
 import type { Card } from "@/lib/validation/card";
 import {
   banPlayer,
   createNews,
+  createPlayerAccount,
   deleteCard,
   deleteNews,
   deletePlayer,
@@ -138,7 +138,10 @@ async function Players({ q, id, isSuper }: { q: string; id: string; isSuper: boo
   if (id) {
     const p = await playerDetail(id);
     if (!p) return <Box title="Joueur introuvable">{null}</Box>;
-    const locked = p.role === "admin" && !isSuper;
+    const isTargetSuper = isSuperAdminId(p.id);
+    const isTargetAdmin = p.role === "admin" && !isTargetSuper;
+    const isTargetPlayer = !isTargetSuper && !isTargetAdmin;
+    const locked = isTargetSuper || (!isSuper && isTargetAdmin);
     return (
       <>
         <Box title={p.username} aside={<Link href="/admin?section=joueurs" className="text-sm font-bold hover:underline">← Tous les joueurs</Link>}>
@@ -161,7 +164,11 @@ async function Players({ q, id, isSuper }: { q: string; id: string; isSuper: boo
         </Box>
 
         <Box title="Ressources">
-          {locked ? <p className="text-sm text-ink-soft">Seul le Super Admin peut modifier un admin.</p> : null}
+          {isTargetSuper ? (
+            <p className="text-sm text-ink-soft">Le compte du Super Admin ne peut pas être modifié depuis le tableau de bord.</p>
+          ) : locked ? (
+            <p className="text-sm font-semibold text-danger">Un administrateur ne peut pas modifier un autre administrateur. Seul le Super Admin en a le pouvoir.</p>
+          ) : null}
           <form action={updatePlayerResources} className="grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
             <input type="hidden" name="id" value={p.id} />
             <Field label="MemeMoney" name="memeMoney" type="number" defaultValue={p.meme_money} min={0} disabled={locked} />
@@ -177,7 +184,11 @@ async function Players({ q, id, isSuper }: { q: string; id: string; isSuper: boo
         </Box>
 
         <Box title="Modération">
-          {p.banned_at ? (
+          {isTargetSuper ? (
+            <p className="text-sm text-ink-soft">Le compte du Super Admin ne peut pas faire l&apos;objet de sanctions.</p>
+          ) : locked ? (
+            <p className="text-sm font-semibold text-danger">Un administrateur ne peut pas modérer ou bannir un autre administrateur. Seul le Super Admin peut intervenir.</p>
+          ) : p.banned_at ? (
             <form action={unbanPlayer} className="flex flex-wrap items-center gap-3">
               <input type="hidden" name="id" value={p.id} />
               <span className="text-sm">
@@ -210,16 +221,37 @@ async function Players({ q, id, isSuper }: { q: string; id: string; isSuper: boo
           ) : null}
         </Box>
 
-        {isSuper && staffRoleLabel(p.id, p.role) !== "Super Admin" ? (
-          <Box title="Super Admin">
+        {isSuper && isTargetAdmin ? (
+          <Box title="Super Admin — Rôle administrateur">
             <form action={setRole} className="flex flex-wrap items-center gap-3">
               <input type="hidden" name="id" value={p.id} />
-              <input type="hidden" name="role" value={p.role === "admin" ? "player" : "admin"} />
+              <input type="hidden" name="role" value="player" />
               <button type="submit" className="mm-btn mm-btn--secondary px-5">
-                {p.role === "admin" ? "Retirer le rôle d'admin" : "Nommer admin"}
+                Retirer le rôle d&apos;admin
               </button>
-              <span className="text-sm text-ink-soft">Un admin accède à ce tableau de bord, sans pouvoir nommer d&apos;autres admins ni supprimer de comptes.</span>
+              <span className="text-sm text-ink-soft">Rétrograde cet administrateur au rang de joueur simple.</span>
             </form>
+          </Box>
+        ) : isSuper && isTargetPlayer ? (
+          <Box title="Super Admin — Promotion">
+            <form action={setRole} className="flex flex-wrap items-center gap-3">
+              <input type="hidden" name="id" value={p.id} />
+              <input type="hidden" name="role" value="admin" />
+              <button type="submit" className="mm-btn mm-btn--secondary px-5">
+                Nommer administrateur
+              </button>
+              <span className="text-sm text-ink-soft">Permet à ce joueur d&apos;accéder au tableau de bord pour superviser les joueurs.</span>
+            </form>
+          </Box>
+        ) : null}
+
+        {!isTargetSuper && (isTargetPlayer || (isSuper && isTargetAdmin)) ? (
+          <Box title="Suppression définitive du compte">
+            <p className="mb-2 text-xs text-ink-soft">
+              {isTargetAdmin
+                ? "Attention : vous allez supprimer définitivement le compte de cet administrateur."
+                : "Attention : vous allez supprimer définitivement le compte de ce joueur."}
+            </p>
             <form action={deletePlayer} className="flex flex-wrap items-end gap-3 border-t-2 border-dashed border-line pt-3">
               <input type="hidden" name="id" value={p.id} />
               <div className="min-w-64 flex-1">
@@ -237,32 +269,62 @@ async function Players({ q, id, isSuper }: { q: string; id: string; isSuper: boo
 
   const rows = await searchPlayers(q);
   return (
-    <Box title="Joueurs">
-      <form className="flex flex-wrap gap-2">
-        <input type="hidden" name="section" value="joueurs" />
-        <input name="q" defaultValue={q} placeholder="Pseudo ou e-mail" className="min-h-10 min-w-64 flex-1 rounded-full border-2 border-ink bg-surface px-4" />
-        <button type="submit" className="mm-btn mm-btn--primary px-5">
-          Rechercher
-        </button>
-      </form>
-      <Table head={["Pseudo", "E-mail", "Trophées", "MemeMoney", "Rôle", "Statut", "Dernière activité"]}>
-        {rows.map((r) => (
-          <tr key={r.id}>
-            <td>
-              <Link href={`/admin?section=joueurs&id=${r.id}`} className="font-bold underline">
-                {r.username}
-              </Link>
-            </td>
-            <td className="break-all">{r.email ?? "—"}</td>
-            <td>{r.trophies}</td>
-            <td>{r.meme_money}</td>
-            <td>{staffRoleLabel(r.id, r.role)}</td>
-            <td>{r.banned_at ? "Banni" : "Actif"}</td>
-            <td>{dateFr(r.last_seen_at)}</td>
-          </tr>
-        ))}
-      </Table>
-    </Box>
+    <>
+      <Box title={isSuper ? "Créer un compte (Joueur ou Administrateur)" : "Créer un compte Joueur"}>
+        <p className="mb-2 text-xs text-ink-soft">
+          {isSuper
+            ? "En tant que Super Admin, vous supervisez, créez et gérez aussi bien les administrateurs que les joueurs."
+            : "En tant qu'administrateur, vous supervisez et créez uniquement des joueurs."}
+        </p>
+        <form action={createPlayerAccount} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          <Field label="Pseudo (3 à 20 car.)" name="username" required maxLength={20} />
+          <Field label="Adresse e-mail" name="email" type="email" required />
+          {isSuper ? (
+            <label className="grid gap-1 text-sm font-bold">
+              Rôle
+              <select name="role" defaultValue="player" className="min-h-10 rounded-xl border-2 border-ink bg-surface px-3 font-normal">
+                <option value="player">Joueur</option>
+                <option value="admin">Administrateur</option>
+              </select>
+            </label>
+          ) : (
+            <input type="hidden" name="role" value="player" />
+          )}
+          <Field label="MemeMoney initial" name="memeMoney" type="number" defaultValue={50} min={0} />
+          <Field label="Trophées de départ" name="trophies" type="number" defaultValue={0} min={0} />
+          <button type="submit" className="mm-btn mm-btn--primary px-5 sm:col-span-2 lg:col-span-5 lg:justify-self-start">
+            Créer le compte
+          </button>
+        </form>
+      </Box>
+
+      <Box title="Joueurs">
+        <form className="flex flex-wrap gap-2">
+          <input type="hidden" name="section" value="joueurs" />
+          <input name="q" defaultValue={q} placeholder="Pseudo ou e-mail" className="min-h-10 min-w-64 flex-1 rounded-full border-2 border-ink bg-surface px-4" />
+          <button type="submit" className="mm-btn mm-btn--primary px-5">
+            Rechercher
+          </button>
+        </form>
+        <Table head={["Pseudo", "E-mail", "Trophées", "MemeMoney", "Rôle", "Statut", "Dernière activité"]}>
+          {rows.map((r) => (
+            <tr key={r.id}>
+              <td>
+                <Link href={`/admin?section=joueurs&id=${r.id}`} className="font-bold underline">
+                  {r.username}
+                </Link>
+              </td>
+              <td className="break-all">{r.email ?? "—"}</td>
+              <td>{r.trophies}</td>
+              <td>{r.meme_money}</td>
+              <td>{staffRoleLabel(r.id, r.role)}</td>
+              <td>{r.banned_at ? "Banni" : "Actif"}</td>
+              <td>{dateFr(r.last_seen_at)}</td>
+            </tr>
+          ))}
+        </Table>
+      </Box>
+    </>
   );
 }
 
@@ -382,16 +444,6 @@ function CardForm({ card }: { card: (Card & { isActive?: boolean; isDroppable?: 
             ))}
           </select>
         </label>
-        <label className="grid gap-1 text-sm font-bold">
-          Vibe
-          <select name="vibe" defaultValue={card?.vibe ?? "chaos"} className="min-h-10 rounded-xl border-2 border-ink bg-surface px-3 font-normal">
-            {VIBES.map((vibe) => (
-              <option key={vibe} value={vibe}>
-                {vibe}
-              </option>
-            ))}
-          </select>
-        </label>
         <label className="grid gap-1 text-sm font-bold sm:col-span-2">
           Description
           <textarea name="description" defaultValue={card?.description} maxLength={280} rows={2} className="rounded-xl border-2 border-ink bg-surface px-3 py-2 font-normal" />
@@ -419,7 +471,6 @@ function CardForm({ card }: { card: (Card & { isActive?: boolean; isDroppable?: 
         <Field label="Défense : valeur (soin 5–20, renvoi 10–50, esquive 5–40)" name="defenseValue" type="number" defaultValue={defenseValue} min={0} max={60} />
         <CardArtPicker
           artSeed={card?.artSeed ?? 1}
-          vibe={card?.vibe ?? "chaos"}
           rarity={card?.rarity ?? "commune"}
           imageUrl={card?.imageUrl ?? null}
         />

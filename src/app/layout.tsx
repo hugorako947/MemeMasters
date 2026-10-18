@@ -13,6 +13,9 @@ import { publicEnv } from "@/lib/env.public";
 import { NavigationTracker } from "@/components/layout/NavigationTracker";
 import { OfflineBanner } from "@/components/pwa/OfflineBanner";
 import { PwaProvider } from "@/components/pwa/PwaProvider";
+import { ToastContainer } from "@/components/ui/Toast";
+import { getAuthUser } from "@/lib/server/auth";
+import { getPlayer } from "@/lib/server/players";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("meta");
@@ -50,8 +53,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     base: cookieStore.get(THEME_COOKIES.base)?.value,
   });
   const { style, ...themeAttrs } = themeAttributes(appearance);
+  const user = await getAuthUser();
+  const player = user ? await getPlayer(user.id) : null;
+  const role = player ? player.role : "player";
   return (
-    <html lang={locale} dir={isLocale(locale) ? localeDir(locale) : "ltr"} {...themeAttrs} style={style}>
+    <html lang={locale} dir={isLocale(locale) ? localeDir(locale) : "ltr"} data-role={role} {...themeAttrs} style={style}>
       {/* suppressHydrationWarning : certaines extensions du navigateur (convertisseurs, traducteurs,
           gestionnaires de mots de passe…) ajoutent des attributs au <body> avant que React ne démarre.
           Cela ne concerne que les attributs de cette balise, pas son contenu. */}
@@ -63,6 +69,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <PwaProvider>
               {/* Tout le site est dans #mm-app : flouté quand une fiche de carte est ouverte. */}
               <NavigationTracker />
+              <ToastContainer />
               <div id="mm-app">{children}</div>
             </PwaProvider>
           </MotionConfig>
