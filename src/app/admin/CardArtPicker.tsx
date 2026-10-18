@@ -9,12 +9,12 @@ type Mode = "auto" | "upload";
 
 export function CardArtPicker({
   artSeed,
-  vibe = "chaos",
+  vibe,
   rarity,
   imageUrl,
 }: {
   artSeed: number;
-  vibe?: Vibe;
+  vibe: Vibe;
   rarity: Rarity;
   imageUrl: string | null;
 }) {
@@ -25,7 +25,7 @@ export function CardArtPicker({
   const [preview, setPreview] = useState<string | null>(imageUrl);
   const [cameraOn, setCameraOn] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
-  const generated = cardArtDataUri({ seed: artSeed, vibe: vibe ?? "chaos", rarity });
+  const generated = cardArtDataUri({ seed: artSeed, vibe, rarity });
 
   useEffect(() => {
     return () => stopCamera();
@@ -142,7 +142,7 @@ export function CardArtPicker({
           />
           <div className="flex flex-wrap gap-2">
             <label className="mm-btn mm-btn--secondary min-h-10 px-4 text-sm">
-              Image
+              Prendre une photo
               <input
                 type="file"
                 accept="image/*"
@@ -166,7 +166,7 @@ export function CardArtPicker({
               </>
             ) : (
               <button type="button" className="mm-btn mm-btn--secondary min-h-10 px-4 text-sm" onClick={startCamera}>
-                Photo
+                Caméra en direct
               </button>
             )}
           </div>
@@ -175,7 +175,7 @@ export function CardArtPicker({
           ) : null}
           {cameraError ? <p className="text-sm font-semibold text-danger">{cameraError}</p> : null}
           <p className="text-xs text-ink-soft">
-            Importez une image de l&apos;appareil, prenez une photo, ou capturez via la caméra. JPEG, PNG, WebP ou GIF, 8&nbsp;Mo max.
+            Importez une image de l&apos;appareil, prenez une photo, ou filmez en direct puis capturez. JPEG, PNG, WebP ou GIF, 8&nbsp;Mo max.
           </p>
         </div>
       )}

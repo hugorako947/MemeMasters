@@ -6,6 +6,7 @@
  * Le même enchaînement d'entrées donne toujours le même résultat : le
  * serveur peut rejouer une partie pour en vérifier le vainqueur.
  */
+import { matchup } from "@/config/vibes";
 import type { Card } from "@/lib/validation/card";
 import { ARENA, COST, RULES, TOWERS } from "./rules";
 
@@ -126,12 +127,38 @@ function nextRandom(state: BattleState): number {
 export function unitTemplate(card: Card): UnitTemplate {
   const cost = COST[card.rarity];
   const scale = (cost + 1) / 3; // une carte plus chère est plus puissante
-  const hp = card.hp * 6 * scale;
-  const damage = card.atk * 1.6 * scale;
-  const speed = (500 + card.spd * 10) / 20; // millièmes de case par tick
-  const range = 700;
-  const targets: UnitTemplate["targets"] = "all";
-  const splash = 0;
+  let hp = card.hp * 6 * scale;
+  let damage = card.atk * 1.6 * scale;
+  let speed = (500 + card.spd * 10) / 20; // millièmes de case par tick
+  let range = 700;
+  let targets: UnitTemplate["targets"] = "all";
+  let splash = 0;
+  // Chaque vibe a un style de combat.
+  switch (card.vibe) {
+    case "wholesome": // tank : vise uniquement les tours
+      targets = "buildings";
+      hp *= 1.3;
+      damage *= 0.8;
+      break;
+    case "rage": // cogneur au corps à corps
+      damage *= 1.15;
+      break;
+    case "chaos": // rapide
+      speed *= 1.15;
+      break;
+    case "cringe": // dégâts de zone
+      splash = 1_200;
+      damage *= 0.8;
+      break;
+    case "ironique": // tire de loin
+      range = 5_000;
+      hp *= 0.85;
+      break;
+    case "absurde": // tire à moyenne distance
+      range = 4_000;
+      hp *= 0.9;
+      break;
+  }
   const normal = Math.max(1, card.normalAttack.power);
   return {
     cardId: card.id,
@@ -251,6 +278,11 @@ function applyDamage(state: BattleState, attacker: { side: Side; vibe?: Card["vi
     const tpl = state.templates[target.cardId];
     const def = Math.round((tpl.def * (100 - pierce)) / 100);
     damage = Math.round((damage * 100) / (100 + def));
+    if (attacker.vibe) {
+      const m = matchup(attacker.vibe, tpl.vibe);
+      if (m === "advantage") damage = Math.round(damage * 1.25);
+      if (m === "weakness") damage = Math.round(damage * 0.8);
+    }
   }
   target.hp -= Math.max(1, damage);
   return Math.max(1, damage);
