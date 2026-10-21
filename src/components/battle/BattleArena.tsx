@@ -47,7 +47,7 @@ export function BattleArena({ deck, botDeck, seed: initialSeed, playerName }: { 
       new Map(
         [...cards.values()].map((c) => [
           c.id,
-          c.imageUrl ?? cardArtDataUri({ seed: c.artSeed, vibe: c.vibe, rarity: c.rarity }),
+          c.imageUrl ?? cardArtDataUri({ seed: c.artSeed, rarity: c.rarity }),
         ]),
       ),
     [cards],

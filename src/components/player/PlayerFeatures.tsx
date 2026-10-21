@@ -71,13 +71,12 @@ async function SlideFrame({ tint, soon = false, children }: { tint: string; soon
   );
 }
 
-/** Boosters : ouvrir tout de suite, acheter en MemeMoney, et un clin d'œil vers la Boutique. */
+/** Boosters : ouvrir tout de suite, le défi du jour, puis acheter en MemeMoney (et un clin d'œil vers la Boutique). */
 async function BoostersSlide({ state, challenge }: { state: BoosterStateView; challenge: DailyChallenge | null }) {
   const doubleOffer = OFFERS.some((o) => o.kind === "first_purchase_double" && isOfferActive(o, new Date()));
   return (
     <SlideFrame tint="bg-[#ffe3ec]">
-      {challenge ? <DailyChallengeCard challenge={challenge} /> : null}
-      <BoostersPanel state={state} doubleOffer={doubleOffer} />
+      <BoostersPanel state={state} doubleOffer={doubleOffer} challenge={challenge ? <DailyChallengeCard challenge={challenge} /> : null} />
     </SlideFrame>
   );
 }

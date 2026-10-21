@@ -2,14 +2,13 @@
  * Générateur procédural d'illustrations de cartes (SVG).
  *
  * Aucune image réelle : chaque carte reçoit un personnage « sticker » original,
- * composé à partir d'une graine, de sa vibe (expression, décor) et de sa
- * rareté (ornements). Même graine + même vibe + même rareté = même image.
+ * composé à partir d'une graine (personnage, expression, décor) et de sa
+ * rareté (ornements). Même graine + même rareté = même image.
  *
  * Le SVG produit ne contient ni texte ni script : il est sûr à afficher en
  * <img src="data:..."> et à stocker dans Supabase Storage.
  */
 import { rarityTier, type Rarity } from "@/config/rarities";
-import type { Vibe } from "@/config/vibes";
 import { between, mulberry32, pick } from "./prng";
 
 export const ART_WIDTH = 400;
@@ -17,19 +16,27 @@ export const ART_HEIGHT = 320;
 
 const INK = "#1A1238";
 
+/** Décors (fond, expression, accessoire), tirés de la graine. */
+const DECORS = ["eclairs", "coeurs", "rayons", "pois", "vagues", "formes"] as const;
+type Decor = (typeof DECORS)[number];
+
+export function decorFor(seed: number): Decor {
+  return DECORS[Math.abs(Math.trunc(seed)) % DECORS.length];
+}
+
 interface Palette {
   from: string;
   to: string;
   pattern: string;
 }
 
-const PALETTES: Record<Vibe, Palette> = {
-  chaos: { from: "#2B1055", to: "#FF3D7F", pattern: "#FFD23F" },
-  wholesome: { from: "#FFE3EC", to: "#FFF6C9", pattern: "#FF8FB1" },
-  rage: { from: "#FF5A36", to: "#8A0F1B", pattern: "#FFD23F" },
-  ironique: { from: "#D6ECFF", to: "#7FA8FF", pattern: "#1A1238" },
-  cringe: { from: "#E4FF9A", to: "#7FD8A0", pattern: "#4B7F3A" },
-  absurde: { from: "#FFD23F", to: "#5FE1F5", pattern: "#7C3AED" },
+const PALETTES: Record<Decor, Palette> = {
+  eclairs: { from: "#2B1055", to: "#FF3D7F", pattern: "#FFD23F" },
+  coeurs: { from: "#FFE3EC", to: "#FFF6C9", pattern: "#FF8FB1" },
+  rayons: { from: "#FF5A36", to: "#8A0F1B", pattern: "#FFD23F" },
+  pois: { from: "#D6ECFF", to: "#7FA8FF", pattern: "#1A1238" },
+  vagues: { from: "#E4FF9A", to: "#7FD8A0", pattern: "#4B7F3A" },
+  formes: { from: "#FFD23F", to: "#5FE1F5", pattern: "#7C3AED" },
 };
 
 const SKINS = ["#FFE08A", "#B8F2E6", "#FFB5C2", "#C9B6FF", "#9AE6B4", "#FFD1A1", "#A0D8FF", "#F4F1FF"];
@@ -37,27 +44,27 @@ const SKINS = ["#FFE08A", "#B8F2E6", "#FFB5C2", "#C9B6FF", "#9AE6B4", "#FFD1A1",
 type Eyes = "dots" | "wide" | "halfLid" | "angry" | "spiral" | "sparkle" | "side" | "closed";
 type Mouth = "smile" | "grin" | "flat" | "scream" | "wavy" | "smirk" | "o";
 
-const EXPRESSIONS: Record<Vibe, { eyes: readonly Eyes[]; mouths: readonly Mouth[] }> = {
-  chaos: { eyes: ["spiral", "wide", "angry"], mouths: ["grin", "scream"] },
-  wholesome: { eyes: ["sparkle", "closed"], mouths: ["smile", "o"] },
-  rage: { eyes: ["angry"], mouths: ["scream", "flat"] },
-  ironique: { eyes: ["halfLid", "side"], mouths: ["smirk", "flat"] },
-  cringe: { eyes: ["wide", "side"], mouths: ["wavy", "grin"] },
-  absurde: { eyes: ["spiral", "dots", "wide"], mouths: ["o", "wavy"] },
+const EXPRESSIONS: Record<Decor, { eyes: readonly Eyes[]; mouths: readonly Mouth[] }> = {
+  eclairs: { eyes: ["spiral", "wide", "angry"], mouths: ["grin", "scream"] },
+  coeurs: { eyes: ["sparkle", "closed"], mouths: ["smile", "o"] },
+  rayons: { eyes: ["angry"], mouths: ["scream", "flat"] },
+  pois: { eyes: ["halfLid", "side"], mouths: ["smirk", "flat"] },
+  vagues: { eyes: ["wide", "side"], mouths: ["wavy", "grin"] },
+  formes: { eyes: ["spiral", "dots", "wide"], mouths: ["o", "wavy"] },
 };
 
 const r1 = (n: number) => Math.round(n * 10) / 10;
 
 export interface CardArtInput {
   seed: number;
-  vibe: Vibe;
   rarity: Rarity;
 }
 
-export function generateCardArtSvg({ seed, vibe, rarity }: CardArtInput): string {
+export function generateCardArtSvg({ seed, rarity }: CardArtInput): string {
   const rand = mulberry32(seed);
+  const decor = decorFor(seed);
   const tier = rarityTier(rarity);
-  const pal = PALETTES[vibe];
+  const pal = PALETTES[decor];
   const skin = pick(rand, SKINS);
   const cx = 200 + between(rand, -12, 12);
   const cy = 182 + between(rand, -6, 8);
@@ -68,7 +75,7 @@ export function generateCardArtSvg({ seed, vibe, rarity }: CardArtInput): string
   parts.push(
     `<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${pal.from}"/><stop offset="1" stop-color="${pal.to}"/></linearGradient></defs>`,
     `<rect width="${ART_WIDTH}" height="${ART_HEIGHT}" fill="url(#bg)"/>`,
-    backgroundPattern(vibe, rand, pal.pattern),
+    backgroundPattern(decor, rand, pal.pattern),
   );
   if (tier >= 6) parts.push(rays(cx, cy));
   if (tier >= 4) parts.push(stars(rand, tier >= 5 ? 14 : 9));
@@ -78,15 +85,15 @@ export function generateCardArtSvg({ seed, vibe, rarity }: CardArtInput): string
   parts.push(`<path d="${head}" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="22" stroke-linejoin="round"/>`);
   parts.push(`<path d="${head}" fill="${skin}" stroke="${INK}" stroke-width="6" stroke-linejoin="round"/>`);
 
-  const { eyes, mouths } = EXPRESSIONS[vibe];
+  const { eyes, mouths } = EXPRESSIONS[decor];
   const eyeKind = pick(rand, eyes);
   const mouthKind = pick(rand, mouths);
   const eyeGap = rx * between(rand, 0.36, 0.48);
   const eyeY = cy - ry * between(rand, 0.12, 0.28);
-  parts.push(drawEyes(eyeKind, rand, cx, eyeY, eyeGap, skin, vibe === "absurde"));
+  parts.push(drawEyes(eyeKind, rand, cx, eyeY, eyeGap, skin, decor === "formes"));
   parts.push(drawMouth(mouthKind, rand, cx, cy + ry * between(rand, 0.32, 0.46), rx * between(rand, 0.28, 0.42)));
 
-  parts.push(vibeExtras(vibe, rand, cx, cy, rx, ry, eyeY, eyeGap));
+  parts.push(decorExtras(decor, rand, cx, cy, rx, ry, eyeY, eyeGap));
   if (tier >= 5) parts.push(thirdEye(cx, cy - ry * 0.62));
   if (tier >= 2) parts.push(sparkles(rand, tier >= 3 ? 5 : 3));
   if (tier >= 6) parts.push(halo(cx, cy - ry - 18, rx));
@@ -126,10 +133,10 @@ function headPath(rand: () => number, cx: number, cy: number, rx: number, ry: nu
   return `${d}Z`;
 }
 
-function backgroundPattern(vibe: Vibe, rand: () => number, color: string): string {
+function backgroundPattern(decor: Decor, rand: () => number, color: string): string {
   const out: string[] = [];
-  switch (vibe) {
-    case "chaos":
+  switch (decor) {
+    case "eclairs":
       for (let i = 0; i < 7; i++) {
         const x = between(rand, 0, ART_WIDTH);
         const y = between(rand, 0, ART_HEIGHT);
@@ -138,14 +145,14 @@ function backgroundPattern(vibe: Vibe, rand: () => number, color: string): strin
       }
       out.push(`<polyline points="20,40 70,90 50,110 110,170" fill="none" stroke="${color}" stroke-width="7" stroke-linejoin="bevel" opacity="0.7"/>`);
       break;
-    case "wholesome":
+    case "coeurs":
       for (let i = 0; i < 9; i++) {
         const x = between(rand, 10, ART_WIDTH - 10);
         const y = between(rand, 10, ART_HEIGHT - 10);
         out.push(heart(x, y, between(rand, 8, 16), color, 0.5));
       }
       break;
-    case "rage":
+    case "rayons":
       for (let i = 0; i < 16; i++) {
         const a = (i / 16) * Math.PI * 2;
         const x1 = 200 + Math.cos(a) * 400;
@@ -155,21 +162,21 @@ function backgroundPattern(vibe: Vibe, rand: () => number, color: string): strin
         out.push(`<polygon points="200,180 ${r1(x1)},${r1(y1)} ${r1(x2)},${r1(y2)}" fill="${color}" opacity="0.28"/>`);
       }
       break;
-    case "ironique":
+    case "pois":
       for (let y = 12; y < ART_HEIGHT; y += 24) {
         for (let x = (y / 24) % 2 === 0 ? 12 : 24; x < ART_WIDTH; x += 24) {
           out.push(`<circle cx="${x}" cy="${y}" r="${r1(2 + (y / ART_HEIGHT) * 4)}" fill="${color}" opacity="0.18"/>`);
         }
       }
       break;
-    case "cringe":
+    case "vagues":
       for (let y = 20; y < ART_HEIGHT; y += 34) {
         let d = `M0 ${y}`;
         for (let x = 0; x <= ART_WIDTH; x += 40) d += ` Q${x + 20} ${y + 12} ${x + 40} ${y}`;
         out.push(`<path d="${d}" fill="none" stroke="${color}" stroke-width="5" opacity="0.3"/>`);
       }
       break;
-    case "absurde":
+    case "formes":
       for (let i = 0; i < 8; i++) {
         const x = between(rand, 0, ART_WIDTH);
         const y = between(rand, 0, ART_HEIGHT);
@@ -255,27 +262,27 @@ function drawMouth(kind: Mouth, rand: () => number, cx: number, y: number, w: nu
   }
 }
 
-function vibeExtras(vibe: Vibe, rand: () => number, cx: number, cy: number, rx: number, ry: number, eyeY: number, gap: number): string {
-  switch (vibe) {
-    case "wholesome":
+function decorExtras(decor: Decor, rand: () => number, cx: number, cy: number, rx: number, ry: number, eyeY: number, gap: number): string {
+  switch (decor) {
+    case "coeurs":
       return `<ellipse cx="${r1(cx - gap - 8)}" cy="${r1(eyeY + 34)}" rx="16" ry="9" fill="#FF8FB1" opacity="0.7"/><ellipse cx="${r1(cx + gap + 8)}" cy="${r1(eyeY + 34)}" rx="16" ry="9" fill="#FF8FB1" opacity="0.7"/>`;
-    case "rage": {
+    case "rayons": {
       const x = cx + rx * 0.55;
       const y = cy - ry * 0.7;
       return `<path d="M${r1(x - 14)} ${r1(y - 4)}Q${r1(x)} ${r1(y - 2)} ${r1(x - 2)} ${r1(y - 16)}M${r1(x + 4)} ${r1(y - 16)}Q${r1(x + 4)} ${r1(y)} ${r1(x + 18)} ${r1(y - 2)}M${r1(x - 12)} ${r1(y + 6)}Q${r1(x + 2)} ${r1(y + 4)} ${r1(x + 2)} ${r1(y + 18)}" fill="none" stroke="#C0001A" stroke-width="5" stroke-linecap="round"/>`;
     }
-    case "cringe": {
+    case "vagues": {
       const x = cx + rx * 0.72;
       const y = cy - ry * 0.35;
       return `<path d="M${r1(x)} ${r1(y - 22)}Q${r1(x + 13)} ${r1(y)} ${r1(x)} ${r1(y + 4)}Q${r1(x - 13)} ${r1(y)} ${r1(x)} ${r1(y - 22)}Z" fill="#7FD3FF" stroke="${INK}" stroke-width="3.5"/>`;
     }
-    case "ironique":
+    case "pois":
       // Lunettes pixelisées, posées une fois sur deux.
       if (rand() < 0.5) return "";
       return pixelShades(cx, eyeY);
-    case "absurde":
+    case "formes":
       return `<path d="M${r1(cx + rx * 0.62)} ${r1(cy - ry * 0.95)}q0 -18 16 -18 16 0 16 14 0 10 -14 16v8" fill="none" stroke="${INK}" stroke-width="6" stroke-linecap="round"/><circle cx="${r1(cx + rx * 0.62 + 18)}" cy="${r1(cy - ry * 0.95 + 26)}" r="4" fill="${INK}"/>`;
-    case "chaos":
+    case "eclairs":
       return `<path d="M${r1(cx - rx * 0.9)} ${r1(cy - ry * 0.9)}l14 6-6 10 16 4" fill="none" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>`;
   }
 }

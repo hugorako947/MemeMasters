@@ -50,3 +50,9 @@ export const usernameSchema = z
     const problem = usernameProblem(value);
     if (problem) ctx.addIssue({ code: "custom", message: problem });
   });
+
+/** Un texte libre (nom de carte proposée…) contient-il un mot interdit ? */
+export function containsBannedWords(text: string): boolean {
+  const norm = normalizeForModeration(text.normalize("NFD").replace(/[̀-ͯ]/g, "")).replace(/[^a-z]/g, "");
+  return BANNED_FRAGMENTS.some((f) => norm.includes(f));
+}

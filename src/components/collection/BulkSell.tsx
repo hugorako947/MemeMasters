@@ -6,12 +6,14 @@ import { useMemo, useState } from "react";
 import { MemeCoin } from "@/components/player/RankBadge";
 import { FormMessage } from "@/components/ui/Field";
 import { planBulkSale, type BulkItem } from "@/lib/economy/duplicates";
+import { toast } from "@/components/ui/Toast";
 import { postJson } from "@/lib/client/api";
+import { useErrorText } from "@/lib/client/errors";
 
 /** « Revendre mes doublons » : aperçu du total, puis confirmation. Un exemplaire de chaque carte est gardé. */
 export function BulkSell({ items, resaleLeftCents }: { items: BulkItem[]; resaleLeftCents: number }) {
   const t = useTranslations("dup.bulk");
-  const te = useTranslations("errors");
+  const errorText = useErrorText();
   const format = useFormatter();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -28,9 +30,10 @@ export function BulkSell({ items, resaleLeftCents }: { items: BulkItem[]; resale
     setOpen(false);
     if (res.ok) {
       setMessage({ tone: "success", text: t("done", { amount: money(res.data.cents) }) });
+      toast.success(t("done", { amount: money(res.data.cents) }));
       router.refresh();
     } else {
-      setMessage({ tone: "error", text: te(res.code as "server_error") });
+      setMessage({ tone: "error", text: errorText(res.code) });
     }
   }
 

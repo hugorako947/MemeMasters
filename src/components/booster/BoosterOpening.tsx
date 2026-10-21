@@ -9,6 +9,7 @@ import { FormMessage } from "@/components/ui/Field";
 import { GAME_CONFIG } from "@/config/game.config";
 import { isAtLeast } from "@/config/rarities";
 import { postJson } from "@/lib/client/api";
+import { useErrorText } from "@/lib/client/errors";
 import type { BoosterKind } from "@/lib/economy/boosters";
 import type { Card } from "@/lib/validation/card";
 
@@ -29,7 +30,7 @@ const PACK_CLASS: Record<BoosterKind, string> = { daily: "", special: "mm-pack--
  */
 export function BoosterOpening({ kind, onClose }: { kind: BoosterKind; onClose: (changed: boolean) => void }) {
   const t = useTranslations("opening");
-  const te = useTranslations("errors");
+  const errorText = useErrorText();
   const ref = useRef<HTMLDialogElement>(null);
   const [phase, setPhase] = useState<"pack" | "tearing" | "reveal">("pack");
   const [result, setResult] = useState<Opened | null>(null);
@@ -63,7 +64,7 @@ export function BoosterOpening({ kind, onClose }: { kind: BoosterKind; onClose: 
     ]);
     if (!res.ok) {
       setPhase("pack");
-      setError(te(res.code as "server_error"));
+      setError(errorText(res.code));
       return;
     }
     setResult(res.data);

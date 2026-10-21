@@ -7,6 +7,7 @@ import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/Button";
 import { Field, FormMessage } from "@/components/ui/Field";
 import { postJson } from "@/lib/client/api";
+import { useErrorText } from "@/lib/client/errors";
 
 /**
  * Suppression définitive du compte, en deux temps : un bouton, puis une
@@ -27,7 +28,7 @@ export function DeleteAccount({ username }: { username: string }) {
 
 function DeleteDialog({ username, onClose }: { username: string; onClose: () => void }) {
   const t = useTranslations("settings.delete");
-  const te = useTranslations("errors");
+  const errorText = useErrorText();
   const router = useRouter();
   const ref = useRef<HTMLDialogElement>(null);
   const [typed, setTyped] = useState("");
@@ -56,7 +57,7 @@ function DeleteDialog({ username, onClose }: { username: string; onClose: () => 
       return;
     }
     setPending(false);
-    setError(te(result.code as "server_error"));
+    setError(errorText(result.code));
   }
 
   return createPortal(

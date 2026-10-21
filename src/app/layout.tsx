@@ -8,9 +8,13 @@ import "./globals.css";
 import { cookies } from "next/headers";
 import { GAME_CONFIG } from "@/config/game.config";
 import { isLocale, localeDir } from "@/lib/i18n/locales";
+import { cursorStyle } from "@/lib/theme/cursor";
 import { parseAppearance, THEME_COOKIES, themeAttributes } from "@/lib/theme/theme";
 import { publicEnv } from "@/lib/env.public";
+import { Suspense } from "react";
+import { NavigationProgress } from "@/components/layout/NavigationProgress";
 import { NavigationTracker } from "@/components/layout/NavigationTracker";
+import { Toaster } from "@/components/ui/Toast";
 import { OfflineBanner } from "@/components/pwa/OfflineBanner";
 import { PwaProvider } from "@/components/pwa/PwaProvider";
 
@@ -50,8 +54,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     base: cookieStore.get(THEME_COOKIES.base)?.value,
   });
   const { style, ...themeAttrs } = themeAttributes(appearance);
+  // Pointeurs de souris aux couleurs du thème (variables CSS, voir globals.css).
+  const rootStyle = { ...style, ...cursorStyle(appearance) } as React.CSSProperties;
   return (
-    <html lang={locale} dir={isLocale(locale) ? localeDir(locale) : "ltr"} {...themeAttrs} style={style}>
+    <html lang={locale} dir={isLocale(locale) ? localeDir(locale) : "ltr"} {...themeAttrs} style={rootStyle}>
       {/* suppressHydrationWarning : certaines extensions du navigateur (convertisseurs, traducteurs,
           gestionnaires de mots de passe…) ajoutent des attributs au <body> avant que React ne démarre.
           Cela ne concerne que les attributs de cette balise, pas son contenu. */}
@@ -63,7 +69,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <PwaProvider>
               {/* Tout le site est dans #mm-app : flouté quand une fiche de carte est ouverte. */}
               <NavigationTracker />
+              {/* Barre de chargement dès le clic sur un lien, bulles de confirmation et d'erreur. */}
+              <Suspense fallback={null}>
+                <NavigationProgress />
+              </Suspense>
               <div id="mm-app">{children}</div>
+              <Toaster />
             </PwaProvider>
           </MotionConfig>
         </NextIntlClientProvider>

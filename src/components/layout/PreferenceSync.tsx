@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import { useEffect } from "react";
 import { LOCALE_COOKIE, isAvailable } from "@/lib/i18n/locales";
+import { cursorStyle } from "@/lib/theme/cursor";
 import { randomPalette, THEME_COOKIES, themeAttributes, type Appearance } from "@/lib/theme/theme";
 
 const PALETTE_KEYS = Object.keys(randomPalette("#000001"));
@@ -31,6 +32,8 @@ export function applyAppearance(a: Appearance) {
   // Retire toutes les couleurs posées par un thème précédent (personnalisé ou aléatoire).
   for (const key of PALETTE_KEYS) root.style.removeProperty(key);
   for (const [k, v] of Object.entries(attrs.style ?? {})) root.style.setProperty(k, v);
+  // Pointeurs de souris redessinés aux couleurs du nouveau thème.
+  for (const [k, v] of Object.entries(cursorStyle(a))) root.style.setProperty(k, v);
   writeCookie(THEME_COOKIES.theme, a.theme);
   writeCookie(THEME_COOKIES.accent, a.accent);
   writeCookie(THEME_COOKIES.base, a.base);

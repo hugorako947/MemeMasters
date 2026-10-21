@@ -1,6 +1,5 @@
 import "server-only";
 import type { Rarity } from "@/config/rarities";
-import type { Vibe } from "@/config/vibes";
 import type { Level } from "@/lib/economy/duplicates";
 import type { Card } from "@/lib/validation/card";
 import { cardArtPublicUrl } from "./card-art";
@@ -12,7 +11,6 @@ export interface CardRow {
   name: string;
   description: string;
   rarity: Rarity;
-  vibe: Vibe;
   hp: number;
   atk: number;
   def: number;
@@ -24,7 +22,7 @@ export interface CardRow {
   image_path: string | null;
 }
 
-export const CARD_COLUMNS = "id, slug, name, description, rarity, vibe, hp, atk, def, spd, normal_attack, special_attack, defense_ability, art_seed, image_path";
+export const CARD_COLUMNS = "id, slug, name, description, rarity, hp, atk, def, spd, normal_attack, special_attack, defense_ability, art_seed, image_path";
 
 export function toCard(r: CardRow): Card {
   return {
@@ -33,7 +31,6 @@ export function toCard(r: CardRow): Card {
     name: r.name,
     description: r.description,
     rarity: r.rarity,
-    vibe: r.vibe,
     hp: r.hp,
     atk: r.atk,
     def: r.def,
@@ -56,7 +53,7 @@ export interface CollectionEntry {
 /** Toutes les cartes actives du jeu, avec la quantité possédée par le joueur. */
 export async function getCollection(playerId: string): Promise<CollectionEntry[]> {
   const rows = await sql()<(CardRow & { quantity: number | null; upgrade_level: Level | null; first_obtained_at: Date | null })[]>`
-    select c.id, c.slug, c.name, c.description, c.rarity, c.vibe, c.hp, c.atk, c.def, c.spd,
+    select c.id, c.slug, c.name, c.description, c.rarity, c.hp, c.atk, c.def, c.spd,
            c.normal_attack, c.special_attack, c.defense_ability, c.art_seed, c.image_path,
            uc.quantity, uc.upgrade_level, uc.first_obtained_at
     from public.cards c

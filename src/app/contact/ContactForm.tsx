@@ -5,7 +5,9 @@ import { useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/Button";
 import { Field, FormMessage, RequiredNote } from "@/components/ui/Field";
 import { Captcha } from "@/components/ui/Captcha";
+import { toast } from "@/components/ui/Toast";
 import { postJson } from "@/lib/client/api";
+import { useErrorText } from "@/lib/client/errors";
 import { publicEnv } from "@/lib/env.public";
 import { looksLikeEmail } from "@/lib/validation/auth";
 import { CONTACT_CATEGORIES, CONTACT_MESSAGE_MAX, CONTACT_MESSAGE_MIN, CONTACT_SUBJECT_MAX, CONTACT_SUBJECT_MIN, type ContactCategory } from "@/lib/validation/contact";
@@ -13,6 +15,7 @@ import { CONTACT_CATEGORIES, CONTACT_MESSAGE_MAX, CONTACT_MESSAGE_MIN, CONTACT_S
 export function ContactForm({ defaultEmail }: { defaultEmail: string }) {
   const t = useTranslations("contact");
   const te = useTranslations("errors");
+  const errorText = useErrorText();
   const [email, setEmail] = useState(defaultEmail);
   const [category, setCategory] = useState<ContactCategory | "">("");
   const [message, setMessage] = useState("");
@@ -37,8 +40,11 @@ export function ContactForm({ defaultEmail }: { defaultEmail: string }) {
     const result = await postJson("/api/contact", { email, category, subject: needsSubject ? subject : undefined, message, website, captchaToken: captchaToken ?? undefined });
     setAttempt((n) => n + 1); // un jeton ne sert qu'une fois
     setPending(false);
-    if (result.ok) setSent(true);
-    else setError(te(result.code as "server_error"));
+    if (result.ok) {
+      setSent(true);
+      toast.success(t("sent"));
+    }
+    else setError(errorText(result.code));
   }
 
   if (sent) return <FormMessage tone="success">{t("sent")}</FormMessage>;

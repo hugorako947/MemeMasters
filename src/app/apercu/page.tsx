@@ -74,7 +74,7 @@ export default async function PreviewPage({ searchParams }: PageProps<"/apercu">
     asOf: new Date(now).toISOString(),
   };
   return (
-    <AppShell player={player} badges={{ home: 3, boosters: 3, infos: 2, news: 2, shop: 1, profile: 3, friends: 1, messages: 2 }}>
+    <AppShell player={player} badges={{ home: 3, boosters: 3, infos: 2, news: 2, shop: 1, profile: 3, friends: 1, messages: 2, community: 0 }}>
       {view === "profil" ? (
         <ProfileView
           profile={profile}
@@ -93,7 +93,17 @@ export default async function PreviewPage({ searchParams }: PageProps<"/apercu">
               { other: { id: "f1", username: "MemeLord", trophies: 2410 }, last: { body: "On se fait une partie ce soir ?", createdAt: new Date().toISOString(), fromMe: false }, unread: 2 },
               { other: { id: "f2", username: "PixelCat", trophies: 980 }, last: { body: "Merci pour le tuyau !", createdAt: new Date().toISOString(), fromMe: true }, unread: 0 },
             ],
-            badges: { friends: 1, messages: 2 },
+            badges: { friends: 1, messages: 2, community: 0 },
+            community: {
+              voting: [
+                { id: "00000000-0000-4000-8000-0000000000c1", name: "Le Chat du Lundi", description: "Il déteste les lundis. Et les mardis.", imageUrl: null, artSeed: 4242, status: "voting", author: "PixelCat", authorId: "f2", votes: 12, createdAt: new Date().toISOString(), rejectReason: null, cardId: null },
+                { id: "00000000-0000-4000-8000-0000000000c2", name: "Wi-Fi Fantôme", description: "Connecté, mais pas trop.", imageUrl: null, artSeed: 777, status: "voting", author: "MemeLord", authorId: "f1", votes: 7, createdAt: new Date().toISOString(), rejectReason: null, cardId: null },
+              ],
+              released: [],
+              mine: [],
+              pending: [],
+              myVote: null,
+            },
             counts: { accounts: 1284, online: 57 },
             initialTab: typeof params.onglet === "string" ? params.onglet : undefined,
           }}

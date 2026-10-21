@@ -4,13 +4,16 @@ import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { FormMessage } from "@/components/ui/Field";
+import { toast } from "@/components/ui/Toast";
 import { postJson } from "@/lib/client/api";
+import { useErrorText } from "@/lib/client/errors";
 import { isAvailable, LOCALES } from "@/lib/i18n/locales";
 
 /** Choix de la langue : appliqué tout de suite, enregistré dans le compte. */
 export function LanguageForm() {
   const t = useTranslations("settings");
-  const te = useTranslations("errors");
+  const tf = useTranslations("feedback");
+  const errorText = useErrorText();
   const current = useLocale();
   const router = useRouter();
   const [pending, setPending] = useState<string | null>(null);
@@ -22,8 +25,11 @@ export function LanguageForm() {
     setError(null);
     const result = await postJson("/api/settings/locale", { locale: code });
     setPending(null);
-    if (result.ok) router.refresh();
-    else setError(te(result.code as "server_error"));
+    if (result.ok) {
+      toast.success(tf("languageSaved"));
+      router.refresh();
+    }
+    else setError(errorText(result.code));
   }
 
   return (

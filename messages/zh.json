@@ -145,7 +145,8 @@
     "tabs": {
       "profile": "资料",
       "friends": "好友",
-      "messages": "消息"
+      "messages": "消息",
+      "community": "社区"
     }
   },
   "settings": {
@@ -262,7 +263,16 @@
     "captcha_failed": "人机验证未通过，请稍后重试。",
     "message_not_found": "这条消息已不存在。",
     "banned": "此账号已被停用。",
-    "challenge_not_ready": "今日挑战尚未完成。"
+    "challenge_not_ready": "今日挑战尚未完成。",
+    "unknown": "我们这边出了点问题。请稍后再试；如果问题持续，请通过“联系我们”页面告诉我们。",
+    "offline": "你已离线：此操作需要联网。网络恢复后再试一次吧。",
+    "file_too_large": "图片太大（最大 8 MB）。请换一张小一点的。",
+    "forbidden": "你没有权限执行此操作。",
+    "community_inappropriate": "名称或描述中包含违禁词。",
+    "community_limit": "你已有 2 个待处理的投稿：请等待审核，或撤回其中一个。",
+    "community_image": "图片保存失败。请换一张照片试试（JPEG 或 PNG）。",
+    "community_not_found": "这张卡牌已不再可用。",
+    "community_own_vote": "你不能给自己的卡牌投票。"
   },
   "statName": {
     "hp": "生命值",
@@ -651,7 +661,16 @@
     "owned": "× {count}",
     "nextFree": "免费卡包将在午夜刷新。",
     "bought": "卡包已加入你的库存！",
-    "buyLabel": "用 {price} MemeMoney 购买{item}"
+    "buyLabel": "用 {price} MemeMoney 购买{item}",
+    "available": "{count, plural, other {个卡包待打开}}",
+    "openOne": "打开一个卡包",
+    "mineTitle": "你的特殊卡包",
+    "openKind": "打开{item}",
+    "buyTitle": "用 MemeMoney 购买",
+    "balance": "{amount} MM",
+    "guaranteed": "至少 1 张{rarity}",
+    "missing": "还差 {amount} MM",
+    "boughtItem": "{item}已加入你的卡包！"
   },
   "opening": {
     "title": "开卡包",
@@ -860,7 +879,8 @@
     },
     "reward": "奖励：{count, plural, other {额外 # 个卡包}}",
     "claim": "{count, plural, other {领取 # 个卡包}}",
-    "claimed": "挑战完成！明天还有新挑战。"
+    "claimed": "挑战完成！明天还有新挑战。",
+    "claimedToast": "{count, plural, other {挑战完成：已添加 # 个卡包！}}"
   },
   "banned": {
     "title": "账号已停用",
@@ -885,5 +905,119 @@
     "confidentialite": "隐私政策",
     "regles-communaute": "社区规则",
     "hors-ligne": "离线"
+  },
+  "feedback": {
+    "close": "关闭",
+    "done": "搞定！",
+    "friendRequested": "好友申请已发送！",
+    "friendAccepted": "你们现在是好友了！",
+    "friendDeclined": "已拒绝申请。",
+    "friendRemoved": "已删除好友。",
+    "playerBlocked": "已屏蔽该玩家：对方无法再联系你。",
+    "playerUnblocked": "已取消屏蔽该玩家。",
+    "messageDeleted": "消息已删除。",
+    "conversationDeleted": "已从列表中删除该对话。",
+    "themeSaved": "主题已保存到你的账号。",
+    "languageSaved": "语言已保存。"
+  },
+  "loading": {
+    "title": "加载中",
+    "tips": {
+      "0": "正在洗牌…",
+      "1": "正在唤醒表情包…",
+      "2": "正在擦亮神圣卡牌…",
+      "3": "正在补充卡包…",
+      "4": "正在清点你的卡牌…",
+      "5": "马上就好…"
+    }
+  },
+  "errorPage": {
+    "title": "哎呀，这个页面崩溃了",
+    "lead": "一个意外问题导致页面无法显示。你的收藏和进度不会丢失：它们都保存在我们的服务器上。",
+    "offlineTitle": "没有网络连接",
+    "offlineLead": "你的设备似乎处于离线状态：此页面需要联网才能显示。",
+    "tip1": "稍后再试：问题通常是暂时的。",
+    "tip2": "检查你的网络连接（Wi-Fi 或移动数据）。",
+    "tip3": "如果问题持续，请刷新页面或返回首页。",
+    "retry": "重试",
+    "home": "返回首页",
+    "contactHint": "问题依旧？",
+    "contact": "告诉我们",
+    "code": "请发给我们的代码："
+  },
+  "imagePicker": {
+    "image": "图片",
+    "photo": "拍照",
+    "capture": "拍摄",
+    "cancel": "取消",
+    "preparing": "正在准备图片…",
+    "cameraBlocked": "无法使用摄像头：请在浏览器中允许访问，或选择“图片”。",
+    "cameraInsecure": "摄像头需要安全连接（https）：请改为选择一张图片。",
+    "unreadable": "无法读取这张图片。请试试 JPEG 或 PNG 格式的照片。",
+    "notImage": "这个文件不是图片。"
+  },
+  "community": {
+    "title": "社区",
+    "lead": "投稿你的表情包卡牌，并为你最喜欢的卡牌投票：玩家票数最高的卡牌将正式加入游戏！",
+    "steps": {
+      "propose": "你来投稿",
+      "check": "团队审核",
+      "vote": "大家投票",
+      "release": "加入游戏"
+    },
+    "voteTitle": "投票",
+    "voteUsed": "你已投票（可以更改）。",
+    "voteFree": "你有 1 票：选出你最喜欢的卡牌。",
+    "voteEmpty": "目前还没有卡牌参与投票。快来投稿吧！",
+    "leader": "👑 领先",
+    "by": "投稿人：{name}",
+    "votes": "{count, plural, =0 {暂无投票} other {# 票}}",
+    "yourCard": "你的卡牌",
+    "myVote": "✓ 我的投票",
+    "moveVote": "改投这张",
+    "vote": "投票",
+    "release": "加入游戏（控制面板）",
+    "voted": "你把票投给了“{name}”！",
+    "unvoted": "已撤回投票。",
+    "releasedTitle": "因你们的投票而上线",
+    "proposed": "投稿已发送！团队审核后会将其提交投票。",
+    "proposeButton": "投稿卡牌",
+    "limitReached": "最多 2 个待处理的投稿。",
+    "proposeTitle": "你的表情包卡牌",
+    "name": "卡牌名称",
+    "namePlaceholder": "周一的猫",
+    "description": "笑点（可选）",
+    "descriptionPlaceholder": "一句话说说它好笑在哪。",
+    "illustration": "插图",
+    "imageReady": "图片已就绪：将按卡牌比例裁剪。",
+    "illustrationHint": "设备里的图片、现拍的照片……或者什么都不放：系统会自动生成插图。",
+    "rules": "不得出现可辨认的真人，不得含有伤害性或低俗内容。如果你的卡牌加入游戏，稀有度和属性由团队决定。",
+    "sending": "发送中…",
+    "send": "提交我的投稿",
+    "cancel": "取消",
+    "preview": "预览",
+    "removeImage": "移除图片",
+    "mineTitle": "我的投稿",
+    "status": {
+      "pending": "审核中",
+      "voting": "投票中",
+      "rejected": "未通过",
+      "released": "已加入游戏！"
+    },
+    "rejectReason": "原因：{reason}",
+    "withdraw": "撤回",
+    "confirmWithdraw": "确认",
+    "keep": "保留",
+    "withdrawn": "投稿已撤回。",
+    "staff": {
+      "title": "团队：待审核（{count}）",
+      "lead": "投票前请审核每个投稿：不得出现真人，不得含有伤害性或抄袭内容。拒绝原因会展示给作者。",
+      "empty": "暂时没有需要审核的内容。",
+      "reasonPlaceholder": "拒绝原因（可选）",
+      "approve": "提交投票",
+      "reject": "拒绝",
+      "approved": "“{name}”已提交投票。",
+      "rejected": "“{name}”已被拒绝。"
+    }
   }
 }

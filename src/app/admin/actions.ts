@@ -3,16 +3,37 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { RARITIES } from "@/config/rarities";
-import { rankIndex } from "@/config/ranks";
-import { checkBudget } from "@/lib/cards/balance";
-import { VIBES } from "@/config/vibes";
 import { audit } from "@/lib/server/admin";
+import {
+  AdminError,
+  applyCardDelete,
+  applyCardSave,
+  applyChallenge,
+  applyDeletePlayer,
+  applyNews,
+  applyNewsDelete,
+  applyResources,
+  buildCard,
+  cardPayloadSchema,
+  challengeSchema,
+  currentResources,
+  newsSchema,
+  resourcesSchema,
+  type CardPayload,
+} from "@/lib/server/admin-ops";
+import { approveRequest, cancelRequest, createRequest, hasPendingRequest, rejectRequest } from "@/lib/server/admin-requests";
 import { requireAdmin } from "@/lib/server/auth";
-import { removeCardArt, uploadCardArt } from "@/lib/server/card-art";
+import { CardArtError, removeCardArt, uploadCardArt } from "@/lib/server/card-art";
 import { sql } from "@/lib/server/db";
-import { deleteAccount, isSuperAdminId } from "@/lib/server/players";
-import { cardSchema } from "@/lib/validation/card";
+import { isSuperAdminId, type Player } from "@/lib/server/players";
+
+/**
+ * Actions du tableau de bord. Règles :
+ * - le Super Admin agit sur les admins, les joueurs et leurs informations ;
+ * - un admin n'agit que sur les joueurs (ni sur un autre admin, ni sur le Super Admin, ni sur lui-même) ;
+ * - les actions importantes d'un admin (cartes, ressources, suppression de compte, news, défis)
+ *   deviennent des demandes que le Super Admin valide avant qu'elles ne s'appliquent.
+ */
 
 /** Retour vers une section du tableau de bord avec un message. */
 function back(section: string, message: string, extra = ""): never {
@@ -22,81 +43,68 @@ function back(section: string, message: string, extra = ""): never {
 function fail(section: string, message: string, extra = ""): never {
   redirect(`/admin?section=${section}${extra}&erreur=${encodeURIComponent(message)}`);
 }
-const int = (min: number, max: number) => z.coerce.number().int().min(min).max(max);
+const PENDING_MESSAGE = "Demande envoyée au Super Admin : elle s'appliquera dès qu'il l'aura validée (suivi dans « Validations »).";
 
-function isControlFlow(error: unknown): boolean {
-  if (!error || typeof error !== "object" || !("digest" in error)) return false;
-  const digest = String((error as { digest: unknown }).digest);
-  return digest.startsWith("NEXT_REDIRECT") || digest.startsWith("NEXT_NOT_FOUND");
-}
+const isSuper = (p: Player) => p.role === "superadmin";
 
-function saveCardFailMessage(error: unknown): string {
-  const code = error && typeof error === "object" && "code" in error ? String((error as { code: unknown }).code) : "";
-  const message = error instanceof Error ? error.message : "";
-  if (code === "23505") return "Une carte avec ce nom existe déjà.";
-  if (code === "42804" || /rarity|vibe/i.test(message)) return "Rareté ou vibe refusée par la base. Réessayez.";
-  if (code === "23514") return "Une valeur dépasse les limites autorisées (statistiques ou nom).";
-  if (message) return message.slice(0, 180);
-  return "Impossible d'enregistrer la carte. Réessayez.";
-}
-
-/** Garde-fous : personne ne touche au Super Admin ; seul le Super Admin agit sur un admin. */
-async function assertCanManage(actor: { id: string; role: string }, targetId: string, section: string) {
-  if (isSuperAdminId(targetId)) fail(section, "Le compte du Super Admin ne peut pas être modifié ici.", `&id=${targetId}`);
-  const [t] = await sql()<{ role: string }[]>`select role from public.player_private where player_id = ${targetId}`;
+/** Garde-fous : personne ne touche au Super Admin ; un admin n'agit que sur les joueurs. */
+async function assertCanManage(actor: Player, targetId: string, section: string): Promise<{ username: string; role: string }> {
+  const extra = `&id=${targetId}`;
+  if (isSuperAdminId(targetId)) fail(section, "Le compte du Super Admin ne peut pas être modifié.", extra);
+  const [t] = await sql()<{ role: string; username: string }[]>`
+    select pp.role, pr.username::text as username
+    from public.player_private pp join public.profiles pr on pr.id = pp.player_id
+    where pp.player_id = ${targetId}
+  `;
   if (!t) fail(section, "Joueur introuvable.");
-  if (t.role === "admin" && actor.role !== "superadmin") fail(section, "Seul le Super Admin peut agir sur un admin.", `&id=${targetId}`);
+  if (!isSuper(actor)) {
+    if (targetId === actor.id) fail(section, "Un admin ne peut pas modifier son propre compte : demandez au Super Admin.", extra);
+    if (t.role === "admin") fail(section, "Un admin ne peut pas modifier un autre admin : seul le Super Admin le peut.", extra);
+  }
+  return t;
+}
+
+function messageOf(error: unknown, fallback: string): string {
+  if (error instanceof AdminError || error instanceof CardArtError) return error.message;
+  console.error("[admin]", error);
+  return fallback;
 }
 
 // ------------------------------------------------------------------ joueurs
 
 export async function updatePlayerResources(form: FormData) {
   const { player: admin } = await requireAdmin();
-  const d = z
-    .object({
-      id: z.uuid(),
-      memeMoney: int(0, 10_000_000),
-      bonus: int(0, 100_000),
-      paid: int(0, 100_000),
-      special: int(0, 100_000),
-      verySpecial: int(0, 100_000),
-      trophies: int(0, 1_000_000),
-    })
-    .parse(Object.fromEntries(form));
-  await assertCanManage(admin, d.id, "joueurs");
-  await sql().begin(async (tx) => {
-    const [before] = await tx<{ trophies: number }[]>`select trophies from public.profiles where id = ${d.id} for update`;
-    await tx`
-      update public.player_wallets
-      set meme_money = ${d.memeMoney}, bonus_boosters = ${d.bonus}, paid_boosters = ${d.paid},
-          special_boosters = ${d.special}, very_special_boosters = ${d.verySpecial}
-      where player_id = ${d.id}
-    `;
-    if (before && before.trophies !== d.trophies) {
-      await tx`
-        update public.profiles set trophies = ${d.trophies}, highest_rank = greatest(highest_rank, ${rankIndex(d.trophies)})
-        where id = ${d.id}
-      `;
-      await tx`
-        insert into public.trophy_history (player_id, trophies, rank, reason)
-        values (${d.id}, ${d.trophies}, ${rankIndex(d.trophies)}, 'admin')
-      `;
+  const parsed = resourcesSchema.extend({ id: z.uuid() }).safeParse(Object.fromEntries(form));
+  if (!parsed.success) fail("joueurs", "Valeurs invalides : nombres entiers positifs attendus.");
+  const { id, ...after } = parsed.data;
+  const target = await assertCanManage(admin, id, "joueurs");
+  const before = await currentResources(id);
+  if (!before) fail("joueurs", "Joueur introuvable.");
+  if (JSON.stringify(before) === JSON.stringify(after)) fail("joueurs", "Aucune valeur n'a changé.", `&id=${id}`);
+  if (isSuper(admin)) {
+    try {
+      await applyResources(id, before, after, admin);
+    } catch (error) {
+      fail("joueurs", messageOf(error, "Impossible d'enregistrer les ressources. Réessayez."), `&id=${id}`);
     }
-    await tx`
-      insert into public.economy_ledger (player_id, kind, note) values (${d.id}, 'admin_adjust', ${`par ${admin.username}`})
-    `;
-  });
-  await audit(admin.id, "joueur.ressources", d.id, d);
-  back("joueurs", "Ressources mises à jour.", `&id=${d.id}`);
+    back("joueurs", "Ressources mises à jour.", `&id=${id}`);
+  }
+  const changes = (Object.keys(after) as Array<keyof typeof after>)
+    .filter((k) => after[k] !== before[k])
+    .map((k) => `${k} ${before[k]} → ${after[k]}`)
+    .join(", ");
+  await createRequest(admin, "joueur.ressources", id, `Ressources de ${target.username} : ${changes}`, { id, username: target.username, before, after });
+  back("joueurs", PENDING_MESSAGE, `&id=${id}`);
 }
 
 export async function banPlayer(form: FormData) {
   const { player: admin } = await requireAdmin();
-  const d = z.object({ id: z.uuid(), reason: z.string().trim().max(300) }).parse(Object.fromEntries(form));
-  await assertCanManage(admin, d.id, "joueurs");
-  await sql()`update public.player_private set banned_at = now(), ban_reason = ${d.reason || null} where player_id = ${d.id}`;
-  await audit(admin.id, "joueur.bannir", d.id, { reason: d.reason });
-  back("joueurs", "Joueur banni.", `&id=${d.id}`);
+  const d = z.object({ id: z.uuid(), reason: z.string().trim().max(300) }).safeParse(Object.fromEntries(form));
+  if (!d.success) fail("joueurs", "Motif trop long (300 caractères au plus).");
+  await assertCanManage(admin, d.data.id, "joueurs");
+  await sql()`update public.player_private set banned_at = now(), ban_reason = ${d.data.reason || null} where player_id = ${d.data.id}`;
+  await audit(admin.id, "joueur.bannir", d.data.id, { reason: d.data.reason });
+  back("joueurs", "Joueur banni : il voit le motif à sa prochaine visite.", `&id=${d.data.id}`);
 }
 
 export async function unbanPlayer(form: FormData) {
@@ -118,16 +126,24 @@ export async function setRole(form: FormData) {
   back("joueurs", d.role === "admin" ? "Joueur nommé admin." : "Rôle d'admin retiré.", `&id=${d.id}`);
 }
 
-/** Supprimer un compte : réservé au Super Admin, avec le pseudo retapé. */
+/** Supprimer un compte, avec le pseudo retapé. Un admin ne supprime qu'un joueur, après validation du Super Admin. */
 export async function deletePlayer(form: FormData) {
-  const { player: admin } = await requireAdmin("superadmin");
+  const { player: admin } = await requireAdmin();
   const d = z.object({ id: z.uuid(), confirm: z.string().trim() }).parse(Object.fromEntries(form));
-  if (isSuperAdminId(d.id)) fail("joueurs", "Impossible de supprimer le Super Admin.");
-  const [p] = await sql()<{ username: string }[]>`select username::text as username from public.profiles where id = ${d.id}`;
-  if (!p || p.username.toLowerCase() !== d.confirm.toLowerCase()) fail("joueurs", "Pseudo de confirmation incorrect.", `&id=${d.id}`);
-  await deleteAccount(d.id);
-  await audit(admin.id, "joueur.supprimer", d.id, { username: p.username });
-  back("joueurs", `Compte « ${p.username} » supprimé.`);
+  const target = await assertCanManage(admin, d.id, "joueurs");
+  if (target.username.toLowerCase() !== d.confirm.toLowerCase()) fail("joueurs", "Pseudo de confirmation incorrect.", `&id=${d.id}`);
+  if (isSuper(admin)) {
+    try {
+      const name = await applyDeletePlayer(d.id, admin.id);
+      back("joueurs", `Compte « ${name} » supprimé.`);
+    } catch (error) {
+      if (error instanceof AdminError) fail("joueurs", error.message, `&id=${d.id}`);
+      throw error;
+    }
+  }
+  if (await hasPendingRequest("joueur.supprimer", d.id)) fail("joueurs", "Une demande de suppression de ce compte attend déjà le Super Admin.", `&id=${d.id}`);
+  await createRequest(admin, "joueur.supprimer", d.id, `Supprimer le compte de ${target.username}`, { id: d.id, username: target.username });
+  back("joueurs", PENDING_MESSAGE, `&id=${d.id}`);
 }
 
 // ------------------------------------------------------------------ signalements et contact
@@ -150,160 +166,123 @@ export async function setContactStatus(form: FormData) {
 
 // ------------------------------------------------------------------ cartes
 
-const DEFENSE_KINDS = ["heal", "reflect", "dodge", "cleanse", "recharge"] as const;
-
-function slugify(name: string): string {
-  return name
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "")
-    .slice(0, 50);
+export interface CardFormState {
+  status: "idle" | "error" | "done";
+  message: string;
+  /** Page à ouvrir après l'enregistrement. */
+  next?: string;
 }
 
-/** Créer ou modifier une carte (avec annonce facultative dans les news). */
-export async function saveCard(form: FormData) {
+const on = (v: FormDataEntryValue | null) => v === "on" || v === "true";
+
+/**
+ * Créer ou modifier une carte (formulaire avec illustration). Renvoie un état
+ * au lieu de rediriger : en cas d'erreur, le formulaire garde tout ce qui a été saisi.
+ */
+export async function saveCard(_prev: CardFormState, form: FormData): Promise<CardFormState> {
   const { player: admin } = await requireAdmin();
-  const artFile = form.get("art");
-  const art = artFile instanceof File && artFile.size > 0 ? artFile : null;
-  const raw = Object.fromEntries([...form.entries()].filter(([, value]) => typeof value === "string")) as Record<string, string>;
-  if (raw.id === "") delete raw.id;
-  const extra = raw.id ? `&id=${raw.id}` : "&nouvelle=1";
-  try {
-    const d = z
-      .object({
-        id: z.uuid().optional(),
-        name: z.string().trim().min(1).max(40),
-        description: z.string().trim().max(280).optional(),
-        rarity: z.enum(RARITIES),
-        vibe: z.enum(VIBES).optional(),
-        hp: int(60, 140),
-        atk: int(20, 65),
-        def: int(20, 65),
-        spd: int(10, 100),
-        attackName: z.string().trim().min(1).max(32),
-        attackPower: int(25, 35),
-        specialName: z.string().trim().min(1).max(32),
-        specialPower: int(50, 90),
-        specialCost: int(2, 4),
-        defenseName: z.string().trim().min(1).max(32),
-        defenseKind: z.enum(DEFENSE_KINDS),
-        defenseValue: int(0, 60),
-        active: z.string().optional(),
-        droppable: z.string().optional(),
-        announce: z.string().optional(),
-        artSource: z.enum(["auto", "upload"]).optional(),
-        reshuffleArt: z.string().optional(),
-      })
-      .safeParse(raw);
-    if (!d.success) fail("cartes", "Champs invalides : " + d.error.issues.map((i) => i.path.join(".") || i.message).join(", "), extra);
-    const v = d.data;
-    const idOpt = v.id || undefined;
-    const defenseEffect =
-      v.defenseKind === "heal"
-        ? { kind: "heal" as const, percent: Math.max(5, Math.min(20, v.defenseValue)) }
-        : v.defenseKind === "reflect"
-          ? { kind: "reflect" as const, percent: Math.max(10, Math.min(50, v.defenseValue)) }
-          : v.defenseKind === "dodge"
-            ? { kind: "dodge" as const, chance: Math.max(5, Math.min(40, v.defenseValue)) }
-            : v.defenseKind === "recharge"
-              ? { kind: "recharge" as const, amount: 1 as const }
-              : { kind: "cleanse" as const };
-    const existing = idOpt
-      ? (
-          await sql()<{
-            special_attack: { effect?: unknown } | null;
-            slug: string;
-            art_seed: number;
-            vibe: (typeof VIBES)[number];
-            image_path: string | null;
-          }[]>`select special_attack, slug, art_seed, vibe, image_path from public.cards where id = ${idOpt}`
-        )[0]
-      : null;
-    if (idOpt && !existing) fail("cartes", "Carte introuvable.", extra);
-    const specialEffect = existing?.special_attack && typeof existing.special_attack === "object" && existing.special_attack.effect
-      ? existing.special_attack.effect
-      : { kind: "none" };
-    const artSeed =
-      v.reshuffleArt === "on" || !existing ? Math.floor(Math.random() * 2_000_000_000) : existing.art_seed;
-    const vibe = v.vibe ?? existing?.vibe ?? "chaos";
-    const card = {
-      id: idOpt || "00000000-0000-4000-8000-000000000000",
-      slug: existing?.slug ?? slugify(v.name),
-      name: v.name,
-      description: v.description ?? "",
-      rarity: v.rarity,
-      vibe,
-      hp: v.hp,
-      atk: v.atk,
-      def: v.def,
-      spd: v.spd,
-      normalAttack: { name: v.attackName, power: v.attackPower },
-      specialAttack: { name: v.specialName, power: v.specialPower, energyCost: v.specialCost, effect: specialEffect as never },
-      defenseAbility: { name: v.defenseName, effect: defenseEffect },
-      artSeed,
-      imageUrl: null,
+  const str = (k: string) => {
+    const v = form.get(k);
+    return typeof v === "string" ? v : undefined;
+  };
+  const file = form.get("art");
+  const art = file instanceof File && file.size > 0 ? file : null;
+  const id = str("id") || undefined;
+  const communityId = str("communityId") || undefined;
+  let mode = str("artMode") === "image" ? "image" : "auto";
+
+  let communityImage: string | null = null;
+  if (communityId) {
+    const [c] = await sql()<{ image_path: string | null; status: string }[]>`select image_path, status from public.community_cards where id = ${communityId}`;
+    if (!c || c.status !== "voting") return { status: "error", message: "Cette carte de la Communauté n'est plus au vote." };
+    communityImage = c.image_path;
+  }
+  const existingImage = id ? ((await sql()<{ image_path: string | null }[]>`select image_path from public.cards where id = ${id}`)[0]?.image_path ?? null) : null;
+  // Mode « image » sans nouveau fichier : on garde l'image actuelle (ou celle de la Communauté).
+  const keptImage = mode === "image" && !art ? (communityImage ?? existingImage) : null;
+  if (mode === "image" && !art && !keptImage) return { status: "error", message: "Choisissez une image ou prenez une photo, ou revenez à l'illustration générée." };
+  if (mode === "image" && !art && keptImage === existingImage && id) mode = "keep";
+
+  const draft = {
+    id,
+    name: str("name"),
+    description: str("description") ?? "",
+    rarity: str("rarity"),
+    hp: str("hp"),
+    atk: str("atk"),
+    def: str("def"),
+    spd: str("spd"),
+    attackName: str("attackName"),
+    attackPower: str("attackPower"),
+    specialName: str("specialName"),
+    specialPower: str("specialPower"),
+    specialCost: str("specialCost"),
+    defenseName: str("defenseName"),
+    defenseKind: str("defenseKind"),
+    defenseValue: str("defenseValue"),
+    active: on(form.get("active")),
+    droppable: on(form.get("droppable")),
+    announce: on(form.get("announce")),
+    art: { mode, reshuffle: on(form.get("reshuffleArt")), imagePath: keptImage },
+    communityId,
+  };
+  const parsed = cardPayloadSchema.safeParse(draft);
+  if (!parsed.success) {
+    const LABELS: Record<string, string> = {
+      name: "nom",
+      rarity: "rareté",
+      hp: "PV (60–140)",
+      atk: "attaque (20–65)",
+      def: "défense (20–65)",
+      spd: "vitesse (10–100)",
+      attackName: "nom de l'attaque",
+      attackPower: "puissance de l'attaque (25–35)",
+      specialName: "nom de la spéciale",
+      specialPower: "puissance de la spéciale (50–90)",
+      specialCost: "énergie (2–4)",
+      defenseName: "nom de la défense",
+      defenseValue: "valeur de la défense",
     };
-    const valid = cardSchema.safeParse(card);
-    if (!valid.success) {
-      fail("cartes", "Carte invalide : " + valid.error.issues.map((i) => i.path.join(".") + " " + i.message).join(" ; "), extra);
-    }
-    const budget = checkBudget(card, card.rarity);
-    let id = idOpt;
-    if (idOpt) {
-      await sql()`
-        update public.cards set name = ${card.name}, description = ${card.description},
-          rarity = ${card.rarity}::public.rarity, vibe = ${card.vibe}::public.vibe,
-          hp = ${card.hp}, atk = ${card.atk}, def = ${card.def}, spd = ${card.spd},
-          normal_attack = ${JSON.stringify(card.normalAttack)}::jsonb, special_attack = ${JSON.stringify(card.specialAttack)}::jsonb,
-          defense_ability = ${JSON.stringify(card.defenseAbility)}::jsonb, art_seed = ${card.artSeed},
-          is_active = ${v.active === "on"}, is_droppable = ${v.droppable === "on"}, updated_at = now()
-        where id = ${idOpt}
-      `;
-    } else {
-      let slug = card.slug || "carte";
-      const [{ n }] = await sql()<{ n: number }[]>`select count(*)::int as n from public.cards where slug = ${slug}`;
-      if (n > 0) slug = `${slug}-${Date.now().toString(36)}`;
-      const [row] = await sql()<{ id: string }[]>`
-        insert into public.cards (slug, name, description, rarity, vibe, hp, atk, def, spd, normal_attack, special_attack, defense_ability, art_seed, is_active, is_droppable)
-        values (${slug}, ${card.name}, ${card.description}, ${card.rarity}::public.rarity, ${card.vibe}::public.vibe, ${card.hp}, ${card.atk}, ${card.def}, ${card.spd},
-                ${JSON.stringify(card.normalAttack)}::jsonb, ${JSON.stringify(card.specialAttack)}::jsonb, ${JSON.stringify(card.defenseAbility)}::jsonb,
-                ${card.artSeed}, ${v.active === "on"}, ${v.droppable === "on"})
-        returning id
-      `;
-      id = row.id;
-    }
-    if (!id) fail("cartes", "La carte n'a pas pu être créée.", extra);
+    const fields = [...new Set(parsed.error.issues.map((i) => LABELS[String(i.path[0])] ?? String(i.path[0])))];
+    return { status: "error", message: `À corriger : ${fields.join(", ")}.` };
+  }
+  const payload: CardPayload = parsed.data;
 
-    const artSource = v.artSource ?? (art ? "upload" : "auto");
-    if (artSource === "auto" && existing?.image_path) {
-      await removeCardArt(existing.image_path);
-      await sql()`update public.cards set image_path = null where id = ${id}`;
-    } else if (artSource === "upload" && art) {
-      const path = await uploadCardArt(id, art);
-      await sql()`update public.cards set image_path = ${path} where id = ${id}`;
-    }
-
-    if (v.announce === "on") {
-      const title = idOpt ? `Carte rééquilibrée : ${card.name}` : `Nouvelle carte : ${card.name}`;
-      const body = idOpt
-        ? `${card.name} a été modifiée : PV ${card.hp}, ATQ ${card.atk}, DÉF ${card.def}, VIT ${card.spd}.`
-        : `${card.name} rejoint le jeu en rareté ${card.rarity}. Elle peut sortir des boosters dès maintenant.`;
-      await sql()`
-        insert into public.news (kind, title, body, created_by)
-        values (${idOpt ? "change" : "news"}, ${JSON.stringify({ fr: title })}::jsonb, ${JSON.stringify({ fr: body })}::jsonb, ${admin.id})
-      `;
-    }
-    await audit(admin.id, idOpt ? "carte.modifier" : "carte.creer", id, { name: card.name, rarity: card.rarity });
-    const note = budget.withinTolerance
-      ? ""
-      : ` Attention : statistiques hors budget pour cette rareté (indice ${Math.round(budget.index)} pour ${Math.round(budget.budget)} attendu).`;
-    back("cartes", (idOpt ? "Carte enregistrée." : "Carte créée.") + note, `&id=${id}`);
+  // Vérifie la carte avant de téléverser quoi que ce soit.
+  let budgetNote = "";
+  try {
+    budgetNote = (await buildCard(payload)).budgetNote;
   } catch (error) {
-    if (isControlFlow(error)) throw error;
-    console.error("[admin] saveCard", error);
-    fail("cartes", saveCardFailMessage(error), extra);
+    return { status: "error", message: messageOf(error, "Carte invalide.") };
+  }
+
+  const superAdmin = isSuper(admin);
+  let uploaded: string | null = null;
+  try {
+    if (art && mode === "image") {
+      uploaded = await uploadCardArt(superAdmin ? "cartes" : "demandes", (id ?? "nouvelle").slice(0, 36), art);
+      payload.art.imagePath = uploaded;
+    }
+    if (superAdmin) {
+      const saved = await applyCardSave(payload, admin.id);
+      revalidatePath("/", "layout");
+      return {
+        status: "done",
+        message: (id ? "Carte enregistrée : les joueurs voient déjà la nouvelle version." : communityId ? "Carte de la Communauté sortie dans le jeu !" : "Carte créée : elle est dans le jeu.") + budgetNote,
+        next: `/admin?section=cartes&id=${saved.id}`,
+      };
+    }
+    const action = communityId ? "communaute.sortir" : id ? "carte.modifier" : "carte.creer";
+    if (id && (await hasPendingRequest("carte.modifier", id))) {
+      if (uploaded) await removeCardArt(uploaded);
+      return { status: "error", message: "Une modification de cette carte attend déjà le Super Admin. Annulez-la dans « Validations » pour en envoyer une autre." };
+    }
+    const summary = `${communityId ? "Faire sortir" : id ? "Modifier" : "Créer"} « ${payload.name} » (${payload.rarity}, PV ${payload.hp}, ATQ ${payload.atk}, DÉF ${payload.def}, VIT ${payload.spd})`;
+    await createRequest(admin, action, id ?? communityId ?? null, summary, payload);
+    return { status: "done", message: PENDING_MESSAGE + budgetNote, next: "/admin?section=validations" };
+  } catch (error) {
+    if (uploaded) await removeCardArt(uploaded);
+    return { status: "error", message: messageOf(error, "Impossible d'enregistrer la carte. Réessayez dans un instant.") };
   }
 }
 
@@ -312,70 +291,96 @@ export async function deleteCard(form: FormData) {
   const { player: admin } = await requireAdmin();
   const d = z.object({ id: z.uuid(), confirm: z.string().trim() }).safeParse(Object.fromEntries(form));
   if (!d.success) fail("cartes", "Confirmation invalide.");
-  try {
-    const [card] = await sql()<{ name: string; image_path: string | null }[]>`
-      select name, image_path from public.cards where id = ${d.data.id}
-    `;
-    if (!card) fail("cartes", "Carte introuvable.");
-    if (card.name.toLowerCase() !== d.data.confirm.toLowerCase()) {
-      fail("cartes", "Retapez exactement le nom de la carte pour confirmer.", `&id=${d.data.id}`);
+  const [card] = await sql()<{ name: string }[]>`select name from public.cards where id = ${d.data.id}`;
+  if (!card) fail("cartes", "Carte introuvable.");
+  if (card.name.toLowerCase() !== d.data.confirm.toLowerCase()) fail("cartes", "Retapez exactement le nom de la carte pour confirmer.", `&id=${d.data.id}`);
+  if (isSuper(admin)) {
+    try {
+      const name = await applyCardDelete(d.data.id, admin.id);
+      back("cartes", `Carte « ${name} » supprimée.`);
+    } catch (error) {
+      if (error instanceof AdminError) fail("cartes", error.message, `&id=${d.data.id}`);
+      throw error;
     }
-    await sql().begin(async (tx) => {
-      await tx`delete from public.user_cards where card_id = ${d.data.id}`;
-      await tx`update public.decks set card_ids = array_remove(card_ids, ${d.data.id}::uuid)`;
-      await tx`delete from public.decks where cardinality(card_ids) < 1`;
-      await tx`delete from public.cards where id = ${d.data.id}`;
-    });
-    await removeCardArt(card.image_path);
-    await audit(admin.id, "carte.supprimer", d.data.id, { name: card.name });
-    back("cartes", `Carte « ${card.name} » supprimée.`);
-  } catch (error) {
-    if (isControlFlow(error)) throw error;
-    console.error("[admin] deleteCard", error);
-    fail("cartes", "Impossible de supprimer cette carte pour le moment.", `&id=${d.data.id}`);
   }
+  if (await hasPendingRequest("carte.supprimer", d.data.id)) fail("cartes", "La suppression de cette carte attend déjà le Super Admin.", `&id=${d.data.id}`);
+  await createRequest(admin, "carte.supprimer", d.data.id, `Supprimer la carte « ${card.name} »`, { id: d.data.id, name: card.name });
+  back("cartes", PENDING_MESSAGE, `&id=${d.data.id}`);
 }
 
 // ------------------------------------------------------------------ news et défis
 
 export async function createNews(form: FormData) {
   const { player: admin } = await requireAdmin();
-  const d = z
-    .object({
-      kind: z.enum(["news", "update", "upcoming", "change"]),
-      titleFr: z.string().trim().min(3).max(120),
-      bodyFr: z.string().trim().min(3).max(1000),
-      titleEn: z.string().trim().max(120).optional(),
-      bodyEn: z.string().trim().max(1000).optional(),
-    })
-    .safeParse(Object.fromEntries(form));
+  const d = newsSchema.safeParse(Object.fromEntries(form));
   if (!d.success) fail("news", "Titre et texte en français obligatoires (3 caractères minimum).");
-  const v = d.data;
-  const title = { fr: v.titleFr, ...(v.titleEn ? { en: v.titleEn } : {}) };
-  const body = { fr: v.bodyFr, ...(v.bodyEn ? { en: v.bodyEn } : {}) };
-  await sql()`insert into public.news (kind, title, body, created_by) values (${v.kind}, ${JSON.stringify(title)}::jsonb, ${JSON.stringify(body)}::jsonb, ${admin.id})`;
-  await audit(admin.id, "news.publier", v.titleFr);
-  back("news", "News publiée : les joueurs reçoivent une notification.");
+  if (isSuper(admin)) {
+    await applyNews(d.data, admin.id);
+    back("news", "News publiée : les joueurs reçoivent une notification.");
+  }
+  await createRequest(admin, "news.publier", null, `Publier la news « ${d.data.titleFr} »`, d.data);
+  back("news", PENDING_MESSAGE);
 }
 
 export async function deleteNews(form: FormData) {
   const { player: admin } = await requireAdmin();
   const { id } = z.object({ id: z.uuid() }).parse(Object.fromEntries(form));
-  await sql()`delete from public.news where id = ${id}`;
-  await audit(admin.id, "news.supprimer", id);
-  back("news", "News supprimée.");
+  const [n] = await sql()<{ title: { fr?: string } }[]>`select title from public.news where id = ${id}`;
+  if (!n) fail("news", "Cette news n'existe plus.");
+  if (isSuper(admin)) {
+    await applyNewsDelete(id, admin.id);
+    back("news", "News supprimée.");
+  }
+  if (await hasPendingRequest("news.supprimer", id)) fail("news", "La suppression de cette news attend déjà le Super Admin.");
+  await createRequest(admin, "news.supprimer", id, `Supprimer la news « ${n.title.fr ?? ""} »`, { id, title: n.title.fr ?? "" });
+  back("news", PENDING_MESSAGE);
 }
 
 export async function updateChallenge(form: FormData) {
   const { player: admin } = await requireAdmin();
+  const raw = Object.fromEntries(form);
+  const d = challengeSchema.safeParse({ ...raw, active: raw.active === "on" });
+  if (!d.success) fail("defis", "Valeurs invalides (objectif 1–1000, boosters 0–20, poids 1–100).");
+  if (isSuper(admin)) {
+    await applyChallenge(d.data, admin.id);
+    back("defis", "Défi enregistré (s'applique aux défis tirés à partir de maintenant).");
+  }
+  const [c] = await sql()<{ code: string }[]>`select code from public.challenge_templates where id = ${d.data.id}`;
+  if (!c) fail("defis", "Ce défi n'existe plus.");
+  await createRequest(
+    admin,
+    "defi.modifier",
+    d.data.id,
+    `Défi ${c.code} : objectif ${d.data.target}, ${d.data.reward} booster(s), poids ${d.data.weight}, ${d.data.active ? "actif" : "inactif"}`,
+    { ...d.data, code: c.code },
+  );
+  back("defis", PENDING_MESSAGE);
+}
+
+// ------------------------------------------------------------------ validations
+
+/** Le Super Admin valide ou refuse une demande d'admin. */
+export async function reviewRequest(form: FormData) {
+  const { player } = await requireAdmin("superadmin");
   const d = z
-    .object({ id: z.uuid(), target: int(1, 1000), reward: int(0, 20), weight: int(1, 100), active: z.string().optional() })
-    .parse(Object.fromEntries(form));
-  await sql()`
-    update public.challenge_templates
-    set target = ${d.target}, reward_boosters = ${d.reward}, weight = ${d.weight}, is_active = ${d.active === "on"}
-    where id = ${d.id}
-  `;
-  await audit(admin.id, "defi.modifier", d.id, d);
-  back("defis", "Défi enregistré (s'applique aux défis tirés à partir de maintenant).");
+    .object({ id: z.uuid(), decision: z.enum(["approve", "reject"]), note: z.string().trim().max(300).optional() })
+    .safeParse(Object.fromEntries(form));
+  if (!d.success) fail("validations", "Demande invalide.");
+  const note = d.data.note || null;
+  if (d.data.decision === "reject") {
+    const ok = await rejectRequest(d.data.id, player, note);
+    if (!ok) fail("validations", "Cette demande a déjà été traitée.");
+    back("validations", "Demande refusée : l'admin voit votre réponse dans ses demandes.");
+  }
+  const result = await approveRequest(d.data.id, player, note);
+  if (!result.ok) fail("validations", result.message);
+  back("validations", `Demande validée. ${result.message}`);
+}
+
+/** Un admin annule une de ses demandes encore en attente. */
+export async function cancelMyRequest(form: FormData) {
+  const { player } = await requireAdmin();
+  const { id } = z.object({ id: z.uuid() }).parse(Object.fromEntries(form));
+  if (!(await cancelRequest(id, player))) fail("validations", "Cette demande a déjà été traitée.");
+  back("validations", "Demande annulée.");
 }

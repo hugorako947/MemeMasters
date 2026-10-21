@@ -4,6 +4,7 @@ import { gameDate } from "@/lib/time/game-day";
 import { getBoosterState } from "./boosters";
 import { sql } from "./db";
 import { getDailyChallenge } from "./challenges";
+import { communityPendingCount } from "./community";
 import { incomingCount } from "./friends";
 import { latestNewsAt, unreadNewsCount } from "./news";
 import { unreadMessages } from "./messages";
@@ -22,6 +23,7 @@ export interface Badges {
   profile: number; // demandes d'ami reçues + messages non lus
   friends: number; //  demandes d'ami reçues (onglet Amis du profil)
   messages: number; // messages non lus (onglet Messages du profil)
+  community: number; // équipe : propositions de cartes à vérifier (onglet Communauté du profil)
 }
 
 /** Valeur « vue » de chaque notification à l'instant présent. */
@@ -35,11 +37,12 @@ export async function currentSeenValue(key: SeenKey, player: Player): Promise<st
 }
 
 export async function getBadges(player: Player): Promise<Badges> {
-  const [[row], boosters, incoming, unread] = await Promise.all([
+  const [[row], boosters, incoming, unread, community] = await Promise.all([
     sql()<{ seen: Record<string, string> }[]>`select seen from public.player_private where player_id = ${player.id}`,
     getBoosterState(player),
     incomingCount(player.id),
     unreadMessages(player.id),
+    player.role === "player" ? Promise.resolve(0) : communityPendingCount(),
   ]);
   const seen = row?.seen ?? {};
   const boostersNew = seen.boosters !== (await currentSeenValue("boosters", player)) ? boosters.freeLeft : 0;
@@ -48,7 +51,7 @@ export async function getBadges(player: Player): Promise<Badges> {
   const challengeReady = challenge && challenge.completed && !challenge.claimed ? 1 : 0;
   const seenOffers = new Set((seen.shop ?? "").split(",").filter(Boolean));
   const newOffers = (await currentSeenValue("shop", player)).split(",").filter((code) => code && !seenOffers.has(code)).length;
-  return { home: boostersNew + challengeReady, boosters: boostersNew, infos: unreadNews, news: unreadNews, shop: newOffers, profile: incoming + unread, friends: incoming, messages: unread };
+  return { home: boostersNew + challengeReady, boosters: boostersNew, infos: unreadNews, news: unreadNews, shop: newOffers, profile: incoming + unread + community, friends: incoming, messages: unread, community };
 }
 
 export async function markSeen(player: Player, key: SeenKey): Promise<void> {

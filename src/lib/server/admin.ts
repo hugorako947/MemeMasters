@@ -149,7 +149,7 @@ export async function listAudit() {
 /** Toutes les cartes, y compris inactives, pour le tableau de bord. */
 export async function adminCards(): Promise<Array<Card & { isActive: boolean; isDroppable: boolean }>> {
   const rows = await sql()<(CardRow & { is_active: boolean; is_droppable: boolean })[]>`
-    select id, slug, name, description, rarity, vibe, hp, atk, def, spd, normal_attack, special_attack, defense_ability,
+    select id, slug, name, description, rarity, hp, atk, def, spd, normal_attack, special_attack, defense_ability,
            art_seed, image_path, is_active, is_droppable
     from public.cards order by is_active desc, rarity desc, name
   `;

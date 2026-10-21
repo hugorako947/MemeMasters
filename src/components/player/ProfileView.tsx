@@ -1,13 +1,15 @@
 import Link from "next/link";
+import { CommunityPanel } from "@/components/community/CommunityPanel";
 import { FriendsPanel } from "@/components/friends/FriendsPanel";
 import { PlayerCounts } from "@/components/player/PlayerCounts";
 import { MessagesPanel } from "@/components/messages/MessagesPanel";
 import { BlockedList, PlayerActions } from "@/components/moderation/PlayerActions";
 import { SlideDeck } from "@/components/ui/SlideDeck";
 import type { FriendsOverview, Relation } from "@/lib/server/friends";
+import type { CommunityView } from "@/lib/server/community";
 import type { Conversation } from "@/lib/server/messages";
 
-export const PROFILE_TABS = ["profil", "amis", "messages"] as const;
+export const PROFILE_TABS = ["profil", "amis", "messages", "communaute"] as const;
 import { getFormatter, getTranslations } from "next-intl/server";
 import { RankShield, TrophyIcon } from "@/components/player/RankBadge";
 import { TrophyChart } from "@/components/player/TrophyChart";
@@ -20,7 +22,8 @@ export interface OwnSocial {
   friends: FriendsOverview;
   blocked: Array<{ id: string; username: string; trophies: number }>;
   conversations: Conversation[];
-  badges: { friends: number; messages: number };
+  badges: { friends: number; messages: number; community: number };
+  community: CommunityView;
   counts: { accounts: number; online: number };
   initialTab?: string;
   openWith?: string;
@@ -152,6 +155,12 @@ export async function ProfileView({
               label: t("tabs.messages"),
               badge: social.badges.messages,
               content: <MessagesPanel initial={social.conversations} openWith={social.openWith} friends={social.friends.friends} />,
+            },
+            {
+              key: "communaute",
+              label: t("tabs.community"),
+              badge: social.badges.community,
+              content: <CommunityPanel view={social.community} meId={viewer.id} staff={viewer.role !== "player"} />,
             },
           ]}
         />

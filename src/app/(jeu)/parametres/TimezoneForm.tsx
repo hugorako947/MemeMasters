@@ -5,12 +5,14 @@ import { useTranslations } from "next-intl";
 import { useMemo, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/Button";
 import { FormMessage } from "@/components/ui/Field";
+import { toast } from "@/components/ui/Toast";
 import { postJson } from "@/lib/client/api";
+import { useErrorText } from "@/lib/client/errors";
 import { useDeviceTimeZone } from "@/lib/client/use-device-timezone";
 
 export function TimezoneForm({ current }: { current: string }) {
   const t = useTranslations("settings");
-  const te = useTranslations("errors");
+  const errorText = useErrorText();
   const router = useRouter();
   const device = useDeviceTimeZone(current);
   const [value, setValue] = useState(current);
@@ -27,9 +29,10 @@ export function TimezoneForm({ current }: { current: string }) {
     setPending(false);
     if (result.ok) {
       setMessage({ tone: "success", text: t("timezoneSaved") });
+      toast.success(t("timezoneSaved"));
       router.refresh();
     } else {
-      setMessage({ tone: "error", text: te(result.code as "server_error") });
+      setMessage({ tone: "error", text: errorText(result.code) });
     }
   }
 

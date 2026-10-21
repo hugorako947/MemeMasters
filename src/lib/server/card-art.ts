@@ -18,35 +18,51 @@ export function cardArtPublicUrl(path: string | null | undefined): string | null
 function adminStorage() {
   const secret = serverEnv().SUPABASE_SECRET_KEY;
   if (!secret) {
-    throw new Error("SUPABASE_SECRET_KEY manquante : impossible de stocker une illustration.");
+    throw new CardArtError("Stockage des images non configuré (SUPABASE_SECRET_KEY manquante sur le serveur).");
   }
   return createClient(publicEnv.supabaseUrl, secret, {
     auth: { persistSession: false, autoRefreshToken: false },
   }).storage.from(CARD_ART_BUCKET);
 }
 
-/** Redimensionne et téléverse une illustration de carte dans le bucket public. */
-export async function uploadCardArt(cardId: string, file: File): Promise<string> {
-  if (file.size <= 0) throw new Error("Fichier d'illustration vide.");
-  if (file.size > MAX_UPLOAD_BYTES) throw new Error("Image trop lourde (8 Mo maximum).");
+/** Erreur d'illustration avec un message clair, affichable tel quel. */
+export class CardArtError extends Error {}
+
+/**
+ * Redimensionne et téléverse une illustration dans le bucket public.
+ * `folder` : « cartes », « demandes » (en attente du Super Admin) ou « communaute ».
+ * Chaque envoi a un nom unique : une nouvelle image s'affiche tout de suite
+ * (pas d'ancienne version gardée en cache par le navigateur ou le CDN).
+ */
+export async function uploadCardArt(folder: "cartes" | "demandes" | "communaute", key: string, file: File): Promise<string> {
+  if (file.size <= 0) throw new CardArtError("Le fichier d'illustration est vide.");
+  if (file.size > MAX_UPLOAD_BYTES) throw new CardArtError("Image trop lourde (8 Mo maximum).");
   const type = file.type || "application/octet-stream";
   if (!ACCEPTED.has(type) && !type.startsWith("image/")) {
-    throw new Error("Format d'image non pris en charge (JPEG, PNG, WebP ou GIF).");
+    throw new CardArtError("Format d'image non pris en charge (JPEG, PNG, WebP ou GIF).");
   }
   const input = Buffer.from(await file.arrayBuffer());
-  const body = await sharp(input)
-    .rotate()
-    .resize(800, 640, { fit: "cover", position: "attention" })
-    .webp({ quality: 82 })
-    .toBuffer();
-  const path = `${cardId}.webp`;
+  let body: Buffer;
+  try {
+    body = await sharp(input)
+      .rotate()
+      .resize(800, 640, { fit: "cover", position: "attention" })
+      .webp({ quality: 82 })
+      .toBuffer();
+  } catch {
+    throw new CardArtError("Cette image n'a pas pu être lue. Essayez une photo au format JPEG ou PNG.");
+  }
+  const path = `${folder}/${key}-${Date.now().toString(36)}.webp`;
   const storage = adminStorage();
   const { error } = await storage.upload(path, body, {
     contentType: "image/webp",
     upsert: true,
-    cacheControl: "3600",
+    cacheControl: "31536000",
   });
-  if (error) throw new Error("Téléversement de l'illustration impossible.");
+  if (error) {
+    console.error("[card-art] téléversement", error);
+    throw new CardArtError("Le stockage des images ne répond pas. Réessayez dans un instant.");
+  }
   return path;
 }
 

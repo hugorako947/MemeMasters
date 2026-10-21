@@ -23,10 +23,10 @@ insert into public.player_private (player_id, timezone) values
 insert into public.player_wallets (player_id, dust) values
   ('11111111-1111-1111-1111-111111111111', 10),
   ('22222222-2222-2222-2222-222222222222', 20);
-insert into public.cards (slug, name, rarity, vibe, hp, atk, def, spd,
+insert into public.cards (slug, name, rarity, hp, atk, def, spd,
                           normal_attack, special_attack, defense_ability, is_active) values
-  ('carte-active', 'Carte active', 'commune', 'chaos', 90, 40, 35, 80, '{}', '{}', '{}', true),
-  ('carte-retiree', 'Carte retirée', 'rare', 'rage', 90, 40, 35, 80, '{}', '{}', '{}', false);
+  ('carte-active', 'Carte active', 'commune', 90, 40, 35, 80, '{}', '{}', '{}', true),
+  ('carte-retiree', 'Carte retirée', 'rare', 90, 40, 35, 80, '{}', '{}', '{}', false);
 insert into public.battles (id, mode, player_a, player_b) values
   ('44444444-4444-4444-4444-444444444444', 'ranked',
    '11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222');

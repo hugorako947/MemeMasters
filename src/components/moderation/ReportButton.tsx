@@ -4,14 +4,16 @@ import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { createPortal } from "react-dom";
 import { FormMessage } from "@/components/ui/Field";
+import { toast } from "@/components/ui/Toast";
 import { postJson } from "@/lib/client/api";
+import { useErrorText } from "@/lib/client/errors";
 
 const REASONS = ["spam", "harassment", "hate", "inappropriate_name", "cheating", "other"] as const;
 
 /** Bouton « Signaler » : fenêtre avec le motif et des précisions facultatives. */
 export function ReportButton({ playerId, compact = false }: { playerId: string; compact?: boolean }) {
   const t = useTranslations("report");
-  const te = useTranslations("errors");
+  const errorText = useErrorText();
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState<(typeof REASONS)[number] | "">("");
   const [details, setDetails] = useState("");
@@ -29,10 +31,13 @@ export function ReportButton({ playerId, compact = false }: { playerId: string; 
     setState("sending");
     setError(null);
     const res = await postJson("/api/moderation/report", { playerId, reason, details: details.trim() || undefined });
-    if (res.ok) setState("sent");
+    if (res.ok) {
+      setState("sent");
+      toast.success(t("sent"));
+    }
     else {
       setState("idle");
-      setError(te(res.code as "server_error"));
+      setError(errorText(res.code));
     }
   }
 

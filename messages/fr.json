@@ -145,7 +145,8 @@
     "tabs": {
       "profile": "Profil",
       "friends": "Amis",
-      "messages": "Messages"
+      "messages": "Messages",
+      "community": "Communauté"
     }
   },
   "settings": {
@@ -262,7 +263,16 @@
     "captcha_failed": "La vérification anti-robot n'a pas abouti. Réessaie dans un instant.",
     "message_not_found": "Ce message n'existe plus.",
     "banned": "Ce compte est suspendu.",
-    "challenge_not_ready": "Le défi du jour n'est pas encore terminé."
+    "challenge_not_ready": "Le défi du jour n'est pas encore terminé.",
+    "unknown": "Quelque chose s'est mal passé de notre côté. Réessaie dans un instant ; si cela continue, préviens-nous via la page Contact.",
+    "offline": "Tu es hors ligne : cette action a besoin du réseau. Réessaie dès que la connexion revient.",
+    "file_too_large": "Image trop lourde (8 Mo au maximum). Choisis-en une plus légère.",
+    "forbidden": "Tu n'as pas le droit de faire cette action.",
+    "community_inappropriate": "Ce nom ou cette description contient un mot interdit.",
+    "community_limit": "Tu as déjà 2 propositions en cours : attends qu'elles soient vérifiées ou retire-en une.",
+    "community_image": "L'image n'a pas pu être enregistrée. Essaie une autre photo (JPEG ou PNG).",
+    "community_not_found": "Cette carte n'est plus disponible.",
+    "community_own_vote": "Tu ne peux pas voter pour ta propre carte."
   },
   "statName": {
     "hp": "Points de vie",
@@ -651,7 +661,16 @@
     "owned": "× {count}",
     "nextFree": "Tes boosters gratuits reviennent à minuit.",
     "bought": "Booster ajouté à ta réserve !",
-    "buyLabel": "Acheter {item} pour {price} MemeMoney"
+    "buyLabel": "Acheter {item} pour {price} MemeMoney",
+    "available": "{count, plural, =0 {booster à ouvrir} one {booster à ouvrir} other {boosters à ouvrir}}",
+    "openOne": "Ouvrir un booster",
+    "mineTitle": "Tes boosters spéciaux",
+    "openKind": "Ouvrir un {item}",
+    "buyTitle": "Acheter avec ta MemeMoney",
+    "balance": "{amount} MM",
+    "guaranteed": "Au moins 1 {rarity}",
+    "missing": "Il te manque {amount} MM",
+    "boughtItem": "{item} ajouté à tes boosters !"
   },
   "opening": {
     "title": "Ouverture de booster",
@@ -860,7 +879,8 @@
     },
     "reward": "Récompense : {count, plural, one {# booster en plus} other {# boosters en plus}}",
     "claim": "Récupérer {count, plural, one {# booster} other {# boosters}}",
-    "claimed": "Défi réussi ! Un nouveau défi t'attend demain."
+    "claimed": "Défi réussi ! Un nouveau défi t'attend demain.",
+    "claimedToast": "{count, plural, one {Défi réussi : # booster ajouté !} other {Défi réussi : # boosters ajoutés !}}"
   },
   "banned": {
     "title": "Compte suspendu",
@@ -885,5 +905,119 @@
     "confidentialite": "Politique de confidentialité",
     "regles-communaute": "Règles de la communauté",
     "hors-ligne": "Hors-ligne"
+  },
+  "feedback": {
+    "close": "Fermer",
+    "done": "C'est fait !",
+    "friendRequested": "Demande d'ami envoyée !",
+    "friendAccepted": "Vous êtes maintenant amis !",
+    "friendDeclined": "Demande refusée.",
+    "friendRemoved": "Ami retiré.",
+    "playerBlocked": "Joueur bloqué : il ne peut plus te contacter.",
+    "playerUnblocked": "Joueur débloqué.",
+    "messageDeleted": "Message supprimé.",
+    "conversationDeleted": "Conversation supprimée de ta liste.",
+    "themeSaved": "Thème enregistré sur ton compte.",
+    "languageSaved": "Langue enregistrée."
+  },
+  "loading": {
+    "title": "Chargement",
+    "tips": {
+      "0": "On mélange les cartes…",
+      "1": "On réveille les memes…",
+      "2": "On polit les cartes Divines…",
+      "3": "On recharge les boosters…",
+      "4": "On compte tes exemplaires…",
+      "5": "Presque prêt…"
+    }
+  },
+  "errorPage": {
+    "title": "Oups, cette page a planté",
+    "lead": "Un problème inattendu l'empêche de s'afficher. Ta collection et ta progression ne sont pas perdues : elles sont enregistrées sur nos serveurs.",
+    "offlineTitle": "Pas de connexion",
+    "offlineLead": "Ton appareil semble hors ligne : cette page a besoin du réseau pour s'afficher.",
+    "tip1": "Réessaie dans un instant : le souci est souvent passager.",
+    "tip2": "Vérifie ta connexion (Wi-Fi ou données mobiles).",
+    "tip3": "Si cela continue, recharge la page ou reviens à l'accueil.",
+    "retry": "Réessayer",
+    "home": "Retour à l'accueil",
+    "contactHint": "Le problème persiste ?",
+    "contact": "Préviens-nous",
+    "code": "Code à nous transmettre :"
+  },
+  "imagePicker": {
+    "image": "Image",
+    "photo": "Photo",
+    "capture": "Capturer",
+    "cancel": "Annuler",
+    "preparing": "Préparation de l'image…",
+    "cameraBlocked": "Caméra inaccessible : autorise-la dans ton navigateur, ou choisis « Image ».",
+    "cameraInsecure": "La webcam demande une connexion sécurisée (https) : choisis une image à la place.",
+    "unreadable": "Cette image n'a pas pu être lue. Essaie une photo JPEG ou PNG.",
+    "notImage": "Ce fichier n'est pas une image."
+  },
+  "community": {
+    "title": "Communauté",
+    "lead": "Propose ta carte de meme et vote pour ta préférée : la plus votée par les joueurs sort pour de bon dans le jeu !",
+    "steps": {
+      "propose": "Tu proposes",
+      "check": "L'équipe vérifie",
+      "vote": "Tout le monde vote",
+      "release": "Elle sort dans le jeu"
+    },
+    "voteTitle": "Le vote",
+    "voteUsed": "Ta voix est donnée (tu peux la changer).",
+    "voteFree": "Tu as 1 voix : choisis ta carte préférée.",
+    "voteEmpty": "Aucune carte au vote pour l'instant. Propose la tienne !",
+    "leader": "👑 En tête",
+    "by": "Proposée par {name}",
+    "votes": "{count, plural, =0 {Aucun vote} one {# vote} other {# votes}}",
+    "yourCard": "Ta carte",
+    "myVote": "✓ Mon vote",
+    "moveVote": "Voter plutôt pour elle",
+    "vote": "Voter",
+    "release": "Faire sortir dans le jeu (tableau de bord)",
+    "voted": "Ta voix va à « {name} » !",
+    "unvoted": "Vote retiré.",
+    "releasedTitle": "Sorties grâce à vos votes",
+    "proposed": "Proposition envoyée ! L'équipe la vérifie avant de la soumettre au vote.",
+    "proposeButton": "Proposer une carte",
+    "limitReached": "2 propositions en cours au maximum.",
+    "proposeTitle": "Ta carte de meme",
+    "name": "Nom de la carte",
+    "namePlaceholder": "Le Chat du Lundi",
+    "description": "La blague (facultatif)",
+    "descriptionPlaceholder": "Ce qui la rend drôle, en une phrase.",
+    "illustration": "Illustration",
+    "imageReady": "Image prête : elle sera recadrée au format de la carte.",
+    "illustrationHint": "Une image de ton appareil, une photo prise sur le moment… ou rien : une illustration sera générée.",
+    "rules": "Pas de vraie personne reconnaissable, rien de blessant ni de vulgaire. L'équipe choisit la rareté et les statistiques si ta carte sort dans le jeu.",
+    "sending": "Envoi…",
+    "send": "Envoyer ma proposition",
+    "cancel": "Annuler",
+    "preview": "Aperçu",
+    "removeImage": "Retirer l'image",
+    "mineTitle": "Mes propositions",
+    "status": {
+      "pending": "En vérification",
+      "voting": "Au vote",
+      "rejected": "Refusée",
+      "released": "Sortie dans le jeu !"
+    },
+    "rejectReason": "Motif : {reason}",
+    "withdraw": "Retirer",
+    "confirmWithdraw": "Confirmer",
+    "keep": "Garder",
+    "withdrawn": "Proposition retirée.",
+    "staff": {
+      "title": "Équipe : à vérifier ({count})",
+      "lead": "Vérifie chaque proposition avant le vote : pas de vraie personne, rien de blessant ni de copié. Le motif d'un refus est montré à l'auteur.",
+      "empty": "Rien à vérifier pour le moment.",
+      "reasonPlaceholder": "Motif du refus (facultatif)",
+      "approve": "Soumettre au vote",
+      "reject": "Refuser",
+      "approved": "« {name} » est soumise au vote.",
+      "rejected": "« {name} » est refusée."
+    }
   }
 }

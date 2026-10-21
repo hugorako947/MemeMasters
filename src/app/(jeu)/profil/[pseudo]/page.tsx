@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { ProfileBackLink } from "@/components/layout/Breadcrumb";
 import { ProfileView } from "@/components/player/ProfileView";
 import { requirePlayer } from "@/lib/server/auth";
+import { getCommunity } from "@/lib/server/community";
 import { getFriendsOverview, relationWith } from "@/lib/server/friends";
 import { listConversations } from "@/lib/server/messages";
 import { blockedPlayers, hasBlocked } from "@/lib/server/moderation";
@@ -34,12 +35,13 @@ export default async function ProfilePage({ params, searchParams }: PageProps<"/
   const isMe = profile.id === player.id;
   if (isMe) {
     const { vue, avec } = await searchParams;
-    const [friends, blocked, conversations, badges, counts] = await Promise.all([
+    const [friends, blocked, conversations, badges, counts, community] = await Promise.all([
       getFriendsOverview(player.id),
       blockedPlayers(player.id),
       listConversations(player.id),
       getBadges(player),
       playerCounts(),
+      getCommunity(player),
     ]);
     return (
       <ProfileView
@@ -49,7 +51,8 @@ export default async function ProfilePage({ params, searchParams }: PageProps<"/
           friends,
           blocked,
           conversations,
-          badges: { friends: badges.friends, messages: badges.messages },
+          badges: { friends: badges.friends, messages: badges.messages, community: badges.community },
+          community,
           counts,
           initialTab: typeof vue === "string" ? vue : undefined,
           openWith: typeof avec === "string" ? avec.slice(0, 20) : undefined,

@@ -24,12 +24,17 @@ const lanAddresses = Object.values(networkInterfaces())
   .filter((n) => n && n.family === "IPv4" && !n.internal)
   .map((n) => n!.address);
 
+/** Tunnels HTTPS de test (la caméra du téléphone exige une adresse sécurisée). */
+const TUNNELS = ["*.trycloudflare.com", "*.ngrok-free.app", "*.ngrok.app"];
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  allowedDevOrigins: [...lanAddresses, "*.trycloudflare.com", "*.ngrok-free.app", "*.ngrok.app"],
+  allowedDevOrigins: [...lanAddresses, ...TUNNELS],
   poweredByHeader: false,
   experimental: {
-    serverActions: { bodySizeLimit: "8mb" },
+    // En développement, les formulaires du tableau de bord (illustrations de cartes) passent aussi par
+    // ces tunnels. Jamais en production : une autre origine ne doit pas pouvoir déclencher ces actions.
+    serverActions: { bodySizeLimit: "8mb", allowedOrigins: process.env.NODE_ENV === "production" ? [] : TUNNELS },
   },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];

@@ -29,6 +29,9 @@ export const RATE_LIMITS = {
   report: { scope: "report", limit: 10, windowSeconds: 3600 },
   messageSend: { scope: "message_send", limit: 20, windowSeconds: 60 },
   messageRead: { scope: "message_read", limit: 120, windowSeconds: 60 },
+  communityPropose: { scope: "community_propose", limit: 3, windowSeconds: 86_400 },
+  communityVote: { scope: "community_vote", limit: 30, windowSeconds: 60 },
+  communityReview: { scope: "community_review", limit: 120, windowSeconds: 60 },
 } as const satisfies Record<string, RateLimitRule>;
 
 /**

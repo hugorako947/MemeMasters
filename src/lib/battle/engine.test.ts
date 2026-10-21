@@ -46,9 +46,9 @@ describe("cartes en unités", () => {
     expect(god.hp).toBeGreaterThan(com.hp * 2);
   });
 
-  it("donne un style à chaque vibe", () => {
-    const tank = unitTemplate(STARTER_SET.find((c) => c.vibe === "wholesome")!);
-    const archer = unitTemplate(STARTER_SET.find((c) => c.vibe === "ironique")!);
+  it("donne un style de combat selon la capacité défensive", () => {
+    const tank = unitTemplate(STARTER_SET.find((c) => c.defenseAbility.effect.kind === "heal")!);
+    const archer = unitTemplate(STARTER_SET.find((c) => c.defenseAbility.effect.kind === "recharge")!);
     expect(tank.targets).toBe("buildings");
     expect(archer.range).toBeGreaterThan(3_000);
   });

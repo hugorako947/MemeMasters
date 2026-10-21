@@ -1,6 +1,8 @@
 /**
  * Génère la migration SQL du jeu de départ à partir de src/content/cards/starter-set.ts.
  * Usage : npm run cards:sql (écrit supabase/migrations/20261010000900_jeu_de_depart.sql)
+ * La colonne historique `vibe` (supprimée par la migration 20261021001800) reçoit une
+ * valeur fixe : cette migration s'exécute avant sa suppression.
  */
 import { writeFileSync } from "node:fs";
 import { STARTER_SET } from "../src/content/cards/starter-set";
@@ -10,7 +12,7 @@ const j = (o: unknown) => `${q(JSON.stringify(o))}::jsonb`;
 
 const rows = STARTER_SET.map(
   (c) =>
-    `  (${q(c.id)}, ${q(c.slug)}, ${q(c.name)}, ${q(c.description)}, ${q(c.rarity)}, ${q(c.vibe)}, ` +
+    `  (${q(c.id)}, ${q(c.slug)}, ${q(c.name)}, ${q(c.description)}, ${q(c.rarity)}, 'chaos', ` +
     `${c.hp}, ${c.atk}, ${c.def}, ${c.spd}, ${j(c.normalAttack)}, ${j(c.specialAttack)}, ${j(c.defenseAbility)}, ${c.artSeed})`,
 );
 

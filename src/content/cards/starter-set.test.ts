@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { VIBES } from "@/config/vibes";
 import { checkBudget } from "@/lib/cards/balance";
 import { cardSchema } from "@/lib/validation/card";
 import { STARTER_SET } from "./starter-set";
@@ -11,10 +10,6 @@ describe("jeu de départ", () => {
     expect(STARTER_SET).toHaveLength(40);
     const expected = { commune: 12, rare: 10, epique: 8, legendaire: 5, brainrot: 3, superbrainrot: 1, godlevel: 1 };
     for (const [rarity, n] of Object.entries(expected)) expect(count((c) => c.rarity === rarity), rarity).toBe(n);
-  });
-
-  it("a au moins 6 cartes par vibe", () => {
-    for (const v of VIBES) expect(count((c) => c.vibe === v), v).toBeGreaterThanOrEqual(6);
   });
 
   it("a des identifiants et des slugs uniques", () => {

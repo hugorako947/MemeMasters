@@ -145,7 +145,8 @@
     "tabs": {
       "profile": "Profile",
       "friends": "Friends",
-      "messages": "Messages"
+      "messages": "Messages",
+      "community": "Community"
     }
   },
   "settings": {
@@ -262,7 +263,16 @@
     "captcha_failed": "The anti-bot check didn't go through. Try again in a moment.",
     "message_not_found": "This message no longer exists.",
     "banned": "This account is suspended.",
-    "challenge_not_ready": "Today's challenge isn't complete yet."
+    "challenge_not_ready": "Today's challenge isn't complete yet.",
+    "unknown": "Something went wrong on our end. Try again in a moment; if it keeps happening, let us know via the Contact page.",
+    "offline": "You're offline: this action needs the network. Try again as soon as you're back online.",
+    "file_too_large": "Image too large (8 MB max). Pick a lighter one.",
+    "forbidden": "You're not allowed to do that.",
+    "community_inappropriate": "This name or description contains a banned word.",
+    "community_limit": "You already have 2 pending submissions: wait for them to be reviewed or withdraw one.",
+    "community_image": "The image couldn't be saved. Try another photo (JPEG or PNG).",
+    "community_not_found": "This card is no longer available.",
+    "community_own_vote": "You can't vote for your own card."
   },
   "statName": {
     "hp": "Hit points",
@@ -651,7 +661,16 @@
     "owned": "× {count}",
     "nextFree": "Your free boosters come back at midnight.",
     "bought": "Booster added to your reserve!",
-    "buyLabel": "Buy {item} for {price} MemeMoney"
+    "buyLabel": "Buy {item} for {price} MemeMoney",
+    "available": "{count, plural, =0 {boosters to open} one {booster to open} other {boosters to open}}",
+    "openOne": "Open a booster",
+    "mineTitle": "Your special boosters",
+    "openKind": "Open a {item}",
+    "buyTitle": "Buy with your MemeMoney",
+    "balance": "{amount} MM",
+    "guaranteed": "At least 1 {rarity}",
+    "missing": "You need {amount} more MM",
+    "boughtItem": "{item} added to your boosters!"
   },
   "opening": {
     "title": "Opening a booster",
@@ -860,7 +879,8 @@
     },
     "reward": "Reward: {count, plural, one {# extra booster} other {# extra boosters}}",
     "claim": "Claim {count, plural, one {# booster} other {# boosters}}",
-    "claimed": "Challenge complete! A new one awaits tomorrow."
+    "claimed": "Challenge complete! A new one awaits tomorrow.",
+    "claimedToast": "{count, plural, one {Challenge complete: # booster added!} other {Challenge complete: # boosters added!}}"
   },
   "banned": {
     "title": "Account suspended",
@@ -885,5 +905,119 @@
     "confidentialite": "Privacy policy",
     "regles-communaute": "Community rules",
     "hors-ligne": "Offline"
+  },
+  "feedback": {
+    "close": "Close",
+    "done": "Done!",
+    "friendRequested": "Friend request sent!",
+    "friendAccepted": "You're friends now!",
+    "friendDeclined": "Request declined.",
+    "friendRemoved": "Friend removed.",
+    "playerBlocked": "Player blocked: they can't contact you anymore.",
+    "playerUnblocked": "Player unblocked.",
+    "messageDeleted": "Message deleted.",
+    "conversationDeleted": "Conversation removed from your list.",
+    "themeSaved": "Theme saved to your account.",
+    "languageSaved": "Language saved."
+  },
+  "loading": {
+    "title": "Loading",
+    "tips": {
+      "0": "Shuffling the cards…",
+      "1": "Waking up the memes…",
+      "2": "Polishing the Divine cards…",
+      "3": "Restocking the boosters…",
+      "4": "Counting your copies…",
+      "5": "Almost ready…"
+    }
+  },
+  "errorPage": {
+    "title": "Oops, this page crashed",
+    "lead": "An unexpected problem is keeping it from loading. Your collection and progress aren't lost: they're saved on our servers.",
+    "offlineTitle": "No connection",
+    "offlineLead": "Your device seems to be offline: this page needs the network to load.",
+    "tip1": "Try again in a moment: the issue is often temporary.",
+    "tip2": "Check your connection (Wi-Fi or mobile data).",
+    "tip3": "If it keeps happening, reload the page or go back home.",
+    "retry": "Try again",
+    "home": "Back to home",
+    "contactHint": "Still having trouble?",
+    "contact": "Let us know",
+    "code": "Code to send us:"
+  },
+  "imagePicker": {
+    "image": "Image",
+    "photo": "Photo",
+    "capture": "Capture",
+    "cancel": "Cancel",
+    "preparing": "Preparing the image…",
+    "cameraBlocked": "Can't access the camera: allow it in your browser, or choose “Image”.",
+    "cameraInsecure": "The webcam needs a secure connection (https): choose an image instead.",
+    "unreadable": "This image couldn't be read. Try a JPEG or PNG photo.",
+    "notImage": "This file isn't an image."
+  },
+  "community": {
+    "title": "Community",
+    "lead": "Submit your meme card and vote for your favorite: the one players vote for most gets released in the game for real!",
+    "steps": {
+      "propose": "You submit",
+      "check": "The team reviews",
+      "vote": "Everyone votes",
+      "release": "It goes live in the game"
+    },
+    "voteTitle": "The vote",
+    "voteUsed": "Your vote is in (you can change it).",
+    "voteFree": "You have 1 vote: pick your favorite card.",
+    "voteEmpty": "No cards up for vote yet. Submit yours!",
+    "leader": "👑 In the lead",
+    "by": "Submitted by {name}",
+    "votes": "{count, plural, =0 {No votes} one {# vote} other {# votes}}",
+    "yourCard": "Your card",
+    "myVote": "✓ My vote",
+    "moveVote": "Vote for this one instead",
+    "vote": "Vote",
+    "release": "Release in the game (dashboard)",
+    "voted": "Your vote goes to “{name}”!",
+    "unvoted": "Vote removed.",
+    "releasedTitle": "Released thanks to your votes",
+    "proposed": "Submission sent! The team will review it before putting it up for vote.",
+    "proposeButton": "Submit a card",
+    "limitReached": "2 pending submissions max.",
+    "proposeTitle": "Your meme card",
+    "name": "Card name",
+    "namePlaceholder": "Monday Cat",
+    "description": "The joke (optional)",
+    "descriptionPlaceholder": "What makes it funny, in one sentence.",
+    "illustration": "Artwork",
+    "imageReady": "Image ready: it'll be cropped to fit the card.",
+    "illustrationHint": "An image from your device, a photo taken on the spot… or nothing: artwork will be generated.",
+    "rules": "No recognizable real people, nothing hurtful or vulgar. The team picks the rarity and stats if your card makes it into the game.",
+    "sending": "Sending…",
+    "send": "Send my submission",
+    "cancel": "Cancel",
+    "preview": "Preview",
+    "removeImage": "Remove image",
+    "mineTitle": "My submissions",
+    "status": {
+      "pending": "Under review",
+      "voting": "Up for vote",
+      "rejected": "Rejected",
+      "released": "Live in the game!"
+    },
+    "rejectReason": "Reason: {reason}",
+    "withdraw": "Withdraw",
+    "confirmWithdraw": "Confirm",
+    "keep": "Keep",
+    "withdrawn": "Submission withdrawn.",
+    "staff": {
+      "title": "Team: to review ({count})",
+      "lead": "Review each submission before the vote: no real people, nothing hurtful or copied. The reason for a rejection is shown to the author.",
+      "empty": "Nothing to review right now.",
+      "reasonPlaceholder": "Rejection reason (optional)",
+      "approve": "Put up for vote",
+      "reject": "Reject",
+      "approved": "“{name}” is up for vote.",
+      "rejected": "“{name}” has been rejected."
+    }
   }
 }

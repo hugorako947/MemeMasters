@@ -4,7 +4,9 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { applyAppearance } from "@/components/layout/PreferenceSync";
 import { FormMessage } from "@/components/ui/Field";
+import { toast } from "@/components/ui/Toast";
 import { postJson } from "@/lib/client/api";
+import { useErrorText } from "@/lib/client/errors";
 import { ACCENTS, BASES, newSeed, parseAppearance, THEMES, type Appearance, type Theme } from "@/lib/theme/theme";
 
 /** Aperçu miniature de chaque thème. */
@@ -19,7 +21,8 @@ const PREVIEW: Record<Theme, { bg: string; fg: string; accent: string; filter?: 
 /** Choix du thème : appliqué immédiatement, enregistré dans le compte. */
 export function AppearanceForm({ initial }: { initial: Appearance }) {
   const t = useTranslations("settings");
-  const te = useTranslations("errors");
+  const errorText = useErrorText();
+  const tf = useTranslations("feedback");
   const [randomOpen, setRandomOpen] = useState(false);
   const [value, setValue] = useState<Appearance>(initial);
   const [error, setError] = useState<string | null>(null);
@@ -30,7 +33,8 @@ export function AppearanceForm({ initial }: { initial: Appearance }) {
     applyAppearance(normalized);
     setError(null);
     const result = await postJson("/api/settings/appearance", normalized);
-    if (!result.ok) setError(te(result.code as "server_error"));
+    if (!result.ok) setError(errorText(result.code));
+    else toast.success(tf("themeSaved"));
   }
 
   return (

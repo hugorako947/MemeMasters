@@ -51,39 +51,46 @@
     outline-offset: 3px;
     border-radius: 6px;
   }
-  /* Curseur sticker : flèche jaune / main rose, uniquement souris (pas le tactile). */
+  /* Pointeurs de souris (uniquement à la souris, pas au doigt) : la flèche partout, boutons et
+     liens compris, et le curseur d'écriture sur les champs de saisie et le texte. Leurs couleurs
+     suivent le thème du compte (variables --mm-cursor-*, posées sur <html> : src/lib/theme/cursor.ts). */
   @media (hover: hover) and (pointer: fine) {
     html,
     body,
-    #mm-app {
-      cursor: url("/cursors/mm-arrow.svg") 3 2, auto;
-    }
+    #mm-app,
     a,
     button,
     [role="button"],
+    [role="tab"],
     [role="link"],
     label,
     select,
     summary,
     .mm-btn,
-    .mm-flip__back,
+    .mm-card,
     input[type="checkbox"],
     input[type="radio"],
     input[type="file"],
-    input[type="submit"] {
-      cursor: url("/cursors/mm-pointer.svg") 8 2, pointer;
+    input[type="range"],
+    input[type="color"],
+    input[type="submit"],
+    :is(a, button, label, summary, [role="button"], [role="tab"], [role="link"], .mm-btn, .mm-card) * {
+      cursor: var(--mm-cursor-arrow, url("/cursors/mm-arrow.svg") 3 2), default;
     }
-    input[type="text"],
-    input[type="email"],
-    input[type="password"],
-    input[type="search"],
-    input[type="number"],
-    input[type="url"],
-    textarea {
-      cursor: url("/cursors/mm-arrow.svg") 3 2, text;
+    :where(p, h1, h2, h3, h4, h5, h6, dt, dd, blockquote, figcaption, td, th, pre, code, time),
+    input:not([type="checkbox"], [type="radio"], [type="file"], [type="range"], [type="color"], [type="submit"], [type="button"], [type="reset"]),
+    textarea:not(:disabled),
+    [contenteditable="true"] {
+      cursor: var(--mm-cursor-text, url("/cursors/mm-text.svg") 16 16), text;
+    }
+    :is(a, button, label, summary, [role="button"], [role="tab"], [role="link"], .mm-btn, .mm-card) :where(p, h1, h2, h3, h4, h5, h6, dt, dd, td, th, time) {
+      cursor: var(--mm-cursor-arrow, url("/cursors/mm-arrow.svg") 3 2), default;
     }
     .mm-btn:disabled,
-    button:disabled {
+    button:disabled,
+    input:disabled,
+    textarea:disabled,
+    select:disabled {
       cursor: not-allowed;
     }
   }
@@ -627,7 +634,7 @@
     transform 0.14s cubic-bezier(0.3, 1.6, 0.6, 1),
     box-shadow 0.14s ease,
     background-color 0.2s;
-  cursor: url("/cursors/mm-pointer.svg") 8 2, pointer;
+  cursor: var(--mm-cursor-arrow, url("/cursors/mm-arrow.svg") 3 2), default;
   -webkit-tap-highlight-color: transparent;
 }
 .mm-btn::after {
@@ -1260,7 +1267,7 @@ body:has(> dialog.mm-detail[open]) #mm-app {
     repeating-linear-gradient(45deg, rgb(255 255 255 / 0.12) 0 6px, transparent 6px 14px),
     linear-gradient(160deg, #ff3d7f, #8b3dff);
   box-shadow: 0 4px 0 0 #1a1238;
-  cursor: url("/cursors/mm-pointer.svg") 8 2, pointer;
+  cursor: var(--mm-cursor-arrow, url("/cursors/mm-arrow.svg") 3 2), default;
 }
 .mm-flip__front {
   transform: rotateY(180deg);
@@ -1498,4 +1505,239 @@ body:has(> dialog.mm-detail[open]) #mm-app {
   opacity: 0.45;
   filter: grayscale(1);
   pointer-events: none;
+}
+
+/* ==========================================================================
+   Attente et retours d'action
+   Toupie (petites actions), barre de navigation (changement de page),
+   écran de chargement (page entière) et bulles de confirmation (toasts).
+   ========================================================================== */
+
+/* Toupie : un jeton candy / sticker qui tourne sur lui-même. */
+.mm-spinner {
+  display: inline-block;
+  flex-shrink: 0;
+  width: var(--size, 1.15em);
+  height: var(--size, 1.15em);
+  border-radius: 999px;
+  border: 0.14em solid currentColor;
+  background:
+    radial-gradient(circle at 50% 50%, currentColor 0 18%, transparent 19%),
+    conic-gradient(from 0deg, var(--color-candy) 0 25%, var(--color-sticker) 0 50%, var(--color-candy) 0 75%, var(--color-sticker) 0);
+  animation: mm-spinner 0.7s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
+  vertical-align: -0.2em;
+}
+@keyframes mm-spinner {
+  to { transform: rotate(360deg); }
+}
+
+/* Bouton en cours : le texte reste à sa place (pas de saut), la toupie passe devant. */
+.mm-btn[aria-busy="true"] {
+  cursor: progress;
+  pointer-events: none;
+  --btn-shadow: 1px;
+  transform: translateY(2px);
+}
+
+/* Barre de navigation : part dès le clic, file vers 90 %, se termine à l'arrivée. */
+.mm-progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 100;
+  height: 4px;
+  pointer-events: none;
+}
+.mm-progress__bar {
+  height: 100%;
+  width: 100%;
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  background: linear-gradient(90deg, var(--color-candy), var(--color-sticker), var(--color-candy));
+  background-size: 200% 100%;
+  box-shadow: 0 0 10px var(--color-candy);
+  animation: mm-progress-shine 1s linear infinite;
+}
+[dir="rtl"] .mm-progress__bar {
+  transform-origin: 100% 50%;
+}
+.mm-progress[data-state="loading"] .mm-progress__bar {
+  transition: transform 8s cubic-bezier(0.05, 0.75, 0.2, 1);
+  transform: scaleX(0.92);
+}
+.mm-progress[data-state="start"] .mm-progress__bar {
+  transition: none;
+  transform: scaleX(0.08);
+}
+.mm-progress[data-state="done"] .mm-progress__bar {
+  transition: transform 0.2s ease, opacity 0.3s ease 0.2s;
+  transform: scaleX(1);
+  opacity: 0;
+}
+@keyframes mm-progress-shine {
+  to { background-position: -200% 0; }
+}
+
+/* Écran de chargement : n'apparaît qu'après un court instant (rien ne clignote si la page arrive vite). */
+.mm-loading {
+  display: grid;
+  min-height: min(70dvh, 34rem);
+  place-items: center;
+  align-content: center;
+  gap: 1.5rem;
+  padding: 2rem 1rem;
+  text-align: center;
+  animation: mm-fade-in 0.25s ease 0.18s both;
+}
+.mm-loading--fullscreen {
+  min-height: 100dvh;
+}
+.mm-loading__cards {
+  position: relative;
+  width: 9.5rem;
+  height: 8rem;
+}
+.mm-loading__card {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 4.6rem;
+  aspect-ratio: 5 / 7;
+  margin-left: -2.3rem;
+  border: 3px solid #1a1238;
+  border-radius: 0.55rem;
+  background:
+    repeating-linear-gradient(45deg, rgb(255 255 255 / 0.14) 0 6px, transparent 6px 14px),
+    linear-gradient(160deg, var(--c1), var(--c2));
+  box-shadow: 0 4px 0 0 #1a1238;
+  transform-origin: 50% 110%;
+  animation: mm-loading-deal 1.8s cubic-bezier(0.45, 0, 0.3, 1.4) infinite;
+}
+.mm-loading__card:nth-child(1) { --c1: #ff3d7f; --c2: #8b3dff; --r: -18deg; --x: -2.6rem; animation-delay: 0s; }
+.mm-loading__card:nth-child(2) { --c1: #ffd23f; --c2: #ff5a36; --r: 0deg; --x: 0rem; animation-delay: 0.15s; z-index: 1; }
+.mm-loading__card:nth-child(3) { --c1: #5fd0ff; --c2: #2d5bff; --r: 18deg; --x: 2.6rem; animation-delay: 0.3s; }
+.mm-loading__card::after {
+  content: "?";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  color: #fff;
+  -webkit-text-stroke: 0.08em #1a1238;
+  paint-order: stroke fill;
+}
+@keyframes mm-loading-deal {
+  0%, 100% { transform: translateX(0) rotate(0) translateY(0); }
+  35%, 65% { transform: translateX(var(--x)) rotate(var(--r)) translateY(-0.6rem); }
+  50% { transform: translateX(var(--x)) rotate(var(--r)) translateY(-1rem) rotateY(180deg); }
+}
+.mm-loading__title {
+  font-size: clamp(2.2rem, 8vw, 3.4rem);
+}
+.mm-loading__title span {
+  display: inline-block;
+  animation: mm-loading-bounce 1.2s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.06s);
+}
+@keyframes mm-loading-bounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-0.18em) rotate(-4deg); }
+}
+.mm-loading__tip {
+  min-height: 1.5em;
+  animation: mm-fade-in 0.4s ease;
+}
+
+/* Bulles de confirmation et d'erreur, en bas de l'écran (au-dessus de la navigation). */
+.mm-toasts {
+  position: fixed;
+  inset: auto 0 calc(5.5rem + env(safe-area-inset-bottom)) 0;
+  z-index: 90;
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+  padding: 0 1rem;
+  pointer-events: none;
+}
+@media (min-width: 768px) {
+  .mm-toasts {
+    inset: auto 1.25rem 1.25rem auto;
+    justify-items: end;
+  }
+}
+.mm-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  width: min(26rem, 100%);
+  padding: 0.75rem 0.85rem;
+  border: 2px solid #1a1238;
+  border-radius: 1rem;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  box-shadow: 0 4px 0 0 var(--mm-shadow);
+  font-weight: 700;
+  font-size: 0.95rem;
+  animation: mm-toast-in 0.32s cubic-bezier(0.3, 1.5, 0.6, 1);
+}
+.mm-toast[data-leaving="true"] {
+  animation: mm-toast-out 0.2s ease forwards;
+}
+.mm-toast__icon {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border: 2px solid #1a1238;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 900;
+  color: #1a1238;
+}
+.mm-toast[data-tone="success"] .mm-toast__icon { background: #7be3a6; }
+.mm-toast[data-tone="error"] .mm-toast__icon { background: #ff8a9a; }
+.mm-toast[data-tone="info"] .mm-toast__icon { background: var(--color-sticker); }
+.mm-toast[data-tone="error"] {
+  border-color: var(--color-danger);
+}
+@keyframes mm-toast-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.92); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes mm-toast-out {
+  to { opacity: 0; transform: translateY(8px) scale(0.96); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mm-spinner {
+    animation-duration: 2s;
+  }
+  .mm-loading__card,
+  .mm-loading__title span,
+  .mm-progress__bar,
+  .mm-toast {
+    animation: none !important;
+  }
+}
+
+/* Bouton dont l'action est en cours (marqué automatiquement par src/lib/client/api.ts). */
+[data-mm-busy="true"] {
+  pointer-events: none;
+  cursor: progress;
+}
+[data-mm-busy="true"]::before {
+  content: "";
+  display: inline-block;
+  flex-shrink: 0;
+  width: 1em;
+  height: 1em;
+  margin-inline-end: 0.45em;
+  border-radius: 999px;
+  border: 0.14em solid currentColor;
+  background: conic-gradient(var(--color-candy) 0 25%, var(--color-sticker) 0 50%, var(--color-candy) 0 75%, var(--color-sticker) 0);
+  vertical-align: -0.15em;
+  animation: mm-spinner 0.7s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
 }

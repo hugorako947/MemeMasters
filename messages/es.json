@@ -145,7 +145,8 @@
     "tabs": {
       "profile": "Perfil",
       "friends": "Amigos",
-      "messages": "Mensajes"
+      "messages": "Mensajes",
+      "community": "Comunidad"
     }
   },
   "settings": {
@@ -262,7 +263,16 @@
     "captcha_failed": "La verificación antirrobots no se completó. Inténtalo de nuevo en un momento.",
     "message_not_found": "Este mensaje ya no existe.",
     "banned": "Esta cuenta está suspendida.",
-    "challenge_not_ready": "El reto del día aún no está completado."
+    "challenge_not_ready": "El reto del día aún no está completado.",
+    "unknown": "Algo ha salido mal por nuestra parte. Vuelve a intentarlo en un momento; si sigue pasando, avísanos desde la página de Contacto.",
+    "offline": "No tienes conexión: esta acción necesita la red. Vuelve a intentarlo en cuanto vuelva la conexión.",
+    "file_too_large": "Imagen demasiado pesada (8 MB como máximo). Elige una más ligera.",
+    "forbidden": "No tienes permiso para hacer esto.",
+    "community_inappropriate": "Este nombre o esta descripción contiene una palabra prohibida.",
+    "community_limit": "Ya tienes 2 propuestas en curso: espera a que las revisen o retira una.",
+    "community_image": "No se ha podido guardar la imagen. Prueba con otra foto (JPEG o PNG).",
+    "community_not_found": "Esta carta ya no está disponible.",
+    "community_own_vote": "No puedes votar por tu propia carta."
   },
   "statName": {
     "hp": "Puntos de salud",
@@ -651,7 +661,16 @@
     "owned": "× {count}",
     "nextFree": "Tus sobres gratis vuelven a medianoche.",
     "bought": "¡Sobre añadido a tu reserva!",
-    "buyLabel": "Comprar {item} por {price} MemeMoney"
+    "buyLabel": "Comprar {item} por {price} MemeMoney",
+    "available": "{count, plural, =0 {sobres por abrir} one {sobre por abrir} other {sobres por abrir}}",
+    "openOne": "Abrir un sobre",
+    "mineTitle": "Tus sobres especiales",
+    "openKind": "Abrir un {item}",
+    "buyTitle": "Comprar con tu MemeMoney",
+    "balance": "{amount} MM",
+    "guaranteed": "Al menos 1 {rarity}",
+    "missing": "Te faltan {amount} MM",
+    "boughtItem": "¡{item} añadido a tus sobres!"
   },
   "opening": {
     "title": "Apertura de sobre",
@@ -860,7 +879,8 @@
     },
     "reward": "Recompensa: {count, plural, one {# sobre extra} other {# sobres extra}}",
     "claim": "Recoger {count, plural, one {# sobre} other {# sobres}}",
-    "claimed": "¡Reto superado! Mañana te espera uno nuevo."
+    "claimed": "¡Reto superado! Mañana te espera uno nuevo.",
+    "claimedToast": "{count, plural, one {¡Reto superado: # sobre añadido!} other {¡Reto superado: # sobres añadidos!}}"
   },
   "banned": {
     "title": "Cuenta suspendida",
@@ -885,5 +905,119 @@
     "confidentialite": "Política de privacidad",
     "regles-communaute": "Normas de la comunidad",
     "hors-ligne": "Sin conexión"
+  },
+  "feedback": {
+    "close": "Cerrar",
+    "done": "¡Hecho!",
+    "friendRequested": "¡Solicitud de amistad enviada!",
+    "friendAccepted": "¡Ya sois amigos!",
+    "friendDeclined": "Solicitud rechazada.",
+    "friendRemoved": "Amigo eliminado.",
+    "playerBlocked": "Jugador bloqueado: ya no puede contactarte.",
+    "playerUnblocked": "Jugador desbloqueado.",
+    "messageDeleted": "Mensaje eliminado.",
+    "conversationDeleted": "Conversación eliminada de tu lista.",
+    "themeSaved": "Tema guardado en tu cuenta.",
+    "languageSaved": "Idioma guardado."
+  },
+  "loading": {
+    "title": "Cargando",
+    "tips": {
+      "0": "Barajando las cartas…",
+      "1": "Despertando a los memes…",
+      "2": "Puliendo las cartas Divinas…",
+      "3": "Rellenando los sobres…",
+      "4": "Contando tus ejemplares…",
+      "5": "Casi listo…"
+    }
+  },
+  "errorPage": {
+    "title": "Uy, esta página ha fallado",
+    "lead": "Un problema inesperado impide que se muestre. No has perdido tu colección ni tu progreso: están guardados en nuestros servidores.",
+    "offlineTitle": "Sin conexión",
+    "offlineLead": "Parece que tu dispositivo no tiene conexión: esta página necesita la red para mostrarse.",
+    "tip1": "Vuelve a intentarlo en un momento: el fallo suele ser pasajero.",
+    "tip2": "Comprueba tu conexión (wifi o datos móviles).",
+    "tip3": "Si sigue pasando, recarga la página o vuelve al inicio.",
+    "retry": "Reintentar",
+    "home": "Volver al inicio",
+    "contactHint": "¿El problema continúa?",
+    "contact": "Avísanos",
+    "code": "Código para enviarnos:"
+  },
+  "imagePicker": {
+    "image": "Imagen",
+    "photo": "Foto",
+    "capture": "Capturar",
+    "cancel": "Cancelar",
+    "preparing": "Preparando la imagen…",
+    "cameraBlocked": "No se puede acceder a la cámara: permítela en tu navegador o elige «Imagen».",
+    "cameraInsecure": "La webcam necesita una conexión segura (https): elige una imagen en su lugar.",
+    "unreadable": "No se ha podido leer esta imagen. Prueba con una foto JPEG o PNG.",
+    "notImage": "Este archivo no es una imagen."
+  },
+  "community": {
+    "title": "Comunidad",
+    "lead": "Propón tu carta de meme y vota por tu favorita: ¡la más votada por los jugadores llega al juego para siempre!",
+    "steps": {
+      "propose": "Tú propones",
+      "check": "El equipo revisa",
+      "vote": "Todos votan",
+      "release": "Llega al juego"
+    },
+    "voteTitle": "La votación",
+    "voteUsed": "Ya has votado (puedes cambiar tu voto).",
+    "voteFree": "Tienes 1 voto: elige tu carta favorita.",
+    "voteEmpty": "Todavía no hay cartas en votación. ¡Propón la tuya!",
+    "leader": "👑 En cabeza",
+    "by": "Propuesta por {name}",
+    "votes": "{count, plural, =0 {Sin votos} one {# voto} other {# votos}}",
+    "yourCard": "Tu carta",
+    "myVote": "✓ Mi voto",
+    "moveVote": "Votar por esta mejor",
+    "vote": "Votar",
+    "release": "Lanzar en el juego (panel de control)",
+    "voted": "¡Tu voto va para «{name}»!",
+    "unvoted": "Voto retirado.",
+    "releasedTitle": "Lanzadas gracias a vuestros votos",
+    "proposed": "¡Propuesta enviada! El equipo la revisará antes de someterla a votación.",
+    "proposeButton": "Proponer una carta",
+    "limitReached": "Máximo 2 propuestas en curso.",
+    "proposeTitle": "Tu carta de meme",
+    "name": "Nombre de la carta",
+    "namePlaceholder": "El Gato del Lunes",
+    "description": "El chiste (opcional)",
+    "descriptionPlaceholder": "Lo que la hace graciosa, en una frase.",
+    "illustration": "Ilustración",
+    "imageReady": "Imagen lista: se recortará al formato de la carta.",
+    "illustrationHint": "Una imagen de tu dispositivo, una foto hecha al momento… o nada: se generará una ilustración.",
+    "rules": "Nada de personas reales reconocibles, nada ofensivo ni vulgar. El equipo elige la rareza y las estadísticas si tu carta llega al juego.",
+    "sending": "Enviando…",
+    "send": "Enviar mi propuesta",
+    "cancel": "Cancelar",
+    "preview": "Vista previa",
+    "removeImage": "Quitar la imagen",
+    "mineTitle": "Mis propuestas",
+    "status": {
+      "pending": "En revisión",
+      "voting": "En votación",
+      "rejected": "Rechazada",
+      "released": "¡Ya está en el juego!"
+    },
+    "rejectReason": "Motivo: {reason}",
+    "withdraw": "Retirar",
+    "confirmWithdraw": "Confirmar",
+    "keep": "Conservar",
+    "withdrawn": "Propuesta retirada.",
+    "staff": {
+      "title": "Equipo: por revisar ({count})",
+      "lead": "Revisa cada propuesta antes de la votación: nada de personas reales, nada ofensivo ni copiado. El motivo del rechazo se muestra al autor.",
+      "empty": "Nada que revisar por ahora.",
+      "reasonPlaceholder": "Motivo del rechazo (opcional)",
+      "approve": "Someter a votación",
+      "reject": "Rechazar",
+      "approved": "«{name}» está en votación.",
+      "rejected": "«{name}» ha sido rechazada."
+    }
   }
 }

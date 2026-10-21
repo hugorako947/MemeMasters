@@ -145,7 +145,8 @@
     "tabs": {
       "profile": "Profil",
       "friends": "Freunde",
-      "messages": "Nachrichten"
+      "messages": "Nachrichten",
+      "community": "Community"
     }
   },
   "settings": {
@@ -262,7 +263,16 @@
     "captcha_failed": "Die Anti-Bot-Prüfung ist fehlgeschlagen. Versuch es gleich noch einmal.",
     "message_not_found": "Diese Nachricht existiert nicht mehr.",
     "banned": "Dieses Konto ist gesperrt.",
-    "challenge_not_ready": "Die Tagesaufgabe ist noch nicht erledigt."
+    "challenge_not_ready": "Die Tagesaufgabe ist noch nicht erledigt.",
+    "unknown": "Bei uns ist etwas schiefgelaufen. Versuch es gleich noch mal; wenn es weiter passiert, sag uns über die Kontaktseite Bescheid.",
+    "offline": "Du bist offline: Diese Aktion braucht eine Netzverbindung. Versuch es erneut, sobald die Verbindung zurück ist.",
+    "file_too_large": "Bild zu groß (max. 8 MB). Wähl ein kleineres.",
+    "forbidden": "Du darfst diese Aktion nicht ausführen.",
+    "community_inappropriate": "Dieser Name oder diese Beschreibung enthält ein verbotenes Wort.",
+    "community_limit": "Du hast schon 2 offene Vorschläge: Warte, bis sie geprüft sind, oder zieh einen zurück.",
+    "community_image": "Das Bild konnte nicht gespeichert werden. Probier ein anderes Foto (JPEG oder PNG).",
+    "community_not_found": "Diese Karte ist nicht mehr verfügbar.",
+    "community_own_vote": "Du kannst nicht für deine eigene Karte stimmen."
   },
   "statName": {
     "hp": "Kraftpunkte",
@@ -651,7 +661,16 @@
     "owned": "× {count}",
     "nextFree": "Deine Gratis-Booster kommen um Mitternacht zurück.",
     "bought": "Booster zu deiner Reserve hinzugefügt!",
-    "buyLabel": "{item} für {price} MemeMoney kaufen"
+    "buyLabel": "{item} für {price} MemeMoney kaufen",
+    "available": "{count, plural, =0 {Booster zum Öffnen} one {Booster zum Öffnen} other {Booster zum Öffnen}}",
+    "openOne": "Booster öffnen",
+    "mineTitle": "Deine Spezial-Booster",
+    "openKind": "{item} öffnen",
+    "buyTitle": "Mit deiner MemeMoney kaufen",
+    "balance": "{amount} MM",
+    "guaranteed": "Mindestens 1 × {rarity}",
+    "missing": "Dir fehlen {amount} MM",
+    "boughtItem": "{item} zu deinen Boostern hinzugefügt!"
   },
   "opening": {
     "title": "Booster öffnen",
@@ -860,7 +879,8 @@
     },
     "reward": "Belohnung: {count, plural, one {# Extra-Booster} other {# Extra-Booster}}",
     "claim": "{count, plural, one {# Booster abholen} other {# Booster abholen}}",
-    "claimed": "Aufgabe geschafft! Morgen wartet eine neue."
+    "claimed": "Aufgabe geschafft! Morgen wartet eine neue.",
+    "claimedToast": "{count, plural, one {Aufgabe geschafft: # Booster hinzugefügt!} other {Aufgabe geschafft: # Booster hinzugefügt!}}"
   },
   "banned": {
     "title": "Konto gesperrt",
@@ -885,5 +905,119 @@
     "confidentialite": "Datenschutz",
     "regles-communaute": "Community-Regeln",
     "hors-ligne": "Offline"
+  },
+  "feedback": {
+    "close": "Schließen",
+    "done": "Erledigt!",
+    "friendRequested": "Freundschaftsanfrage gesendet!",
+    "friendAccepted": "Ihr seid jetzt Freunde!",
+    "friendDeclined": "Anfrage abgelehnt.",
+    "friendRemoved": "Freund entfernt.",
+    "playerBlocked": "Spieler blockiert: Er kann dich nicht mehr kontaktieren.",
+    "playerUnblocked": "Spieler entblockt.",
+    "messageDeleted": "Nachricht gelöscht.",
+    "conversationDeleted": "Unterhaltung aus deiner Liste entfernt.",
+    "themeSaved": "Design in deinem Konto gespeichert.",
+    "languageSaved": "Sprache gespeichert."
+  },
+  "loading": {
+    "title": "Wird geladen",
+    "tips": {
+      "0": "Karten werden gemischt …",
+      "1": "Memes werden geweckt …",
+      "2": "Göttliche Karten werden poliert …",
+      "3": "Booster werden aufgefüllt …",
+      "4": "Deine Exemplare werden gezählt …",
+      "5": "Fast fertig …"
+    }
+  },
+  "errorPage": {
+    "title": "Hoppla, diese Seite ist abgestürzt",
+    "lead": "Ein unerwartetes Problem verhindert die Anzeige. Deine Sammlung und dein Fortschritt sind nicht verloren: Sie sind auf unseren Servern gespeichert.",
+    "offlineTitle": "Keine Verbindung",
+    "offlineLead": "Dein Gerät scheint offline zu sein: Diese Seite braucht eine Netzverbindung.",
+    "tip1": "Versuch es gleich noch mal: Das Problem ist oft nur vorübergehend.",
+    "tip2": "Prüf deine Verbindung (WLAN oder mobile Daten).",
+    "tip3": "Wenn es weiter passiert, lade die Seite neu oder geh zurück zur Startseite.",
+    "retry": "Erneut versuchen",
+    "home": "Zur Startseite",
+    "contactHint": "Das Problem besteht weiter?",
+    "contact": "Sag uns Bescheid",
+    "code": "Code für uns:"
+  },
+  "imagePicker": {
+    "image": "Bild",
+    "photo": "Foto",
+    "capture": "Aufnehmen",
+    "cancel": "Abbrechen",
+    "preparing": "Bild wird vorbereitet …",
+    "cameraBlocked": "Kein Zugriff auf die Kamera: Erlaube sie in deinem Browser oder wähl „Bild“.",
+    "cameraInsecure": "Die Webcam braucht eine sichere Verbindung (https): Wähl stattdessen ein Bild.",
+    "unreadable": "Dieses Bild konnte nicht gelesen werden. Probier ein JPEG- oder PNG-Foto.",
+    "notImage": "Diese Datei ist kein Bild."
+  },
+  "community": {
+    "title": "Community",
+    "lead": "Schlag deine Meme-Karte vor und stimm für deinen Favoriten: Die Karte mit den meisten Stimmen kommt fest ins Spiel!",
+    "steps": {
+      "propose": "Du schlägst vor",
+      "check": "Das Team prüft",
+      "vote": "Alle stimmen ab",
+      "release": "Sie kommt ins Spiel"
+    },
+    "voteTitle": "Die Abstimmung",
+    "voteUsed": "Deine Stimme ist abgegeben (du kannst sie ändern).",
+    "voteFree": "Du hast 1 Stimme: Wähl deine Lieblingskarte.",
+    "voteEmpty": "Noch keine Karten zur Abstimmung. Schlag deine vor!",
+    "leader": "👑 Vorne",
+    "by": "Vorgeschlagen von {name}",
+    "votes": "{count, plural, =0 {Keine Stimmen} one {# Stimme} other {# Stimmen}}",
+    "yourCard": "Deine Karte",
+    "myVote": "✓ Meine Stimme",
+    "moveVote": "Lieber für diese stimmen",
+    "vote": "Abstimmen",
+    "release": "Ins Spiel bringen (Dashboard)",
+    "voted": "Deine Stimme geht an „{name}“!",
+    "unvoted": "Stimme zurückgezogen.",
+    "releasedTitle": "Dank eurer Stimmen im Spiel",
+    "proposed": "Vorschlag gesendet! Das Team prüft ihn, bevor er zur Abstimmung kommt.",
+    "proposeButton": "Karte vorschlagen",
+    "limitReached": "Maximal 2 offene Vorschläge.",
+    "proposeTitle": "Deine Meme-Karte",
+    "name": "Name der Karte",
+    "namePlaceholder": "Die Montagskatze",
+    "description": "Der Witz (optional)",
+    "descriptionPlaceholder": "Was sie lustig macht, in einem Satz.",
+    "illustration": "Illustration",
+    "imageReady": "Bild bereit: Es wird auf das Kartenformat zugeschnitten.",
+    "illustrationHint": "Ein Bild von deinem Gerät, ein spontanes Foto … oder nichts: Dann wird eine Illustration generiert.",
+    "rules": "Keine erkennbaren echten Personen, nichts Verletzendes oder Vulgäres. Das Team legt Seltenheit und Werte fest, wenn deine Karte ins Spiel kommt.",
+    "sending": "Wird gesendet …",
+    "send": "Vorschlag senden",
+    "cancel": "Abbrechen",
+    "preview": "Vorschau",
+    "removeImage": "Bild entfernen",
+    "mineTitle": "Meine Vorschläge",
+    "status": {
+      "pending": "Wird geprüft",
+      "voting": "In der Abstimmung",
+      "rejected": "Abgelehnt",
+      "released": "Im Spiel!"
+    },
+    "rejectReason": "Grund: {reason}",
+    "withdraw": "Zurückziehen",
+    "confirmWithdraw": "Bestätigen",
+    "keep": "Behalten",
+    "withdrawn": "Vorschlag zurückgezogen.",
+    "staff": {
+      "title": "Team: zu prüfen ({count})",
+      "lead": "Prüf jeden Vorschlag vor der Abstimmung: keine echten Personen, nichts Verletzendes oder Kopiertes. Der Ablehnungsgrund wird dem Autor angezeigt.",
+      "empty": "Gerade nichts zu prüfen.",
+      "reasonPlaceholder": "Ablehnungsgrund (optional)",
+      "approve": "Zur Abstimmung stellen",
+      "reject": "Ablehnen",
+      "approved": "„{name}“ steht zur Abstimmung.",
+      "rejected": "„{name}“ wurde abgelehnt."
+    }
   }
 }

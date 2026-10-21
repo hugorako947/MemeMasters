@@ -8,7 +8,9 @@ import { RankShield } from "@/components/player/RankBadge";
 import { ReportButton } from "@/components/moderation/ReportButton";
 import { FormMessage } from "@/components/ui/Field";
 import { rankFor } from "@/config/ranks";
+import { toast } from "@/components/ui/Toast";
 import { postJson } from "@/lib/client/api";
+import { useErrorText } from "@/lib/client/errors";
 import type { Conversation, Thread, ThreadMessage } from "@/lib/server/messages";
 
 const MAX = 500;
@@ -151,7 +153,9 @@ export function MessagesPanel({
 
 function ThreadView({ username, onBack, onHidden }: { username: string; onBack: () => void; onHidden: (username: string) => void }) {
   const t = useTranslations("messages");
+  const tf = useTranslations("feedback");
   const te = useTranslations("errors");
+  const errorText = useErrorText();
   const format = useFormatter();
   const router = useRouter();
   const [thread, setThread] = useState<Thread | null>(null);
@@ -163,17 +167,20 @@ function ThreadView({ username, onBack, onHidden }: { username: string; onBack: 
 
   async function removeMessage(id: string) {
     const res = await postJson("/api/messages/delete", { messageId: id });
-    if (res.ok) setThread((th) => (th ? { ...th, messages: th.messages.filter((m) => m.id !== id) } : th));
-    else setError(te(res.code as "server_error"));
+    if (res.ok) {
+      setThread((th) => (th ? { ...th, messages: th.messages.filter((m) => m.id !== id) } : th));
+      toast.success(tf("messageDeleted"));
+    } else setError(errorText(res.code));
     setConfirmMsg(null);
   }
 
   async function hide() {
     const res = await postJson("/api/messages/hide", { username });
     if (res.ok) {
+      toast.success(tf("conversationDeleted"));
       router.refresh();
       onHidden(username);
-    } else setError(te(res.code as "server_error"));
+    } else setError(errorText(res.code));
   }
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -214,7 +221,7 @@ function ThreadView({ username, onBack, onHidden }: { username: string; onBack: 
       setText("");
       setThread((th) => (th ? { ...th, messages: [...th.messages, res.data], remaining: th.remaining === null ? null : Math.max(0, th.remaining - 1) } : th));
     } else {
-      setError(te(res.code as "server_error"));
+      setError(errorText(res.code));
     }
   }
 

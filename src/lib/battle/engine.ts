@@ -6,7 +6,6 @@
  * Le même enchaînement d'entrées donne toujours le même résultat : le
  * serveur peut rejouer une partie pour en vérifier le vainqueur.
  */
-import { matchup } from "@/config/vibes";
 import type { Card } from "@/lib/validation/card";
 import { ARENA, COST, RULES, TOWERS } from "./rules";
 
@@ -17,7 +16,6 @@ export interface UnitTemplate {
   cardId: string;
   name: string;
   rarity: Card["rarity"];
-  vibe: Card["vibe"];
   artSeed: number;
   cost: number;
   hp: number;
@@ -123,7 +121,7 @@ function nextRandom(state: BattleState): number {
 
 // ---------------------------------------------------------------- cartes → unités
 
-/** Caractéristiques d'une unité, dérivées de la carte (rareté, vibe, statistiques). */
+/** Caractéristiques d'une unité, dérivées de la carte (rareté, capacité défensive, statistiques). */
 export function unitTemplate(card: Card): UnitTemplate {
   const cost = COST[card.rarity];
   const scale = (cost + 1) / 3; // une carte plus chère est plus puissante
@@ -133,30 +131,26 @@ export function unitTemplate(card: Card): UnitTemplate {
   let range = 700;
   let targets: UnitTemplate["targets"] = "all";
   let splash = 0;
-  // Chaque vibe a un style de combat.
-  switch (card.vibe) {
-    case "wholesome": // tank : vise uniquement les tours
+  // Le style de combat découle de la capacité défensive de la carte.
+  switch (card.defenseAbility.effect.kind) {
+    case "heal": // tank : vise uniquement les tours
       targets = "buildings";
       hp *= 1.3;
       damage *= 0.8;
       break;
-    case "rage": // cogneur au corps à corps
+    case "reflect": // cogneur au corps à corps
       damage *= 1.15;
       break;
-    case "chaos": // rapide
+    case "dodge": // rapide
       speed *= 1.15;
       break;
-    case "cringe": // dégâts de zone
+    case "cleanse": // dégâts de zone
       splash = 1_200;
       damage *= 0.8;
       break;
-    case "ironique": // tire de loin
+    case "recharge": // tire de loin
       range = 5_000;
       hp *= 0.85;
-      break;
-    case "absurde": // tire à moyenne distance
-      range = 4_000;
-      hp *= 0.9;
       break;
   }
   const normal = Math.max(1, card.normalAttack.power);
@@ -164,7 +158,6 @@ export function unitTemplate(card: Card): UnitTemplate {
     cardId: card.id,
     name: card.name,
     rarity: card.rarity,
-    vibe: card.vibe,
     artSeed: card.artSeed,
     cost,
     hp: Math.round(hp),
@@ -272,17 +265,12 @@ const enemyTowerFor = (state: BattleState, unit: Unit, alive: Set<number>): Towe
   return princess ?? enemies.find((t) => t.kind === "king") ?? enemies[0];
 };
 
-function applyDamage(state: BattleState, attacker: { side: Side; vibe?: Card["vibe"] }, target: Unit | Tower, raw: number, pierce = 0) {
+function applyDamage(state: BattleState, attacker: { side: Side }, target: Unit | Tower, raw: number, pierce = 0) {
   let damage = raw;
   if ("cardId" in target) {
     const tpl = state.templates[target.cardId];
     const def = Math.round((tpl.def * (100 - pierce)) / 100);
     damage = Math.round((damage * 100) / (100 + def));
-    if (attacker.vibe) {
-      const m = matchup(attacker.vibe, tpl.vibe);
-      if (m === "advantage") damage = Math.round(damage * 1.25);
-      if (m === "weakness") damage = Math.round(damage * 0.8);
-    }
   }
   target.hp -= Math.max(1, damage);
   return Math.max(1, damage);
@@ -306,7 +294,7 @@ function unitAttack(state: BattleState, unit: Unit, target: Unit | Tower, aliveI
     }
   }
   for (const t of targets) {
-    const dealt = applyDamage(state, { side: unit.side, vibe: tpl.vibe }, t, raw, pierce);
+    const dealt = applyDamage(state, { side: unit.side }, t, raw, pierce);
     state.events.push({ type: "hit", from: unit.id, to: t.id, damage: dealt, special, ranged: tpl.range > 1_500 });
     if (special && tpl.special.kind === "drain") unit.hp = Math.min(unit.maxHp, unit.hp + Math.round((dealt * tpl.special.percent) / 100));
   }

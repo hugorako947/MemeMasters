@@ -54,8 +54,8 @@ export function MemeCard({
   const ref = useRef<HTMLElement>(null);
   const tier = rarityTier(card.rarity);
   const art = useMemo(
-    () => card.imageUrl ?? cardArtDataUri({ seed: card.artSeed, vibe: card.vibe, rarity: card.rarity }),
-    [card.imageUrl, card.artSeed, card.vibe, card.rarity],
+    () => card.imageUrl ?? cardArtDataUri({ seed: card.artSeed, rarity: card.rarity }),
+    [card.imageUrl, card.artSeed, card.rarity],
   );
 
   const onMove = useCallback(

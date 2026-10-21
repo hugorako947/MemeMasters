@@ -4,7 +4,6 @@
  */
 import { z } from "zod";
 import { RARITIES } from "@/config/rarities";
-import { VIBES } from "@/config/vibes";
 
 export const STAT_KEYS = ["atk", "def", "spd"] as const;
 export type StatKey = (typeof STAT_KEYS)[number];
@@ -76,7 +75,6 @@ export const cardSchema = cardStatsSchema.extend({
   name: z.string().trim().min(1).max(40),
   description: z.string().max(280),
   rarity: z.enum(RARITIES),
-  vibe: z.enum(VIBES),
   normalAttack: normalAttackSchema,
   specialAttack: specialAttackSchema,
   defenseAbility: defenseAbilitySchema,

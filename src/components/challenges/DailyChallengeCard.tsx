@@ -3,7 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { toast } from "@/components/ui/Toast";
 import { postJson } from "@/lib/client/api";
+import { useErrorText } from "@/lib/client/errors";
 import type { DailyChallenge } from "@/lib/server/challenges";
 
 const DIFFICULTY_STYLE = {
@@ -15,7 +17,7 @@ const DIFFICULTY_STYLE = {
 /** Défi du jour : mission, progression et récompense (des boosters en plus). */
 export function DailyChallengeCard({ challenge }: { challenge: DailyChallenge }) {
   const t = useTranslations("challenge");
-  const te = useTranslations("errors");
+  const errorText = useErrorText();
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -26,8 +28,11 @@ export function DailyChallengeCard({ challenge }: { challenge: DailyChallenge })
     setError(null);
     const res = await postJson("/api/challenges/claim", {});
     setPending(false);
-    if (res.ok) router.refresh();
-    else setError(te(res.code as "server_error"));
+    if (res.ok) {
+      toast.success(t("claimedToast", { count: challenge.reward }));
+      router.refresh();
+    }
+    else setError(errorText(res.code));
   }
 
   return (

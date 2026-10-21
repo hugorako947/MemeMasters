@@ -7,6 +7,7 @@ import { ConsentFields, UsernameField, useUsernameAvailability } from "@/app/(au
 import { Button } from "@/components/ui/Button";
 import { FormMessage, RequiredNote } from "@/components/ui/Field";
 import { postJson } from "@/lib/client/api";
+import { useErrorText } from "@/lib/client/errors";
 import { useDeviceTimeZone } from "@/lib/client/use-device-timezone";
 import { usernameProblem } from "@/lib/validation/username";
 
@@ -14,7 +15,7 @@ import { usernameProblem } from "@/lib/validation/username";
 export function OnboardingForm() {
   const t = useTranslations("onboarding");
   const ta = useTranslations("auth");
-  const te = useTranslations("errors");
+  const errorText = useErrorText();
   const router = useRouter();
   const timezone = useDeviceTimeZone("Europe/Paris");
   const [username, setUsername] = useState("");
@@ -37,7 +38,7 @@ export function OnboardingForm() {
       return;
     }
     setPending(false);
-    setError(te(result.code as "server_error"));
+    setError(errorText(result.code));
   }
 
   return (
@@ -61,7 +62,7 @@ export function OnboardingForm() {
 export function ConsentForm() {
   const t = useTranslations("onboarding");
   const ta = useTranslations("auth");
-  const te = useTranslations("errors");
+  const errorText = useErrorText();
   const router = useRouter();
   const [adult, setAdult] = useState(false);
   const [terms, setTerms] = useState(false);
@@ -79,7 +80,7 @@ export function ConsentForm() {
       return;
     }
     setPending(false);
-    setError(te(result.code as "server_error"));
+    setError(errorText(result.code));
   }
 
   return (

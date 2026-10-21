@@ -5,7 +5,9 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useState } from "react";
 import { MemeCoin } from "@/components/player/RankBadge";
 import { duplicatesOf, lookOf, nextUpgrade, sellAllDuplicates, type Level } from "@/lib/economy/duplicates";
+import { toast } from "@/components/ui/Toast";
 import { postJson } from "@/lib/client/api";
+import { useErrorText } from "@/lib/client/errors";
 import type { Card } from "@/lib/validation/card";
 
 /**
@@ -15,7 +17,7 @@ import type { Card } from "@/lib/validation/card";
  */
 export function CardActions({ card, quantity, level, resaleLeftCents }: { card: Card; quantity: number; level: Level; resaleLeftCents: number }) {
   const t = useTranslations("dup");
-  const te = useTranslations("errors");
+  const errorText = useErrorText();
   const format = useFormatter();
   const router = useRouter();
   const [pending, setPending] = useState(false);
@@ -32,8 +34,12 @@ export function CardActions({ card, quantity, level, resaleLeftCents }: { card: 
     setPending(false);
     if (res.ok) {
       setMessage({ ok: true, text: success(res.data) });
+      toast.success(success(res.data));
       router.refresh();
-    } else setMessage({ ok: false, text: te(res.code as "server_error") });
+    } else {
+      setMessage({ ok: false, text: errorText(res.code) });
+      toast.error(errorText(res.code));
+    }
   }
 
   return (

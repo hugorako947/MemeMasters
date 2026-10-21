@@ -7,7 +7,9 @@ import { MemeCoin } from "@/components/player/RankBadge";
 import { FormMessage } from "@/components/ui/Field";
 import { GAME_CONFIG } from "@/config/game.config";
 import { countsTowardCap, duplicatesOf, lookOf, nextUpgrade, sellAllDuplicates, type Level } from "@/lib/economy/duplicates";
+import { toast } from "@/components/ui/Toast";
 import { postJson } from "@/lib/client/api";
+import { useErrorText } from "@/lib/client/errors";
 import type { Card } from "@/lib/validation/card";
 
 /**
@@ -27,7 +29,7 @@ export function DuplicateActions({
   resaleLeftCents: number;
 }) {
   const t = useTranslations("dup");
-  const te = useTranslations("errors");
+  const errorText = useErrorText();
   const format = useFormatter();
   const router = useRouter();
   const [pending, setPending] = useState(false);
@@ -45,9 +47,10 @@ export function DuplicateActions({
     setPending(false);
     if (res.ok) {
       setMessage({ tone: "success", text: success(res.data) });
+      toast.success(success(res.data));
       router.refresh();
     } else {
-      setMessage({ tone: "error", text: te(res.code as "server_error") });
+      setMessage({ tone: "error", text: errorText(res.code) });
     }
   }
 
