@@ -3,7 +3,7 @@ import { z } from "zod";
 import { containsBannedWords } from "@/lib/validation/username";
 import { audit } from "./admin";
 import { cardArtPublicUrl, removeCardArt, uploadCardArt } from "./card-art";
-import { sql } from "./db";
+import { sql, withMissingTable } from "./db";
 import { ApiError } from "./http";
 import type { Player } from "./players";
 
@@ -112,7 +112,13 @@ async function byAuthor(authorId: string): Promise<CommunityCard[]> {
   return list.map(toCard);
 }
 
+const EMPTY_VIEW: CommunityView = { voting: [], released: [], mine: [], pending: [], myVote: null };
+
 export async function getCommunity(player: Player): Promise<CommunityView> {
+  return withMissingTable("Communauté", EMPTY_VIEW, () => loadCommunity(player));
+}
+
+async function loadCommunity(player: Player): Promise<CommunityView> {
   const staff = player.role !== "player";
   const [voting, released, mine, pending, vote] = await Promise.all([
     byStatus("voting"),
@@ -125,11 +131,17 @@ export async function getCommunity(player: Player): Promise<CommunityView> {
 }
 
 export async function communityPendingCount(): Promise<number> {
-  const [r] = await sql()<{ n: number }[]>`select count(*)::int as n from public.community_cards where status = 'pending'`;
-  return r?.n ?? 0;
+  return withMissingTable("Communauté", 0, async () => {
+    const [r] = await sql()<{ n: number }[]>`select count(*)::int as n from public.community_cards where status = 'pending'`;
+    return r?.n ?? 0;
+  });
 }
 
 export async function getCommunityCard(id: string): Promise<CommunityCard | null> {
+  return withMissingTable("Communauté", null, () => loadCommunityCard(id));
+}
+
+async function loadCommunityCard(id: string): Promise<CommunityCard | null> {
   const s = sql();
   const [r] = await s<Row[]>`
     select ${COLUMNS(s)}
@@ -140,7 +152,7 @@ export async function getCommunityCard(id: string): Promise<CommunityCard | null
 }
 
 /** Classement du vote, pour le tableau de bord. */
-export const votingRanking = () => byStatus("voting");
+export const votingRanking = () => withMissingTable("Communauté", [], () => byStatus("voting"));
 
 /** Nouvelle proposition (en attente de vérification par l'équipe). */
 export async function propose(player: Player, input: z.infer<typeof proposalSchema>, image: File | null): Promise<string> {

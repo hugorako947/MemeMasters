@@ -16,7 +16,7 @@ import {
   resourcesSchema,
 } from "./admin-ops";
 import { removeCardArt } from "./card-art";
-import { sql } from "./db";
+import { sql, withMissingTable } from "./db";
 import type { Player } from "./players";
 
 /**
@@ -73,6 +73,10 @@ export async function createRequest(admin: Player, action: RequestAction, target
 }
 
 export async function listRequests(filter: { status?: "pending" | "done"; requestedBy?: string }): Promise<AdminRequest[]> {
+  return withMissingTable("Validations", [], () => loadRequests(filter));
+}
+
+async function loadRequests(filter: { status?: "pending" | "done"; requestedBy?: string }): Promise<AdminRequest[]> {
   const pending = filter.status === "pending";
   const done = filter.status === "done";
   return sql()<AdminRequest[]>`
@@ -90,8 +94,10 @@ export async function listRequests(filter: { status?: "pending" | "done"; reques
 }
 
 export async function pendingRequestCount(): Promise<number> {
-  const [r] = await sql()<{ n: number }[]>`select count(*)::int as n from public.admin_requests where status = 'pending'`;
-  return r?.n ?? 0;
+  return withMissingTable("Validations", 0, async () => {
+    const [r] = await sql()<{ n: number }[]>`select count(*)::int as n from public.admin_requests where status = 'pending'`;
+    return r?.n ?? 0;
+  });
 }
 
 /** Une demande en attente concerne-t-elle déjà cette cible ? (évite les doublons) */

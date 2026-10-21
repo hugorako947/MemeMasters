@@ -29,6 +29,27 @@ export function sql(): Sql {
 
 /** Codes d'erreur Postgres utilisés par l'application. */
 export const PG_UNIQUE_VIOLATION = "23505";
+export const PG_UNDEFINED_TABLE = "42P01";
+
+const warned = new Set<string>();
+
+/**
+ * Lecture d'une fonctionnalité dont la table vient d'une migration récente :
+ * si la migration n'est pas encore appliquée, on renvoie `fallback` (et on
+ * l'écrit une fois dans la console du serveur) au lieu de faire planter la page.
+ */
+export async function withMissingTable<T>(feature: string, fallback: T, run: () => Promise<T>): Promise<T> {
+  try {
+    return await run();
+  } catch (error) {
+    if (!isPgError(error, PG_UNDEFINED_TABLE)) throw error;
+    if (!warned.has(feature)) {
+      warned.add(feature);
+      console.warn(`[db] ${feature} indisponible : migration non appliquée (lancez « supabase db push »).`);
+    }
+    return fallback;
+  }
+}
 
 export function isPgError(error: unknown, code: string): boolean {
   return typeof error === "object" && error !== null && "code" in error && (error as { code: unknown }).code === code;
