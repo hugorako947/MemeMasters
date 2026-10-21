@@ -21,16 +21,15 @@ export function Button({
   children,
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant; pending?: boolean }) {
-  // En cours, le bouton garde ses couleurs (il n'est pas « désactivé » visuellement) mais ignore les clics.
+  // En cours, le bouton garde ses couleurs (il n'est pas « désactivé » visuellement) mais ignore les clics
+  // (pointer-events: none dans globals.css). Aucune fonction n'est créée ici : ce composant est aussi
+  // affiché par des composants serveur, qui ne peuvent pas transmettre de fonction au navigateur.
   return (
     <button
       className={buttonClass(variant, pending ? `gap-2 ${className}` : className)}
       aria-busy={pending || undefined}
       aria-disabled={pending || undefined}
-      onClick={(e) => {
-        if (pending) e.preventDefault();
-        else onClick?.(e);
-      }}
+      onClick={pending ? undefined : onClick}
       {...props}
     >
       {pending ? <Spinner /> : null}
