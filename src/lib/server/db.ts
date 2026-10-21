@@ -14,15 +14,24 @@ type Sql = postgres.Sql;
 
 const globalForDb = globalThis as unknown as { __mmSql?: Sql };
 
+/** `max_pipeline` est lu par postgres.js mais absent de ses types TypeScript. */
+type Options = postgres.Options<Record<string, postgres.PostgresType>> & { max_pipeline: number };
+
 export function sql(): Sql {
   if (!globalForDb.__mmSql) {
-    globalForDb.__mmSql = postgres(serverEnv().DATABASE_URL, {
+    const options: Options = {
       prepare: false,
       max: 5,
       idle_timeout: 20,
       connect_timeout: 10,
+      // Une seule requête à la fois par connexion. Le pooler Supabase en mode « transaction »
+      // perd des réponses quand plusieurs requêtes lui arrivent en rafale sur une même
+      // connexion (requêtes sans paramètre lancées en parallèle) : la page attendait alors
+      // indéfiniment. Les requêtes suivantes passent par les autres connexions du pool.
+      max_pipeline: 0,
       onnotice: () => {},
-    });
+    };
+    globalForDb.__mmSql = postgres(serverEnv().DATABASE_URL, options) as unknown as Sql;
   }
   return globalForDb.__mmSql;
 }
