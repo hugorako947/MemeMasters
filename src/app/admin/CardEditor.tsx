@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useActionState, useEffect, useRef, useState, startTransition, type FormEvent } from "react";
+import { useActionState, useCallback, useEffect, useRef, useState, startTransition, type FormEvent } from "react";
+import { CardDetailDialog } from "@/components/card/CardDetailDialog";
 import { MemeCard } from "@/components/card/MemeCard";
 import { Button } from "@/components/ui/Button";
 import { ImagePicker, type ImagePickerLabels } from "@/components/ui/ImagePicker";
@@ -53,6 +54,9 @@ export function CardEditor({ card, community, isSuper }: { card: EditorCard | nu
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(startImage);
   const [fields, setFields] = useState<Record<string, string>>({});
+  // Aperçu agrandi et détaillé, comme une carte de la Collection.
+  const [zoomed, setZoomed] = useState(false);
+  const closeZoom = useCallback(() => setZoomed(false), []);
 
   useEffect(() => {
     if (state.status === "done") {
@@ -265,10 +269,11 @@ export function CardEditor({ card, community, isSuper }: { card: EditorCard | nu
       </div>
 
       <aside className="grid content-start justify-items-center gap-2 lg:sticky lg:top-4">
-        <p className="text-sm font-bold text-ink-soft">Aperçu</p>
+        <p className="text-sm font-bold text-ink-soft">Aperçu (cliquez pour l&apos;agrandir)</p>
         <div className="w-full max-w-64">
-          <MemeCard card={previewCard} />
+          <MemeCard card={previewCard} onOpen={() => setZoomed(true)} />
         </div>
+        {zoomed ? <CardDetailDialog card={previewCard} onClose={closeZoom} /> : null}
       </aside>
     </form>
   );

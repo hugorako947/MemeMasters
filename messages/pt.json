@@ -655,37 +655,24 @@
   },
   "boostersPanel": {
     "openDaily": "Abrir um pacote diário",
-    "freeToday": "{left} / {total} grátis hoje",
     "reserve": "+ {count} na reserva",
-    "open": "Abrir",
-    "owned": "× {count}",
     "nextFree": "Seus pacotes grátis voltam à meia-noite.",
-    "bought": "Pacote adicionado à sua reserva!",
     "buyLabel": "Comprar {item} por {price} MemeMoney",
-    "available": "{count, plural, =0 {pacotes para abrir} one {pacote para abrir} other {pacotes para abrir}}",
-    "openOne": "Abrir um pacote",
     "mineTitle": "Seus pacotes especiais",
     "openKind": "Abrir um {item}",
-    "buyTitle": "Comprar com sua MemeMoney",
-    "balance": "{amount} MM",
-    "guaranteed": "Pelo menos 1 {rarity}",
-    "missing": "Faltam {amount} MM",
-    "boughtItem": "{item} adicionado aos seus pacotes!"
+    "boughtItem": "{item} adicionado aos seus pacotes!",
+    "freeLeft": "{count, plural, =0 {Sem pacotes grátis hoje} one {# pacote grátis hoje} other {# pacotes grátis hoje}}",
+    "shopBadge": "Oferta de boas-vindas",
+    "shopTitleDouble": "Sua 1ª recarga vale em dobro!",
+    "shopTitle": "Precisa de MemeMoney?",
+    "shopLead": "Recarregue sua MemeMoney na Loja e abra ainda mais pacotes.",
+    "shopCta": "Ir para a Loja"
   },
   "opening": {
     "title": "Abertura de pacote",
-    "cards": "{count} cartas",
-    "tapToOpen": "Toque no pacote para abri-lo",
-    "opening": "Abrindo…",
-    "tapToReveal": "Toque na carta para virá-la",
-    "revealOne": "Virar a carta {index}",
     "summary": "{count, plural, =0 {Nenhuma carta nova desta vez.} one {# carta nova!} other {# cartas novas!}}",
     "newBadge": "Nova",
-    "done": "Continuar",
-    "counter": "Carta {index} de {total}",
-    "next": "Próxima carta",
-    "tapForNext": "Toque de novo para a próxima carta",
-    "revealRest": "Revelar o resto"
+    "done": "Continuar"
   },
   "installer": {
     "title": "Instale o {name}",
@@ -877,10 +864,10 @@
       "send_messages": "{count, plural, one {Envie # mensagem} other {Envie # mensagens}}",
       "add_friend": "Faça um novo amigo"
     },
-    "reward": "Recompensa: {count, plural, one {# pacote extra} other {# pacotes extras}}",
     "claim": "Pegar {count, plural, one {# pacote} other {# pacotes}}",
     "claimed": "Desafio concluído! Um novo te espera amanhã.",
-    "claimedToast": "{count, plural, one {Desafio concluído: # pacote adicionado!} other {Desafio concluído: # pacotes adicionados!}}"
+    "claimedToast": "{count, plural, one {Desafio concluído: # pacote adicionado!} other {Desafio concluído: # pacotes adicionados!}}",
+    "rewardShort": "{count, plural, one {# pacote extra} other {# pacotes extras}}"
   },
   "banned": {
     "title": "Conta suspensa",

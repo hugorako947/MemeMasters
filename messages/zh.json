@@ -655,37 +655,24 @@
   },
   "boostersPanel": {
     "openDaily": "打开每日卡包",
-    "freeToday": "今日免费 {left} / {total}",
     "reserve": "+ 库存 {count} 个",
-    "open": "打开",
-    "owned": "× {count}",
     "nextFree": "免费卡包将在午夜刷新。",
-    "bought": "卡包已加入你的库存！",
     "buyLabel": "用 {price} MemeMoney 购买{item}",
-    "available": "{count, plural, other {个卡包待打开}}",
-    "openOne": "打开一个卡包",
     "mineTitle": "你的特殊卡包",
     "openKind": "打开{item}",
-    "buyTitle": "用 MemeMoney 购买",
-    "balance": "{amount} MM",
-    "guaranteed": "至少 1 张{rarity}",
-    "missing": "还差 {amount} MM",
-    "boughtItem": "{item}已加入你的卡包！"
+    "boughtItem": "{item}已加入你的卡包！",
+    "freeLeft": "{count, plural, =0 {今天的免费卡包已用完} other {今天还有 # 个免费卡包}}",
+    "shopBadge": "新人优惠",
+    "shopTitleDouble": "首次充值双倍！",
+    "shopTitle": "需要 MemeMoney 吗？",
+    "shopLead": "在商店充值 MemeMoney，开更多卡包。",
+    "shopCta": "前往商店"
   },
   "opening": {
     "title": "开卡包",
-    "cards": "{count} 张卡牌",
-    "tapToOpen": "点击卡包将其打开",
-    "opening": "正在打开…",
-    "tapToReveal": "点击卡牌将其翻开",
-    "revealOne": "翻开第 {index} 张卡牌",
     "summary": "{count, plural, =0 {这次没有新卡牌。} other {获得 # 张新卡牌！}}",
     "newBadge": "新",
-    "done": "继续",
-    "counter": "第 {index} 张，共 {total} 张",
-    "next": "下一张卡牌",
-    "tapForNext": "再点一下，查看下一张",
-    "revealRest": "翻开剩余卡牌"
+    "done": "继续"
   },
   "installer": {
     "title": "安装 {name}",
@@ -877,10 +864,10 @@
       "send_messages": "{count, plural, other {发送 # 条消息}}",
       "add_friend": "结交一位新好友"
     },
-    "reward": "奖励：{count, plural, other {额外 # 个卡包}}",
     "claim": "{count, plural, other {领取 # 个卡包}}",
     "claimed": "挑战完成！明天还有新挑战。",
-    "claimedToast": "{count, plural, other {挑战完成：已添加 # 个卡包！}}"
+    "claimedToast": "{count, plural, other {挑战完成：已添加 # 个卡包！}}",
+    "rewardShort": "{count, plural, other {额外 # 个卡包}}"
   },
   "banned": {
     "title": "账号已停用",

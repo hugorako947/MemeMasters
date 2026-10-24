@@ -655,37 +655,24 @@
   },
   "boostersPanel": {
     "openDaily": "Einen Tages-Booster öffnen",
-    "freeToday": "{left} / {total} heute gratis",
     "reserve": "+ {count} in Reserve",
-    "open": "Öffnen",
-    "owned": "× {count}",
     "nextFree": "Deine Gratis-Booster kommen um Mitternacht zurück.",
-    "bought": "Booster zu deiner Reserve hinzugefügt!",
     "buyLabel": "{item} für {price} MemeMoney kaufen",
-    "available": "{count, plural, =0 {Booster zum Öffnen} one {Booster zum Öffnen} other {Booster zum Öffnen}}",
-    "openOne": "Booster öffnen",
     "mineTitle": "Deine Spezial-Booster",
     "openKind": "{item} öffnen",
-    "buyTitle": "Mit deiner MemeMoney kaufen",
-    "balance": "{amount} MM",
-    "guaranteed": "Mindestens 1 × {rarity}",
-    "missing": "Dir fehlen {amount} MM",
-    "boughtItem": "{item} zu deinen Boostern hinzugefügt!"
+    "boughtItem": "{item} zu deinen Boostern hinzugefügt!",
+    "freeLeft": "{count, plural, =0 {Heute keine Gratis-Booster mehr} one {# Gratis-Booster heute} other {# Gratis-Booster heute}}",
+    "shopBadge": "Willkommensangebot",
+    "shopTitleDouble": "Deine 1. Aufladung wird verdoppelt!",
+    "shopTitle": "Brauchst du MemeMoney?",
+    "shopLead": "Lade deine MemeMoney im Shop auf und öffne noch mehr Booster.",
+    "shopCta": "Zum Shop"
   },
   "opening": {
     "title": "Booster öffnen",
-    "cards": "{count} Karten",
-    "tapToOpen": "Tippe auf den Booster, um ihn zu öffnen",
-    "opening": "Wird geöffnet …",
-    "tapToReveal": "Tippe auf die Karte, um sie umzudrehen",
-    "revealOne": "Karte {index} umdrehen",
     "summary": "{count, plural, =0 {Diesmal keine neue Karte.} one {# neue Karte!} other {# neue Karten!}}",
     "newBadge": "Neu",
-    "done": "Weiter",
-    "counter": "Karte {index} von {total}",
-    "next": "Nächste Karte",
-    "tapForNext": "Tippe noch einmal für die nächste Karte",
-    "revealRest": "Rest aufdecken"
+    "done": "Weiter"
   },
   "installer": {
     "title": "{name} installieren",
@@ -877,10 +864,10 @@
       "send_messages": "{count, plural, one {Sende # Nachricht} other {Sende # Nachrichten}}",
       "add_friend": "Finde einen neuen Freund"
     },
-    "reward": "Belohnung: {count, plural, one {# Extra-Booster} other {# Extra-Booster}}",
     "claim": "{count, plural, one {# Booster abholen} other {# Booster abholen}}",
     "claimed": "Aufgabe geschafft! Morgen wartet eine neue.",
-    "claimedToast": "{count, plural, one {Aufgabe geschafft: # Booster hinzugefügt!} other {Aufgabe geschafft: # Booster hinzugefügt!}}"
+    "claimedToast": "{count, plural, one {Aufgabe geschafft: # Booster hinzugefügt!} other {Aufgabe geschafft: # Booster hinzugefügt!}}",
+    "rewardShort": "{count, plural, one {# Extra-Booster} other {# Extra-Booster}}"
   },
   "banned": {
     "title": "Konto gesperrt",

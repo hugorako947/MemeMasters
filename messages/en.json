@@ -655,37 +655,24 @@
   },
   "boostersPanel": {
     "openDaily": "Open a daily booster",
-    "freeToday": "{left} / {total} free today",
     "reserve": "+ {count} in reserve",
-    "open": "Open",
-    "owned": "× {count}",
     "nextFree": "Your free boosters come back at midnight.",
-    "bought": "Booster added to your reserve!",
     "buyLabel": "Buy {item} for {price} MemeMoney",
-    "available": "{count, plural, =0 {boosters to open} one {booster to open} other {boosters to open}}",
-    "openOne": "Open a booster",
     "mineTitle": "Your special boosters",
     "openKind": "Open a {item}",
-    "buyTitle": "Buy with your MemeMoney",
-    "balance": "{amount} MM",
-    "guaranteed": "At least 1 {rarity}",
-    "missing": "You need {amount} more MM",
-    "boughtItem": "{item} added to your boosters!"
+    "boughtItem": "{item} added to your boosters!",
+    "freeLeft": "{count, plural, =0 {No free boosters left today} one {# free booster today} other {# free boosters today}}",
+    "shopBadge": "Welcome offer",
+    "shopTitleDouble": "Your 1st top-up is doubled!",
+    "shopTitle": "Need MemeMoney?",
+    "shopLead": "Top up your MemeMoney in the Shop and open even more boosters.",
+    "shopCta": "Go to the Shop"
   },
   "opening": {
     "title": "Opening a booster",
-    "cards": "{count} cards",
-    "tapToOpen": "Tap the booster to open it",
-    "opening": "Opening…",
-    "tapToReveal": "Tap the card to flip it",
-    "revealOne": "Flip card {index}",
     "summary": "{count, plural, =0 {No new card this time.} one {# new card!} other {# new cards!}}",
     "newBadge": "New",
-    "done": "Continue",
-    "counter": "Card {index} of {total}",
-    "next": "Next card",
-    "tapForNext": "Tap again for the next card",
-    "revealRest": "Reveal the rest"
+    "done": "Continue"
   },
   "installer": {
     "title": "Install {name}",
@@ -877,10 +864,10 @@
       "send_messages": "{count, plural, one {Send # message} other {Send # messages}}",
       "add_friend": "Make a new friend"
     },
-    "reward": "Reward: {count, plural, one {# extra booster} other {# extra boosters}}",
     "claim": "Claim {count, plural, one {# booster} other {# boosters}}",
     "claimed": "Challenge complete! A new one awaits tomorrow.",
-    "claimedToast": "{count, plural, one {Challenge complete: # booster added!} other {Challenge complete: # boosters added!}}"
+    "claimedToast": "{count, plural, one {Challenge complete: # booster added!} other {Challenge complete: # boosters added!}}",
+    "rewardShort": "{count, plural, one {# extra booster} other {# extra boosters}}"
   },
   "banned": {
     "title": "Account suspended",

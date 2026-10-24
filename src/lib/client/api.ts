@@ -2,39 +2,17 @@
  * Appels d'API depuis le navigateur. Le serveur répond toujours
  * { error: { code } } en cas d'échec ; le code est traduit via errors.<code>.
  */
+import { markBusy, takePressed } from "./busy";
+
 export type ApiResult<T> = { ok: true; data: T } | { ok: false; code: string; status: number };
 
 /**
- * Bouton qui vient d'être pressé : pendant l'appel qu'il déclenche, il affiche
- * une toupie et ignore les nouveaux clics (styles [data-mm-busy] dans globals.css).
- * Ainsi chaque action du jeu montre aussitôt qu'elle est en cours.
+ * Pendant chaque appel, l'élément qui l'a déclenché (bouton, onglet…) est
+ * « en cours » : il ignore les nouveaux clics et affiche un cercle tournant si
+ * la réponse tarde (voir busy.ts).
  */
-let pressed: { el: HTMLElement; at: number } | null = null;
-if (typeof document !== "undefined") {
-  const remember = (e: Event) => {
-    const el = (e.target as Element | null)?.closest?.("button, [role='button']");
-    if (el instanceof HTMLElement) pressed = { el, at: performance.now() };
-  };
-  document.addEventListener("click", remember, true);
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") remember(e);
-  }, true);
-}
-
-function markBusy(): () => void {
-  const target = pressed && performance.now() - pressed.at < 800 ? pressed.el : null;
-  pressed = null;
-  if (!target) return () => undefined;
-  target.dataset.mmBusy = "true";
-  target.setAttribute("aria-busy", "true");
-  return () => {
-    delete target.dataset.mmBusy;
-    target.removeAttribute("aria-busy");
-  };
-}
-
 export async function postJson<T = unknown>(url: string, body: unknown): Promise<ApiResult<T>> {
-  const release = markBusy();
+  const release = markBusy(takePressed());
   try {
     return await send<T>(url, body);
   } finally {
@@ -58,7 +36,7 @@ async function send<T>(url: string, body: unknown): Promise<ApiResult<T>> {
 
 /** Envoi d'un formulaire avec fichier (illustration…), mêmes conventions que postJson. */
 export async function postForm<T = unknown>(url: string, form: FormData): Promise<ApiResult<T>> {
-  const release = markBusy();
+  const release = markBusy(takePressed());
   try {
     let res: Response;
     try {

@@ -51,48 +51,13 @@
     outline-offset: 3px;
     border-radius: 6px;
   }
-  /* Pointeurs de souris (uniquement à la souris, pas au doigt) : la flèche partout, boutons et
-     liens compris, et le curseur d'écriture sur les champs de saisie et le texte. Leurs couleurs
-     suivent le thème du compte (variables --mm-cursor-*, posées sur <html> : src/lib/theme/cursor.ts). */
-  @media (hover: hover) and (pointer: fine) {
-    html,
-    body,
-    #mm-app,
-    a,
-    button,
-    [role="button"],
-    [role="tab"],
-    [role="link"],
-    label,
-    select,
-    summary,
-    .mm-btn,
-    .mm-card,
-    input[type="checkbox"],
-    input[type="radio"],
-    input[type="file"],
-    input[type="range"],
-    input[type="color"],
-    input[type="submit"],
-    :is(a, button, label, summary, [role="button"], [role="tab"], [role="link"], .mm-btn, .mm-card) * {
-      cursor: var(--mm-cursor-arrow, url("/cursors/mm-arrow.svg") 3 2), default;
-    }
-    :where(p, h1, h2, h3, h4, h5, h6, dt, dd, blockquote, figcaption, td, th, pre, code, time),
-    input:not([type="checkbox"], [type="radio"], [type="file"], [type="range"], [type="color"], [type="submit"], [type="button"], [type="reset"]),
-    textarea:not(:disabled),
-    [contenteditable="true"] {
-      cursor: var(--mm-cursor-text, url("/cursors/mm-text.svg") 16 16), text;
-    }
-    :is(a, button, label, summary, [role="button"], [role="tab"], [role="link"], .mm-btn, .mm-card) :where(p, h1, h2, h3, h4, h5, h6, dt, dd, td, th, time) {
-      cursor: var(--mm-cursor-arrow, url("/cursors/mm-arrow.svg") 3 2), default;
-    }
-    .mm-btn:disabled,
-    button:disabled,
-    input:disabled,
-    textarea:disabled,
-    select:disabled {
-      cursor: not-allowed;
-    }
+  /* Pointeur de souris : celui du système (aucun pointeur personnalisé). */
+  .mm-btn:disabled,
+  button:disabled,
+  input:disabled,
+  textarea:disabled,
+  select:disabled {
+    cursor: not-allowed;
   }
 
   /* Encoche et barre de geste des téléphones (mode application installée). */
@@ -634,7 +599,6 @@
     transform 0.14s cubic-bezier(0.3, 1.6, 0.6, 1),
     box-shadow 0.14s ease,
     background-color 0.2s;
-  cursor: var(--mm-cursor-arrow, url("/cursors/mm-arrow.svg") 3 2), default;
   -webkit-tap-highlight-color: transparent;
 }
 .mm-btn::after {
@@ -1267,7 +1231,6 @@ body:has(> dialog.mm-detail[open]) #mm-app {
     repeating-linear-gradient(45deg, rgb(255 255 255 / 0.12) 0 6px, transparent 6px 14px),
     linear-gradient(160deg, #ff3d7f, #8b3dff);
   box-shadow: 0 4px 0 0 #1a1238;
-  cursor: var(--mm-cursor-arrow, url("/cursors/mm-arrow.svg") 3 2), default;
 }
 .mm-flip__front {
   transform: rotateY(180deg);
@@ -1531,14 +1494,6 @@ body:has(> dialog.mm-detail[open]) #mm-app {
   to { transform: rotate(360deg); }
 }
 
-/* Bouton en cours : le texte reste à sa place (pas de saut), la toupie passe devant. */
-.mm-btn[aria-busy="true"] {
-  cursor: progress;
-  pointer-events: none;
-  --btn-shadow: 1px;
-  transform: translateY(2px);
-}
-
 /* Barre de navigation : part dès le clic, file vers 90 %, se termine à l'arrivée. */
 .mm-progress {
   position: fixed;
@@ -1723,21 +1678,81 @@ body:has(> dialog.mm-detail[open]) #mm-app {
   }
 }
 
-/* Bouton dont l'action est en cours (marqué automatiquement par src/lib/client/api.ts). */
-[data-mm-busy="true"] {
+/* ==========================================================================
+   Élément dont l'action est en cours (bouton, onglet, lien, sachet…)
+   Posé par src/lib/client/busy.ts (appels d'API, liens dans la même page,
+   onglets, boutons en attente). Les clics sont bloqués tout de suite ; si
+   l'action dure plus de 0,15 s, le contenu s'efface et un cercle tourne à
+   sa place, sans changer la taille de l'élément.
+   data-mm-busy="overlay" : le contenu reste visible, atténué, sous le cercle.
+   ========================================================================== */
+/* :where() : un élément déjà positionné (absolute…) garde sa position. */
+:where([data-mm-busy]) {
+  position: relative;
+}
+[data-mm-busy] {
   pointer-events: none;
   cursor: progress;
 }
-[data-mm-busy="true"]::before {
+[data-mm-busy="true"] {
+  color: transparent !important;
+  transition: color 0s linear 0.15s;
+}
+[data-mm-busy="true"] > * {
+  visibility: hidden;
+  transition: visibility 0s linear 0.15s;
+}
+[data-mm-busy="overlay"] > * {
+  opacity: 0.55;
+  transition: opacity 0.2s ease 0.15s;
+}
+[data-mm-busy]::before {
   content: "";
-  display: inline-block;
-  flex-shrink: 0;
-  width: 1em;
-  height: 1em;
-  margin-inline-end: 0.45em;
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  width: 1.2em;
+  height: 1.2em;
+  min-width: 18px;
+  min-height: 18px;
+  margin: auto;
   border-radius: 999px;
-  border: 0.14em solid currentColor;
-  background: conic-gradient(var(--color-candy) 0 25%, var(--color-sticker) 0 50%, var(--color-candy) 0 75%, var(--color-sticker) 0);
-  vertical-align: -0.15em;
-  animation: mm-spinner 0.7s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
+  border: 0.16em solid var(--color-ink);
+  background:
+    radial-gradient(circle, var(--color-ink) 0 16%, transparent 17%),
+    conic-gradient(var(--color-candy) 0 25%, var(--color-sticker) 0 50%, var(--color-candy) 0 75%, var(--color-sticker) 0);
+  opacity: 0;
+  animation:
+    mm-spinner 0.7s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite,
+    mm-busy-show 0.12s ease 0.15s forwards;
+}
+[data-mm-busy="overlay"]::before {
+  width: 2.6rem;
+  height: 2.6rem;
+  border-width: 3px;
+}
+@keyframes mm-busy-show {
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-mm-busy]::before {
+    animation:
+      mm-spinner 2s linear infinite,
+      mm-busy-show 0.12s ease 0.15s forwards;
+  }
+}
+
+/* Contenu d'un booster ouvert : les cartes arrivent l'une après l'autre. */
+.mm-reveal-card {
+  animation: mm-card-arrive 0.4s cubic-bezier(0.2, 1.3, 0.4, 1) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+/* Carte agrandie : seul un clic en dehors de la carte la ferme. */
+.mm-detail--card .mm-card {
+  cursor: default;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mm-reveal-card {
+    animation: none;
+  }
 }

@@ -7,31 +7,41 @@ import { serverEnv } from "./env";
  * ligne, tout-ou-rien). Elle contourne RLS : chaque fonction qui l'utilise
  * doit vérifier elle-même l'identité et les droits du joueur.
  *
- * En production, DATABASE_URL pointe vers le pooler Supabase en mode
- * « transaction » (port 6543), d'où `prepare: false`.
+ * DATABASE_URL pointe vers le pooler Supabase. Il est utilisé en mode « session »
+ * (port 5432) : en mode « transaction » (port 6543), le pooler perd des réponses
+ * quand plusieurs requêtes arrivent en même temps sur une connexion, et les pages
+ * restaient bloquées sur l'écran de chargement. Une adresse en 6543 est donc
+ * convertie automatiquement. `prepare: false` reste compatible avec les deux modes.
+ * Ne pas ajouter `max_pipeline` : toute limite empêche postgres.js de réserver la
+ * connexion d'une transaction (erreur UNSAFE_TRANSACTION).
  */
 type Sql = postgres.Sql;
 
-const globalForDb = globalThis as unknown as { __mmSql?: Sql };
+/** Pooler Supabase en mode transaction (6543) → même pooler en mode session (5432). */
+export function sessionPoolerUrl(url: string): string {
+  try {
+    const u = new URL(url);
+    if (u.hostname.endsWith(".pooler.supabase.com") && u.port === "6543") {
+      u.port = "5432";
+      return u.toString();
+    }
+  } catch {
+    // Adresse illisible : serverEnv() l'a déjà refusée, rien à convertir.
+  }
+  return url;
+}
 
-/** `max_pipeline` est lu par postgres.js mais absent de ses types TypeScript. */
-type Options = postgres.Options<Record<string, postgres.PostgresType>> & { max_pipeline: number };
+const globalForDb = globalThis as unknown as { __mmSql?: Sql };
 
 export function sql(): Sql {
   if (!globalForDb.__mmSql) {
-    const options: Options = {
+    globalForDb.__mmSql = postgres(sessionPoolerUrl(serverEnv().DATABASE_URL), {
       prepare: false,
       max: 5,
       idle_timeout: 20,
       connect_timeout: 10,
-      // Une seule requête à la fois par connexion. Le pooler Supabase en mode « transaction »
-      // perd des réponses quand plusieurs requêtes lui arrivent en rafale sur une même
-      // connexion (requêtes sans paramètre lancées en parallèle) : la page attendait alors
-      // indéfiniment. Les requêtes suivantes passent par les autres connexions du pool.
-      max_pipeline: 0,
       onnotice: () => {},
-    };
-    globalForDb.__mmSql = postgres(serverEnv().DATABASE_URL, options) as unknown as Sql;
+    });
   }
   return globalForDb.__mmSql;
 }

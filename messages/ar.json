@@ -655,37 +655,24 @@
   },
   "boostersPanel": {
     "openDaily": "فتح حزمة يومية",
-    "freeToday": "{left} / {total} مجانية اليوم",
     "reserve": "+ {count} في المخزون",
-    "open": "فتح",
-    "owned": "× {count}",
     "nextFree": "تعود حزمك المجانية عند منتصف الليل.",
-    "bought": "تمت إضافة الحزمة إلى مخزونك!",
     "buyLabel": "شراء {item} مقابل {price} MemeMoney",
-    "available": "{count, plural, =0 {حزمة للفتح} one {حزمة للفتح} two {حزمتان للفتح} few {حزم للفتح} other {حزمة للفتح}}",
-    "openOne": "افتح حزمة",
     "mineTitle": "حزمك الخاصة",
     "openKind": "افتح {item}",
-    "buyTitle": "اشترِ بـ MemeMoney",
-    "balance": "{amount} MM",
-    "guaranteed": "بطاقة {rarity} واحدة على الأقل",
-    "missing": "ينقصك {amount} MM",
-    "boughtItem": "أُضيفت {item} إلى حزمك!"
+    "boughtItem": "أُضيفت {item} إلى حزمك!",
+    "freeLeft": "{count, plural, zero {لا حزم مجانية متبقية اليوم} one {حزمة مجانية واحدة اليوم} two {حزمتان مجانيتان اليوم} few {# حزم مجانية اليوم} many {# حزمة مجانية اليوم} other {# حزمة مجانية اليوم}}",
+    "shopBadge": "عرض ترحيبي",
+    "shopTitleDouble": "شحنتك الأولى مضاعفة!",
+    "shopTitle": "تحتاج إلى MemeMoney؟",
+    "shopLead": "اشحن رصيدك من MemeMoney في المتجر وافتح حزمًا أكثر.",
+    "shopCta": "الذهاب إلى المتجر"
   },
   "opening": {
     "title": "فتح حزمة",
-    "cards": "{count} بطاقات",
-    "tapToOpen": "اضغط على الحزمة لفتحها",
-    "opening": "جارٍ الفتح…",
-    "tapToReveal": "اضغط على البطاقة لقلبها",
-    "revealOne": "قلب البطاقة {index}",
     "summary": "{count, plural, =0 {لا بطاقات جديدة هذه المرة.} one {بطاقة جديدة!} two {بطاقتان جديدتان!} few {# بطاقات جديدة!} other {# بطاقة جديدة!}}",
     "newBadge": "جديدة",
-    "done": "متابعة",
-    "counter": "البطاقة {index} من {total}",
-    "next": "البطاقة التالية",
-    "tapForNext": "اضغط مجددًا للبطاقة التالية",
-    "revealRest": "كشف الباقي"
+    "done": "متابعة"
   },
   "installer": {
     "title": "ثبّت {name}",
@@ -877,10 +864,10 @@
       "send_messages": "{count, plural, one {أرسل رسالة واحدة} two {أرسل رسالتين} few {أرسل # رسائل} other {أرسل # رسالة}}",
       "add_friend": "كوّن صديقًا جديدًا"
     },
-    "reward": "المكافأة: {count, plural, one {حزمة إضافية} two {حزمتان إضافيتان} few {# حزم إضافية} other {# حزمة إضافية}}",
     "claim": "{count, plural, one {استلم حزمة} two {استلم حزمتين} few {استلم # حزم} other {استلم # حزمة}}",
     "claimed": "أنجزت التحدي! تحدٍّ جديد ينتظرك غدًا.",
-    "claimedToast": "{count, plural, one {نجحت في التحدي: أُضيفت حزمة واحدة!} two {نجحت في التحدي: أُضيفت حزمتان!} few {نجحت في التحدي: أُضيفت # حزم!} other {نجحت في التحدي: أُضيفت # حزمة!}}"
+    "claimedToast": "{count, plural, one {نجحت في التحدي: أُضيفت حزمة واحدة!} two {نجحت في التحدي: أُضيفت حزمتان!} few {نجحت في التحدي: أُضيفت # حزم!} other {نجحت في التحدي: أُضيفت # حزمة!}}",
+    "rewardShort": "{count, plural, zero {لا حزم إضافية} one {حزمة إضافية واحدة} two {حزمتان إضافيتان} few {# حزم إضافية} many {# حزمة إضافية} other {# حزمة إضافية}}"
   },
   "banned": {
     "title": "الحساب موقوف",

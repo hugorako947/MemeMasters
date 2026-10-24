@@ -655,37 +655,24 @@
   },
   "boostersPanel": {
     "openDaily": "Abrir un sobre diario",
-    "freeToday": "{left} / {total} gratis hoy",
     "reserve": "+ {count} en reserva",
-    "open": "Abrir",
-    "owned": "× {count}",
     "nextFree": "Tus sobres gratis vuelven a medianoche.",
-    "bought": "¡Sobre añadido a tu reserva!",
     "buyLabel": "Comprar {item} por {price} MemeMoney",
-    "available": "{count, plural, =0 {sobres por abrir} one {sobre por abrir} other {sobres por abrir}}",
-    "openOne": "Abrir un sobre",
     "mineTitle": "Tus sobres especiales",
     "openKind": "Abrir un {item}",
-    "buyTitle": "Comprar con tu MemeMoney",
-    "balance": "{amount} MM",
-    "guaranteed": "Al menos 1 {rarity}",
-    "missing": "Te faltan {amount} MM",
-    "boughtItem": "¡{item} añadido a tus sobres!"
+    "boughtItem": "¡{item} añadido a tus sobres!",
+    "freeLeft": "{count, plural, =0 {No te quedan sobres gratis hoy} one {# sobre gratis hoy} other {# sobres gratis hoy}}",
+    "shopBadge": "Oferta de bienvenida",
+    "shopTitleDouble": "¡Tu 1.ª recarga vale el doble!",
+    "shopTitle": "¿Necesitas MemeMoney?",
+    "shopLead": "Recarga tu MemeMoney en la Tienda y abre todavía más sobres.",
+    "shopCta": "Ir a la Tienda"
   },
   "opening": {
     "title": "Apertura de sobre",
-    "cards": "{count} cartas",
-    "tapToOpen": "Toca el sobre para abrirlo",
-    "opening": "Abriendo…",
-    "tapToReveal": "Toca la carta para darle la vuelta",
-    "revealOne": "Girar la carta {index}",
     "summary": "{count, plural, =0 {Ninguna carta nueva esta vez.} one {¡# carta nueva!} other {¡# cartas nuevas!}}",
     "newBadge": "Nueva",
-    "done": "Continuar",
-    "counter": "Carta {index} de {total}",
-    "next": "Siguiente carta",
-    "tapForNext": "Toca otra vez para la siguiente carta",
-    "revealRest": "Revelar el resto"
+    "done": "Continuar"
   },
   "installer": {
     "title": "Instala {name}",
@@ -877,10 +864,10 @@
       "send_messages": "{count, plural, one {Envía # mensaje} other {Envía # mensajes}}",
       "add_friend": "Haz un nuevo amigo"
     },
-    "reward": "Recompensa: {count, plural, one {# sobre extra} other {# sobres extra}}",
     "claim": "Recoger {count, plural, one {# sobre} other {# sobres}}",
     "claimed": "¡Reto superado! Mañana te espera uno nuevo.",
-    "claimedToast": "{count, plural, one {¡Reto superado: # sobre añadido!} other {¡Reto superado: # sobres añadidos!}}"
+    "claimedToast": "{count, plural, one {¡Reto superado: # sobre añadido!} other {¡Reto superado: # sobres añadidos!}}",
+    "rewardShort": "{count, plural, one {# sobre extra} other {# sobres extra}}"
   },
   "banned": {
     "title": "Cuenta suspendida",

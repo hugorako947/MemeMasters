@@ -655,37 +655,24 @@
   },
   "boostersPanel": {
     "openDaily": "Ouvrir un booster journalier",
-    "freeToday": "{left} / {total} gratuits aujourd'hui",
     "reserve": "+ {count} en réserve",
-    "open": "Ouvrir",
-    "owned": "× {count}",
     "nextFree": "Tes boosters gratuits reviennent à minuit.",
-    "bought": "Booster ajouté à ta réserve !",
     "buyLabel": "Acheter {item} pour {price} MemeMoney",
-    "available": "{count, plural, =0 {booster à ouvrir} one {booster à ouvrir} other {boosters à ouvrir}}",
-    "openOne": "Ouvrir un booster",
     "mineTitle": "Tes boosters spéciaux",
     "openKind": "Ouvrir un {item}",
-    "buyTitle": "Acheter avec ta MemeMoney",
-    "balance": "{amount} MM",
-    "guaranteed": "Au moins 1 {rarity}",
-    "missing": "Il te manque {amount} MM",
-    "boughtItem": "{item} ajouté à tes boosters !"
+    "boughtItem": "{item} ajouté à tes boosters !",
+    "freeLeft": "{count, plural, =0 {Plus de booster gratuit aujourd'hui} one {# booster gratuit aujourd'hui} other {# boosters gratuits aujourd'hui}}",
+    "shopBadge": "Offre de bienvenue",
+    "shopTitleDouble": "Ta 1ère recharge est doublée !",
+    "shopTitle": "Besoin de MemeMoney ?",
+    "shopLead": "Recharge ta MemeMoney dans la Boutique et ouvre encore plus de boosters.",
+    "shopCta": "Voir la Boutique"
   },
   "opening": {
     "title": "Ouverture de booster",
-    "cards": "{count} cartes",
-    "tapToOpen": "Touche le booster pour l'ouvrir",
-    "opening": "Ouverture…",
-    "tapToReveal": "Touche la carte pour la retourner",
-    "revealOne": "Retourner la carte {index}",
     "summary": "{count, plural, =0 {Aucune nouvelle carte cette fois.} one {# nouvelle carte !} other {# nouvelles cartes !}}",
     "newBadge": "Nouveau",
-    "done": "Continuer",
-    "counter": "Carte {index} sur {total}",
-    "next": "Carte suivante",
-    "tapForNext": "Touche encore pour la carte suivante",
-    "revealRest": "Révéler la suite"
+    "done": "Continuer"
   },
   "installer": {
     "title": "Installe {name}",
@@ -877,10 +864,10 @@
       "send_messages": "{count, plural, one {Envoie # message} other {Envoie # messages}}",
       "add_friend": "Fais-toi un nouvel ami"
     },
-    "reward": "Récompense : {count, plural, one {# booster en plus} other {# boosters en plus}}",
     "claim": "Récupérer {count, plural, one {# booster} other {# boosters}}",
     "claimed": "Défi réussi ! Un nouveau défi t'attend demain.",
-    "claimedToast": "{count, plural, one {Défi réussi : # booster ajouté !} other {Défi réussi : # boosters ajoutés !}}"
+    "claimedToast": "{count, plural, one {Défi réussi : # booster ajouté !} other {Défi réussi : # boosters ajoutés !}}",
+    "rewardShort": "{count, plural, one {# booster en plus} other {# boosters en plus}}"
   },
   "banned": {
     "title": "Compte suspendu",

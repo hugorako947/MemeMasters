@@ -9,7 +9,7 @@ import { MemeCard } from "./MemeCard";
 
 /**
  * Carte affichée en grand, seule, sur fond flouté : le joueur se concentre
- * sur la carte elle-même. Se ferme d'un clic n'importe où (sauf ses boutons) ou avec Échap.
+ * sur la carte elle-même. Se ferme d'un clic en dehors de la carte, ou avec Échap.
  */
 export function CardDetailDialog({
   card,
@@ -37,16 +37,16 @@ export function CardDetailDialog({
     return () => dialog?.removeEventListener("close", onCloseEvent);
   }, [onClose]);
 
-  // Un clic n'importe où ferme la vue, sauf sur les boutons posés sur la carte (Évoluer, Vendre).
+  // Un clic en dehors de la carte ferme la vue ; un clic sur la carte (ou ses boutons Évoluer, Vendre) la garde ouverte.
   function onBackdrop(e: MouseEvent<HTMLDialogElement>) {
-    if ((e.target as HTMLElement).closest(".mm-card__actions")) return;
+    if ((e.target as HTMLElement).closest(".mm-card")) return;
     ref.current?.close();
   }
 
   return createPortal(
     <dialog ref={ref} className="mm-detail mm-detail--card" onClick={onBackdrop} aria-label={card.name}>
       <div className="grid justify-items-center gap-3">
-        {/* Fermeture : clic n'importe où ou Échap. Bouton invisible, pour le clavier et les lecteurs d'écran. */}
+        {/* Fermeture : clic en dehors de la carte ou Échap. Bouton invisible, pour le clavier et les lecteurs d'écran. */}
         <button type="button" onClick={() => ref.current?.close()} className="sr-only">
           {t("close")}
         </button>

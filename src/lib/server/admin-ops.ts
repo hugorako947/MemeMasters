@@ -148,8 +148,8 @@ export async function applyCardSave(p: CardPayload, actorId: string): Promise<{ 
         await tx`
           update public.cards set name = ${card.name}, description = ${card.description}, rarity = ${card.rarity}::public.rarity,
             hp = ${card.hp}, atk = ${card.atk}, def = ${card.def}, spd = ${card.spd},
-            normal_attack = ${JSON.stringify(card.normalAttack)}::jsonb, special_attack = ${JSON.stringify(card.specialAttack)}::jsonb,
-            defense_ability = ${JSON.stringify(card.defenseAbility)}::jsonb, art_seed = ${artSeed},
+            normal_attack = ${JSON.stringify(card.normalAttack)}::text::jsonb, special_attack = ${JSON.stringify(card.specialAttack)}::text::jsonb,
+            defense_ability = ${JSON.stringify(card.defenseAbility)}::text::jsonb, art_seed = ${artSeed},
             is_active = ${p.active}, is_droppable = ${p.droppable}, updated_at = now()
           where id = ${p.id}
         `;
@@ -160,7 +160,7 @@ export async function applyCardSave(p: CardPayload, actorId: string): Promise<{ 
         const [row] = await tx<{ id: string }[]>`
           insert into public.cards (slug, name, description, rarity, hp, atk, def, spd, normal_attack, special_attack, defense_ability, art_seed, is_active, is_droppable)
           values (${slug}, ${card.name}, ${card.description}, ${card.rarity}::public.rarity, ${card.hp}, ${card.atk}, ${card.def}, ${card.spd},
-                  ${JSON.stringify(card.normalAttack)}::jsonb, ${JSON.stringify(card.specialAttack)}::jsonb, ${JSON.stringify(card.defenseAbility)}::jsonb,
+                  ${JSON.stringify(card.normalAttack)}::text::jsonb, ${JSON.stringify(card.specialAttack)}::text::jsonb, ${JSON.stringify(card.defenseAbility)}::text::jsonb,
                   ${artSeed}, ${p.active}, ${p.droppable})
           returning id
         `;
@@ -182,7 +182,7 @@ export async function applyCardSave(p: CardPayload, actorId: string): Promise<{ 
             : `${card.name} rejoint le jeu en rareté ${card.rarity}. Elle peut sortir des boosters dès maintenant.`;
         await tx`
           insert into public.news (kind, title, body, created_by)
-          values (${p.id ? "change" : "news"}, ${JSON.stringify({ fr: title })}::jsonb, ${JSON.stringify({ fr: body })}::jsonb, ${actorId})
+          values (${p.id ? "change" : "news"}, ${JSON.stringify({ fr: title })}::text::jsonb, ${JSON.stringify({ fr: body })}::text::jsonb, ${actorId})
         `;
       }
     });
@@ -289,7 +289,7 @@ export type NewsPayload = z.infer<typeof newsSchema>;
 export async function applyNews(v: NewsPayload, actorId: string): Promise<void> {
   const title = { fr: v.titleFr, ...(v.titleEn ? { en: v.titleEn } : {}) };
   const body = { fr: v.bodyFr, ...(v.bodyEn ? { en: v.bodyEn } : {}) };
-  await sql()`insert into public.news (kind, title, body, created_by) values (${v.kind}, ${JSON.stringify(title)}::jsonb, ${JSON.stringify(body)}::jsonb, ${actorId})`;
+  await sql()`insert into public.news (kind, title, body, created_by) values (${v.kind}, ${JSON.stringify(title)}::text::jsonb, ${JSON.stringify(body)}::text::jsonb, ${actorId})`;
   await audit(actorId, "news.publier", v.titleFr);
 }
 

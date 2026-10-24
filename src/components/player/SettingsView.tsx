@@ -3,6 +3,7 @@ import { Button, ButtonLink } from "@/components/ui/Button";
 import { Panel } from "@/components/ui/Panel";
 import { FullscreenToggle } from "@/components/install/FullscreenToggle";
 import { PlayOnPhone } from "@/components/install/PlayOnPhone";
+import { LegalInfo } from "@/components/layout/SiteFooter";
 import { GAME_CONFIG } from "@/config/game.config";
 import { timezoneUnlockDate, type Player } from "@/lib/server/players";
 import { parseAppearance } from "@/lib/theme/theme";
@@ -18,6 +19,7 @@ import { TimezoneForm } from "@/app/(jeu)/parametres/TimezoneForm";
  */
 export async function SettingsView({ player, email }: { player: Player; email: string | null }) {
   const t = await getTranslations("settings");
+  const tFooter = await getTranslations("footer");
   const format = await getFormatter();
   const unlock = timezoneUnlockDate(player);
 
@@ -96,6 +98,14 @@ export async function SettingsView({ player, email }: { player: Player; email: s
           </div>
         </div>
       </Panel>
+
+      {/* Informations légales : présentes mais discrètes (pas de pied de page dans le compte joueur). */}
+      <section aria-labelledby="infos-legales" className="grid gap-2 border-t-2 border-dashed border-line pt-4">
+        <h2 id="infos-legales" className="text-sm font-extrabold text-ink-soft">
+          {tFooter("label")}
+        </h2>
+        <LegalInfo compact />
+      </section>
     </div>
   );
 }

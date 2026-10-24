@@ -67,7 +67,7 @@ export async function createRequest(admin: Player, action: RequestAction, target
   const parsed = payloads[action].parse(payload);
   await sql()`
     insert into public.admin_requests (requested_by, action, target, summary, payload)
-    values (${admin.id}, ${action}, ${target}, ${summary.slice(0, 300)}, ${JSON.stringify(parsed)}::jsonb)
+    values (${admin.id}, ${action}, ${target}, ${summary.slice(0, 300)}, ${JSON.stringify(parsed)}::text::jsonb)
   `;
   await audit(admin.id, `demande.${action}`, target, { summary });
 }

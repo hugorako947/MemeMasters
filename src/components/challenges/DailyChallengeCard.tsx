@@ -43,7 +43,10 @@ export function DailyChallengeCard({ challenge }: { challenge: DailyChallenge })
         </h3>
         <span className={`rounded-full px-3 py-1 text-xs font-extrabold ${DIFFICULTY_STYLE[challenge.difficulty]}`}>{t(`difficulty.${challenge.difficulty}`)}</span>
       </div>
-      <p className="font-semibold">{t(`types.${challenge.type}`, { count: challenge.target })}</p>
+      {/* Le défi et sa récompense en une seule phrase : « Ouvre 1 booster = 1 booster en plus ». */}
+      <p className="font-semibold">
+        {t(`types.${challenge.type}`, { count: challenge.target })} = <span className="font-extrabold">{t("rewardShort", { count: challenge.reward })}</span>
+      </p>
       <div className="grid gap-1">
         <div
           className="h-3 overflow-hidden rounded-full border-2 border-ink bg-paper"
@@ -55,12 +58,9 @@ export function DailyChallengeCard({ challenge }: { challenge: DailyChallenge })
         >
           <div className="h-full bg-candy transition-[width] duration-500" style={{ width: `${ratio * 100}%` }} />
         </div>
-        <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
-          <span className="font-bold">
-            {challenge.progress} / {challenge.target}
-          </span>
-          <span className="text-ink-soft">{t("reward", { count: challenge.reward })}</span>
-        </div>
+        <p className="text-sm font-bold">
+          {challenge.progress} / {challenge.target}
+        </p>
       </div>
       {challenge.claimed ? (
         <p className="rounded-xl bg-paper px-3 py-2 text-sm font-bold">{t("claimed")}</p>

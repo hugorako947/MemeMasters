@@ -1,8 +1,9 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { applyAppearance } from "@/components/layout/PreferenceSync";
+import { applyLocalAppearance } from "@/components/layout/PreferenceSync";
 import { FormMessage } from "@/components/ui/Field";
 import { toast } from "@/components/ui/Toast";
 import { postJson } from "@/lib/client/api";
@@ -23,6 +24,7 @@ export function AppearanceForm({ initial }: { initial: Appearance }) {
   const t = useTranslations("settings");
   const errorText = useErrorText();
   const tf = useTranslations("feedback");
+  const router = useRouter();
   const [randomOpen, setRandomOpen] = useState(false);
   const [value, setValue] = useState<Appearance>(initial);
   const [error, setError] = useState<string | null>(null);
@@ -30,11 +32,16 @@ export function AppearanceForm({ initial }: { initial: Appearance }) {
   async function save(next: Appearance) {
     const normalized = parseAppearance(next);
     setValue(normalized);
-    applyAppearance(normalized);
+    applyLocalAppearance(normalized);
     setError(null);
     const result = await postJson("/api/settings/appearance", normalized);
-    if (!result.ok) setError(errorText(result.code));
-    else toast.success(tf("themeSaved"));
+    if (!result.ok) {
+      setError(errorText(result.code));
+      return;
+    }
+    toast.success(tf("themeSaved"));
+    // Les pages déjà visitées, gardées en mémoire, sont rechargées avec le nouveau thème.
+    router.refresh();
   }
 
   return (

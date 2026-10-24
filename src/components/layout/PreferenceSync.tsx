@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import { useEffect } from "react";
 import { LOCALE_COOKIE, isAvailable } from "@/lib/i18n/locales";
-import { cursorStyle } from "@/lib/theme/cursor";
 import { randomPalette, THEME_COOKIES, themeAttributes, type Appearance } from "@/lib/theme/theme";
 
 const PALETTE_KEYS = Object.keys(randomPalette("#000001"));
@@ -32,28 +31,39 @@ export function applyAppearance(a: Appearance) {
   // Retire toutes les couleurs posées par un thème précédent (personnalisé ou aléatoire).
   for (const key of PALETTE_KEYS) root.style.removeProperty(key);
   for (const [k, v] of Object.entries(attrs.style ?? {})) root.style.setProperty(k, v);
-  // Pointeurs de souris redessinés aux couleurs du nouveau thème.
-  for (const [k, v] of Object.entries(cursorStyle(a))) root.style.setProperty(k, v);
   writeCookie(THEME_COOKIES.theme, a.theme);
   writeCookie(THEME_COOKIES.accent, a.accent);
   writeCookie(THEME_COOKIES.base, a.base);
 }
 
+/** Moment (horloge du navigateur) du dernier changement de thème fait sur cet appareil. */
+const LOCAL_CHANGE_COOKIE = "mm-theme-at";
+
+/** Changement de thème choisi par le joueur sur cet appareil (Réglages). */
+export function applyLocalAppearance(a: Appearance) {
+  applyAppearance(a);
+  writeCookie(LOCAL_CHANGE_COOKIE, String(Date.now()));
+}
+
 /**
- * Sur un nouvel appareil, recopie dans les cookies la langue et le thème
- * enregistrés dans le compte du joueur, puis les applique.
+ * Recopie dans les cookies la langue et le thème enregistrés dans le compte du
+ * joueur (nouvel appareil, ou changement fait depuis un autre appareil), puis
+ * les applique. `renderedAt` : moment où le serveur a préparé ce cadre de page.
+ * Next.js garde en mémoire le cadre des pages déjà visitées : un cadre préparé
+ * avant le dernier changement de thème sur cet appareil porte l'ancien thème, il
+ * est donc ignoré (sinon il remettait l'ancien thème sur ces pages).
  */
-export function PreferenceSync({ locale, appearance }: { locale: string | null; appearance: Appearance }) {
+export function PreferenceSync({ locale, appearance, renderedAt }: { locale: string | null; appearance: Appearance; renderedAt: number }) {
   const router = useRouter();
   const current = useLocale();
   useEffect(() => {
-    if (readCookie(THEME_COOKIES.theme) !== appearance.theme || readCookie(THEME_COOKIES.accent) !== appearance.accent) {
-      applyAppearance(appearance);
-    }
+    const localChangeAt = Number(readCookie(LOCAL_CHANGE_COOKIE) ?? 0);
+    const differs = readCookie(THEME_COOKIES.theme) !== appearance.theme || readCookie(THEME_COOKIES.accent) !== appearance.accent;
+    if (differs && renderedAt > localChangeAt) applyAppearance(appearance);
     if (locale && isAvailable(locale) && locale !== current && readCookie(LOCALE_COOKIE) !== locale) {
       writeCookie(LOCALE_COOKIE, locale);
       router.refresh();
     }
-  }, [locale, appearance, current, router]);
+  }, [locale, appearance, renderedAt, current, router]);
   return null;
 }

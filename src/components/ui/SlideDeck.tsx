@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { postJson } from "@/lib/client/api";
 import { NotificationDot } from "./NotificationDot";
-import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, useTransition, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
 
 export interface Slide {
   key: string;
@@ -42,6 +42,8 @@ export function SlideDeck({
   // Note : min-w-0 empêche la grille parente de s'élargir à la largeur des 3 pages.
   const t = useTranslations("slides");
   const [index, setIndex] = useState(initial);
+  // Page dont la notification est en train d'être marquée comme vue : son onglet tourne jusqu'au rafraîchissement.
+  const [refreshing, startRefresh] = useTransition();
   // Au-delà de 4 onglets, le bandeau défile horizontalement (téléphone).
   const scrollable = slides.length > 4;
   const [height, setHeight] = useState<number | null>(null);
@@ -83,7 +85,7 @@ export function SlideDeck({
     const seenKey = markSeen?.[slide.key];
     if (slide.badge && seenKey) {
       postJson("/api/seen", { key: seenKey }).then((r) => {
-        if (r.ok) router.refresh(); // met à jour les points rouges de la navigation
+        if (r.ok) startRefresh(() => router.refresh()); // met à jour les points rouges de la navigation
       });
     }
   }, [index, onShow, slides, markSeen, router]);
@@ -133,6 +135,7 @@ export function SlideDeck({
             role="tab"
             type="button"
             aria-selected={i === index}
+            data-mm-busy={refreshing && i === index ? "true" : undefined}
             aria-controls={`${baseId}-panel-${i}`}
             tabIndex={i === index ? 0 : -1}
             onClick={() => go(i)}

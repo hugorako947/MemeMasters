@@ -8,7 +8,7 @@ import { ONLINE_WINDOW_SECONDS } from "./presence";
 export async function audit(adminId: string, action: string, target: string | null, diff?: unknown): Promise<void> {
   await sql()`
     insert into public.admin_audit_log (admin_id, action, target, diff)
-    values (${adminId}, ${action.slice(0, 60)}, ${target ? target.slice(0, 200) : null}, ${diff === undefined ? null : JSON.stringify(diff)}::jsonb)
+    values (${adminId}, ${action.slice(0, 60)}, ${target ? target.slice(0, 200) : null}, ${diff === undefined ? null : JSON.stringify(diff)}::text::jsonb)
   `;
 }
 

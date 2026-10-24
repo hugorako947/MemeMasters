@@ -10,12 +10,12 @@ import { BackLink } from "./BackLink";
 import { Presence } from "@/components/player/Presence";
 import { BottomNav } from "./BottomNav";
 import { PreferenceSync } from "./PreferenceSync";
-import { SiteFooter } from "./SiteFooter";
 
 /**
  * Cadre des pages du joueur :
  * en haut, le rang et les trophées (gauche), le titre (centre), la MemeMoney (droite) ;
- * en bas, la navigation, au-dessus du pied de page. Pas de fil d'Ariane.
+ * en bas, la navigation. Pas de fil d'Ariane, ni de pied de page : comme dans un jeu vidéo,
+ * les informations légales sont rangées en bas des Réglages.
  */
 export async function AppShell({ player, back, children, badges }: { player: Player; back?: string; children: ReactNode; badges?: Badges }) {
   // Points rouges de notification (calculés par le serveur, sauf dans l'aperçu).
@@ -25,10 +25,13 @@ export async function AppShell({ player, back, children, badges }: { player: Pla
   const rank = rankFor(player.trophies);
   const rankName = t(`rank.${rank}`);
   const profileHref = `/profil/${encodeURIComponent(player.username)}`;
+  // Moment où ce cadre est préparé : un cadre resté en mémoire et plus ancien qu'un
+  // changement de thème ne réapplique pas l'ancien thème (voir PreferenceSync).
+  const renderedAt = new Date().getTime();
 
   return (
     <div className="flex min-h-dvh flex-col">
-      <PreferenceSync locale={player.locale} appearance={player.appearance} />
+      <PreferenceSync locale={player.locale} appearance={player.appearance} renderedAt={renderedAt} />
       <a
         href="#contenu"
         className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-50 focus:rounded-lg focus:bg-surface focus:px-3 focus:py-2"
@@ -82,7 +85,6 @@ export async function AppShell({ player, back, children, badges }: { player: Pla
 
       <Presence />
       <BottomNav username={player.username} badges={{ shop: dots.shop, infos: dots.infos, home: dots.home, profile: dots.profile }} />
-      <SiteFooter />
     </div>
   );
 }

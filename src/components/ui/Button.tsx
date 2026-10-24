@@ -1,6 +1,5 @@
 import Link from "next/link";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { Spinner } from "./Spinner";
 
 type Variant = "primary" | "secondary" | "ghost" | "danger";
 
@@ -10,8 +9,9 @@ export function buttonClass(variant: Variant = "primary", extra = ""): string {
 }
 
 /**
- * Bouton du jeu. `pending` : l'action est en cours (toupie, bouton désactivé,
- * annoncé aux lecteurs d'écran), pour que le joueur sache que son clic est pris en compte.
+ * Bouton du jeu. `pending` : l'action est en cours. Le bouton ignore les clics et, si
+ * l'action dure, un cercle tourne à la place de son texte, sans changer de taille (même
+ * style que tous les éléments « en cours », voir src/lib/client/busy.ts).
  */
 export function Button({
   variant = "primary",
@@ -26,14 +26,14 @@ export function Button({
   // affiché par des composants serveur, qui ne peuvent pas transmettre de fonction au navigateur.
   return (
     <button
-      className={buttonClass(variant, pending ? `gap-2 ${className}` : className)}
+      className={buttonClass(variant, className)}
+      data-mm-busy={pending ? "true" : undefined}
       aria-busy={pending || undefined}
       aria-disabled={pending || undefined}
       onClick={pending ? undefined : onClick}
       {...props}
     >
-      {pending ? <Spinner /> : null}
-      <span className="mm-btn__label contents">{children}</span>
+      {children}
     </button>
   );
 }
