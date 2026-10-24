@@ -10,30 +10,33 @@
  * flux séparés, ordre d'itération fixe (participants par emplacement, projectiles par
  * numéro de création). Aucun accès au DOM, au réseau ni à l'heure.
  *
- * Ordre d'un tick : commandes (visée, actions ponctuelles) → déplacements → grille →
+ * Ordre d'un tick : commandes des bots → commandes (visée, actions ponctuelles) → déplacements → grille →
  * capacités et tirs → projectiles → minuteries (rechargement, soin, brûlure,
  * régénération) → zone → fin de partie.
  *
  * Toute modification qui change le résultat d'une partie doit augmenter ENGINE_VERSION
  * (le test d'empreinte de replay.test.ts le rappelle).
  */
+import { initBots, runBots } from "./bot";
 import { ABILITY_KINDS, BOOST_STATS, PASSIVE_KINDS, type BattleCharacter } from "./character";
 import { BTN, isValidCommand, unpackAim, unpackButtons, unpackMove } from "./commands";
-import { angleDiff, clamp, floorDiv, iatan2, icos, idiv, isin, isqrt, Q14 } from "./fixed";
-import { circleHitsSolid, generateMap, ITEM, isPassable, lineOfSight, placeLoot, placeSpawns, segmentWallHit, TILE, tileAt, type GameMap, type LootItem } from "./map";
+import { angleDiff, clamp, iatan2, icos, idiv, isin, isqrt, Q14 } from "./fixed";
+import { buildGrid, forEachNear } from "./grid";
+import { circleHitsSolid, generateMap, ITEM, isPassable, placeLoot, placeSpawns, segmentWallHit, tileAt, type GameMap, type LootItem } from "./map";
 import { chance, createStreams, nextBelow, nextRange, STREAM } from "./rng";
 import { BURN_SHOT, SUB, type Rules } from "./rules";
-import { allocateState, C, cloneState, KILL_BURN, KILL_REFLECT, KILL_ZONE, SHOT_CAPACITY, SHOT_FIELDS, Z, type MatchState } from "./state";
+import { allocateState, C, cloneState, KILL_BURN, KILL_REFLECT, KILL_ZONE, SHOT_CAPACITY, SHOT_FIELDS, weaponInHand, Z, type MatchState } from "./state";
+import { canSee } from "./vision";
 
-export const ENGINE_VERSION = 1;
+export const ENGINE_VERSION = 2;
 
 const kindIndex = <K extends string>(list: readonly K[]) => Object.fromEntries(list.map((k, i) => [k, i])) as Record<K, number>;
 const AB = kindIndex(ABILITY_KINDS);
 const PS = kindIndex(PASSIVE_KINDS);
 const ST = kindIndex(BOOST_STATS);
 
-/** Cellule de la grille spatiale : 256 unités. */
-const CELL = 256 * SUB;
+/** Tick « jamais » : dernier tir d'un participant qui n'a pas encore tiré. */
+const NEVER = -1_000_000;
 
 export interface MatchSetup {
   /** Graine de la partie (entier 32 bits). */
@@ -41,6 +44,11 @@ export interface MatchSetup {
   rules: Rules;
   /** Un personnage par emplacement (l'emplacement est l'indice). */
   characters: readonly BattleCharacter[];
+  /**
+   * Niveau de chaque emplacement joué par un bot (en dixièmes, de 0 à 10 × MAX_LEVEL ; voir botLevelForTrophies),
+   * null pour un emplacement piloté par des commandes (joueur). Absent : tous pilotés par des commandes.
+   */
+  botLevels?: readonly (number | null)[];
   /** Tests uniquement : carte, positions de départ (x, y à la suite) et butin imposés. */
   map?: GameMap;
   spawns?: ArrayLike<number>;
@@ -55,7 +63,9 @@ export function createMatch(setup: MatchSetup): MatchState {
   const maxRadius = characters.reduce((m, c) => Math.max(m, c.hitRadius * SUB), 0);
   const spawns = setup.spawns ?? placeSpawns(map, rules, rng, n, maxRadius);
   const loot = setup.loot ?? placeLoot(map, rules, rng, n);
-  const s = allocateState(rules, map, characters, rng, loot);
+  const botLevels = setup.botLevels ?? [];
+  const botCount = characters.reduce((count, _, i) => count + (botLevels[i] === null || botLevels[i] === undefined ? 0 : 1), 0);
+  const s = allocateState(rules, map, characters, rng, loot, botCount);
   const P = s.p;
   const size = map.size * map.tileSub;
   const middle = size >> 1;
@@ -69,6 +79,8 @@ export function createMatch(setup: MatchSetup): MatchState {
     P.mag0[i] = rules.weapons[rules.startWeapon].magazine;
     P.killedBy[i] = -2;
     P.burnFrom[i] = -1;
+    P.lastHitBy[i] = -1;
+    P.lastShot[i] = NEVER;
   }
   // Zone de départ : un cercle qui couvre toute la carte.
   const Zs = s.zone;
@@ -76,6 +88,7 @@ export function createMatch(setup: MatchSetup): MatchState {
   Zs[Z.cy] = Zs[Z.fy] = middle;
   Zs[Z.r] = Zs[Z.fr] = idiv(size * 7072, 10000) + map.tileSub;
   chooseZoneTarget(s);
+  if (botCount > 0) initBots(s, characters, botLevels);
   return s;
 }
 
@@ -84,46 +97,7 @@ export function step(state: MatchState, commands: ArrayLike<number>): MatchState
   return advance(cloneState(state), commands);
 }
 
-/** Arme en main (indice dans rules.weapons). */
-export function weaponInHand(s: MatchState, i: number): number {
-  return s.p.active[i] === 1 && s.p.weapon1[i] >= 0 ? s.p.weapon1[i] : s.rules.startWeapon;
-}
-
-// ---------------------------------------------------------------- grille spatiale (dérivée, hors état)
-
-let gridSide = 0;
-let gridStart = new Int32Array(1);
-let gridItems = new Int32Array(1);
-
-function cellCoord(v: number): number {
-  return clamp(floorDiv(v, CELL), 0, gridSide - 1);
-}
-
-function buildGrid(s: MatchState): void {
-  const P = s.p;
-  gridSide = Math.max(1, idiv(s.map.size * s.map.tileSub + CELL - 1, CELL));
-  const cells = gridSide * gridSide;
-  if (gridStart.length < cells + 1) gridStart = new Int32Array(cells + 1);
-  if (gridItems.length < s.n) gridItems = new Int32Array(s.n);
-  gridStart.fill(0, 0, cells + 1);
-  for (let i = 0; i < s.n; i++) if (P.alive[i]) gridStart[cellCoord(P.y[i]) * gridSide + cellCoord(P.x[i]) + 1]++;
-  for (let c = 0; c < cells; c++) gridStart[c + 1] += gridStart[c];
-  const fill = gridStart.slice(0, cells);
-  for (let i = 0; i < s.n; i++) if (P.alive[i]) gridItems[fill[cellCoord(P.y[i]) * gridSide + cellCoord(P.x[i])]++] = i;
-}
-
-/** Participants en vie dans les cellules qui couvrent le rectangle, par cellule puis par emplacement. */
-function forEachNear(x0: number, y0: number, x1: number, y1: number, visit: (j: number) => void): void {
-  const cx0 = cellCoord(x0);
-  const cx1 = cellCoord(x1);
-  const cy1 = cellCoord(y1);
-  for (let cy = cellCoord(y0); cy <= cy1; cy++) {
-    for (let cx = cx0; cx <= cx1; cx++) {
-      const c = cy * gridSide + cx;
-      for (let k = gridStart[c]; k < gridStart[c + 1]; k++) visit(gridItems[k]);
-    }
-  }
-}
+export { weaponInHand };
 
 // ---------------------------------------------------------------- un tick
 
@@ -133,6 +107,14 @@ export function advance(s: MatchState, commands: ArrayLike<number>): MatchState 
   s.tick++;
   const n = s.n;
   const P = s.p;
+  // 0. Bots : leurs commandes, tirées de l'état au début du tick, remplacent celles reçues pour leurs emplacements.
+  if (s.botCount > 0) {
+    const merged = new Uint32Array(n);
+    for (let i = 0; i < n; i++) merged[i] = commands[i] ?? 0;
+    buildGrid(s);
+    runBots(s, merged);
+    commands = merged;
+  }
   const moveDir = new Int32Array(n);
   const wantsFire = new Uint8Array(n);
   const wantsAbility = new Uint8Array(n);
@@ -367,7 +349,7 @@ function assistedAim(s: MatchState, i: number): number {
   const base = P.aim[i];
   const assist = s.rules.aimAssist;
   if (assist === 0) return base;
-  const { halfWidth, halfHeight, bushReveal } = s.rules.view;
+  const { halfWidth, halfHeight } = s.rules.view;
   let best = -1;
   let bestDiff = 0;
   let bestD = 0;
@@ -378,12 +360,12 @@ function assistedAim(s: MatchState, i: number): number {
     const dy = P.y[j] - P.y[i];
     if (Math.abs(dx) > halfWidth || Math.abs(dy) > halfHeight) return;
     const d = dx * dx + dy * dy;
-    if (tileAt(s.map, P.x[j], P.y[j]) === TILE.bush && d > bushReveal * bushReveal) return;
     const angle = iatan2(dy, dx);
     const diff = Math.abs(angleDiff(angle, base));
     if (diff > assist) return;
     const better = best < 0 || diff < bestDiff || (diff === bestDiff && (d < bestD || (d === bestD && j < best)));
-    if (!better || !lineOfSight(s.map, P.x[i], P.y[i], P.x[j], P.y[j])) return;
+    // Visible selon la même règle que pour le joueur et les bots (champ de vision, buissons, murs).
+    if (!better || !canSee(s, i, j)) return;
     best = j;
     bestDiff = diff;
     bestD = d;
@@ -447,6 +429,7 @@ function tryFire(s: MatchState, i: number): void {
   }
   setMagazine(s, i, mag - 1);
   P.fireCd[i] = W.fireTicks;
+  P.lastShot[i] = s.tick;
   if (W.ammo > 0) s.counters[W.ammo]++;
   const fx: ShotEffects = { ...NO_EFFECT };
   if (abilityActive(s, i, AB.drain)) fx.drain = f.abilityPermille;
@@ -474,6 +457,7 @@ function activateAbility(s: MatchState, i: number): void {
   const P = s.p;
   const f = s.fighters[i];
   P.abilityCd[i] = f.abilityCooldown;
+  if (f.ability === AB.multi || f.ability === AB.burn) P.lastShot[i] = s.tick;
   if (f.ability === AB.multi) {
     // Rafale : `hits` balles de l'arme en main, en éventail, sans munitions.
     const w = weaponInHand(s, i);
@@ -579,12 +563,14 @@ function hitParticipant(s: MatchState, k: number, t: number): void {
   const dealt = damage(s, t, amount, owner, S.weapon[k], true);
   P.damage[owner] += dealt;
   P.lastHit[t] = s.tick;
+  P.lastHitBy[t] = owner;
   if (S.drain[k] > 0 && P.alive[owner]) P.hp[owner] = Math.min(s.fighters[owner].maxHp, P.hp[owner] + idiv(dealt * S.drain[k], 1000));
   if (ft.passive === PS.reflect && P.alive[owner]) {
     const back = idiv(dealt * ft.passivePermille, 1000);
     if (back > 0) {
       damage(s, owner, back, t, KILL_REFLECT, true);
       P.lastHit[owner] = s.tick;
+      P.lastHitBy[owner] = t;
     }
   }
   if (!P.alive[t]) return;
@@ -691,10 +677,11 @@ function updateTimers(s: MatchState): void {
         if (!P.alive[i]) continue;
       }
     }
-    // Régénération (passif « soin ») après quelques secondes sans être touché.
+    // Régénération (passif « soin ») après quelques secondes sans être touché, jusqu'au plafond.
     const f = s.fighters[i];
-    if (perSecond && f.passive === PS.regen && f.passivePermille > 0 && s.tick - P.lastHit[i] >= s.rules.regenDelayTicks && P.hp[i] < f.maxHp) {
-      P.hp[i] = Math.min(f.maxHp, P.hp[i] + Math.max(1, idiv(f.maxHp * f.passivePermille, 1000)));
+    const cap = idiv(f.maxHp * s.rules.regenCapPercent, 100);
+    if (perSecond && f.passive === PS.regen && f.passivePermille > 0 && s.tick - P.lastHit[i] >= s.rules.regenDelayTicks && P.hp[i] < cap) {
+      P.hp[i] = Math.min(cap, P.hp[i] + Math.max(1, idiv(f.maxHp * f.passivePermille, 1000)));
     }
   }
 }

@@ -144,7 +144,127 @@ function fullyReachable(map: GameMap): boolean {
   return true;
 }
 
-/** Génère la carte. Jusqu'à 8 essais dans la suite du flux « carte » ; au-delà, les poches isolées deviennent de l'eau. */
+/**
+ * Sommets de la grille des tuiles (coins des tuiles, (taille + 1)² sommets) où le plus gros personnage peut se tenir :
+ * les 4 tuiles autour sont praticables, donc tout obstacle est à au moins une tuile (32 unités), plus que la plus
+ * grande zone de touche (22 unités). Deux sommets voisins praticables se rejoignent en ligne droite sans rien toucher.
+ */
+export function walkableVertices(map: GameMap): Uint8Array {
+  const n = map.size;
+  const side = n + 1;
+  const pass = (x: number, y: number) => x >= 0 && y >= 0 && x < n && y < n && isPassable(map.tiles[y * n + x]);
+  const walk = new Uint8Array(side * side);
+  for (let vy = 0; vy < side; vy++) {
+    for (let vx = 0; vx < side; vx++) walk[vy * side + vx] = pass(vx - 1, vy - 1) && pass(vx, vy - 1) && pass(vx - 1, vy) && pass(vx, vy) ? 1 : 0;
+  }
+  return walk;
+}
+
+/** Régions de sommets praticables reliés (4 voisins) : numéro de région par sommet (−1 hors région), et numéro de la plus grande. */
+function vertexRegions(map: GameMap, walk: Uint8Array): { region: Int32Array; main: number } {
+  const side = map.size + 1;
+  const region = new Int32Array(side * side).fill(-1);
+  const stack = new Int32Array(side * side);
+  let count = 0;
+  let main = -1;
+  let mainSize = 0;
+  for (let start = 0; start < walk.length; start++) {
+    if (!walk[start] || region[start] >= 0) continue;
+    let top = 0;
+    let size = 0;
+    stack[top++] = start;
+    region[start] = count;
+    while (top > 0) {
+      const v = stack[--top];
+      size++;
+      const x = v % side;
+      const neighbors = [x > 0 ? v - 1 : -1, x < side - 1 ? v + 1 : -1, v - side, v + side];
+      for (const u of neighbors) {
+        if (u < 0 || u >= walk.length || !walk[u] || region[u] >= 0) continue;
+        region[u] = count;
+        stack[top++] = u;
+      }
+    }
+    // À taille égale, la première trouvée (ordre de lecture) : déterministe.
+    if (size > mainSize) {
+      mainSize = size;
+      main = count;
+    }
+    count++;
+  }
+  return { region, main };
+}
+
+/** Sommets de la région principale : là où tout personnage, même le plus gros, peut aller (1 = oui). */
+export function mainVertices(map: GameMap): Uint8Array {
+  const walk = walkableVertices(map);
+  const { region, main } = vertexRegions(map, walk);
+  for (let v = 0; v < walk.length; v++) walk[v] = region[v] === main && main >= 0 ? 1 : 0;
+  return walk;
+}
+
+/** Tuiles accessibles à tous (1 = au moins un de leurs coins est dans la région principale) : butin et apparitions n'y sont posés que là. */
+export function accessibleMask(map: GameMap): Uint8Array {
+  const n = map.size;
+  const side = n + 1;
+  const main = mainVertices(map);
+  const mask = new Uint8Array(n * n);
+  for (let ty = 0; ty < n; ty++) {
+    for (let tx = 0; tx < n; tx++) {
+      const v = ty * side + tx;
+      if (isPassable(map.tiles[ty * n + tx]) && (main[v] || main[v + 1] || main[v + side] || main[v + side + 1])) mask[ty * n + tx] = 1;
+    }
+  }
+  return mask;
+}
+
+/**
+ * Recoins reliés au reste seulement par un passage d'une seule case : un petit personnage y entrerait, pas un gros
+ * (butin inaccessible, joueur enfermé). Ils deviennent de l'eau. La région principale n'est pas touchée : aucun de
+ * ses sommets n'est le coin d'une tuile de recoin.
+ */
+function fillPockets(map: GameMap): void {
+  const n = map.size;
+  const side = n + 1;
+  const walk = walkableVertices(map);
+  const { region, main } = vertexRegions(map, walk);
+  for (let ty = 0; ty < n; ty++) {
+    for (let tx = 0; tx < n; tx++) {
+      if (!isPassable(map.tiles[ty * n + tx])) continue;
+      const corners = [ty * side + tx, ty * side + tx + 1, (ty + 1) * side + tx, (ty + 1) * side + tx + 1];
+      const inMain = corners.some((v) => region[v] === main);
+      const inPocket = corners.some((v) => region[v] >= 0 && region[v] !== main);
+      if (inPocket && !inMain) map.tiles[ty * n + tx] = TILE.water;
+    }
+  }
+  // Les bouts de passage étroit qui ne menaient qu'à ces recoins sont désormais isolés : eux aussi deviennent de l'eau.
+  const reach = new Uint8Array(n * n);
+  const stack: number[] = [];
+  for (let t = 0; t < n * n; t++) {
+    const tx = t % n;
+    const ty = floorDiv(t, n);
+    const corners = [ty * side + tx, ty * side + tx + 1, (ty + 1) * side + tx, (ty + 1) * side + tx + 1];
+    if (isPassable(map.tiles[t]) && corners.some((v) => region[v] === main)) {
+      reach[t] = 1;
+      stack.push(t);
+    }
+  }
+  while (stack.length) {
+    const t = stack.pop()!;
+    const tx = t % n;
+    for (const u of [tx > 0 ? t - 1 : -1, tx < n - 1 ? t + 1 : -1, t - n, t + n]) {
+      if (u < 0 || u >= n * n || reach[u] || !isPassable(map.tiles[u])) continue;
+      reach[u] = 1;
+      stack.push(u);
+    }
+  }
+  for (let t = 0; t < n * n; t++) if (isPassable(map.tiles[t]) && !reach[t]) map.tiles[t] = TILE.water;
+}
+
+/**
+ * Génère la carte. Jusqu'à 8 essais dans la suite du flux « carte » ; au-delà, les poches isolées deviennent de l'eau.
+ * Puis les recoins réservés aux petits personnages deviennent aussi de l'eau (fillPockets).
+ */
 export function generateMap(rules: Rules, rng: Uint32Array): GameMap {
   let map = attempt(rules, rng);
   for (let tries = 1; tries < 8 && !fullyReachable(map); tries++) map = attempt(rules, rng);
@@ -152,6 +272,7 @@ export function generateMap(rules: Rules, rng: Uint32Array): GameMap {
     const reach = reachableMask(map);
     for (let i = 0; i < map.tiles.length; i++) if (isPassable(map.tiles[i]) && !reach[i]) map.tiles[i] = TILE.water;
   }
+  fillPockets(map);
   return map;
 }
 
@@ -271,7 +392,7 @@ const center = (t: number, ts: number) => t * ts + (ts >> 1);
 export function placeSpawns(map: GameMap, rules: Rules, rng: Uint32Array, count: number, maxRadius: number): Int32Array {
   const n = map.size;
   const B = rules.map.border;
-  const reach = reachableMask(map);
+  const reach = accessibleMask(map);
   let grid = 1;
   while (grid * grid < count) grid++;
   const span = n - 2 * B;
@@ -288,12 +409,15 @@ export function placeSpawns(map: GameMap, rules: Rules, rng: Uint32Array, count:
     const cx0 = B + floorDiv((cell % grid) * span, grid);
     const cy0 = B + floorDiv(floorDiv(cell, grid) * span, grid);
     const cw = Math.max(1, floorDiv(span, grid));
-    // Marge au bord de la cellule : deux voisins ne peuvent pas apparaître côte à côte.
+    // D'abord le tiers central de la cellule : deux voisins apparaissent assez loin l'un de l'autre pour ne pas se
+    // voir dès le départ (tout le monde a le temps de s'équiper). Puis toute la cellule, avec une marge au bord.
     const margin = Math.min(2, cw >> 2);
+    const central = Math.max(margin, floorDiv(cw, 3));
     let found = -1;
     for (let tries = 0; tries < 60 && found < 0; tries++) {
-      const tx = cx0 + margin + nextBelow(rng, STREAM.map, cw - 2 * margin);
-      const ty = cy0 + margin + nextBelow(rng, STREAM.map, cw - 2 * margin);
+      const m = tries < 40 ? central : margin;
+      const tx = cx0 + m + nextBelow(rng, STREAM.map, Math.max(1, cw - 2 * m));
+      const ty = cy0 + m + nextBelow(rng, STREAM.map, Math.max(1, cw - 2 * m));
       if (ok(tx, ty)) found = ty * n + tx;
     }
     // Repli : la case libre la plus proche du centre de la cellule, en spirale carrée.
@@ -331,7 +455,7 @@ export function placeLoot(map: GameMap, rules: Rules, rng: Uint32Array, particip
   const n = map.size;
   const ts = map.tileSub;
   const L = rules.loot;
-  const reach = reachableMask(map);
+  const reach = accessibleMask(map);
   const total = L.perParticipant * participants;
   const inBuildings = map.buildings.length ? floorDiv(total * L.inBuildingsPercent, 100) : 0;
   // Munitions : même répartition que les armes ramassables.

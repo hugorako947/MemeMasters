@@ -5,16 +5,17 @@ import { createMatch, ENGINE_VERSION, step } from "./engine";
 import { replayMatch } from "./replay";
 import { resolveRules } from "./rules";
 import { stateHash } from "./state";
-import { playWithDriver, sampleCharacters, smallRules } from "./test-driver";
+import { botSetup, playWithDriver, smallRules } from "./test-driver";
 
 describe("déterminisme et rejeu", () => {
-  it("300 parties (graines et commandes différentes), rejouées : état final identique octet pour octet", () => {
+  it("300 parties (1 joueur piloté + 15 bots, graines différentes), rejouées avec les seules commandes du joueur : état final identique octet pour octet", () => {
     const rules = smallRules();
     const hashes = new Set<string>();
     let finished = 0;
     for (let seed = 1; seed <= 300; seed++) {
-      const setup = { seed: seed * 7919, rules, characters: sampleCharacters(16, seed) };
+      const setup = { ...botSetup(seed, rules, 16), seed: seed * 7919 };
       const played = playWithDriver(setup, seed);
+      expect([...played.inputs.keys()]).toEqual([0]);
       const replay = replayMatch(setup, played.inputs);
       expect(replay.hash).toBe(stateHash(played.state));
       expect(replay.result.places).toEqual(Array.from(played.state.p.place));
@@ -29,7 +30,7 @@ describe("déterminisme et rejeu", () => {
   it("tick par tick (copie à chaque tick) ou rejeu d'un bloc : même résultat", () => {
     const rules = smallRules();
     for (let seed = 1; seed <= 10; seed++) {
-      const setup = { seed, rules, characters: sampleCharacters(16, 1000 + seed) };
+      const setup = { ...botSetup(1000 + seed, rules, 16), seed };
       const played = playWithDriver(setup, seed, { maxTicks: 300 });
       let pure = createMatch(setup);
       const commands = new Uint32Array(pure.n);
@@ -43,7 +44,7 @@ describe("déterminisme et rejeu", () => {
 
   it("commandes envoyées par tranches : réassemblées puis rejouées, même partie", () => {
     const rules = smallRules();
-    const setup = { seed: 4242, rules, characters: sampleCharacters(16, 4242) };
+    const setup = botSetup(4242, rules, 16);
     const played = playWithDriver(setup, 4242);
     const inputs = new Map<number, Uint32Array>();
     for (const [slot, stream] of played.inputs) {
@@ -55,7 +56,7 @@ describe("déterminisme et rejeu", () => {
   });
 
   it("empreinte de référence : toute modification du résultat d'une partie impose d'augmenter ENGINE_VERSION", () => {
-    const setup = { seed: 20261024, rules: resolveRules(GAME_CONFIG.BATTLE_ROYALE), characters: sampleCharacters(100, 1) };
+    const setup = { ...botSetup(1, resolveRules(GAME_CONFIG.BATTLE_ROYALE), 100), seed: 20261024 };
     const played = playWithDriver(setup, 7, { maxTicks: 400 });
     // Si ce test échoue après une modification du moteur : augmenter ENGINE_VERSION (engine.ts),
     // puis mettre à jour l'empreinte ci-dessous (npx vitest run -u).

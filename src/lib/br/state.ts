@@ -37,8 +37,11 @@ export const PARTICIPANT_FIELDS = [
   /** PV perdus par seconde de brûlure, et qui l'a infligée. */
   "burnDps",
   "burnFrom",
-  /** Dernier tick où le participant a été touché (régénération). */
+  /** Dernier tick où le participant a été touché (régénération), et par qui (−1 : personne). */
   "lastHit",
+  "lastHitBy",
+  /** Dernier tick où le participant a tiré (ouïe des bots). */
+  "lastShot",
   "prevButtons",
   /** Résultats : place (0 = encore en vie), éliminations, dégâts infligés, éliminé par (−1 zone, −2 personne), tick. */
   "place",
@@ -80,6 +83,67 @@ export type ShotField = (typeof SHOT_FIELDS)[number];
 export const ITEM_FIELDS = ["kind", "sub", "qty", "x", "y"] as const;
 export type ItemField = (typeof ITEM_FIELDS)[number];
 
+/** Mémoire et réglages de chaque bot (un entier par participant ; inutilisés pour un emplacement piloté par des commandes). */
+export const BOT_FIELDS = [
+  /** Niveau en dixièmes, après la variation personnelle ; −1 : emplacement piloté par des commandes (joueur). */
+  "level",
+  /** Personnalité (voir bot.ts) et traits : envie d'attaquer (‰), seuil de PV pour se soigner ou fuir (‰ des PV max), distance de combat (‰ de la normale). */
+  "persona",
+  "aggro",
+  "caution",
+  "rangeMod",
+  /** Difficulté : réaction (ticks), erreur de visée (pas), anticipation (‰), bruit des décisions, pas de côté (‰). */
+  "react",
+  "aimErr",
+  "lead",
+  "noise",
+  "strafe",
+  /** Décision en cours, ennemi visé (−1 : aucun), objet visé (−1 : aucun), point visé. */
+  "action",
+  "target",
+  "item",
+  "goalX",
+  "goalY",
+  /** Chemin : nombre de points, prochain point, but du chemin, calcul demandé. */
+  "pathLen",
+  "pathIdx",
+  "pathGX",
+  "pathGY",
+  "needPath",
+  /** Combat : tick où la cible est apparue (réaction), dernier tick où elle était visible, sa position à ce moment, erreur de visée en cours, pas de côté. */
+  "seenTick",
+  "visTick",
+  "tgtX",
+  "tgtY",
+  "aimOff",
+  "strafeDir",
+  "strafeUntil",
+  /** Anti-blocage : position et tick de référence, direction de secours et sa fin. */
+  "anchorX",
+  "anchorY",
+  "anchorTick",
+  "unstickDir",
+  "unstickUntil",
+  /** Dernier tir entendu (position approximative) et dernière menace (d'où venaient les balles reçues). */
+  "heardX",
+  "heardY",
+  "heardTick",
+  "threatX",
+  "threatY",
+  "threatTick",
+  /** Bâtiment visé pour explorer (−1 : aucun). */
+  "building",
+  /** Dernière commande produite (lecture seule : banc d'essai, débogage). */
+  "cmd",
+] as const;
+export type BotField = (typeof BOT_FIELDS)[number];
+
+/** Ennemis mémorisés par bot : emplacement (−1 : case libre), x, y, tick où il a été vu, PV et gilet vus (barre de vie). */
+export const BOT_MEMORY = 4;
+export const BOT_MEMORY_FIELDS = 5;
+/** Points de chemin gardés par bot (au-delà, le chemin est recalculé en route). */
+export const BOT_PATH = 32;
+
 /** Zone : phase, étape (0 attente, 1 rétrécissement, 2 fermée), ticks dans l'étape, cercle actuel, de départ et visé. */
 export const Z = { phase: 0, stage: 1, t: 2, cx: 3, cy: 4, r: 5, fx: 6, fy: 7, fr: 8, tx: 9, ty: 10, tr: 11 } as const;
 
@@ -111,6 +175,17 @@ export interface MatchState {
   /** Journal des éliminations : tick, auteur (−1 zone), victime, arme ou cause ; 4 entiers par entrée. */
   logCount: number;
   log: Int32Array;
+  /** Bots : nombre (fixé à la création), mémoire par bot, ennemis mémorisés, chemins, compteurs communs (recherche de chemin suivante). */
+  readonly botCount: number;
+  b: Record<BotField, Int32Array>;
+  bmem: Int32Array;
+  bpath: Int32Array;
+  bmisc: Int32Array;
+}
+
+/** Arme en main (indice dans rules.weapons). */
+export function weaponInHand(s: MatchState, i: number): number {
+  return s.p.active[i] === 1 && s.p.weapon1[i] >= 0 ? s.p.weapon1[i] : s.rules.startWeapon;
 }
 
 export const SHOT_CAPACITY = 4096;
@@ -119,8 +194,10 @@ function table<K extends string>(keys: readonly K[], size: number): Record<K, In
   return Object.fromEntries(keys.map((k) => [k, new Int32Array(size)])) as Record<K, Int32Array>;
 }
 
-export function allocateState(rules: Rules, map: GameMap, characters: readonly BattleCharacter[], rng: Uint32Array, loot: readonly LootItem[]): MatchState {
+export function allocateState(rules: Rules, map: GameMap, characters: readonly BattleCharacter[], rng: Uint32Array, loot: readonly LootItem[], botCount = 0): MatchState {
   const n = characters.length;
+  const b = table(BOT_FIELDS, n);
+  b.level.fill(-1);
   const itemCapacity = loot.length + 6 * n;
   const it = table(ITEM_FIELDS, itemCapacity);
   loot.forEach((item, k) => {
@@ -149,6 +226,11 @@ export function allocateState(rules: Rules, map: GameMap, characters: readonly B
     counters: new Int32Array(6),
     logCount: 0,
     log: new Int32Array(4 * n),
+    botCount,
+    b,
+    bmem: new Int32Array(BOT_MEMORY_FIELDS * BOT_MEMORY * n).fill(-1),
+    bpath: new Int32Array(BOT_PATH * n),
+    bmisc: new Int32Array(2),
   };
 }
 
@@ -168,6 +250,10 @@ export function cloneState(s: MatchState): MatchState {
     zone: s.zone.slice(),
     counters: s.counters.slice(),
     log: s.log.slice(),
+    b: cloneTable(s.b),
+    bmem: s.bmem.slice(),
+    bpath: s.bpath.slice(),
+    bmisc: s.bmisc.slice(),
   };
 }
 
@@ -197,6 +283,10 @@ export function stateHash(s: MatchState): string {
   all(s.zone);
   all(s.counters);
   all(s.log, 4 * s.logCount);
+  for (const k of BOT_FIELDS) all(s.b[k]);
+  all(s.bmem);
+  all(s.bpath);
+  all(s.bmisc);
   const hex = (v: number) => (v >>> 0).toString(16).padStart(8, "0");
   return hex(h1) + hex(h2);
 }

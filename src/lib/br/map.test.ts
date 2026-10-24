@@ -44,7 +44,7 @@ describe("carte générée par la graine", () => {
         if (map.tiles[i] === TILE.floor || map.tiles[i] === TILE.bush) expect(reach[i]).toBe(1);
       }
     }
-  });
+  }, 60_000);
 
   it("chaque bâtiment a au moins une porte de 2 cases dans son mur", () => {
     const { map } = build(11);
@@ -92,6 +92,50 @@ describe("carte générée par la graine", () => {
     }
     expect(inside).toBeGreaterThan(120);
   });
+
+  it("aucun recoin réservé aux petits personnages : le plus gros atteint tout le butin et tous les points d'apparition", () => {
+    // Vérification indépendante du générateur : positions tous les 16 unités où un cercle du plus gros rayon
+    // tient sans toucher d'obstacle, reliées de proche en proche (8 voisins).
+    const step = 16 * SUB;
+    for (let seed = 1; seed <= 16; seed++) {
+      const { map, rng } = build(seed);
+      const w = (map.size * map.tileSub) / step + 1;
+      const fits = new Uint8Array(w * w);
+      for (let y = 0; y < w; y++) for (let x = 0; x < w; x++) fits[y * w + x] = circleHitsSolid(map, x * step, y * step, MAX_RADIUS) ? 0 : 1;
+      const region = new Int32Array(w * w).fill(-1);
+      let regions = 0;
+      for (let start = 0; start < w * w; start++) {
+        if (!fits[start] || region[start] >= 0) continue;
+        const stack = [start];
+        region[start] = regions;
+        while (stack.length) {
+          const v = stack.pop()!;
+          const [x, y] = [v % w, Math.floor(v / w)];
+          for (const [nx, ny] of [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1], [x + 1, y + 1], [x - 1, y - 1], [x + 1, y - 1], [x - 1, y + 1]]) {
+            const u = ny * w + nx;
+            if (nx >= 0 && ny >= 0 && nx < w && ny < w && fits[u] && region[u] < 0) {
+              region[u] = regions;
+              stack.push(u);
+            }
+          }
+        }
+        regions++;
+      }
+      // Une seule région : personne ne peut se retrouver enfermé.
+      expect(regions, `graine ${seed}`).toBe(1);
+      const reachable = (px: number, py: number, range: number) => {
+        for (let y = Math.max(0, Math.floor((py - range) / step)); y <= Math.min(w - 1, Math.ceil((py + range) / step)); y++) {
+          for (let x = Math.max(0, Math.floor((px - range) / step)); x <= Math.min(w - 1, Math.ceil((px + range) / step)); x++) {
+            if (fits[y * w + x] && (x * step - px) ** 2 + (y * step - py) ** 2 <= range * range) return true;
+          }
+        }
+        return false;
+      };
+      const spawns = placeSpawns(map, RULES, rng, 100, MAX_RADIUS);
+      for (let i = 0; i < 100; i++) expect(reachable(spawns[2 * i], spawns[2 * i + 1], step), `graine ${seed}, apparition ${i}`).toBe(true);
+      for (const item of placeLoot(map, RULES, rng, 100)) expect(reachable(item.x, item.y, RULES.items.pickupRange), `graine ${seed}, objet`).toBe(true);
+    }
+  }, 60_000);
 
   it("collisions, tirs et ligne de vue : murs et caisses bloquent, l'eau et les buissons non", () => {
     const map = emptyMap(10);

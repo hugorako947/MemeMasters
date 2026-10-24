@@ -1,19 +1,19 @@
 /**
- * Banc d'essai du moteur du battle royale (phase 1) : joue des parties complètes à
- * 100 participants avec le pilote de test, puis les rejoue sans affichage.
+ * Banc d'essai du moteur du battle royale : joue des parties complètes à 100 participants
+ * (1 joueur simulé par le pilote de test, 99 bots), puis les rejoue sans affichage à partir
+ * des seules commandes du joueur, comme le fera le serveur.
  * Usage : npm run br:bench [-- nombre_de_parties]   (5 par défaut)
  *
  * Affiche : durée des parties, coût moyen et 99e centile d'un tick, temps de rejeu,
- * part des éliminations par la zone. Le pilote de test n'est pas l'IA des bots : les
- * durées et causes d'élimination seront mesurées avec les vrais bots en phase 2
- * (npm run bots:tournament).
+ * part des éliminations par la zone. Le comportement des bots (seuils de la conception)
+ * se mesure avec npm run bots:tournament.
  */
 import { performance } from "node:perf_hooks";
 import { GAME_CONFIG } from "../src/config/game.config";
 import { replayMatch } from "../src/lib/br/replay";
 import { resolveRules } from "../src/lib/br/rules";
 import { KILL_ZONE, stateHash } from "../src/lib/br/state";
-import { playWithDriver, sampleCharacters } from "../src/lib/br/test-driver";
+import { botSetup, playWithDriver } from "../src/lib/br/test-driver";
 
 const games = Number(process.argv[2] ?? 5);
 const rules = resolveRules(GAME_CONFIG.BATTLE_ROYALE);
@@ -26,7 +26,7 @@ const durations: number[] = [];
 
 for (let g = 0; g < games; g++) {
   const seed = 1000 + g;
-  const setup = { seed, rules, characters: sampleCharacters(rules.participants, seed) };
+  const setup = botSetup(seed, rules, rules.participants);
   const times: number[] = [];
   const played = playWithDriver(setup, seed, { timer: () => performance.now(), times });
   ticks.push(...times);
@@ -45,7 +45,7 @@ for (let g = 0; g < games; g++) {
 const sorted = [...ticks].sort((a, b) => a - b);
 const mean = (a: number[]) => a.reduce((s, v) => s + v, 0) / a.length;
 console.log(`
-Parties : ${games} × ${rules.participants} participants (pilote de test, pas les bots)
+Parties : ${games} × ${rules.participants} participants (1 joueur simulé, ${rules.participants - 1} bots)
 Durée moyenne       : ${(mean(durations) / 60).toFixed(2)} min
 Tick moyen          : ${mean(ticks).toFixed(3)} ms (seuil 2 ms)
 Tick, 99e centile   : ${sorted[Math.floor(sorted.length * 0.99)].toFixed(3)} ms (seuil 5 ms)

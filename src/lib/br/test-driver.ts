@@ -1,9 +1,9 @@
 /**
- * Pilote de test : produit, à partir de l'état, des commandes plausibles pour tous les
- * participants (rejoindre la zone, ramasser du butin, viser et tirer sur l'ennemi le plus
- * proche, se soigner, utiliser sa capacité). Il sert aux tests de déterminisme, de rejeu et
- * de performance de la phase 1 ; ce n'est PAS l'IA des bots (phase 2), qui fera partie du
- * moteur avec une perception honnête. Il n'est importé par aucun code de production.
+ * Pilote de test : produit, à partir de l'état, des commandes plausibles pour les emplacements
+ * pilotés par des commandes (rejoindre la zone, ramasser du butin, viser et tirer sur l'ennemi
+ * le plus proche, se soigner, utiliser sa capacité). Il joue le rôle du joueur humain dans les
+ * tests de déterminisme, de rejeu et de performance ; ce n'est PAS l'IA des bots (bot.ts), qui
+ * fait partie du moteur. Il n'est importé par aucun code de production.
  *
  * Il ne lit que l'état et son propre générateur : ses commandes sont des entrées comme
  * celles d'un joueur, enregistrées puis rejouées par les tests.
@@ -28,6 +28,16 @@ export function sampleCharacters(count: number, seed: number, br: BrConfig = GAM
   });
 }
 
+/**
+ * Partie « classée » de test : `humans` emplacements pilotés par des commandes (les premiers),
+ * les autres joués par des bots de niveaux variés (déterministe).
+ */
+export function botSetup(seed: number, rules: Rules, count: number, humans = 1): MatchSetup {
+  const rng = createStreams(seed ^ 0x5bd1e995, 1);
+  const botLevels = Array.from({ length: count }, (_, i) => (i < humans ? null : nextBelow(rng, 0, rules.bots.maxLevel + 1)));
+  return { seed, rules, characters: sampleCharacters(count, seed), botLevels };
+}
+
 /** Petites parties rapides (16 participants, carte de 40 tuiles, zone en 28 s) pour les tests en nombre. */
 export function smallRules(): Rules {
   const br = GAME_CONFIG.BATTLE_ROYALE;
@@ -47,25 +57,27 @@ export function smallRules(): Rules {
 }
 
 /**
- * Joue une partie avec le pilote et enregistre les commandes de chaque emplacement.
- * `onTick` est appelé après chaque tick (vérification d'invariants, mesure du temps…).
+ * Joue une partie : le pilote commande les emplacements sans bot, le moteur joue les bots.
+ * Renvoie l'état final et les commandes enregistrées des seuls emplacements pilotés (ce que
+ * le serveur recevra) ; `onTick` est appelé après chaque tick (invariants, mesure du temps…).
  */
 export function playWithDriver(setup: MatchSetup, driverSeed: number, options: { maxTicks?: number; onTick?: (s: MatchState) => void; timer?: () => number; times?: number[] } = {}) {
   const state = createMatch(setup);
   const limit = options.maxTicks ?? state.rules.maxTicks;
   const driver = createDriver(driverSeed, state.n);
-  const streams = Array.from({ length: state.n }, () => new Uint32Array(limit));
+  const driven = Array.from({ length: state.n }, (_, i) => i).filter((i) => state.b.level[i] < 0);
+  const streams = driven.map(() => new Uint32Array(limit));
   const commands = new Uint32Array(state.n);
   while (!state.finished && state.tick < limit) {
     const t = state.tick;
     driverCommands(state, driver, commands);
-    for (let i = 0; i < state.n; i++) streams[i][t] = commands[i];
+    driven.forEach((slot, k) => (streams[k][t] = commands[slot]));
     const t0 = options.timer?.();
     advance(state, commands);
     if (options.timer && options.times) options.times.push(options.timer() - (t0 ?? 0));
     options.onTick?.(state);
   }
-  const inputs = new Map(streams.map((stream, i) => [i, stream.subarray(0, state.tick)] as const));
+  const inputs = new Map(driven.map((slot, k) => [slot, streams[k].subarray(0, state.tick)] as const));
   return { state, inputs };
 }
 
@@ -90,7 +102,8 @@ export function driverCommands(s: MatchState, d: Driver, out: Uint32Array): void
   const zr = s.zone[Z.r];
   for (let i = 0; i < s.n; i++) {
     out[i] = 0;
-    if (!P.alive[i]) continue;
+    // Les bots jouent eux-mêmes (le moteur remplace leurs commandes).
+    if (!P.alive[i] || s.b.level[i] >= 0) continue;
     const W = s.rules.weapons[weaponInHand(s, i)];
     // Ennemi le plus proche.
     let enemy = -1;

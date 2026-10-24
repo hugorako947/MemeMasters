@@ -134,6 +134,8 @@ const battleRoyaleSchema = z.object({
   /** Passif (capacité défensive de la carte). */
   PASSIVE: z.object({
     REGEN_DELAY_MS: positiveInt,
+    /** La régénération s'arrête à ce pourcentage des PV max (100 : jusqu'au maximum). */
+    REGEN_CAP_PERCENT: z.number().int().min(1).max(100),
     DODGE_DIVISOR: positiveInt,
     REFLECT_DIVISOR: positiveInt,
     CLEANSE_PERCENT: z.number().int().min(0).max(100),
@@ -176,6 +178,38 @@ const battleRoyaleSchema = z.object({
     MEME_MONEY_BY_PLACE: placeBands,
     /** MemeMoney gagnée en bataille au plus par jour (fuseau du joueur). */
     MEME_MONEY_DAILY_CAP: nonNegativeInt,
+  }),
+  /**
+   * Bots (conception §7) : ils font partie du moteur et jouent avec les mêmes commandes et les mêmes règles qu'un joueur.
+   * Difficulté : niveau = min(MAX_LEVEL, trophées du joueur / TROPHIES_PER_LEVEL) ; chaque réglage en paire
+   * [niveau 0, niveau maximal] est interpolé entre ces deux valeurs.
+   */
+  BOTS: z.object({
+    /** Décisions par seconde de chaque bot (les bots sont répartis sur les calculs successifs). */
+    THINK_PER_SECOND: z.number().int().min(1).max(20),
+    /** Ouïe : tirs entendus dans ce rayon (unités), avec une position approximative. */
+    HEARING_RANGE: positiveInt,
+    /** Mémoire de la dernière position connue d'un ennemi, en millisecondes. */
+    MEMORY_MS: positiveInt,
+    /** Recherche de chemin : nœuds explorés au plus par recherche, et recherches au plus par calcul (tous bots confondus). */
+    PATH_MAX_NODES: positiveInt,
+    PATHS_PER_TICK: positiveInt,
+    /** Anti-blocage : un bot qui avance de moins de STUCK_UNITS en STUCK_MS change de direction, puis recalcule son chemin. */
+    STUCK_MS: positiveInt,
+    STUCK_UNITS: positiveInt,
+    TROPHIES_PER_LEVEL: positiveInt,
+    MAX_LEVEL: z.number().int().min(1).max(20),
+    REACTION_MS: z.tuple([positiveInt, positiveInt]),
+    /** Erreur de visée : ± pas d'angle (un tour = 256 pas). */
+    AIM_ERROR_STEPS: z.tuple([z.number().int().min(0).max(64), z.number().int().min(0).max(64)]),
+    /** Anticipation du déplacement de la cible, en %. */
+    LEAD_PERCENT: z.tuple([z.number().int().min(0).max(100), z.number().int().min(0).max(100)]),
+    /** Bruit des scores de décision (sur 1 000) : plus il est fort, moins les choix sont bons. */
+    DECISION_NOISE: z.tuple([z.number().int().min(0).max(1000), z.number().int().min(0).max(1000)]),
+    /** Chance de faire des pas de côté pendant un combat, en %. */
+    STRAFE_PERCENT: z.tuple([z.number().int().min(0).max(100), z.number().int().min(0).max(100)]),
+    /** Variation du niveau de chaque bot, en niveaux (±), tirée à la création de la partie. */
+    PERSONALITY_LEVEL_SPREAD: z.number().int().min(0).max(5),
   }),
 });
 
@@ -463,33 +497,35 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
 
   // Battle royale : valeurs de la conception validée (2026-10-24), à ajuster par les tournois de bots (phase 2).
   BATTLE_ROYALE: {
-    CONFIG_VERSION: 1,
+    CONFIG_VERSION: 2,
     PARTICIPANTS: 100,
     TICK_RATE: 20,
     MAX_DURATION_S: 540,
+    // 176 × 176 tuiles (environ 6 écrans de large) : avec 128, les participants se voyaient presque tous dès l'apparition
+    // (tournois de bots, phase 2). Bâtiments, caisses, buissons et lacs gardent la même densité.
     MAP: {
-      TILES: 128,
+      TILES: 176,
       TILE_UNITS: 32,
       BORDER_TILES: 2,
-      LAKES: [3, 5],
+      LAKES: [5, 9],
       LAKE_RADIUS_TILES: [3, 7],
-      BUILDINGS: [18, 26],
+      BUILDINGS: [34, 48],
       BUILDING_SIZE_TILES: [6, 11],
-      CRATES: 120,
-      BUSH_CLUSTERS: 25,
+      CRATES: 226,
+      BUSH_CLUSTERS: 47,
       BUSH_CLUSTER_SIZE: [3, 8],
     },
     VIEW: { HALF_WIDTH: 450, HALF_HEIGHT: 250, BUSH_REVEAL: 64 },
     CONTROLS: { AIM_TURN_PER_TICK: 32, AIM_ASSIST_STEPS: 8, WEAPON_SWITCH_MS: 250 },
-    // 6 phases : 6 min 20 de zone, puis la zone fermée achève la partie.
+    // 6 phases : 7 min de zone (conception : 6 min 30 à 7 min 30), puis la zone fermée achève la partie.
     ZONE: {
       PHASES: [
-        { waitS: 60, shrinkS: 40, radiusPercent: 62, dps: 1 },
-        { waitS: 40, shrinkS: 35, radiusPercent: 55, dps: 2 },
-        { waitS: 35, shrinkS: 30, radiusPercent: 50, dps: 4 },
-        { waitS: 30, shrinkS: 25, radiusPercent: 45, dps: 6 },
-        { waitS: 25, shrinkS: 20, radiusPercent: 40, dps: 10 },
-        { waitS: 20, shrinkS: 20, radiusPercent: 0, dps: 15 },
+        { waitS: 60, shrinkS: 40, radiusPercent: 65, dps: 1 },
+        { waitS: 45, shrinkS: 35, radiusPercent: 60, dps: 2 },
+        { waitS: 40, shrinkS: 30, radiusPercent: 55, dps: 4 },
+        { waitS: 35, shrinkS: 25, radiusPercent: 50, dps: 6 },
+        { waitS: 30, shrinkS: 25, radiusPercent: 40, dps: 10 },
+        { waitS: 25, shrinkS: 30, radiusPercent: 0, dps: 15 },
       ],
     },
     CHARACTER: {
@@ -518,10 +554,10 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
       BURN_SHOT_SPEED: 1400,
       BURN_SHOT_RANGE: 700,
     },
-    PASSIVE: { REGEN_DELAY_MS: 4000, DODGE_DIVISOR: 3, REFLECT_DIVISOR: 4, CLEANSE_PERCENT: 50, RECHARGE_PERCENT: 25 },
+    PASSIVE: { REGEN_DELAY_MS: 4000, REGEN_CAP_PERCENT: 100, DODGE_DIVISOR: 3, REFLECT_DIVISOR: 4, CLEANSE_PERCENT: 50, RECHARGE_PERCENT: 25 },
     // Lance-Pop (pistolet, arme de départ), Pétard Mouillé (fusil à pompe), Rafaleuse 3000 (mitraillette), Lunette à Like (précision).
     WEAPONS: {
-      pop: { damage: 12, pellets: 1, fireIntervalMs: 400, magazine: 12, reloadMs: 1500, spreadSteps: 2, speed: 1600, range: 700, ammo: "none" },
+      pop: { damage: 10, pellets: 1, fireIntervalMs: 400, magazine: 12, reloadMs: 1500, spreadSteps: 2, speed: 1600, range: 700, ammo: "none" },
       petard: { damage: 9, pellets: 6, fireIntervalMs: 900, magazine: 5, reloadMs: 2500, spreadSteps: 10, speed: 1300, range: 350, ammo: "shell" },
       rafaleuse: { damage: 8, pellets: 1, fireIntervalMs: 100, magazine: 30, reloadMs: 2000, spreadSteps: 5, speed: 1700, range: 600, ammo: "light" },
       lunette: { damage: 60, pellets: 1, fireIntervalMs: 1500, magazine: 4, reloadMs: 3000, spreadSteps: 0, speed: 2800, range: 1400, ammo: "heavy" },
@@ -572,6 +608,24 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
         [25, 1],
       ],
       MEME_MONEY_DAILY_CAP: 15,
+    },
+    BOTS: {
+      THINK_PER_SECOND: 4,
+      HEARING_RANGE: 1200,
+      MEMORY_MS: 5000,
+      PATH_MAX_NODES: 2000,
+      PATHS_PER_TICK: 2,
+      STUCK_MS: 1000,
+      STUCK_UNITS: 16,
+      // Niveau 0 (débutant) → niveau 10 (Immortel, 6 000 trophées et plus).
+      TROPHIES_PER_LEVEL: 600,
+      MAX_LEVEL: 10,
+      REACTION_MS: [650, 170],
+      AIM_ERROR_STEPS: [16, 3],
+      LEAD_PERCENT: [0, 90],
+      DECISION_NOISE: [250, 30],
+      STRAFE_PERCENT: [0, 80],
+      PERSONALITY_LEVEL_SPREAD: 1,
     },
   },
 });

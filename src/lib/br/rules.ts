@@ -63,6 +63,8 @@ export interface Rules {
   startWeapon: number;
   multiSpread: number;
   regenDelayTicks: number;
+  /** La régénération s'arrête à ce pourcentage des PV max. */
+  regenCapPercent: number;
   items: {
     healHp: number;
     healTicks: number;
@@ -82,6 +84,32 @@ export interface Rules {
     /** Poids des armes ramassables, indexés comme BR_WEAPONS (l'arme de départ à 0). */
     weaponWeights: number[];
   };
+  bots: BotRules;
+}
+
+/** Réglages des bots. Les paires [niveau 0, niveau maximal] sont interpolées selon le niveau du bot (en dixièmes). */
+export interface BotRules {
+  thinkTicks: number;
+  /** Rayon de l'ouïe, en sous-unités. */
+  hearing: number;
+  memoryTicks: number;
+  pathMaxNodes: number;
+  pathsPerTick: number;
+  stuckTicks: number;
+  /** Distance minimale à parcourir pendant stuckTicks, en sous-unités. */
+  stuckDistance: number;
+  trophiesPerLevel: number;
+  /** Niveau maximal, en dixièmes de niveau. */
+  maxLevel: number;
+  reactionMs: readonly [number, number];
+  aimError: readonly [number, number];
+  leadPermille: readonly [number, number];
+  noise: readonly [number, number];
+  strafePermille: readonly [number, number];
+  /** Variation du niveau de chaque bot, en dixièmes (±). */
+  levelSpread: number;
+  /** Statistiques de référence (commune moyenne) : la personnalité d'un bot se lit par rapport à elles. */
+  reference: { hp: number; atk: number; def: number; spd: number };
 }
 
 /** Millisecondes → ticks, arrondi au plus proche (au moins 1 tick pour une durée non nulle). */
@@ -112,6 +140,7 @@ export function resolveRules(br: BrConfig): Rules {
   });
   const A = br.ABILITY;
   const I = br.ITEMS;
+  const B = br.BOTS;
   return {
     configVersion: br.CONFIG_VERSION,
     participants: br.PARTICIPANTS,
@@ -143,6 +172,7 @@ export function resolveRules(br: BrConfig): Rules {
     startWeapon: BR_WEAPONS.indexOf(br.STARTING_WEAPON),
     multiSpread: A.MULTI_SPREAD_STEPS,
     regenDelayTicks: ticks(br.PASSIVE.REGEN_DELAY_MS),
+    regenCapPercent: br.PASSIVE.REGEN_CAP_PERCENT,
     items: {
       healHp: I.HEAL_HP,
       healTicks: ticks(I.HEAL_MS),
@@ -158,6 +188,24 @@ export function resolveRules(br: BrConfig): Rules {
       inBuildingsPercent: br.LOOT.IN_BUILDINGS_PERCENT,
       weights: [br.LOOT.WEIGHTS.weapon, br.LOOT.WEIGHTS.ammo, br.LOOT.WEIGHTS.heal, br.LOOT.WEIGHTS.vest],
       weaponWeights: BR_WEAPONS.map((id) => (id === br.STARTING_WEAPON ? 0 : (br.LOOT.WEAPON_WEIGHTS as Record<string, number>)[id] ?? 0)),
+    },
+    bots: {
+      thinkTicks: Math.max(1, idiv(rate, B.THINK_PER_SECOND)),
+      hearing: B.HEARING_RANGE * SUB,
+      memoryTicks: ticks(B.MEMORY_MS),
+      pathMaxNodes: B.PATH_MAX_NODES,
+      pathsPerTick: B.PATHS_PER_TICK,
+      stuckTicks: ticks(B.STUCK_MS),
+      stuckDistance: B.STUCK_UNITS * SUB,
+      trophiesPerLevel: B.TROPHIES_PER_LEVEL,
+      maxLevel: B.MAX_LEVEL * 10,
+      reactionMs: B.REACTION_MS,
+      aimError: B.AIM_ERROR_STEPS,
+      leadPermille: [B.LEAD_PERCENT[0] * 10, B.LEAD_PERCENT[1] * 10],
+      noise: B.DECISION_NOISE,
+      strafePermille: [B.STRAFE_PERCENT[0] * 10, B.STRAFE_PERCENT[1] * 10],
+      levelSpread: B.PERSONALITY_LEVEL_SPREAD * 10,
+      reference: { ...br.CHARACTER.REFERENCE },
     },
   };
 }

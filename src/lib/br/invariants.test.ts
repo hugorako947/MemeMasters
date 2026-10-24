@@ -4,7 +4,7 @@ import { circleHitsSolid, ITEM } from "./map";
 import { replayMatch } from "./replay";
 import { resolveRules } from "./rules";
 import { C, stateHash, Z, type MatchState } from "./state";
-import { playWithDriver, sampleCharacters } from "./test-driver";
+import { botSetup, playWithDriver } from "./test-driver";
 
 /** Butin total : au sol, porté, et consommé (soins, gilets, balles tirées). Rien ne se crée ni ne disparaît hors règles. */
 function lootTotals(s: MatchState): number[] {
@@ -35,10 +35,10 @@ function lootTotals(s: MatchState): number[] {
   return totals;
 }
 
-describe("invariants d'une partie complète à 100 participants", () => {
+describe("invariants d'une partie complète à 100 participants (1 joueur piloté, 99 bots)", () => {
   it("PV bornés, personne dans un mur, zone incluse dans la précédente, butin conservé ; places de 1 à 100", () => {
     const rules = resolveRules(GAME_CONFIG.BATTLE_ROYALE);
-    const setup = { seed: 31337, rules, characters: sampleCharacters(100, 31337) };
+    const setup = botSetup(31337, rules, 100);
     let start: number[] | null = null;
     let prev: number[] | null = null;
     let checks = 0;
@@ -73,7 +73,7 @@ describe("invariants d'une partie complète à 100 participants", () => {
     expect(checks).toBe(s.tick);
     expect([...s.p.place].sort((a, b) => a - b)).toEqual(Array.from({ length: 100 }, (_, i) => i + 1));
     expect(s.logCount).toBe(99);
-    // Durée d'une partie (≈ 6 min 30 à 7 min 30 visées ; le pilote de test n'est pas l'IA des bots).
+    // Durée d'une partie : jamais au-delà du filet de sécurité (durées mesurées par npm run bots:tournament).
     expect(s.tick).toBeLessThanOrEqual(rules.maxTicks);
 
     // Rejeu sans affichage : même partie, même journal ; arrêt anticipé dès l'élimination d'un participant.
