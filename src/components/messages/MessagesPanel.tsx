@@ -7,6 +7,7 @@ import { useCallback, useEffect, useRef, useState, type FormEvent } from "react"
 import { RankShield } from "@/components/player/RankBadge";
 import { ReportButton } from "@/components/moderation/ReportButton";
 import { FormMessage } from "@/components/ui/Field";
+import { Spinner } from "@/components/ui/Spinner";
 import { rankFor } from "@/config/ranks";
 import { toast } from "@/components/ui/Toast";
 import { postJson } from "@/lib/client/api";
@@ -155,6 +156,7 @@ function ThreadView({ username, onBack, onHidden }: { username: string; onBack: 
   const t = useTranslations("messages");
   const tf = useTranslations("feedback");
   const te = useTranslations("errors");
+  const tl = useTranslations("loading");
   const errorText = useErrorText();
   const format = useFormatter();
   const router = useRouter();
@@ -261,6 +263,12 @@ function ThreadView({ username, onBack, onHidden }: { username: string; onBack: 
       )}
 
       <div className="grid max-h-[55vh] min-h-48 content-start gap-2 overflow-y-auto rounded-xl bg-paper p-3" aria-live="polite">
+        {/* Conversation en cours de chargement : un cercle tourne à la place des messages. */}
+        {!thread && !error ? (
+          <div className="grid min-h-40 place-items-center">
+            <Spinner size="2rem" label={tl("title")} />
+          </div>
+        ) : null}
         {thread && thread.messages.length === 0 ? <p className="text-center text-sm text-ink-soft">{t("start", { username })}</p> : null}
         {thread?.messages.map((m) => (
           <div key={m.id} className={`grid max-w-[80%] gap-0.5 ${m.fromMe ? "justify-self-end text-end" : "justify-self-start"}`}>

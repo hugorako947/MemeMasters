@@ -194,10 +194,8 @@
     "appTitle": "App",
     "randomHint": "Each click rolls a new color palette for the whole game.",
     "randomAgain": "New colors",
-    "adminTitle": "Administration",
-    "superAdmin": "Super Admin",
-    "admin": "Admin",
-    "openDashboard": "Open the dashboard"
+    "adminSpace": "Admin Area",
+    "superAdminSpace": "Super Admin Area"
   },
   "rarities": {
     "title": "The 7 rarities"
@@ -394,7 +392,7 @@
       "verySpecial": "Ultra Booster"
     },
     "battles": {
-      "title": "Battles",
+      "title": "Battle Royale",
       "lead": "Battles are coming soon: get your collection ready.",
       "nextReward": "Next rank reached → {boosters} boosters and {money} MemeMoney as a gift"
     },
@@ -508,13 +506,13 @@
       "top": "You've reached the highest rank. Respect.",
       "howTitle": "How it works",
       "rules": {
-        "win": "Win: +{win} trophies and +{money} MemeMoney.",
-        "loss": "Loss: −{loss} trophies, never below 0.",
-        "draw": "Draw: your trophies don't change.",
         "perRank": "Every {per} trophies, you move up a rank.",
         "drop": "Your rank follows your trophies: you can drop down, but each rank reward is only given once.",
-        "matchmaking": "Your opponents have a trophy count close to yours.",
-        "bots": "Battles against a bot give neither trophies nor MemeMoney."
+        "matchmaking": "Your opponents are AIs playing the characters of real players close to your level; their difficulty follows your trophies.",
+        "place": "Your final place in ranked Battle Royale: from +{top} trophies (top 1) to {worst} (last places), plus MemeMoney down to the top {mmTop}.",
+        "kills": "{per, plural, one {+# trophy} other {+# trophies}} per elimination (up to +{cap}) if you finish in the top half.",
+        "rankEffect": "The higher your rank, the smaller your gains (−{gain}% per rank) and the bigger your losses (+{loss}% per rank).",
+        "abandon": "Leaving: eliminated at your current place, and {penalty} trophies less. Matches with friends don't count."
       },
       "yours": "Your rank",
       "range": "{min} to {max} trophies",
@@ -532,7 +530,7 @@
       "how1": "One copy of each card always stays in your collection: only extra copies are used.",
       "how2": "Evolutions unlock in order: Golden ★, then Golden ★★, then Divine ★★★.",
       "how3": "The rarer the card, the fewer copies you need (table below).",
-      "how4": "Each evolution raises HP, attack, defense and speed, up to +{max}% at Divine.",
+      "how4": "Each evolution raises HP, attack, defense and speed, up to +{max}% at Divine. In the Battle Royale, this bonus counts at {factor}% (up to +{battleMax}%), so your skill stays decisive.",
       "how5": "A star appears on the artwork with each evolution: gold for Golden, white and silver for Divine.",
       "costTitle": "Copies needed",
       "rarity": "Rarity",
@@ -542,13 +540,13 @@
       "sell1": "Tap a card: the “Sell” button sells all its extra copies at once.",
       "sell2": "“Sell my extra copies” does the same for your whole collection.",
       "sell3": "Commons, rares and epics earn at most {cap} MemeMoney per day; rarer cards have no limit.",
-      "sell4": "Small amounts (0.1, 0.25…) add up and are never lost."
+      "sell4": "Small amounts (0.1, 0.25…) add up and are never lost.",
+      "how6": "Not to be confused with Mastery, planned with the Battle Royale: by playing a character, you'll unlock purely cosmetic rewards for it (frame, trail, title)."
     },
     "memeMoney": {
       "whatTitle": "What is it?",
       "what": "MemeMoney is the game's currency. Your balance is shown at the top right; tap it to open the Shop.",
       "earnTitle": "How to earn it",
-      "earnWin": "Win a ranked battle: +{amount} MemeMoney (battles are coming soon).",
       "earnRanks": "Reach a new rank for the first time: up to {total} MemeMoney in total, plus boosters (see Ranks).",
       "earnSell": "Sell your extra copies (see Evolutions), up to {cap} MemeMoney per day for commons, rares and epics.",
       "earnShop": "Buy it in the Shop with real money, from {price}.",
@@ -561,56 +559,61 @@
       "rule1": "MemeMoney has no real-money value: it can't be resold, refunded or converted into money.",
       "rule2": "It can't be traded between players.",
       "rule3": "Fractions earned by selling cards are kept and add up.",
-      "rule4": "Real-money purchases are for people aged {age} and over, capped at {cap} per 30-day period."
+      "rule4": "Real-money purchases are for people aged {age} and over, capped at {cap} per 30-day period.",
+      "earnBattle": "Finish in the top {top} of a ranked Battle Royale match (table below), up to {cap} MemeMoney per day.",
+      "placeHead": "Final place",
+      "amountHead": "MemeMoney",
+      "battleNote": "Leaving a match earns no MemeMoney, and neither do matches with friends. The Battle Royale is coming soon."
     },
     "trophies": {
       "whatTitle": "What are they?",
-      "what": "Trophies measure your level in ranked battles. The more you have, the higher your rank and the stronger your opponents.",
+      "what": "Trophies measure your level in ranked Battle Royale. The more you have, the higher your rank and the better the AIs you face play.",
       "gainTitle": "Winning and losing trophies",
-      "result": "Result",
+      "result": "Final place",
       "change": "Trophies",
-      "win": "Win",
-      "draw": "Draw",
-      "loss": "Loss",
       "floor": "You can never go below 0 trophies.",
-      "bots": "Battles against a bot don't change your trophies.",
-      "soon": "Ranked battles are coming soon: until then, your trophies don't move.",
+      "soon": "Ranked Battle Royale is coming soon: until then, your trophies stay put.",
       "useTitle": "What they're for",
       "use1": "Every {per} trophies, you move up a rank (see Ranks).",
       "use2": "Each new rank reached for the first time gives boosters and MemeMoney.",
-      "use3": "The game matches you with opponents who have a similar number of trophies.",
+      "use3": "The AIs you face play the characters of real players close to your level, and their difficulty follows your trophies.",
       "use4": "They place you against other players in the Ranking tab.",
       "whereTitle": "Where to see them",
       "where1": "At the top left of the screen, next to your rank.",
       "where2": "In your Profile, with a chart of how they change.",
-      "where3": "In the Ranking: around you, in your rank or worldwide."
+      "where3": "In the Ranking: around you, in your rank or worldwide.",
+      "tableNote": "For a {count}-player match. With fewer players, the brackets keep the same proportions.",
+      "kills": "Each elimination earns +{per} (up to +{cap}) if you finish in the top half.",
+      "rankEffect": "The higher your rank, the smaller your gains (−{gain}% per rank) and the bigger your losses (+{loss}% per rank): everyone settles at their true level.",
+      "abandon": "Leaving a ranked match counts as being eliminated at your current place, with {penalty} trophies less.",
+      "casual": "Matches with friends and Training don't change your trophies."
     },
     "card": {
       "title": "Anatomy of a card",
-      "lead": "Every meme card is a fighter. Here's what each part means, using this card as an example.",
+      "lead": "Every card is a playable character in the Battle Royale, with its strengths and weaknesses. Here is what each part means, using this card as an example.",
       "nameTitle": "Name and rarity",
-      "name": "The name is at the top left; the rarity, in the bottom strip. The rarer the card, the higher its stats.",
+      "name": "The name is at the top left; the rarity, on the bottom strip. A rarer card is a little stronger, but in battle the gap is deliberately small: your skill matters most.",
       "hpTitle": "HP: {hp}",
-      "hp": "Hit points: how much the card can take. When they reach 0, the card is knocked out.",
+      "hp": "Hit points. In battle: {maxHp} HP. The flip side: the sturdier a character, the bigger it is, so the easier to hit ({radius}-unit radius).",
       "atkTitle": "ATK: {atk}",
-      "atk": "Attack: the card's overall strength. It boosts the damage of all its moves.",
+      "atk": "Attack. In battle, it multiplies your weapons' damage: × {percent}% here.",
       "defTitle": "DEF: {def}",
-      "def": "Defense: how sturdy the card is. It reduces the damage it takes.",
+      "def": "Defense. In battle, it's your armor: it reduces the damage you take by {percent}%.",
       "spdTitle": "SPD: {spd}",
-      "spd": "Speed: the fastest card acts first during a battle turn.",
+      "spd": "Speed. In battle, you move at {speed} units per second. Fast characters are often more fragile.",
       "attackTitle": "Attack: {name} ({power})",
-      "attack": "The basic move, usable anytime, with no energy. The number on the right is its power: the strength of this particular move.",
-      "whyTitle": "Why {atk} and {power}?",
-      "why": "{atk} is the card's strength; {power} is the power of this specific move. Damage combines both, then the opponent's defense reduces it: roughly power × attack ÷ opponent's defense. Here: {power} × {atk} ÷ {def} ≈ {damage} damage against a card with {def} defense.",
+      "attack": "The basic attack gives the card its style. In the Battle Royale, you shoot with weapons picked up on the field: {weapons}.",
       "specialTitle": "Special attack: {name} ({power})",
-      "special": "A stronger move, often with an extra effect (hitting several times, stunning, healing…). It costs energy.",
+      "special": "Becomes your ability, to trigger whenever you want: {ability}. The higher its power, the stronger the effect.",
       "energyTitle": "Energy: {count, plural, one {# point} other {# points}}",
-      "energy": "The yellow dots show the energy needed to use the special attack. The card gains energy during the battle: here, it needs {count} before it can use it.",
+      "energy": "In battle, energy sets your ability's cooldown: {seconds} s here ({base} s, plus {per} s per energy point).",
       "defenseTitle": "Defense: {name}",
-      "defense": "The ability used when the card protects itself instead of attacking. The short line below says what it does (heal, reflect damage, dodge…).",
+      "defense": "Becomes your passive, always on: {passive}.",
       "extrasTitle": "Stars and copies",
-      "extras": "The stars, at the top left of the artwork, show the card's evolution, which raises its stats a little. The ×n badge, at the top right, shows how many copies you own.",
-      "soon": "The full battle rules will be detailed when battles arrive; these numbers give the general idea."
+      "extras": "The stars at the top left of the artwork show the card's evolution: its stats go up a little (in battle, this counts at {factor}%). The ×n badge at the top right shows how many copies you own.",
+      "soon": "The Battle Royale is coming soon. These values may still be adjusted to keep the game balanced.",
+      "exampleTitle": "Damage example",
+      "example": "A {weapon} bullet ({damage} damage) fired by this card leaves with {shot} damage. Against an average character (armor −{reduction}%), it deals {hit}."
     }
   },
   "collection": {
@@ -1005,6 +1008,35 @@
       "reject": "Reject",
       "approved": "“{name}” is up for vote.",
       "rejected": "“{name}” has been rejected."
+    }
+  },
+  "battleRoyale": {
+    "weapons": {
+      "pop": "Pop Launcher",
+      "petard": "Damp Squib",
+      "rafaleuse": "Burst-o-Matic 3000",
+      "lunette": "Like Scope"
+    },
+    "items": {
+      "heal": "LOL Patch",
+      "vest": "Cringe Vest"
+    },
+    "ability": {
+      "sprint": "Sprint: +{percent}% speed for {seconds} s",
+      "stun": "Stun: your next bullet (within {window} s) freezes the target for {seconds} s",
+      "drain": "Lifesteal: for {seconds} s, you recover {percent}% of the damage you deal",
+      "multi": "Burst: {hits} bullets at once, each at {percent}% of your weapon's damage",
+      "burn": "Burn: a projectile that burns the target ({percent}% of its max HP per second for {seconds} s)",
+      "pierce": "Armor piercing: for {seconds} s, your shots ignore {percent}% of enemy armor",
+      "buff": "Boost: +{percent}% {stat} for {seconds} s",
+      "debuff": "Weaken: your next bullet (within {window} s) lowers the target's {stat} by {percent}% for {seconds} s"
+    },
+    "passive": {
+      "regen": "Regeneration: after {delay} s without being hit, you recover {percent}% of your max HP per second",
+      "dodge": "Dodge: {percent}% chance to avoid each bullet",
+      "reflect": "Reflect: {percent}% of the damage you take goes back to the shooter",
+      "cleanse": "Immunity: stuns, burns and weakening last {percent}% shorter",
+      "recharge": "Quick recharge: your ability recharges {percent}% faster"
     }
   }
 }

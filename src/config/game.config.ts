@@ -30,6 +30,155 @@ const boosterSchema = z.object({
   godlevelChance: percent,
 });
 
+const range = (min: number, max: number) => z.tuple([z.number().int().min(min).max(max), z.number().int().min(min).max(max)]).refine(([a, b]) => a <= b, "Intervalle [min, max] attendu.");
+const ammoKind = z.enum(["none", "light", "shell", "heavy"]);
+/** Les 4 armes du battle royale, dans cet ordre (l'ordre sert d'identifiant dans le moteur). */
+export const BR_WEAPONS = ["pop", "petard", "rafaleuse", "lunette"] as const;
+export type BrWeaponId = (typeof BR_WEAPONS)[number];
+
+const brWeaponSchema = z.object({
+  /** Dégâts d'une balle (avant l'ATQ du tireur, l'armure et le gilet de la cible). */
+  damage: positiveInt,
+  /** Balles par tir (le fusil à pompe tire plusieurs plombs). */
+  pellets: z.number().int().min(1).max(12),
+  /** Temps entre deux tirs, en millisecondes. */
+  fireIntervalMs: positiveInt,
+  magazine: positiveInt,
+  reloadMs: positiveInt,
+  /** Dispersion de chaque balle : ± pas d'angle (un tour = 256 pas). */
+  spreadSteps: z.number().int().min(0).max(32),
+  /** Vitesse des balles (unités par seconde) et portée (unités). */
+  speed: positiveInt,
+  range: positiveInt,
+  /** Munitions utilisées ; « none » = réserve illimitée (arme de départ). */
+  ammo: ammoKind,
+});
+
+/** Tranches de récompense selon la place : [place maximale (en % des participants), valeur]. */
+const placeBands = z
+  .array(z.tuple([z.number().int().min(1).max(100), z.number().int().min(-100).max(100)]))
+  .min(1)
+  .refine((bands) => bands[0][0] === 1 && bands.every((b, i) => i === 0 || b[0] > bands[i - 1][0]), "Tranches croissantes, la première pour la place 1.");
+
+const battleRoyaleSchema = z.object({
+  /** Version de ces réglages, enregistrée avec chaque partie (un rejeu utilise les réglages de la partie). */
+  CONFIG_VERSION: positiveInt,
+  PARTICIPANTS: z.number().int().min(2).max(100),
+  /** Calculs du moteur par seconde. */
+  TICK_RATE: z.number().int().min(10).max(60),
+  /** Durée maximale d'une partie, en secondes (filet de sécurité : la zone finit toujours avant). */
+  MAX_DURATION_S: positiveInt,
+  /** Carte générée par la graine. 1 unité = 16 sous-unités du moteur. */
+  MAP: z.object({
+    TILES: z.number().int().min(24).max(256),
+    TILE_UNITS: z.number().int().min(8).max(64),
+    /** Bande d'eau infranchissable tout autour. */
+    BORDER_TILES: z.number().int().min(1).max(8),
+    LAKES: range(0, 20),
+    LAKE_RADIUS_TILES: range(1, 20),
+    BUILDINGS: range(0, 80),
+    BUILDING_SIZE_TILES: range(5, 20),
+    CRATES: nonNegativeInt,
+    BUSH_CLUSTERS: nonNegativeInt,
+    BUSH_CLUSTER_SIZE: range(1, 30),
+  }),
+  /** Champ de vision, le même pour tous (fixé par le moteur, pas par la taille de l'écran), en unités. */
+  VIEW: z.object({ HALF_WIDTH: positiveInt, HALF_HEIGHT: positiveInt, BUSH_REVEAL: nonNegativeInt }),
+  CONTROLS: z.object({
+    /** Rotation maximale de la visée par calcul (pas d'angle), la même pour tous, bots compris. */
+    AIM_TURN_PER_TICK: z.number().int().min(1).max(128),
+    /** Aide à la visée : la balle part vers la cible visible la plus proche si elle est à ± N pas de la visée. */
+    AIM_ASSIST_STEPS: z.number().int().min(0).max(16),
+    /** Délai avant de pouvoir tirer après un changement d'arme, en millisecondes. */
+    WEAPON_SWITCH_MS: nonNegativeInt,
+  }),
+  /** La zone (« le Scroll ») : attente, rétrécissement vers un rayon en % du précédent, dégâts par seconde hors zone. */
+  ZONE: z.object({
+    PHASES: z
+      .array(z.object({ waitS: nonNegativeInt, shrinkS: positiveInt, radiusPercent: z.number().int().min(0).max(95), dps: positiveInt }))
+      .min(1)
+      .max(12),
+  }),
+  CHARACTER: z.object({
+    /** Statistiques moyennes d'une commune : la compression rapproche chaque statistique de cette valeur. */
+    REFERENCE: z.object({ hp: positiveInt, atk: positiveInt, def: positiveInt, spd: positiveInt }),
+    /** κ en % : 50 = l'écart à la référence est divisé par deux (raretés plus proches). */
+    COMPRESSION_PERCENT: z.number().int().min(0).max(100),
+    /** Part du bonus d'évolution (★ +3 %, ★★ +6 %, ★★★ +10 %) appliquée en bataille, en %. */
+    EVOLUTION_FACTOR_PERCENT: z.number().int().min(0).max(100),
+  }),
+  /** Capacité active (attaque spéciale de la carte) : recharge, intensité × puissance / référence. */
+  ABILITY: z.object({
+    COOLDOWN_BASE_MS: positiveInt,
+    COOLDOWN_PER_ENERGY_MS: nonNegativeInt,
+    POWER_REFERENCE: positiveInt,
+    SPRINT_PERCENT: positiveInt,
+    SPRINT_MS: positiveInt,
+    /** Étourdissement et affaiblissement : la prochaine balle dans ce délai porte l'effet. */
+    ARMED_MS: positiveInt,
+    STUN_BASE_MS: positiveInt,
+    /** Durée d'étourdissement ajoutée par point de « chance » de la carte. */
+    STUN_MS_PER_CHANCE: nonNegativeInt,
+    DRAIN_MS: positiveInt,
+    PIERCE_MS: positiveInt,
+    BUFF_PERCENT: positiveInt,
+    BUFF_MS: positiveInt,
+    DEBUFF_PERCENT: positiveInt,
+    DEBUFF_MS: positiveInt,
+    MULTI_SPREAD_STEPS: z.number().int().min(0).max(32),
+    /** Projectile de brûlure (effet « dot ») : dégâts à l'impact, vitesse et portée. */
+    BURN_SHOT_DAMAGE: nonNegativeInt,
+    BURN_SHOT_SPEED: positiveInt,
+    BURN_SHOT_RANGE: positiveInt,
+  }),
+  /** Passif (capacité défensive de la carte). */
+  PASSIVE: z.object({
+    REGEN_DELAY_MS: positiveInt,
+    DODGE_DIVISOR: positiveInt,
+    REFLECT_DIVISOR: positiveInt,
+    CLEANSE_PERCENT: z.number().int().min(0).max(100),
+    RECHARGE_PERCENT: z.number().int().min(0).max(90),
+  }),
+  WEAPONS: z.object(Object.fromEntries(BR_WEAPONS.map((w) => [w, brWeaponSchema])) as Record<BrWeaponId, typeof brWeaponSchema>),
+  STARTING_WEAPON: z.enum(BR_WEAPONS),
+  ITEMS: z.object({
+    /** « Patch de Lol » : PV rendus, durée d'utilisation (déplacement ralenti, pas de tir), nombre maximal. */
+    HEAL_HP: positiveInt,
+    HEAL_MS: positiveInt,
+    HEALS_MAX: positiveInt,
+    HEAL_SLOW_PERCENT: z.number().int().min(0).max(100),
+    /** « Gilet Cringe » : points de protection, consommés avant les PV. */
+    VEST_SHIELD: positiveInt,
+    AMMO_MAX: z.object({ light: positiveInt, shell: positiveInt, heavy: positiveInt }),
+    AMMO_BOX: z.object({ light: positiveInt, shell: positiveInt, heavy: positiveInt }),
+    /** Distance de ramassage, en unités. */
+    PICKUP_RANGE: positiveInt,
+  }),
+  /** Butin posé sur la carte : les mêmes chances pour tout le monde (la rareté du personnage n'y change rien). */
+  LOOT: z.object({
+    PER_PARTICIPANT: z.number().int().min(0).max(10),
+    IN_BUILDINGS_PERCENT: z.number().int().min(0).max(100),
+    WEIGHTS: z.object({ weapon: nonNegativeInt, ammo: nonNegativeInt, heal: nonNegativeInt, vest: nonNegativeInt }),
+    WEAPON_WEIGHTS: z.object({ petard: nonNegativeInt, rafaleuse: nonNegativeInt, lunette: nonNegativeInt }),
+  }),
+  /** Récompenses d'une partie classée selon la place finale (tranches en % si le nombre de participants change). */
+  ECONOMY: z.object({
+    TROPHIES_BY_PLACE: placeBands,
+    /** Trophées par élimination, plafonnés, et seulement pour une place dans la première part du classement (en %). */
+    KILL_TROPHY: nonNegativeInt,
+    KILL_TROPHY_CAP: nonNegativeInt,
+    KILL_BONUS_MAX_PLACE_PERCENT: z.number().int().min(1).max(100),
+    /** Par rang atteint (0 à 9) : gains réduits et pertes augmentées de ces %. */
+    RANK_GAIN_REDUCTION_PERCENT: z.number().int().min(0).max(10),
+    RANK_LOSS_INCREASE_PERCENT: z.number().int().min(0).max(30),
+    /** Abandon : élimination à la place du moment, ces trophées en moins, et aucune MemeMoney. */
+    ABANDON_TROPHY_PENALTY: nonNegativeInt,
+    MEME_MONEY_BY_PLACE: placeBands,
+    /** MemeMoney gagnée en bataille au plus par jour (fuseau du joueur). */
+    MEME_MONEY_DAILY_CAP: nonNegativeInt,
+  }),
+});
+
 const gameConfigSchema = z
   .object({
     /** Nom du jeu affiché partout (titre, manifest PWA, e-mails). */
@@ -145,8 +294,34 @@ const gameConfigSchema = z
     /** Âge minimum pour créer un compte (attestation par case à cocher). null = aucun minimum. */
     MIN_ACCOUNT_AGE: z.number().int().min(1).nullable(),
 
+    /** Battle royale (conception validée : docs/BATTLE_ROYALE_CONCEPTION.md). Moteur : src/lib/br/. */
+    BATTLE_ROYALE: battleRoyaleSchema,
   })
   .superRefine((cfg, ctx) => {
+    const br = cfg.BATTLE_ROYALE;
+    const tickMs = 1000 / br.TICK_RATE;
+    if (br.WEAPONS[br.STARTING_WEAPON].ammo !== "none") {
+      ctx.addIssue({ code: "custom", path: ["BATTLE_ROYALE", "STARTING_WEAPON"], message: "L'arme de départ a une réserve illimitée (munitions « none »)." });
+    }
+    for (const id of BR_WEAPONS) {
+      const w = br.WEAPONS[id];
+      if (w.fireIntervalMs < tickMs || w.reloadMs < tickMs) {
+        ctx.addIssue({ code: "custom", path: ["BATTLE_ROYALE", "WEAPONS", id], message: "Durées plus courtes qu'un calcul du moteur." });
+      }
+    }
+    if (br.ECONOMY.TROPHIES_BY_PLACE.at(-1)![0] !== 100) {
+      ctx.addIssue({ code: "custom", path: ["BATTLE_ROYALE", "ECONOMY", "TROPHIES_BY_PLACE"], message: "La dernière tranche doit aller jusqu'à 100 %." });
+    }
+    if (br.ECONOMY.MEME_MONEY_BY_PLACE.some(([, mm]) => mm < 0)) {
+      ctx.addIssue({ code: "custom", path: ["BATTLE_ROYALE", "ECONOMY", "MEME_MONEY_BY_PLACE"], message: "Pas de MemeMoney négative." });
+    }
+    if (br.ZONE.PHASES.at(-1)!.radiusPercent !== 0) {
+      ctx.addIssue({ code: "custom", path: ["BATTLE_ROYALE", "ZONE", "PHASES"], message: "La dernière phase referme la zone (rayon 0 %) : la partie finit toujours." });
+    }
+    // Positions en sous-unités (×16) : la carte doit tenir largement dans un entier 32 bits.
+    if (br.MAP.TILES * br.MAP.TILE_UNITS * 16 > 2 ** 20) {
+      ctx.addIssue({ code: "custom", path: ["BATTLE_ROYALE", "MAP"], message: "Carte trop grande." });
+    }
     for (const [kind, booster] of Object.entries(cfg.BOOSTERS)) {
       const fixed = Object.values(booster.fixed).reduce((n, c) => n + (c ?? 0), 0);
       if (fixed + 1 !== cfg.BOOSTER_SIZE) {
@@ -286,6 +461,119 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
 
   MIN_ACCOUNT_AGE: 18,
 
+  // Battle royale : valeurs de la conception validée (2026-10-24), à ajuster par les tournois de bots (phase 2).
+  BATTLE_ROYALE: {
+    CONFIG_VERSION: 1,
+    PARTICIPANTS: 100,
+    TICK_RATE: 20,
+    MAX_DURATION_S: 540,
+    MAP: {
+      TILES: 128,
+      TILE_UNITS: 32,
+      BORDER_TILES: 2,
+      LAKES: [3, 5],
+      LAKE_RADIUS_TILES: [3, 7],
+      BUILDINGS: [18, 26],
+      BUILDING_SIZE_TILES: [6, 11],
+      CRATES: 120,
+      BUSH_CLUSTERS: 25,
+      BUSH_CLUSTER_SIZE: [3, 8],
+    },
+    VIEW: { HALF_WIDTH: 450, HALF_HEIGHT: 250, BUSH_REVEAL: 64 },
+    CONTROLS: { AIM_TURN_PER_TICK: 32, AIM_ASSIST_STEPS: 8, WEAPON_SWITCH_MS: 250 },
+    // 6 phases : 6 min 20 de zone, puis la zone fermée achève la partie.
+    ZONE: {
+      PHASES: [
+        { waitS: 60, shrinkS: 40, radiusPercent: 62, dps: 1 },
+        { waitS: 40, shrinkS: 35, radiusPercent: 55, dps: 2 },
+        { waitS: 35, shrinkS: 30, radiusPercent: 50, dps: 4 },
+        { waitS: 30, shrinkS: 25, radiusPercent: 45, dps: 6 },
+        { waitS: 25, shrinkS: 20, radiusPercent: 40, dps: 10 },
+        { waitS: 20, shrinkS: 20, radiusPercent: 0, dps: 15 },
+      ],
+    },
+    CHARACTER: {
+      // Moyenne des 12 communes du jeu de départ.
+      REFERENCE: { hp: 92, atk: 39, def: 36, spd: 77 },
+      COMPRESSION_PERCENT: 50,
+      EVOLUTION_FACTOR_PERCENT: 50,
+    },
+    ABILITY: {
+      COOLDOWN_BASE_MS: 6000,
+      COOLDOWN_PER_ENERGY_MS: 3000,
+      POWER_REFERENCE: 70,
+      SPRINT_PERCENT: 40,
+      SPRINT_MS: 2000,
+      ARMED_MS: 3000,
+      STUN_BASE_MS: 400,
+      STUN_MS_PER_CHANCE: 10,
+      DRAIN_MS: 4000,
+      PIERCE_MS: 4000,
+      BUFF_PERCENT: 25,
+      BUFF_MS: 5000,
+      DEBUFF_PERCENT: 20,
+      DEBUFF_MS: 4000,
+      MULTI_SPREAD_STEPS: 6,
+      BURN_SHOT_DAMAGE: 10,
+      BURN_SHOT_SPEED: 1400,
+      BURN_SHOT_RANGE: 700,
+    },
+    PASSIVE: { REGEN_DELAY_MS: 4000, DODGE_DIVISOR: 3, REFLECT_DIVISOR: 4, CLEANSE_PERCENT: 50, RECHARGE_PERCENT: 25 },
+    // Lance-Pop (pistolet, arme de départ), Pétard Mouillé (fusil à pompe), Rafaleuse 3000 (mitraillette), Lunette à Like (précision).
+    WEAPONS: {
+      pop: { damage: 12, pellets: 1, fireIntervalMs: 400, magazine: 12, reloadMs: 1500, spreadSteps: 2, speed: 1600, range: 700, ammo: "none" },
+      petard: { damage: 9, pellets: 6, fireIntervalMs: 900, magazine: 5, reloadMs: 2500, spreadSteps: 10, speed: 1300, range: 350, ammo: "shell" },
+      rafaleuse: { damage: 8, pellets: 1, fireIntervalMs: 100, magazine: 30, reloadMs: 2000, spreadSteps: 5, speed: 1700, range: 600, ammo: "light" },
+      lunette: { damage: 60, pellets: 1, fireIntervalMs: 1500, magazine: 4, reloadMs: 3000, spreadSteps: 0, speed: 2800, range: 1400, ammo: "heavy" },
+    },
+    STARTING_WEAPON: "pop",
+    ITEMS: {
+      HEAL_HP: 40,
+      HEAL_MS: 1000,
+      HEALS_MAX: 3,
+      HEAL_SLOW_PERCENT: 50,
+      VEST_SHIELD: 50,
+      AMMO_MAX: { light: 120, shell: 30, heavy: 20 },
+      AMMO_BOX: { light: 30, shell: 10, heavy: 6 },
+      PICKUP_RANGE: 48,
+    },
+    LOOT: {
+      PER_PARTICIPANT: 3,
+      IN_BUILDINGS_PERCENT: 60,
+      WEIGHTS: { weapon: 20, ammo: 35, heal: 25, vest: 20 },
+      WEAPON_WEIGHTS: { petard: 35, rafaleuse: 40, lunette: 25 },
+    },
+    ECONOMY: {
+      // Pour 100 participants : Top 1 +40, 2–3 +30, 4–5 +24, 6–10 +18, 11–20 +12, 21–30 +6, 31–40 +2, 41–50 0, 51–70 −4, 71–90 −8, 91–100 −12.
+      TROPHIES_BY_PLACE: [
+        [1, 40],
+        [3, 30],
+        [5, 24],
+        [10, 18],
+        [20, 12],
+        [30, 6],
+        [40, 2],
+        [50, 0],
+        [70, -4],
+        [90, -8],
+        [100, -12],
+      ],
+      KILL_TROPHY: 1,
+      KILL_TROPHY_CAP: 5,
+      KILL_BONUS_MAX_PLACE_PERCENT: 50,
+      RANK_GAIN_REDUCTION_PERCENT: 5,
+      RANK_LOSS_INCREASE_PERCENT: 10,
+      ABANDON_TROPHY_PENALTY: 5,
+      // Top 1 : 5 ; Top 2–5 : 3 ; Top 6–10 : 2 ; Top 11–25 : 1 ; au-delà : rien.
+      MEME_MONEY_BY_PLACE: [
+        [1, 5],
+        [5, 3],
+        [10, 2],
+        [25, 1],
+      ],
+      MEME_MONEY_DAILY_CAP: 15,
+    },
+  },
 });
 
 export { gameConfigSchema };

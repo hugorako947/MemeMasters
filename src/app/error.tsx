@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useSyncExternalStore, useTransition } from "react";
 import { Logo } from "@/components/brand/Logo";
 import { Button, ButtonLink } from "@/components/ui/Button";
+import { reloadIfStaleBuild } from "@/lib/client/stale-build";
 
 /**
  * Une page n'a pas pu s'afficher : on explique ce qui se passe, ce que le
@@ -26,6 +27,8 @@ export default function ErrorPage({ error, retry }: { error: Error & { digest?: 
 
   useEffect(() => {
     console.error(error);
+    // Ancienne version du jeu restée ouverte après une mise en ligne : on recharge.
+    reloadIfStaleBuild(error);
   }, [error]);
 
   return (

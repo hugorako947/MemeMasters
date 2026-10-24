@@ -8,12 +8,6 @@ import { postJson } from "@/lib/client/api";
 import { useErrorText } from "@/lib/client/errors";
 import type { DailyChallenge } from "@/lib/server/challenges";
 
-const DIFFICULTY_STYLE = {
-  easy: "bg-[#c9f2d8] text-[#0b5d33]",
-  medium: "bg-[#fff1b8] text-[#6b4b00]",
-  hard: "bg-[#ffd3dc] text-[#8a0f2c]",
-} as const;
-
 /** Défi du jour : mission, progression et récompense (des boosters en plus). */
 export function DailyChallengeCard({ challenge }: { challenge: DailyChallenge }) {
   const t = useTranslations("challenge");
@@ -41,7 +35,8 @@ export function DailyChallengeCard({ challenge }: { challenge: DailyChallenge })
         <h3 id="defi-du-jour" className="font-display text-2xl leading-none">
           {t("title")}
         </h3>
-        <span className={`rounded-full px-3 py-1 text-xs font-extrabold ${DIFFICULTY_STYLE[challenge.difficulty]}`}>{t(`difficulty.${challenge.difficulty}`)}</span>
+        {/* Aux couleurs du thème, comme le reste de la page : la difficulté est écrite en toutes lettres. */}
+        <span className="rounded-full border-2 border-ink bg-paper px-3 py-1 text-xs font-extrabold text-ink">{t(`difficulty.${challenge.difficulty}`)}</span>
       </div>
       {/* Le défi et sa récompense en une seule phrase : « Ouvre 1 booster = 1 booster en plus ». */}
       <p className="font-semibold">

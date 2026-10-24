@@ -1,34 +1,53 @@
-import { getTranslations } from "next-intl/server";
+import { getFormatter, getTranslations } from "next-intl/server";
 import { MemeCard } from "@/components/card/MemeCard";
 import { sampleOf } from "@/components/card/sample-cards";
+import { BR_WEAPONS, GAME_CONFIG } from "@/config/game.config";
+import { battleCharacter, bulletDamage, damageTakenPermille } from "@/lib/br/character";
+import { battleTexts } from "./battle-texts";
 import { InfoSection } from "./InfoBlocks";
 
 /**
- * Page « Carte » d'Infos : chaque élément d'une carte expliqué, sur une
- * vraie carte du jeu (les chiffres de l'exemple sont lus sur la carte).
+ * Page « Carte » d'Infos : chaque élément d'une carte expliqué, sur une vraie carte du jeu,
+ * avec ce qu'il devient dans le Battle Royale (la carte est un personnage jouable). Tous les
+ * chiffres sont calculés par les formules du moteur à partir de la configuration.
  */
 export async function CardGuidePanel() {
   const t = await getTranslations("infos.card");
+  const tw = await getTranslations("battleRoyale.weapons");
+  const format = await getFormatter();
+  const { BATTLE_ROYALE: BR, DUPLICATES } = GAME_CONFIG;
   const card = sampleOf("rare");
-  const enemyDef = 35;
-  const damage = Math.round((card.normalAttack.power * card.atk) / enemyDef);
   const special = card.specialAttack;
+  const c = battleCharacter(card, 0, BR, DUPLICATES.STAT_BONUS_PERCENT);
+  const { ability, passive } = await battleTexts(c, BR.PASSIVE.REGEN_DELAY_MS);
+  // Exemple chiffré : une balle de Rafaleuse 3000 contre un personnage moyen (la commune de référence).
+  const example = BR.WEAPONS.rafaleuse;
+  const averageDef = BR.CHARACTER.REFERENCE.def;
+  const { shot, hit } = bulletDamage(example.damage, c.weaponPercent, averageDef);
+  const averageReduction = 100 - Math.floor(damageTakenPermille(averageDef) / 10);
+  const seconds = (ms: number) => format.number(ms / 1000, { maximumFractionDigits: 1 });
 
   const items: Array<{ title: string; text: string }> = [
     { title: t("nameTitle"), text: t("name") },
-    { title: t("hpTitle", { hp: card.hp }), text: t("hp") },
-    { title: t("atkTitle", { atk: card.atk }), text: t("atk") },
-    { title: t("defTitle", { def: card.def }), text: t("def") },
-    { title: t("spdTitle", { spd: card.spd }), text: t("spd") },
-    { title: t("attackTitle", { name: card.normalAttack.name, power: card.normalAttack.power }), text: t("attack") },
+    { title: t("hpTitle", { hp: card.hp }), text: t("hp", { maxHp: c.maxHp, radius: c.hitRadius }) },
+    { title: t("atkTitle", { atk: card.atk }), text: t("atk", { percent: c.weaponPercent }) },
+    { title: t("defTitle", { def: card.def }), text: t("def", { percent: 100 - c.damageTakenPercent }) },
+    { title: t("spdTitle", { spd: card.spd }), text: t("spd", { speed: c.speed }) },
     {
-      title: t("whyTitle", { atk: card.atk, power: card.normalAttack.power }),
-      text: t("why", { atk: card.atk, power: card.normalAttack.power, def: enemyDef, damage }),
+      title: t("attackTitle", { name: card.normalAttack.name, power: card.normalAttack.power }),
+      text: t("attack", { weapons: format.list(BR_WEAPONS.map((w) => tw(w)), { type: "conjunction" }) }),
     },
-    { title: t("specialTitle", { name: special.name, power: special.power }), text: t("special") },
-    { title: t("energyTitle", { count: special.energyCost }), text: t("energy", { count: special.energyCost }) },
-    { title: t("defenseTitle", { name: card.defenseAbility.name }), text: t("defense") },
-    { title: t("extrasTitle"), text: t("extras") },
+    {
+      title: t("exampleTitle"),
+      text: t("example", { weapon: tw("rafaleuse"), damage: example.damage, shot, reduction: averageReduction, hit }),
+    },
+    { title: t("specialTitle", { name: special.name, power: special.power }), text: t("special", { ability }) },
+    {
+      title: t("energyTitle", { count: special.energyCost }),
+      text: t("energy", { seconds: seconds(c.ability.cooldownMs), base: seconds(BR.ABILITY.COOLDOWN_BASE_MS), per: seconds(BR.ABILITY.COOLDOWN_PER_ENERGY_MS) }),
+    },
+    { title: t("defenseTitle", { name: card.defenseAbility.name }), text: t("defense", { passive }) },
+    { title: t("extrasTitle"), text: t("extras", { factor: BR.CHARACTER.EVOLUTION_FACTOR_PERCENT }) },
   ];
 
   return (

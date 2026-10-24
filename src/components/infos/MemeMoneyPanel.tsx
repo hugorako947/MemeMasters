@@ -3,14 +3,15 @@ import { MemeCoin } from "@/components/player/RankBadge";
 import { GAME_CONFIG } from "@/config/game.config";
 import { RANK_REWARDS, RANKS } from "@/config/ranks";
 import { OFFERS, isOfferActive } from "@/config/shop";
-import { InfoList, InfoSection, InfoTable } from "./InfoBlocks";
+import { InfoList, InfoSection, InfoTable, placeBandRows } from "./InfoBlocks";
 
-/** Page « MemeMoney » d'Infos : ce que c'est, comment en gagner, comment la dépenser, et ses règles. */
+/** Page « MemeMoney » d'Infos : ce que c'est, comment en gagner (dont le Battle Royale classé, selon la place), comment la dépenser, et ses règles. */
 export async function MemeMoneyPanel() {
   const t = await getTranslations("infos.memeMoney");
   const th = await getTranslations("playerHome.boosters");
   const format = await getFormatter();
-  const { MEME_MONEY, DUPLICATES, PURCHASES } = GAME_CONFIG;
+  const { MEME_MONEY, DUPLICATES, PURCHASES, BATTLE_ROYALE } = GAME_CONFIG;
+  const eco = BATTLE_ROYALE.ECONOMY;
   const rankTotal = RANKS.reduce((n, r) => n + RANK_REWARDS[r].memeMoney, 0);
   const firstDouble = OFFERS.some((o) => o.kind === "first_purchase_double" && isOfferActive(o, new Date()));
   const cheapest = format.number(Math.min(...PURCHASES.PRODUCTS.map((p) => p.priceCents)) / 100, { style: "currency", currency: "EUR" });
@@ -28,13 +29,15 @@ export async function MemeMoneyPanel() {
       <InfoSection title={t("earnTitle")}>
         <InfoList
           items={[
-            t("earnWin", { amount: MEME_MONEY.WIN_REWARD }),
+            t("earnBattle", { top: eco.MEME_MONEY_BY_PLACE.at(-1)![0], cap: eco.MEME_MONEY_DAILY_CAP }),
             t("earnRanks", { total: format.number(rankTotal) }),
             t("earnSell", { cap: DUPLICATES.DAILY_SELL_CAP }),
             t("earnShop", { price: cheapest }),
             ...(firstDouble ? [t("earnFirst")] : []),
           ]}
         />
+        <InfoTable head={[t("placeHead"), t("amountHead")]} rows={placeBandRows(eco.MEME_MONEY_BY_PLACE, (v) => `+${v}`)} />
+        <p className="text-xs text-ink-soft">{t("battleNote")}</p>
       </InfoSection>
 
       <InfoSection title={t("spendTitle")}>

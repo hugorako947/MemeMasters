@@ -2,13 +2,26 @@
 
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useMemo, useState, type FormEvent } from "react";
+import { useMemo, useState, useSyncExternalStore, type FormEvent } from "react";
 import { Button } from "@/components/ui/Button";
 import { FormMessage } from "@/components/ui/Field";
 import { toast } from "@/components/ui/Toast";
 import { postJson } from "@/lib/client/api";
 import { useErrorText } from "@/lib/client/errors";
 import { useDeviceTimeZone } from "@/lib/client/use-device-timezone";
+
+/**
+ * Liste des fuseaux du navigateur. Elle diffère de celle du serveur (Node n'a pas la même
+ * version des données) : on ne l'affiche qu'après l'affichage initial, sinon React signale
+ * un écart d'hydratation (erreur n° 418).
+ */
+const noSubscription = () => () => undefined;
+const NO_ZONES: string[] = [];
+let browserZones: string[] | null = null;
+function getBrowserZones(): string[] {
+  browserZones ??= typeof Intl.supportedValuesOf === "function" ? Intl.supportedValuesOf("timeZone") : NO_ZONES;
+  return browserZones;
+}
 
 export function TimezoneForm({ current }: { current: string }) {
   const t = useTranslations("settings");
@@ -19,7 +32,8 @@ export function TimezoneForm({ current }: { current: string }) {
   const [message, setMessage] = useState<{ tone: "error" | "success"; text: string } | null>(null);
   const [pending, setPending] = useState(false);
 
-  const zones = useMemo(() => (typeof Intl.supportedValuesOf === "function" ? Intl.supportedValuesOf("timeZone") : [current]), [current]);
+  const all = useSyncExternalStore(noSubscription, getBrowserZones, () => NO_ZONES);
+  const zones = useMemo(() => (all.includes(current) ? all : [current, ...all]), [all, current]);
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();

@@ -10,7 +10,7 @@ Jeu web multijoueur de cartes à collectionner sur le thème des memes (PWA inst
 
 - **Propriétaire** : un développeur seul, francophone, qui valide chaque fonctionnalité. **Toujours répondre en français**, clairement, sans jargon inutile.
 - **Nom du jeu** : **« Battle Meme »**, provisoire (un jeu du même nom existe : il changera encore). Constantes uniques `GAME_CONFIG.GAME_NAME` et `GAME_SHORT_NAME` (`src/config/game.config.ts`) ; ne jamais écrire le nom en dur dans l'interface. Seules exceptions, à mettre à jour à chaque changement de nom : les modèles d'e-mails `supabase/templates/*.html` (à recoller ensuite dans Supabase, avec le « Sender name » du SMTP) et le pseudo réservé de `src/lib/validation/username.ts`. Le dépôt, `package.json`, les tables, les cookies `mm-…` et les documents de `docs/` gardent l'ancien nom technique « MemeMasters ».
-- **État** : l'essentiel est en place (comptes, cartes, boosters, collection, évolutions, revente, classements, amis, messagerie, défi du jour, communauté, tableau de bord). **Restent** : les batailles (concept non validé, voir §8), les paiements Stripe (phase 5), les finitions (performances, audit de sécurité).
+- **État** : l'essentiel est en place (comptes, cartes, boosters, collection, évolutions, revente, classements, amis, messagerie, défi du jour, communauté, tableau de bord). **Restent** : le battle royale (conception validée, phase 1 « moteur » faite, phases 2 à 7 à venir, voir §8), les paiements Stripe, les finitions (performances, audit de sécurité).
 
 ## 2. Règles de travail (à suivre à chaque tâche)
 
@@ -40,6 +40,7 @@ Jeu web multijoueur de cartes à collectionner sur le thème des memes (PWA inst
 | `npm run db:check` / `npm run db:status` | Migrations à appliquer sur Supabase (simulation) / état local vs distant. |
 | `npx supabase db push` | Applique les nouvelles migrations sur la base Supabase du propriétaire. |
 | `npm run cards:sql` | Régénère la migration du jeu de cartes de départ à partir de `src/content/cards/starter-set.ts`. |
+| `npm run br:bench [-- N]` | Banc d'essai du moteur du battle royale : N parties complètes à 100 participants (pilote de test), coût par tick, temps de rejeu, part des éliminations par la zone. |
 | `npm run doctor` | Diagnostic de la configuration (`.env.local`, connexion). |
 | `npm run tunnel` | Tunnel HTTPS Cloudflare (tester l'installation sur téléphone, la webcam). |
 
@@ -61,15 +62,15 @@ src/
     admin/             tableau de bord (Super Admin / admins) : page.tsx, actions.ts, CardEditor
     api/               routes JSON (une action = une route ; voir §6)
     apercu/            prévisualisation sans compte (développement)
-    bataille/          bataille d'entraînement — NON reliée à l'interface (§8)
   components/          par domaine : card, collection, booster, infos, player, friends, messages,
-                       moderation, community, challenges, install, pwa, layout, ui, battle, home, legal
+                       moderation, community, challenges, install, pwa, layout, ui, home, legal
   config/              game.config.ts (réglages validés par Zod), rarities.ts, ranks.ts, shop.ts, legal.config.ts
   content/cards/       starter-set.ts : les 40 cartes de départ
   lib/
     server/            tout le code serveur (marqué "server-only") : base, auth, jeu, administration
-    economy/           logique pure et testée : boosters, évolutions et revente, tirage du défi
-    battle/            moteur de bataille déterministe (§8)
+    economy/           logique pure et testée : boosters, évolutions et revente, tirage du défi,
+                       récompenses du battle royale selon la place (placement.ts)
+    br/                moteur du battle royale, pur et déterministe, en entiers (§8)
     i18n/ theme/ navigation/ pwa/ time/ validation/ art/ client/ cards/ player/
 messages/              traductions : fr (référence), en, es, pt, de, zh, ar
 supabase/migrations/   migrations SQL (ordre chronologique, jamais modifiées une fois livrées)
@@ -80,7 +81,7 @@ docs/                  guides pour le propriétaire (Google OAuth et e-mails, St
 
 ## 6. Architecture côté serveur
 
-- **Base de données** : `src/lib/server/db.ts` (`sql()`), connexion directe qui **contourne RLS** : chaque fonction vérifie elle-même l'identité et les droits. `DATABASE_URL` pointe sur le pooler Supabase ; une adresse en mode transaction (port 6543) est **convertie automatiquement en mode session (port 5432)** par `sessionPoolerUrl()` : en mode transaction, le pooler perdait des réponses quand plusieurs requêtes partaient en même temps (pages bloquées sur l'écran de chargement). Options : `prepare: false`, `max: 5`. **Ne jamais ajouter `max_pipeline`** : toute limite empêche postgres.js de réserver la connexion d'une transaction (erreur `UNSAFE_TRANSACTION`, toutes les ouvertures de booster et créations de carte échouaient). Si le trafic grandit (Vercel, beaucoup d'instances), surveiller la limite de connexions du mode session.
+- **Base de données** : `src/lib/server/db.ts` (`sql()`), connexion directe qui **contourne RLS** : chaque fonction vérifie elle-même l'identité et les droits. `DATABASE_URL` pointe sur le pooler Supabase en **mode transaction (port 6543)** ; une adresse en 5432 est convertie par `transactionPoolerUrl()`. **Jamais le mode session** sur Vercel : il n'accepte que 15 clients en tout (mesuré le 2026-10-24), les instances Vercel le saturaient et les pages plantaient (« Oups, cette page a planté »). En mode transaction, le pooler perd les réponses de requêtes envoyées en rafale sur une connexion, d'où **deux groupes de connexions** : requêtes isolées avec `max_pipeline: 0` (une à la fois), et transactions (`sql().begin`, réassigné vers un second groupe sans `max_pipeline`, car `max_pipeline: 0` casse `begin` : erreur `UNSAFE_TRANSACTION`). Ne pas modifier ce montage sans refaire le test de charge (1 000 requêtes simultanées sur le vrai pooler, décrit dans `DECISIONS.md`).
 - **Transactions** : `sql().begin(async (tx) => …)` pour tout ce qui doit être tout-ou-rien ; verrouiller les lignes lues puis modifiées (`for update`).
 - **Routes API** (`src/app/api/**/route.ts`), toujours sur ce modèle :
   ```ts
@@ -114,13 +115,15 @@ docs/                  guides pour le propriétaire (Google OAuth et e-mails, St
 
 ## 8. Batailles : ATTENTION
 
-**Concept choisi par le propriétaire (2026-10-24)** : un **battle royale 2D vu de dessus, jusqu'à 100 participants** ; chaque carte est un personnage jouable ; partie classée en solo contre des bots portant les personnages de vrais joueurs, parties entre amis en pair-à-pair. Cahier des charges complet : `docs/PROMPT_CLAUDE_CODE_Battle_Meme.md` ; conception (phase 0) : `docs/BATTLE_ROYALE_CONCEPTION.md`, **à faire valider avant tout code**. Travail par phases (0 conception → 7 finitions), avec un arrêt pour validation après la phase 0.
+**Concept choisi par le propriétaire (2026-10-24)** : un **battle royale 2D vu de dessus, jusqu'à 100 participants** ; chaque carte est un personnage jouable ; partie classée en solo contre des bots portant les personnages de vrais joueurs, parties entre amis en pair-à-pair. Cahier des charges : `docs/PROMPT_CLAUDE_CODE_Battle_Meme.md` ; conception **validée le 2026-10-24** (propositions du §16 retenues) : `docs/BATTLE_ROYALE_CONCEPTION.md`. Travail par phases (0 conception → 7 finitions) ; le propriétaire valide chaque phase avant la suivante.
 
-L'ancien code d'une bataille « arène à tours » existe encore (`src/lib/battle/` : moteur pur et déterministe en nombres entiers, bot, decks ; `src/components/battle/` ; page `/bataille`), mais **aucun lien n'y mène** et la page Batailles de l'accueil affiche « Bientôt ». Il est remplacé par le battle royale ; son sort est proposé en phase 0.
-
-- Ne pas relier, étendre ni supprimer l'ancien code sans accord du propriétaire (proposition attendue en phase 0).
-- Moteur du battle royale : **fonction pure et déterministe** (`état + commandes du tick → nouvel état`), entiers ou virgule fixe, aucun `Math.random`/`sin`/`cos`/`atan2`/`sqrt` flottant dans la simulation, tests d'abord, rejeu et vérification par le serveur des parties classées (le client ne décide jamais).
-- Les trophées (+25 / −25 / 0), les récompenses de victoire et les défis liés aux batailles sont déjà prévus dans la configuration et la base, en attente.
+- **Phase 1 (moteur) faite** : `src/lib/br/`. `fixed.ts` (trigonométrie sur 256 pas en tables Q14, arc tangente, racine et divisions entières exactes : **seul fichier du moteur où `/` est permis**), `rng.ts` (xoshiro128**, flux séparés : carte, butin, zone, combats, un par bot), `commands.ts` (commande de 3 octets par tick, plages, tranches de 400 ticks), `rules.ts` (configuration → ticks et sous-unités, 1 unité = 16), `character.ts` (carte → personnage : compression κ, évolution à moitié, capacité, passif), `map.ts` (carte générée, ligne de vue, collisions), `state.ts` (état en tableaux d'entiers, copie, empreinte FNV-1a), `engine.ts` (`createMatch`, `advance` en place, `step` pur), `replay.ts` (rejeu sans affichage), `test-driver.ts` (pilote de test : **pas** l'IA des bots, jamais importé par le code de production).
+- **Interdits dans le moteur** (ESLint et `purity.test.ts`) : fonctions flottantes de `Math`, nombres décimaux, `/` hors de `fixed.ts`, `Date`, `performance`, minuteries. Ordre d'itération fixe (participants par emplacement, projectiles par création).
+- **`ENGINE_VERSION`** (`engine.ts`) : à augmenter à chaque changement qui modifie le résultat d'une partie ; le test d'empreinte de `replay.test.ts` échoue pour le rappeler (puis `npx vitest run -u`).
+- **Réglages** : `GAME_CONFIG.BATTLE_ROYALE` (validé par Zod), dont `ECONOMY` (trophées et MemeMoney par place, bonus d'élimination, effet du rang, abandon, plafond quotidien) appliquée par `src/lib/economy/placement.ts` (pages d'Infos dès maintenant, serveur en phase 4). Les anciens champs `TROPHIES.WIN/LOSS/DRAW`, `MEME_MONEY.WIN_REWARD`, `TEAM_SIZE`… restent jusqu'à la phase 4 mais ne sont plus affichés.
+- **Mesures** (portable, Node 24) : partie complète à 100 participants ≈ 0,1 ms par tick en moyenne, < 1 ms au 99e centile, rejeu complet < 1 s ; 300 parties rejouées à l'identique.
+- **Ancien code « arène à tours » supprimé** (`src/lib/battle/`, `src/components/battle/`, page `/bataille`). Ses tables (`battles`, `decks`, `matchmaking_queue`…) restent jusqu'à leur suppression par une nouvelle migration en phase 4.
+- La page Battle Royale de l'accueil affiche « Bientôt » jusqu'à la phase 5. Les trophées et la MemeMoney de bataille ne bougent pas avant la phase 4 (partie classée vérifiée par le serveur ; le client ne décide jamais).
 
 ## 9. Traductions (next-intl, 7 langues)
 
@@ -128,6 +131,8 @@ L'ancien code d'une bataille « arène à tours » existe encore (`src/lib/battl
 - Toute nouvelle clé : écrite dans les 7 fichiers et vraiment traduite (pas de français recopié). Pluriels au format ICU ; l'arabe utilise les formes `zero/one/two/few/many/other`, le chinois seulement `other`.
 - Un message qui contient `{param}` exige ce paramètre à l'appel (sinon erreur d'exécution). Si on retire un paramètre d'un texte, le retirer dans les 7 langues.
 - L'arabe s'affiche de droite à gauche : utiliser les propriétés logiques (`ms-`, `me-`, `start-`, `end-`) et `rtl:` quand une flèche doit s'inverser.
+- Textes du battle royale : espace `battleRoyale` (noms des armes et des objets, phrases des capacités et des passifs, utilisées par `src/components/infos/battle-texts.ts`). Le nom de la page de l'accueil est « Battle Royale » (« 大逃杀 » en chinois, « باتل رويال » en arabe).
+- Nombres signés ou tranches (« +40 », « 2 – 3 ») dans une phrase ou un tableau : les isoler avec `<bdi dir="ltr">`, sinon l'arabe les inverse.
 - **Vocabulaire imposé** (dans toutes les langues) : « exemplaires » (jamais « doublons ») ; « évolution / faire évoluer » (jamais « amélioration ») ; « MemeMoney » ; « boosters » ; tutoiement en français.
 - Le tableau de bord `/admin` est volontairement en français uniquement.
 
@@ -139,13 +144,14 @@ L'ancien code d'une bataille « arène à tours » existe encore (`src/lib/battl
 - **Accessibilité** : contrastes suffisants, navigation au clavier, `aria-*` sur les contrôles, `prefers-reduced-motion` respecté (classes `motion-reduce:`, Motion en `reducedMotion="user"`).
 - **Composants à réutiliser** : `MemeCard` / `InteractiveCard` (carte ; props `level` 0 à 3, `quantity`, `actions`), `SlideDeck` (pages glissantes avec onglets, URL `?vue=`, badges chiffrés), `NotificationDot`, `Button` / `ButtonLink`, `SubmitButton`, `Spinner`, `toast` (bulles de confirmation et d'erreur, `src/components/ui/Toast.tsx`), `PasswordField`, `Captcha`, `PlayerCounts`, `FullscreenToggle`, `ImagePicker`, `InfoSection` / `InfoTable` (pages d'Infos), `CardDetailDialog` (carte agrandie), `LegalInfo` (liens légaux), `markBusy` (`src/lib/client/busy.ts`, élément « en cours »), `postJson` (`src/lib/client/api.ts`) pour appeler les routes, `src/lib/client/errors.ts` pour traduire un code d'erreur.
 - **Attente** (« le jeu doit paraître rapide ») :
-  - changement de page : barre de chargement en haut dès le clic, puis écran d'attente des cartes (`loading.tsx`, visible seulement après 0,18 s) ;
-  - action dans la même page (bouton, onglet de page glissante, lien qui ne change que `?…`, sachet de booster) : l'élément cliqué devient « en cours » (`src/lib/client/busy.ts`, attribut `data-mm-busy`) : clics bloqués aussitôt, puis après 0,15 s un cercle tournant remplace son contenu sans changer sa taille. `data-mm-busy-style="overlay"` garde le contenu visible, atténué (sachet). C'est automatique pour `postJson`/`postForm`, les liens dans la même page, `Button pending` et `SubmitButton` ; pour un autre cas, appeler `markBusy(élément)`.
+  - changement de page : barre de chargement en haut dès le clic, cercle sur le lien cliqué s'il tarde, puis écran d'attente des cartes (`loading.tsx`, visible seulement après 0,18 s) **dans le cadre du jeu** : `(jeu)/loading.tsx` entre deux pages du jeu, `PlayerLoading` (`app/loading.tsx`, `admin/loading.tsx`) en entrant dans l'Espace Admin ou en revenant au jeu ; plein écran seulement pour un visiteur ;
+  - élément « en cours » (`src/lib/client/busy.ts`, attribut `data-mm-busy`) : clics bloqués aussitôt, puis après 0,15 s un cercle tournant remplace son contenu sans changer sa taille. `data-mm-busy-style="overlay"` garde le contenu visible, atténué (sachet). C'est automatique pour `postJson`/`postForm`, **tous les liens internes** (`NavigationProgress`), les navigations lancées par `startNavigationProgress()`, `Button pending` et `SubmitButton` (seul le bouton pressé tourne quand un formulaire en a plusieurs) ; pour un autre cas, appeler `markBusy(élément)` ou afficher `Spinner` (liste qui se charge).
+  - `NavigationProgress` écoute les clics **à la capture** : un `<Link>` de Next.js annule l'événement (`preventDefault`) avant tout écouteur ordinaire du document (la barre et le cercle ne démarraient jamais).
   - Garder ce fonctionnement pour toute nouvelle page ou action.
 - **Pas de pied de page dans le compte joueur** (comme un jeu vidéo) : liens légaux, contact et droits sont en bas des Réglages (`LegalInfo compact`). Le pied de page (`SiteFooter`) reste sur la vitrine, la connexion et l'inscription.
 - **Thème** : un changement fait dans les Réglages passe par `applyLocalAppearance` ; `PreferenceSync` ignore un cadre de page préparé avant ce changement (`renderedAt`), sinon les pages gardées en mémoire remettaient l'ancien thème.
 - **Hors ligne** : ajouter la classe `mm-online-only` à tout élément qui demande le serveur (il est grisé quand le réseau manque).
-- **Pages glissantes existantes** : Accueil (Collection | Boosters | Batailles ; Boosters par défaut) ; Infos (Carte, Raretés, Évolutions, **Classement** par défaut, Rangs, Trophées, MemeMoney, News) ; Profil (Profil, Amis, Messages, Communauté). Navigation du bas : Boutique, Infos, Accueil, Profil, Réglages.
+- **Pages glissantes existantes** : Accueil (Collection | Boosters | Battle Royale ; Boosters par défaut ; clé `batailles` gardée dans `?vue=` ; toutes aux couleurs du thème : panneau `bg-surface`, fond intérieur `bg-paper`, cases `bg-surface`, jamais de rose ni de jaune codés en dur) ; Infos (Carte, Raretés, Évolutions, **Classement** par défaut, Rangs, Trophées, MemeMoney, News) ; Profil (Profil, Amis, Messages, Communauté). Navigation du bas : Boutique, Infos, Accueil, Profil, Réglages.
 - **Notifications** : les points rouges affichent un nombre, calculés côté serveur par `getBadges()` ; une notification vue est marquée par `/api/seen`, et `router.refresh()` n'est appelé que lorsqu'une notification est réellement consommée.
 
 ## 11. Règles du jeu à respecter (valeurs dans `src/config/`)
@@ -157,6 +163,7 @@ L'ancien code d'une bataille « arène à tours » existe encore (`src/lib/battl
 - **Exemplaires** : le premier exemplaire d'une carte reste toujours dans la collection. Les exemplaires en trop servent à **faire évoluer** (Dorée ★, Dorée ★★, Divine ★★★ ; coûts par rareté dans `DUPLICATES.UPGRADES` ; bonus de statistiques +3 / +6 / +10 %) ou à **vendre** (prix bas en centièmes de MemeMoney, fractions conservées ; plafond quotidien de 20 MemeMoney pour communes, rares et épiques).
 - **MemeMoney** : monnaie fermée, sans valeur réelle, jamais échangeable entre joueurs ni reconvertible en argent. C'est une règle légale essentielle des boosters payants : ne jamais créer de passerelle.
 - **Rangs** : 10 rangs, un tous les 1 000 trophées ; récompenses données une seule fois par rang (`src/config/ranks.ts`).
+- **Battle Royale** (validé, appliqué à partir de la phase 4) : trophées et MemeMoney selon la place finale (`GAME_CONFIG.BATTLE_ROYALE.ECONOMY` : Top 1 +40 … −12 ; +1 par élimination jusqu'à +5 dans la première moitié ; gains −5 % et pertes +10 % par rang ; MemeMoney du Top 1 au Top 25, 15 par jour au plus) ; abandon = élimination à la place du moment, −5 trophées, aucune MemeMoney ; parties entre amis et Entraînement sans récompense ; écart de rareté borné (compression κ = 50 %, bonus d'évolution compté à moitié).
 - **Social** : amis (200 au plus, 50 demandes en attente), messages (500 caractères, 3 messages au plus à un non-ami tant qu'il n'a pas répondu), blocage (coupe amitié, demandes et messages dans les deux sens), signalements (traités dans le tableau de bord).
 - **Communauté** : un joueur propose une carte (2 propositions en cours, 3 par jour), l'équipe la vérifie, tout le monde vote (une voix déplaçable, jamais pour sa propre carte), la plus votée peut sortir dans le jeu.
 - **Achats en argent réel** (phase 5, pas encore actifs) : 18 ans et plus, plafond de dépenses sur 30 jours, pays bloqués, webhooks Stripe vérifiés par signature. Voir `docs/Guide_2_Stripe_Paiements_et_MemeMoney.md`.
@@ -165,6 +172,7 @@ L'ancien code d'une bataille « arène à tours » existe encore (`src/lib/battl
 
 - **Joueur**, **admin** (`player_private.role = 'admin'`, nommé par le Super Admin depuis le tableau de bord), **Super Admin** (le créateur) : désigné uniquement par la variable d'environnement `SUPER_ADMIN_IDS` (identifiants de comptes séparés par des virgules), lue côté serveur par `isSuperAdminId()`. Il n'existe ni page ni mot de passe spécial ; ne jamais en créer.
 - **Droits** : un admin gère les joueurs (ni les autres admins, ni le Super Admin, ni son propre compte ; l'e-mail des membres de l'équipe lui est masqué). Ses actions importantes (cartes, ressources d'un joueur, suppression de compte, news, défis, sortie d'une carte de la Communauté) créent une **demande** (`admin_requests`) que le Super Admin valide ; la modération urgente (bannir, traiter un signalement ou un contact) est immédiate.
+- **Passage d'un espace à l'autre** : dans les Réglages, un seul bouton « Espace Admin » (admin) ou « Espace Super Admin » ; dans le tableau de bord, un bouton « Espace Joueur » (vers les Réglages) à la place du fil d'Ariane.
 - Chaque action d'administration est inscrite dans `admin_audit_log` (`audit()`). Les opérations elles-mêmes sont dans `src/lib/server/admin-ops.ts` : utilisées directement par le Super Admin, ou à la validation d'une demande.
 - Une modification visible par tous (carte créée ou rééquilibrée, règle changée) peut être annoncée par une **news** (table `news`), qui notifie tous les joueurs.
 
@@ -173,7 +181,8 @@ L'ancien code d'une bataille « arène à tours » existe encore (`src/lib/battl
 ```bash
 npx next typegen        # si les types de pages manquent (copie neuve)
 npm run check           # types + lint + tests (tout doit passer)
-npm run db:check-local  # si une migration ou une table a changé
+npm run db:check-local  # si une migration ou une table a changé (exige PostgreSQL + pgTAP en local ;
+                        # à défaut, exécuter la migration sur la base dans une transaction annulée)
 npm run build           # si le changement est important (pages, configuration)
 ```
 
@@ -182,10 +191,11 @@ Puis : textes ajoutés dans les 7 langues, `DECISIONS.md` complété si une déc
 ## 14. Pièges React / Next.js déjà rencontrés
 
 - **Lint React 19** : pas de `setState` synchrone dans un `useEffect` (passer par `setTimeout(…, 0)`, un rappel d'événement ou `useSyncExternalStore`) ; pas de lecture ni d'écriture de `ref.current` pendant le rendu ; pas de réassignation de variable après le rendu.
-- **Hydratation** : rien d'aléatoire ni de dépendant de l'heure (`Date.now()`, `Math.random()`, format de date local) dans le rendu initial d'un composant client. `<body suppressHydrationWarning>` existe uniquement pour les attributs ajoutés par les extensions du navigateur ; ne pas s'en servir pour masquer un vrai problème.
+- **Hydratation** : rien d'aléatoire ni de dépendant de l'heure (`Date.now()`, `Math.random()`, format de date local) ni des données du navigateur (`Intl.supportedValuesOf`, dont la liste diffère de celle de Node : erreur React n° 418 sur les Réglages) dans le rendu initial d'un composant client ; passer par `useSyncExternalStore` avec une valeur serveur. `<body suppressHydrationWarning>` existe uniquement pour les attributs ajoutés par les extensions du navigateur ; ne pas s'en servir pour masquer un vrai problème.
 - **Styles en ligne** : propriétés en camelCase (`colorScheme`, pas `color-scheme`) ; les variables CSS `--…` sont acceptées telles quelles.
 - **Modules serveur** : un composant client n'importe d'un fichier `server-only` que des **types** (`import type`).
 - **Service worker** : actif seulement en production (`npm run build && npm start`) ou avec `NEXT_PUBLIC_ENABLE_SW_DEV`. L'installation sur téléphone exige HTTPS.
+- **Mise en ligne** : un onglet resté ouvert sur l'ancienne version peut réclamer un fichier JavaScript disparu (`ChunkLoadError`) ; `error.tsx` et `global-error.tsx` rechargent alors la page une fois par minute au plus (`src/lib/client/stale-build.ts`).
 - **Images générées** : `next/image` n'est pas utilisé pour les illustrations en data URI ; mettre `// eslint-disable-next-line @next/next/no-img-element` avec la raison.
 
 ## 15. Fichiers obsolètes (ne pas utiliser, ne pas s'en inspirer)
@@ -194,4 +204,4 @@ Ces fichiers ne sont importés nulle part : `src/content/news.ts` (les news sont
 
 ## 16. Variables d'environnement (`.env.local`, et Vercel en production)
 
-`NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `DATABASE_URL` (pooler Supabase ; 6543 converti en 5432, voir §6), `SUPABASE_SECRET_KEY` (Storage des illustrations, opérations d'administration), `SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID` / `…_SECRET` (connexion Google), `NEXT_PUBLIC_ENABLE_SW_DEV`, `CRON_SECRET`, `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET` (phase 5), `NEXT_PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` (captcha), `SUPER_ADMIN_IDS`. Toutes sont commentées dans `.env.example`. Ne jamais écrire de valeur secrète dans le code ni dans un fichier suivi par git.
+`NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `DATABASE_URL` (pooler Supabase en mode transaction, port 6543 ; 5432 converti, voir §6), `SUPABASE_SECRET_KEY` (Storage des illustrations, opérations d'administration), `SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID` / `…_SECRET` (connexion Google), `NEXT_PUBLIC_ENABLE_SW_DEV`, `CRON_SECRET`, `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET` (phase 5), `NEXT_PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` (captcha), `SUPER_ADMIN_IDS`. Toutes sont commentées dans `.env.example`. Ne jamais écrire de valeur secrète dans le code ni dans un fichier suivi par git.

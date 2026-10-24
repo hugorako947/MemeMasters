@@ -194,10 +194,8 @@
     "appTitle": "App",
     "randomHint": "Jeder Klick würfelt eine neue Farbpalette für das ganze Spiel aus.",
     "randomAgain": "Neue Farben",
-    "adminTitle": "Verwaltung",
-    "superAdmin": "Super-Admin",
-    "admin": "Admin",
-    "openDashboard": "Dashboard öffnen"
+    "adminSpace": "Admin-Bereich",
+    "superAdminSpace": "Super-Admin-Bereich"
   },
   "rarities": {
     "title": "Die 7 Seltenheiten"
@@ -394,7 +392,7 @@
       "verySpecial": "Ultra-Booster"
     },
     "battles": {
-      "title": "Kämpfe",
+      "title": "Battle Royale",
       "lead": "Kämpfe kommen bald: Bereite deine Sammlung vor.",
       "nextReward": "Nächster Rang erreicht → {boosters} Booster und {money} MemeMoney geschenkt"
     },
@@ -508,13 +506,13 @@
       "top": "Du hast den höchsten Rang erreicht. Respekt.",
       "howTitle": "So funktioniert's",
       "rules": {
-        "win": "Sieg: +{win} Trophäen und +{money} MemeMoney.",
-        "loss": "Niederlage: −{loss} Trophäen, nie unter 0.",
-        "draw": "Unentschieden: Deine Trophäen bleiben gleich.",
         "perRank": "Alle {per} Trophäen steigst du einen Rang auf.",
         "drop": "Dein Rang folgt deinen Trophäen: Du kannst absteigen, aber jede Rangbelohnung gibt es nur einmal.",
-        "matchmaking": "Deine Gegner haben ähnlich viele Trophäen wie du.",
-        "bots": "Kämpfe gegen einen Bot bringen weder Trophäen noch MemeMoney."
+        "matchmaking": "Deine Gegner sind KIs, die die Figuren echter Spieler mit ähnlichem Niveau spielen; ihre Schwierigkeit folgt deinen Trophäen.",
+        "place": "Deine Endplatzierung im gewerteten Battle Royale: von +{top} Trophäen (Platz 1) bis {worst} (letzte Plätze), dazu MemeMoney bis zu den Top {mmTop}.",
+        "kills": "{per, plural, one {+# Trophäe} other {+# Trophäen}} pro Eliminierung (bis zu +{cap}), wenn du in der oberen Hälfte landest.",
+        "rankEffect": "Je höher dein Rang, desto kleiner die Gewinne (−{gain} % pro Rang) und desto größer die Verluste (+{loss} % pro Rang).",
+        "abandon": "Aufgeben: Eliminierung auf deiner aktuellen Platzierung und {penalty} Trophäen weniger. Partien mit Freunden zählen nicht."
       },
       "yours": "Dein Rang",
       "range": "{min} bis {max} Trophäen",
@@ -532,7 +530,7 @@
       "how1": "Ein Exemplar jeder Karte bleibt immer in deiner Sammlung: Nur überzählige Exemplare werden verwendet.",
       "how2": "Die Entwicklungen werden der Reihe nach freigeschaltet: Golden ★, dann Golden ★★, dann Göttlich ★★★.",
       "how3": "Je seltener die Karte, desto weniger Exemplare brauchst du (Tabelle unten).",
-      "how4": "Jede Entwicklung erhöht KP, Angriff, Verteidigung und Tempo, bis zu +{max} % bei Göttlich.",
+      "how4": "Jede Entwicklung erhöht KP, Angriff, Verteidigung und Tempo, bis zu +{max} % bei Göttlich. Im Battle Royale zählt dieser Bonus zu {factor} % (bis zu +{battleMax} %), damit dein Können entscheidend bleibt.",
       "how5": "Mit jeder Entwicklung erscheint ein Stern auf dem Bild: golden bei Golden, weiß und silbern bei Göttlich.",
       "costTitle": "Benötigte Exemplare",
       "rarity": "Seltenheit",
@@ -542,13 +540,13 @@
       "sell1": "Tippe auf eine Karte: „Verkaufen“ verkauft alle überzähligen Exemplare auf einmal.",
       "sell2": "„Überzählige Exemplare verkaufen“ macht dasselbe für deine ganze Sammlung.",
       "sell3": "Gewöhnliche, seltene und epische Karten bringen höchstens {cap} MemeMoney pro Tag; seltenere Karten haben kein Limit.",
-      "sell4": "Kleine Beträge (0,1; 0,25 …) summieren sich und gehen nie verloren."
+      "sell4": "Kleine Beträge (0,1; 0,25 …) summieren sich und gehen nie verloren.",
+      "how6": "Nicht zu verwechseln mit der Meisterschaft, die mit dem Battle Royale kommt: Wenn du eine Figur spielst, schaltest du für sie rein kosmetische Belohnungen frei (Rahmen, Spur, Titel)."
     },
     "memeMoney": {
       "whatTitle": "Was ist das?",
       "what": "MemeMoney ist die Währung des Spiels. Dein Guthaben steht oben rechts; tippe darauf, um den Shop zu öffnen.",
       "earnTitle": "So verdienst du sie",
-      "earnWin": "Einen gewerteten Kampf gewinnen: +{amount} MemeMoney (Kämpfe kommen bald).",
       "earnRanks": "Zum ersten Mal einen neuen Rang erreichen: insgesamt bis zu {total} MemeMoney, dazu Booster (siehe Ränge).",
       "earnSell": "Überzählige Exemplare verkaufen (siehe Entwicklungen), bis zu {cap} MemeMoney pro Tag für gewöhnliche, seltene und epische Karten.",
       "earnShop": "Im Shop mit echtem Geld kaufen, ab {price}.",
@@ -561,56 +559,61 @@
       "rule1": "MemeMoney hat keinen Echtgeldwert: Sie kann weder weiterverkauft, erstattet noch in Geld umgetauscht werden.",
       "rule2": "Sie kann nicht zwischen Spielern getauscht werden.",
       "rule3": "Bruchteile aus Kartenverkäufen bleiben erhalten und summieren sich.",
-      "rule4": "Käufe mit echtem Geld sind ab {age} Jahren möglich und auf {cap} pro 30 Tage begrenzt."
+      "rule4": "Käufe mit echtem Geld sind ab {age} Jahren möglich und auf {cap} pro 30 Tage begrenzt.",
+      "earnBattle": "In einer gewerteten Battle-Royale-Partie unter die Top {top} kommen (Tabelle unten), bis zu {cap} MemeMoney pro Tag.",
+      "placeHead": "Endplatzierung",
+      "amountHead": "MemeMoney",
+      "battleNote": "Aufgeben bringt keine MemeMoney, Partien mit Freunden auch nicht. Das Battle Royale kommt bald."
     },
     "trophies": {
       "whatTitle": "Was sind sie?",
-      "what": "Trophäen messen dein Niveau in gewerteten Kämpfen. Je mehr du hast, desto höher dein Rang und desto stärker deine Gegner.",
+      "what": "Trophäen messen dein Niveau im gewerteten Battle Royale. Je mehr du hast, desto höher dein Rang und desto besser spielen die KIs, gegen die du antrittst.",
       "gainTitle": "Trophäen gewinnen und verlieren",
-      "result": "Ergebnis",
+      "result": "Endplatzierung",
       "change": "Trophäen",
-      "win": "Sieg",
-      "draw": "Unentschieden",
-      "loss": "Niederlage",
       "floor": "Du kannst nie unter 0 Trophäen fallen.",
-      "bots": "Kämpfe gegen einen Bot ändern deine Trophäen nicht.",
-      "soon": "Gewertete Kämpfe kommen bald: Bis dahin bleiben deine Trophäen gleich.",
+      "soon": "Das gewertete Battle Royale kommt bald: Bis dahin bleiben deine Trophäen unverändert.",
       "useTitle": "Wofür sie da sind",
       "use1": "Alle {per} Trophäen steigst du einen Rang auf (siehe Ränge).",
       "use2": "Jeder zum ersten Mal erreichte Rang bringt Booster und MemeMoney.",
-      "use3": "Das Spiel sucht dir Gegner mit ähnlich vielen Trophäen.",
+      "use3": "Die KIs, gegen die du antrittst, spielen die Figuren echter Spieler mit ähnlichem Niveau, und ihre Schwierigkeit folgt deinen Trophäen.",
       "use4": "Sie bestimmen deinen Platz in der Rangliste.",
       "whereTitle": "Wo du sie siehst",
       "where1": "Oben links auf dem Bildschirm, neben deinem Rang.",
       "where2": "In deinem Profil, mit einem Verlaufsdiagramm.",
-      "where3": "In der Rangliste: um dich herum, in deinem Rang oder weltweit."
+      "where3": "In der Rangliste: um dich herum, in deinem Rang oder weltweit.",
+      "tableNote": "Für eine Partie mit {count} Teilnehmenden. Mit weniger Teilnehmenden gelten dieselben Anteile.",
+      "kills": "Jede Eliminierung bringt +{per} (bis zu +{cap}), wenn du in der oberen Hälfte landest.",
+      "rankEffect": "Je höher dein Rang, desto kleiner die Gewinne (−{gain} % pro Rang) und desto größer die Verluste (+{loss} % pro Rang): So pendelt sich jeder auf seinem echten Niveau ein.",
+      "abandon": "Eine gewertete Partie zu verlassen zählt als Eliminierung auf deiner aktuellen Platzierung, mit {penalty} Trophäen weniger.",
+      "casual": "Partien mit Freunden und das Training verändern deine Trophäen nicht."
     },
     "card": {
       "title": "Aufbau einer Karte",
-      "lead": "Jede Meme-Karte ist ein Kämpfer. Hier siehst du, was jedes Element bedeutet, am Beispiel dieser Karte.",
+      "lead": "Jede Karte ist eine spielbare Figur im Battle Royale, mit Stärken und Schwächen. Hier erfährst du, was jedes Element bedeutet – am Beispiel dieser Karte.",
       "nameTitle": "Name und Seltenheit",
-      "name": "Der Name steht oben links, die Seltenheit im Band unten. Je seltener die Karte, desto höher ihre Werte.",
+      "name": "Der Name steht oben links, die Seltenheit im unteren Band. Eine seltenere Karte ist etwas stärker, aber im Kampf ist der Unterschied absichtlich klein: Dein Können zählt am meisten.",
       "hpTitle": "KP: {hp}",
-      "hp": "Kraftpunkte: die Ausdauer der Karte. Fallen sie auf 0, ist die Karte kampfunfähig.",
+      "hp": "Kraftpunkte. Im Kampf: {maxHp} KP. Die Kehrseite: Je robuster eine Figur, desto größer ist sie und desto leichter zu treffen (Radius {radius} Einheiten).",
       "atkTitle": "ANG: {atk}",
-      "atk": "Angriff: die allgemeine Stärke der Karte. Er erhöht den Schaden all ihrer Attacken.",
+      "atk": "Angriff. Im Kampf vervielfacht er den Schaden deiner Waffen: hier × {percent} %.",
       "defTitle": "VER: {def}",
-      "def": "Verteidigung: die Robustheit der Karte. Sie verringert den erlittenen Schaden.",
+      "def": "Verteidigung. Im Kampf ist sie deine Rüstung: Sie verringert den Schaden, den du erleidest, um {percent} %.",
       "spdTitle": "TEM: {spd}",
-      "spd": "Tempo: Die schnellste Karte handelt in jeder Kampfrunde zuerst.",
+      "spd": "Tempo. Im Kampf bewegst du dich mit {speed} Einheiten pro Sekunde. Schnelle Figuren sind oft zerbrechlicher.",
       "attackTitle": "Angriff: {name} ({power})",
-      "attack": "Der Grundangriff, jederzeit und ohne Energie einsetzbar. Die Zahl rechts ist seine Stärke: die Kraft genau dieser Attacke.",
-      "whyTitle": "Warum {atk} und {power}?",
-      "why": "{atk} ist die Stärke der Karte, {power} die Stärke dieser einen Attacke. Der Schaden kombiniert beides, die gegnerische Verteidigung verringert ihn: ungefähr Stärke × Angriff ÷ Verteidigung des Gegners. Hier: {power} × {atk} ÷ {def} ≈ {damage} Schaden gegen eine Karte mit {def} Verteidigung.",
+      "attack": "Die Grundattacke gibt der Karte ihren Stil. Im Battle Royale schießt du mit Waffen, die du auf dem Spielfeld aufhebst: {weapons}.",
       "specialTitle": "Spezialangriff: {name} ({power})",
-      "special": "Eine stärkere Attacke, oft mit Zusatzeffekt (mehrmals treffen, betäuben, heilen …). Sie kostet Energie.",
+      "special": "Wird zu deiner Fähigkeit, die du jederzeit auslöst: {ability}. Je höher ihre Stärke, desto stärker der Effekt.",
       "energyTitle": "Energie: {count, plural, one {# Punkt} other {# Punkte}}",
-      "energy": "Die gelben Punkte zeigen, wie viel Energie der Spezialangriff braucht. Die Karte sammelt im Kampf Energie: Hier braucht sie {count}, bevor sie ihn einsetzen kann.",
+      "energy": "Im Kampf bestimmt die Energie die Abklingzeit deiner Fähigkeit: hier {seconds} s ({base} s plus {per} s pro Energiepunkt).",
       "defenseTitle": "Verteidigung: {name}",
-      "defense": "Die Fähigkeit, die die Karte nutzt, wenn sie sich schützt statt anzugreifen. Der kurze Satz darunter sagt, was sie bewirkt (heilen, Schaden zurückwerfen, ausweichen …).",
+      "defense": "Wird zu deiner passiven Fähigkeit, immer aktiv: {passive}.",
       "extrasTitle": "Sterne und Exemplare",
-      "extras": "Die Sterne oben links im Bild zeigen die Entwicklung der Karte, die ihre Werte etwas erhöht. Das Abzeichen ×n oben rechts zeigt, wie viele Exemplare du besitzt.",
-      "soon": "Die vollständigen Kampfregeln werden erklärt, sobald die Kämpfe kommen; diese Rechnungen zeigen das Prinzip."
+      "extras": "Die Sterne oben links auf dem Bild zeigen die Entwicklung der Karte: Ihre Werte steigen ein wenig (im Kampf zählt das zu {factor} %). Das Abzeichen ×n oben rechts zeigt, wie viele Exemplare du besitzt.",
+      "soon": "Das Battle Royale kommt bald. Diese Werte können noch angepasst werden, damit das Spiel ausgeglichen bleibt.",
+      "exampleTitle": "Schadensbeispiel",
+      "example": "Ein Schuss mit {weapon} ({damage} Schaden) dieser Karte startet mit {shot} Schaden. Gegen eine durchschnittliche Figur (Rüstung −{reduction} %) richtet er {hit} an."
     }
   },
   "collection": {
@@ -1005,6 +1008,35 @@
       "reject": "Ablehnen",
       "approved": "„{name}“ steht zur Abstimmung.",
       "rejected": "„{name}“ wurde abgelehnt."
+    }
+  },
+  "battleRoyale": {
+    "weapons": {
+      "pop": "Pop-Werfer",
+      "petard": "Nasser Böller",
+      "rafaleuse": "Salvenschleuder 3000",
+      "lunette": "Like-Zielfernrohr"
+    },
+    "items": {
+      "heal": "LOL-Pflaster",
+      "vest": "Cringe-Weste"
+    },
+    "ability": {
+      "sprint": "Sprint: +{percent} % Tempo für {seconds} s",
+      "stun": "Betäubung: Deine nächste Kugel (innerhalb von {window} s) lähmt das Ziel für {seconds} s",
+      "drain": "Lebensraub: {seconds} s lang erhältst du {percent} % des verursachten Schadens zurück",
+      "multi": "Salve: {hits} Kugeln auf einmal, jede mit {percent} % des Waffenschadens",
+      "burn": "Verbrennung: Ein Geschoss, das das Ziel verbrennt ({percent} % seiner max. KP pro Sekunde für {seconds} s)",
+      "pierce": "Panzerbrechend: {seconds} s lang ignorieren deine Schüsse {percent} % der gegnerischen Rüstung",
+      "buff": "Boost: +{percent} % {stat} für {seconds} s",
+      "debuff": "Schwächung: Deine nächste Kugel (innerhalb von {window} s) senkt den Wert „{stat}“ des Ziels um {percent} % für {seconds} s"
+    },
+    "passive": {
+      "regen": "Regeneration: Nach {delay} s ohne Treffer erhältst du {percent} % deiner max. KP pro Sekunde zurück",
+      "dodge": "Ausweichen: {percent} % Chance, jeder Kugel auszuweichen",
+      "reflect": "Rückstoß: {percent} % des erlittenen Schadens gehen an den Schützen zurück",
+      "cleanse": "Immunität: Betäubungen, Verbrennungen und Schwächungen dauern {percent} % kürzer",
+      "recharge": "Schnelles Aufladen: Deine Fähigkeit lädt {percent} % schneller auf"
     }
   }
 }

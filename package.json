@@ -19,6 +19,7 @@
     "assets:pwa": "tsx scripts/generate-pwa-assets.mts",
     "doctor": "tsx scripts/doctor.mts",
     "cards:sql": "tsx scripts/generate-cards-sql.mts",
+    "br:bench": "tsx scripts/br-bench.mts",
     "predev": "node scripts/check-deps.mjs",
     "prebuild": "node scripts/check-deps.mjs",
     "tunnel": "cloudflared tunnel --url http://localhost:3000",

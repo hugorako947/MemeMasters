@@ -19,7 +19,7 @@ import { getBadges } from "@/lib/server/notifications";
 import { getDailyChallenge } from "@/lib/server/challenges";
 
 /**
- * Accueil : la vitrine pour un visiteur, le jeu (Collection | Boosters | Batailles)
+ * Accueil : la vitrine pour un visiteur, le jeu (Collection | Boosters | Battle Royale)
  * pour un joueur. Il est dans le groupe (jeu) : le cadre du joueur (rang, trophées,
  * MemeMoney, navigation) reste affiché pendant le chargement, comme sur les autres pages.
  */

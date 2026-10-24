@@ -4,24 +4,26 @@ import { GAME_CONFIG } from "@/config/game.config";
 import { progressToNextRank, RANK_REWARDS, rankBounds, rankIndex, RANKS } from "@/config/ranks";
 
 /**
- * Page « Rangs » d'Infos : comment on gagne et perd des trophées, où en est
+ * Page « Rangs » d'Infos : comment on gagne et perd des trophées en Battle Royale classé, où en est
  * le joueur, et les 10 rangs avec leurs récompenses.
  */
 export async function RanksPanel({ trophies, highestRank }: { trophies: number; highestRank: number }) {
   const t = await getTranslations("infos.ranks");
   const tr = await getTranslations("rank");
   const format = await getFormatter();
-  const { TROPHIES, MEME_MONEY } = GAME_CONFIG;
+  const { TROPHIES, BATTLE_ROYALE } = GAME_CONFIG;
+  const eco = BATTLE_ROYALE.ECONOMY;
+  const worst = eco.TROPHIES_BY_PLACE.at(-1)![1];
   const current = rankIndex(trophies);
   const progress = progressToNextRank(trophies);
   const rules = [
-    t("rules.win", { win: TROPHIES.WIN, money: MEME_MONEY.WIN_REWARD }),
-    t("rules.loss", { loss: TROPHIES.LOSS }),
-    t("rules.draw"),
+    t("rules.place", { top: eco.TROPHIES_BY_PLACE[0][1], worst: worst < 0 ? `−${-worst}` : `${worst}`, mmTop: eco.MEME_MONEY_BY_PLACE.at(-1)![0] }),
+    t("rules.kills", { per: eco.KILL_TROPHY, cap: eco.KILL_TROPHY_CAP }),
+    t("rules.rankEffect", { gain: eco.RANK_GAIN_REDUCTION_PERCENT, loss: eco.RANK_LOSS_INCREASE_PERCENT }),
     t("rules.perRank", { per: format.number(TROPHIES.PER_RANK) }),
     t("rules.drop"),
     t("rules.matchmaking"),
-    t("rules.bots"),
+    t("rules.abandon", { penalty: eco.ABANDON_TROPHY_PENALTY }),
   ];
 
   return (

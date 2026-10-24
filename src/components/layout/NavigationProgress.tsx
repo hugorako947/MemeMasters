@@ -2,7 +2,7 @@
 
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { markBusy } from "@/lib/client/busy";
+import { markBusy, takePressed } from "@/lib/client/busy";
 
 type State = "idle" | "start" | "loading" | "done";
 
@@ -11,9 +11,10 @@ type State = "idle" | "start" | "loading" | "done";
  * sur un lien (ou de l'envoi d'un formulaire qui change de page), file vers la
  * fin, puis se termine dès que la nouvelle page s'affiche. Le joueur voit
  * tout de suite que son clic est pris en compte.
- * Dans la même page (seuls les paramètres ?… changent, ex. sections du tableau de
- * bord), le lien ou le bouton cliqué affiche aussi un cercle tournant jusqu'à l'arrivée ;
- * pour une autre page, c'est l'écran de chargement des cartes (loading.tsx).
+ * Le lien ou le bouton cliqué (navigation du bas, sections du tableau de bord, profil
+ * d'un joueur…) affiche aussi un cercle tournant à sa place si la page tarde, jusqu'à ce
+ * que la nouvelle adresse s'affiche ; pour une autre page, l'écran de chargement des
+ * cartes (loading.tsx) prend ensuite le relais dans le cadre du jeu.
  */
 export function NavigationProgress() {
   const pathname = usePathname();
@@ -48,7 +49,7 @@ export function NavigationProgress() {
       // Même page (ancre, onglet ?vue=… géré sur place) : rien à charger.
       if (href.pathname === location.pathname && href.search === location.search) return;
       begin();
-      if (href.pathname === location.pathname) busy(a);
+      busy(a);
     };
     const onSubmit = (e: SubmitEvent) => {
       const form = e.target as HTMLFormElement;
@@ -58,12 +59,19 @@ export function NavigationProgress() {
         busy(e.submitter instanceof HTMLElement ? e.submitter : null);
       }
     };
-    const onStart = () => begin();
-    document.addEventListener("click", onClick);
+    // Navigation lancée par le code (router.push…) : le bouton pressé juste avant tourne.
+    const onStart = () => {
+      begin();
+      busy(takePressed());
+    };
+    // Clics écoutés à la capture : un lien de Next.js annule l'événement (preventDefault) pour
+    // naviguer lui-même, avant qu'il n'atteigne un écouteur ordinaire du document. Seul le logo
+    // intercepte aussi le clic, et il navigue quand même (après son animation).
+    document.addEventListener("click", onClick, true);
     document.addEventListener("submit", onSubmit);
     window.addEventListener("mm:navigation-start", onStart);
     return () => {
-      document.removeEventListener("click", onClick);
+      document.removeEventListener("click", onClick, true);
       document.removeEventListener("submit", onSubmit);
       window.removeEventListener("mm:navigation-start", onStart);
     };

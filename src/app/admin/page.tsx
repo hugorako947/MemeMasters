@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { MemeCard } from "@/components/card/MemeCard";
+import { ButtonLink } from "@/components/ui/Button";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 import { GAME_CONFIG } from "@/config/game.config";
 import { RANK_REWARDS, RANKS } from "@/config/ranks";
@@ -76,10 +77,11 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
     <main id="contenu" className="mx-auto grid w-full max-w-7xl gap-5 px-4 py-6 md:px-8">
       <AdminFlash ok={ok} error={error} />
       <header className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <Link href="/parametres" className="text-sm font-bold text-ink-soft hover:underline">
-            ← Retour au jeu
-          </Link>
+        <div className="grid justify-items-start gap-3">
+          {/* Retour au jeu : un bouton, symétrique de « Espace Admin » dans les Réglages. */}
+          <ButtonLink href="/parametres" className="px-6">
+            Espace Joueur
+          </ButtonLink>
           <h1 className="font-display text-5xl leading-none">Tableau de bord</h1>
         </div>
         <span className={`rounded-full px-4 py-1.5 text-sm font-extrabold ${isSuper ? "bg-[#1a1238] text-white" : "bg-sticker text-[#1a1238]"}`}>
@@ -718,7 +720,8 @@ async function Challenges({ isSuper }: { isSuper: boolean }) {
 }
 
 function Config() {
-  const { DUPLICATES, MEME_MONEY, TROPHIES, DAILY_FREE_BOOSTERS, PITY_THRESHOLD } = GAME_CONFIG;
+  const { DUPLICATES, MEME_MONEY, DAILY_FREE_BOOSTERS, PITY_THRESHOLD, BATTLE_ROYALE } = GAME_CONFIG;
+  const eco = BATTLE_ROYALE.ECONOMY;
   return (
     <>
       <Box title="Configuration du jeu">
@@ -731,7 +734,8 @@ function Config() {
           <Stat label="Pity (légendaire garantie)" value={`${PITY_THRESHOLD} boosters`} />
           <Stat label="Booster en plus" value={`${MEME_MONEY.EXTRA_DAILY_BOOSTER_PRICE} MM`} />
           <Stat label="Super / Ultra Booster" value={`${MEME_MONEY.SPECIAL_BOOSTER_PRICE} / ${MEME_MONEY.VERY_SPECIAL_BOOSTER_PRICE} MM`} />
-          <Stat label="Trophées victoire / défaite" value={`+${TROPHIES.WIN} / −${TROPHIES.LOSS}`} />
+          <Stat label="Battle Royale : trophées Top 1 / dernier" value={`+${eco.TROPHIES_BY_PLACE[0][1]} / −${-eco.TROPHIES_BY_PLACE.at(-1)![1]}`} />
+          <Stat label="Battle Royale : MemeMoney max par jour" value={`${eco.MEME_MONEY_DAILY_CAP} MM`} />
           <Stat label="Plafond de revente" value={`${DUPLICATES.DAILY_SELL_CAP} MM / jour`} />
         </div>
       </Box>

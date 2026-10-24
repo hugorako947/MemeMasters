@@ -194,10 +194,8 @@
     "appTitle": "Aplicativo",
     "randomHint": "Cada clique sorteia uma nova paleta de cores para todo o jogo.",
     "randomAgain": "Novas cores",
-    "adminTitle": "Administração",
-    "superAdmin": "Super Admin",
-    "admin": "Admin",
-    "openDashboard": "Abrir o painel"
+    "adminSpace": "Espaço Admin",
+    "superAdminSpace": "Espaço Super Admin"
   },
   "rarities": {
     "title": "As 7 raridades"
@@ -394,7 +392,7 @@
       "verySpecial": "Ultra Pacote"
     },
     "battles": {
-      "title": "Batalhas",
+      "title": "Battle Royale",
       "lead": "As batalhas chegam em breve: prepare sua coleção.",
       "nextReward": "Próximo ranque alcançado → {boosters} pacotes e {money} MemeMoney de presente"
     },
@@ -508,13 +506,13 @@
       "top": "Você chegou ao ranque mais alto. Respeito.",
       "howTitle": "Como funciona",
       "rules": {
-        "win": "Vitória: +{win} troféus e +{money} MemeMoney.",
-        "loss": "Derrota: −{loss} troféus, nunca abaixo de 0.",
-        "draw": "Empate: seus troféus não mudam.",
         "perRank": "A cada {per} troféus você sobe de ranque.",
         "drop": "Seu ranque acompanha seus troféus: você pode descer, mas cada recompensa de ranque só é dada uma vez.",
-        "matchmaking": "Seus adversários têm um número de troféus próximo do seu.",
-        "bots": "Batalhas contra um bot não dão troféus nem MemeMoney."
+        "matchmaking": "Seus adversários são IAs que jogam com os personagens de jogadores reais próximos do seu nível; a dificuldade delas acompanha seus troféus.",
+        "place": "Sua posição final no Battle Royale ranqueado: de +{top} troféus (Top 1) a {worst} (últimas posições), e MemeMoney até o Top {mmTop}.",
+        "kills": "{per, plural, one {+# troféu} other {+# troféus}} por eliminação (até +{cap}) se você terminar na primeira metade.",
+        "rankEffect": "Quanto mais seu ranque sobe, mais os ganhos diminuem (−{gain} % por ranque) e mais as perdas aumentam (+{loss} % por ranque).",
+        "abandon": "Abandono: eliminação na sua posição do momento e {penalty} troféus a menos. Partidas com amigos não contam."
       },
       "yours": "Seu ranque",
       "range": "De {min} a {max} troféus",
@@ -532,7 +530,7 @@
       "how1": "Um exemplar de cada carta sempre fica na sua coleção: só os exemplares sobrando são usados.",
       "how2": "As evoluções são desbloqueadas em ordem: Dourada ★, depois Dourada ★★ e depois Divina ★★★.",
       "how3": "Quanto mais rara a carta, menos exemplares são necessários (tabela abaixo).",
-      "how4": "Cada evolução aumenta PV, ataque, defesa e velocidade, até +{max} % na Divina.",
+      "how4": "Cada evolução aumenta PV, ataque, defesa e velocidade, até +{max} % na Divina. No Battle Royale, esse bônus conta a {factor} % (até +{battleMax} %), para que sua habilidade continue decisiva.",
       "how5": "Uma estrela aparece na ilustração a cada evolução: douradas para Dourada, brancas e prateadas para Divina.",
       "costTitle": "Exemplares necessários",
       "rarity": "Raridade",
@@ -542,13 +540,13 @@
       "sell1": "Toque em uma carta: o botão “Vender” vende de uma vez todos os exemplares sobrando.",
       "sell2": "“Vender meus exemplares sobrando” faz o mesmo com toda a sua coleção.",
       "sell3": "Comuns, raras e épicas rendem no máximo {cap} MemeMoney por dia; cartas mais raras não têm limite.",
-      "sell4": "Os valores pequenos (0,1; 0,25…) se somam e nunca se perdem."
+      "sell4": "Os valores pequenos (0,1; 0,25…) se somam e nunca se perdem.",
+      "how6": "Não confunda com a Maestria, prevista com o Battle Royale: jogando com um personagem, você vai desbloquear para ele recompensas apenas cosméticas (moldura, rastro, título)."
     },
     "memeMoney": {
       "whatTitle": "O que é?",
       "what": "A MemeMoney é a moeda do jogo. Seu saldo aparece no canto superior direito; toque nele para abrir a Loja.",
       "earnTitle": "Como ganhar",
-      "earnWin": "Vencer uma batalha ranqueada: +{amount} MemeMoney (as batalhas chegam em breve).",
       "earnRanks": "Alcançar um novo ranque pela primeira vez: até {total} MemeMoney no total, além de pacotes (veja Ranques).",
       "earnSell": "Vender seus exemplares sobrando (veja Evoluções), até {cap} MemeMoney por dia com comuns, raras e épicas.",
       "earnShop": "Comprar na Loja com dinheiro real, a partir de {price}.",
@@ -561,56 +559,61 @@
       "rule1": "A MemeMoney não tem valor em dinheiro real: não pode ser revendida, reembolsada nem convertida em dinheiro.",
       "rule2": "Ela não pode ser trocada entre jogadores.",
       "rule3": "As frações ganhas vendendo cartas são guardadas e se somam.",
-      "rule4": "Compras com dinheiro real são para maiores de {age} anos, com limite de {cap} a cada 30 dias."
+      "rule4": "Compras com dinheiro real são para maiores de {age} anos, com limite de {cap} a cada 30 dias.",
+      "earnBattle": "Terminar no Top {top} de uma partida ranqueada de Battle Royale (tabela abaixo), até {cap} MemeMoney por dia.",
+      "placeHead": "Posição final",
+      "amountHead": "MemeMoney",
+      "battleNote": "Abandonar não dá MemeMoney, e as partidas com amigos também não. O Battle Royale chega em breve."
     },
     "trophies": {
       "whatTitle": "O que são?",
-      "what": "Os troféus medem seu nível nas batalhas ranqueadas. Quanto mais você tem, mais alto seu ranque e mais fortes seus adversários.",
+      "what": "Os troféus medem seu nível no Battle Royale ranqueado. Quanto mais você tem, mais alto seu ranque e melhor jogam as IAs que você enfrenta.",
       "gainTitle": "Ganhar e perder troféus",
-      "result": "Resultado",
+      "result": "Posição final",
       "change": "Troféus",
-      "win": "Vitória",
-      "draw": "Empate",
-      "loss": "Derrota",
       "floor": "Você nunca fica abaixo de 0 troféus.",
-      "bots": "Batalhas contra um bot não mudam seus troféus.",
-      "soon": "As batalhas ranqueadas chegam em breve: até lá, seus troféus não mudam.",
+      "soon": "O Battle Royale ranqueado chega em breve: até lá, seus troféus não mudam.",
       "useTitle": "Para que servem",
       "use1": "A cada {per} troféus você sobe de ranque (veja Ranques).",
       "use2": "Cada novo ranque alcançado pela primeira vez dá pacotes e MemeMoney.",
-      "use3": "O jogo encontra adversários com um número de troféus parecido com o seu.",
+      "use3": "As IAs que você enfrenta jogam com os personagens de jogadores reais próximos do seu nível, e a dificuldade delas acompanha seus troféus.",
       "use4": "Eles posicionam você em relação aos outros jogadores na aba Ranking.",
       "whereTitle": "Onde ver",
       "where1": "No canto superior esquerdo da tela, ao lado do seu ranque.",
       "where2": "No seu Perfil, com o gráfico da evolução.",
-      "where3": "No Ranking: perto de você, no seu ranque ou no mundo."
+      "where3": "No Ranking: perto de você, no seu ranque ou no mundo.",
+      "tableNote": "Para uma partida com {count} participantes. Com menos participantes, as faixas seguem a mesma proporção.",
+      "kills": "Cada eliminação vale +{per} (até +{cap}) se você terminar na primeira metade da classificação.",
+      "rankEffect": "Quanto mais alto o seu ranque, menores os ganhos (−{gain} % por ranque) e maiores as perdas (+{loss} % por ranque): cada um se estabiliza no seu nível real.",
+      "abandon": "Sair de uma partida ranqueada conta como uma eliminação na sua posição do momento, com {penalty} troféus a menos.",
+      "casual": "Partidas com amigos e o Treino não mudam seus troféus."
     },
     "card": {
       "title": "Anatomia de uma carta",
-      "lead": "Cada carta de meme é um lutador. Veja o que significa cada elemento, com esta carta como exemplo.",
+      "lead": "Cada carta é um personagem jogável do Battle Royale, com suas vantagens e desvantagens. Veja o que significa cada elemento, com esta carta como exemplo.",
       "nameTitle": "Nome e raridade",
-      "name": "O nome fica no canto superior esquerdo; a raridade, na faixa de baixo. Quanto mais rara a carta, maiores seus atributos.",
+      "name": "O nome fica no alto à esquerda; a raridade, na faixa de baixo. Uma carta mais rara é um pouco mais forte, mas na batalha a diferença é pequena de propósito: sua habilidade é o que mais conta.",
       "hpTitle": "PV: {hp}",
-      "hp": "Pontos de vida: a resistência da carta. Quando chegam a 0, a carta fica fora de combate.",
+      "hp": "Pontos de vida. Na batalha: {maxHp} PV. O outro lado: quanto mais resistente o personagem, maior ele é, então mais fácil de acertar (raio de {radius} unidades).",
       "atkTitle": "ATQ: {atk}",
-      "atk": "Ataque: a força geral da carta. Aumenta o dano de todos os golpes.",
+      "atk": "Ataque. Na batalha, multiplica o dano das suas armas: × {percent} % aqui.",
       "defTitle": "DEF: {def}",
-      "def": "Defesa: a solidez da carta. Reduz o dano que ela recebe.",
+      "def": "Defesa. Na batalha, é a sua armadura: reduz em {percent} % o dano que você recebe.",
       "spdTitle": "VEL: {spd}",
-      "spd": "Velocidade: a carta mais rápida age primeiro em cada turno de combate.",
+      "spd": "Velocidade. Na batalha, você se move a {speed} unidades por segundo. Personagens rápidos costumam ser mais frágeis.",
       "attackTitle": "Ataque: {name} ({power})",
-      "attack": "O golpe básico, usável a qualquer momento, sem energia. O número à direita é o poder: a força própria desse golpe.",
-      "whyTitle": "Por que {atk} e {power}?",
-      "why": "{atk} é a força da carta; {power}, o poder desse golpe específico. O dano combina os dois e a defesa adversária o reduz: mais ou menos poder × ataque ÷ defesa do adversário. Aqui: {power} × {atk} ÷ {def} ≈ {damage} de dano contra uma carta com {def} de defesa.",
+      "attack": "O golpe básico dá estilo à carta. No Battle Royale, você atira com as armas recolhidas no terreno: {weapons}.",
       "specialTitle": "Ataque especial: {name} ({power})",
-      "special": "Um golpe mais forte, muitas vezes com um efeito extra (bater várias vezes, atordoar, se curar…). Custa energia.",
+      "special": "Vira a sua habilidade, que você ativa quando quiser: {ability}. Quanto maior o poder, mais forte o efeito.",
       "energyTitle": "Energia: {count, plural, one {# ponto} other {# pontos}}",
-      "energy": "Os pontos amarelos indicam a energia necessária para usar o ataque especial. A carta ganha energia durante o combate: aqui, precisa de {count} para poder usá-lo.",
+      "energy": "Na batalha, a energia define o tempo de recarga da sua habilidade: {seconds} s aqui ({base} s, mais {per} s por ponto de energia).",
       "defenseTitle": "Defesa: {name}",
-      "defense": "A habilidade usada quando a carta se protege em vez de atacar. A frase abaixo diz o que ela faz (curar, devolver dano, esquivar…).",
+      "defense": "Vira a sua passiva, sempre ativa: {passive}.",
       "extrasTitle": "Estrelas e exemplares",
-      "extras": "As estrelas, no canto superior esquerdo da ilustração, mostram a evolução da carta, que aumenta um pouco seus atributos. O selo ×n, no canto superior direito, indica quantos exemplares você tem.",
-      "soon": "As regras completas das batalhas serão detalhadas quando elas chegarem; estes cálculos dão a ideia geral."
+      "extras": "As estrelas, no alto à esquerda da ilustração, mostram a evolução da carta: as estatísticas sobem um pouco (na batalha, contam a {factor} %). O selo ×n, no alto à direita, indica quantos exemplares você tem.",
+      "soon": "O Battle Royale chega em breve. Esses valores ainda podem ser ajustados para manter o jogo equilibrado.",
+      "exampleTitle": "Exemplo de dano",
+      "example": "Uma bala de {weapon} ({damage} de dano) disparada por esta carta sai com {shot} de dano. Contra um personagem médio (armadura −{reduction} %), ela causa {hit}."
     }
   },
   "collection": {
@@ -1005,6 +1008,35 @@
       "reject": "Recusar",
       "approved": "“{name}” está em votação.",
       "rejected": "“{name}” foi recusada."
+    }
+  },
+  "battleRoyale": {
+    "weapons": {
+      "pop": "Lança-Pop",
+      "petard": "Bombinha Molhada",
+      "rafaleuse": "Rajadona 3000",
+      "lunette": "Luneta de Likes"
+    },
+    "items": {
+      "heal": "Curativo LOL",
+      "vest": "Colete Cringe"
+    },
+    "ability": {
+      "sprint": "Sprint: +{percent} % de velocidade por {seconds} s",
+      "stun": "Atordoamento: sua próxima bala (em até {window} s) imobiliza o alvo por {seconds} s",
+      "drain": "Roubo de vida: por {seconds} s, você recupera {percent} % do dano que causa",
+      "multi": "Rajada: {hits} balas de uma vez, cada uma com {percent} % do dano da sua arma",
+      "burn": "Queimadura: um projétil que queima o alvo ({percent} % dos PV máx. por segundo durante {seconds} s)",
+      "pierce": "Perfuração: por {seconds} s, seus tiros ignoram {percent} % da armadura inimiga",
+      "buff": "Reforço: +{percent} % de {stat} por {seconds} s",
+      "debuff": "Enfraquecimento: sua próxima bala (em até {window} s) reduz em {percent} % o atributo de {stat} do alvo por {seconds} s"
+    },
+    "passive": {
+      "regen": "Regeneração: depois de {delay} s sem ser atingido, você recupera {percent} % dos PV máx. por segundo",
+      "dodge": "Esquiva: {percent} % de chance de evitar cada bala",
+      "reflect": "Reflexo: {percent} % do dano recebido volta para o atirador",
+      "cleanse": "Imunidade: atordoamentos, queimaduras e enfraquecimentos duram {percent} % menos",
+      "recharge": "Recarga rápida: sua habilidade recarrega {percent} % mais rápido"
     }
   }
 }

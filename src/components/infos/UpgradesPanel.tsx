@@ -6,13 +6,14 @@ import { RARITIES } from "@/config/rarities";
 import { LEVELS } from "@/lib/economy/duplicates";
 import { InfoList, InfoSection, InfoTable } from "./InfoBlocks";
 
-/** Page « Améliorations » d'Infos : niveaux étoilés, coûts, bonus et revente des exemplaires en trop. */
+/** Page « Évolutions » d'Infos : niveaux étoilés, coûts, bonus (réduit en Battle Royale) et revente des exemplaires en trop. */
 export async function UpgradesPanel() {
   const t = await getTranslations("infos.upgrades");
   const tr = await getTranslations("rarity");
   const tl = await getTranslations("dup.level");
   const format = await getFormatter();
   const { UPGRADES, STAT_BONUS_PERCENT, SELL_CENTS, DAILY_SELL_CAP } = GAME_CONFIG.DUPLICATES;
+  const factor = GAME_CONFIG.BATTLE_ROYALE.CHARACTER.EVOLUTION_FACTOR_PERCENT;
   const demo = sampleOf("rare");
   const money = (cents: number) => format.number(cents / 100, { maximumFractionDigits: 2 });
   return (
@@ -31,7 +32,16 @@ export async function UpgradesPanel() {
       </InfoSection>
 
       <InfoSection title={t("howTitle")}>
-        <InfoList items={[t("how1"), t("how2"), t("how3"), t("how4", { max: STAT_BONUS_PERCENT[3] }), t("how5")]} />
+        <InfoList
+          items={[
+            t("how1"),
+            t("how2"),
+            t("how3"),
+            t("how4", { max: STAT_BONUS_PERCENT[3], factor, battleMax: format.number((STAT_BONUS_PERCENT[3] * factor) / 100, { maximumFractionDigits: 1 }) }),
+            t("how5"),
+            t("how6"),
+          ]}
+        />
       </InfoSection>
 
       <InfoSection title={t("costTitle")}>

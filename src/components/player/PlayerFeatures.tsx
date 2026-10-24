@@ -17,8 +17,9 @@ export const HOME_SLIDES = ["collection", "boosters", "batailles"] as const;
 
 /**
  * Accueil du joueur en pages glissantes : Collection (gauche), Boosters
- * (milieu, ouvert par défaut) et Batailles (droite). La Boutique est
- * suggérée discrètement dans la page Boosters.
+ * (milieu, ouvert par défaut) et Battle Royale (droite ; clé « batailles »
+ * gardée dans l'adresse ?vue=…). La Boutique est suggérée discrètement dans
+ * la page Boosters.
  */
 export async function PlayerFeatures({
   player,
@@ -57,16 +58,18 @@ export async function PlayerFeatures({
   );
 }
 
-async function SlideFrame({ tint, soon = false, children }: { tint: string; soon?: boolean; children: ReactNode }) {
+/**
+ * Cadre d'une page de l'Accueil, aux couleurs du thème choisi (comme la Collection et les
+ * pages d'Infos) : panneau `bg-surface`, et à l'intérieur le fond des pages (`bg-paper`).
+ */
+async function SlideFrame({ soon = false, children }: { soon?: boolean; children: ReactNode }) {
   const t = await getTranslations("playerHome");
   return (
-    <section className="rounded-[1.75rem] border-2 border-ink bg-surface p-4 shadow-[0_3px_0_0_var(--mm-shadow)] sm:p-6">
-      <div className="flex items-start justify-between gap-3">
-        {soon ? (
-          <span className="shrink-0 rounded-full border-2 border-ink bg-sticker px-3 py-1 text-xs font-extrabold text-[#1a1238]">{t("soon")}</span>
-        ) : null}
-      </div>
-      <div className={`mt-4 rounded-2xl p-4 text-[#1a1238] sm:p-6 ${tint}`}>{children}</div>
+    <section className="grid gap-4 rounded-[1.75rem] border-2 border-ink bg-surface p-4 shadow-[0_3px_0_0_var(--mm-shadow)] sm:p-6">
+      {soon ? (
+        <span className="justify-self-start rounded-full border-2 border-ink bg-paper px-3 py-1 text-xs font-extrabold text-ink">{t("soon")}</span>
+      ) : null}
+      <div className="rounded-2xl bg-paper p-4 text-ink sm:p-6">{children}</div>
     </section>
   );
 }
@@ -75,13 +78,13 @@ async function SlideFrame({ tint, soon = false, children }: { tint: string; soon
 async function BoostersSlide({ state, challenge }: { state: BoosterStateView; challenge: DailyChallenge | null }) {
   const doubleOffer = OFFERS.some((o) => o.kind === "first_purchase_double" && isOfferActive(o, new Date()));
   return (
-    <SlideFrame tint="bg-[#ffe3ec]">
+    <SlideFrame>
       <BoostersPanel state={state} doubleOffer={doubleOffer} challenge={challenge ? <DailyChallengeCard challenge={challenge} /> : null} />
     </SlideFrame>
   );
 }
 
-/** Rang, trophées, prochaine récompense, et un duel pour donner envie. */
+/** Battle Royale (bientôt) : rang, trophées, prochaine récompense, et deux personnages pour donner envie. */
 async function BattlesSlide({ player, counts }: { player: Player; counts?: { accounts: number; online: number } }) {
   const t = await getTranslations("playerHome.battles");
   const tr = await getTranslations("rank");
@@ -89,7 +92,7 @@ async function BattlesSlide({ player, counts }: { player: Player; counts?: { acc
   const rank = rankFor(player.trophies);
   const next = RANKS[rankIndex(player.trophies) + 1];
   return (
-    <SlideFrame tint="bg-[#fff6c9]" soon>
+    <SlideFrame soon>
       <div className="mx-auto grid max-w-lg gap-5">
         {counts ? <PlayerCounts initial={counts} compact /> : null}
         <div className="flex items-center gap-3">
@@ -103,7 +106,7 @@ async function BattlesSlide({ player, counts }: { player: Player; counts?: { acc
           </p>
         </div>
         {next ? (
-          <p className="rounded-xl bg-white px-4 py-2.5 text-sm font-bold">
+          <p className="rounded-xl border-2 border-ink bg-surface px-4 py-2.5 text-sm font-bold">
             {t("nextReward", { boosters: RANK_REWARDS[next].boosters, money: RANK_REWARDS[next].memeMoney })}
           </p>
         ) : null}
@@ -111,7 +114,7 @@ async function BattlesSlide({ player, counts }: { player: Player; counts?: { acc
           <div className="-rotate-6">
             <InteractiveCard card={sampleOf("epique")} size="compact" />
           </div>
-          <span className="meme-caption grid size-14 place-items-center rounded-full border-2 border-[#1a1238] bg-sticker text-2xl" aria-hidden="true">
+          <span className="meme-caption grid size-14 place-items-center rounded-full border-2 border-ink bg-surface text-2xl" aria-hidden="true">
             VS
           </span>
           <div className="rotate-6">

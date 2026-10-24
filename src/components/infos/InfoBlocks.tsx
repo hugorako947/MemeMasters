@@ -25,6 +25,18 @@ export function InfoList({ items }: { items: ReactNode[] }) {
   );
 }
 
+/**
+ * Lignes d'un tableau « place finale → valeur » à partir de tranches [place maximale, valeur]
+ * (pour 100 participants) : « 1 », « 2 – 3 », « 4 – 5 »…
+ */
+export function placeBandRows(bands: ReadonlyArray<readonly [number, number]>, value: (v: number) => ReactNode): ReactNode[][] {
+  // <bdi dir="ltr"> : en arabe, « 2 – 3 » et « +40 » ne doivent pas être inversés.
+  return bands.map(([max, v], i) => {
+    const from = i === 0 ? 1 : bands[i - 1][0] + 1;
+    return [<bdi key="place" dir="ltr">{from === max ? `${max}` : `${from} – ${max}`}</bdi>, <bdi key="value" dir="ltr">{value(v)}</bdi>];
+  });
+}
+
 export function InfoTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
   return (
     <div className="overflow-x-auto">

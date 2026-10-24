@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import { isOfferActive, OFFERS } from "@/config/shop";
 import { gameDate } from "@/lib/time/game-day";
 import { getBoosterState } from "./boosters";
@@ -36,7 +37,12 @@ export async function currentSeenValue(key: SeenKey, player: Player): Promise<st
     .join(",");
 }
 
-export async function getBadges(player: Player): Promise<Badges> {
+/**
+ * Mis en cache pour la durée de la requête : l'écran d'attente (PlayerLoading), le cadre du
+ * jeu et l'Accueil demandent les mêmes points rouges pour le même joueur (getPlayer est lui
+ * aussi en cache, donc c'est le même objet).
+ */
+export const getBadges = cache(async (player: Player): Promise<Badges> => {
   const [[row], boosters, incoming, unread, community] = await Promise.all([
     sql()<{ seen: Record<string, string> }[]>`select seen from public.player_private where player_id = ${player.id}`,
     getBoosterState(player),
@@ -52,7 +58,7 @@ export async function getBadges(player: Player): Promise<Badges> {
   const seenOffers = new Set((seen.shop ?? "").split(",").filter(Boolean));
   const newOffers = (await currentSeenValue("shop", player)).split(",").filter((code) => code && !seenOffers.has(code)).length;
   return { home: boostersNew + challengeReady, boosters: boostersNew, infos: unreadNews, news: unreadNews, shop: newOffers, profile: incoming + unread + community, friends: incoming, messages: unread, community };
-}
+});
 
 export async function markSeen(player: Player, key: SeenKey): Promise<void> {
   await sql()`

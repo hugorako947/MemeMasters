@@ -5,6 +5,7 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { RankShield, TrophyIcon } from "@/components/player/RankBadge";
 import { FormMessage } from "@/components/ui/Field";
+import { Spinner } from "@/components/ui/Spinner";
 import { rankFor } from "@/config/ranks";
 import type { FriendLite, FriendsOverview, Relation } from "@/lib/server/friends";
 import { useFriendAction } from "./useFriendAction";
@@ -18,7 +19,9 @@ type SearchResult = FriendLite & { relation: Relation["kind"] };
 export function FriendsPanel({ overview }: { overview: FriendsOverview }) {
   const t = useTranslations("friends");
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<SearchResult[]>([]);
+  // Résultats et recherche à laquelle ils répondent : tant que la recherche affichée n'a pas
+  // de réponse, un cercle tourne dans le champ (et « Aucun joueur trouvé » attend la réponse).
+  const [results, setResults] = useState<{ q: string; list: SearchResult[] }>({ q: "", list: [] });
   const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
   const { act, pending, error } = useFriendAction();
 
@@ -28,12 +31,14 @@ export function FriendsPanel({ overview }: { overview: FriendsOverview }) {
     if (q.length < 2) return;
     const controller = new AbortController();
     const timer = setTimeout(async () => {
+      let list: SearchResult[] = [];
       try {
         const res = await fetch(`/api/friends/search?q=${encodeURIComponent(q)}`, { signal: controller.signal });
-        if (res.ok) setResults((await res.json()).results);
+        if (res.ok) list = (await res.json()).results;
       } catch {
-        /* recherche annulée */
+        if (controller.signal.aborted) return; // recherche remplacée par une plus récente
       }
+      setResults({ q, list });
     }, 300);
     return () => {
       clearTimeout(timer);
@@ -43,11 +48,14 @@ export function FriendsPanel({ overview }: { overview: FriendsOverview }) {
 
   async function add(r: SearchResult) {
     if (await act(r.id, "/api/friends/request", { username: r.username })) {
-      setResults((list) => list.map((x) => (x.id === r.id ? { ...x, relation: r.relation === "incoming" ? "friends" : "outgoing" } : x)));
+      setResults((res) => ({ ...res, list: res.list.map((x) => (x.id === r.id ? { ...x, relation: r.relation === "incoming" ? "friends" : "outgoing" } : x)) }));
     }
   }
 
-  const shown = query.trim().length >= 2 ? results : [];
+  const q = query.trim();
+  const searching = q.length >= 2 && results.q !== q;
+  // Pendant une nouvelle recherche, les résultats précédents restent affichés sous le cercle.
+  const shown = q.length >= 2 ? results.list : [];
 
   return (
     <section className="mm-online-only grid gap-5 rounded-[1.5rem] border-2 border-ink bg-surface p-5 shadow-[0_3px_0_0_var(--mm-shadow)]" aria-labelledby="amis">
@@ -60,16 +68,23 @@ export function FriendsPanel({ overview }: { overview: FriendsOverview }) {
         <label htmlFor="friend-search" className="text-sm font-bold">
           {t("searchLabel")}
         </label>
-        <input
-          id="friend-search"
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder={t("searchPlaceholder")}
-          autoComplete="off"
-          className="min-h-11 rounded-full border-2 border-ink bg-surface px-4"
-        />
-        {query.trim().length >= 2 && shown.length === 0 ? <p className="text-sm text-ink-soft">{t("noResult")}</p> : null}
+        <div className="relative">
+          <input
+            id="friend-search"
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={t("searchPlaceholder")}
+            autoComplete="off"
+            className="min-h-11 w-full rounded-full border-2 border-ink bg-surface px-4 pe-12"
+          />
+          {searching ? (
+            <span className="pointer-events-none absolute inset-y-0 end-4 grid place-items-center">
+              <Spinner />
+            </span>
+          ) : null}
+        </div>
+        {q.length >= 2 && !searching && shown.length === 0 ? <p className="text-sm text-ink-soft">{t("noResult")}</p> : null}
         <ul className="grid gap-1.5">
           {shown.map((r) => (
             <PlayerRow key={r.id} player={r}>

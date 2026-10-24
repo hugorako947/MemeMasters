@@ -96,7 +96,7 @@ export function BoostersPanel({ state, doubleOffer, challenge }: { state: Booste
         </button>
         <p className="text-lg font-extrabold">{t("freeLeft", { count: state.freeLeft })}</p>
         {state.dailyReserve > 0 ? <p className="-mt-2 text-sm font-semibold opacity-80">{t("reserve", { count: state.dailyReserve })}</p> : null}
-        {dailyAvailable === 0 ? <p className="rounded-xl bg-white/70 px-4 py-2 text-sm font-bold">{t("nextFree")}</p> : null}
+        {dailyAvailable === 0 ? <p className="rounded-xl border-2 border-ink bg-surface px-4 py-2 text-sm font-bold">{t("nextFree")}</p> : null}
       </section>
 
       {challenge}
@@ -114,7 +114,7 @@ export function BoostersPanel({ state, doubleOffer, challenge }: { state: Booste
                 <li key={s.kind}>
                   <button type="button" onClick={() => open(s.kind)} className="mm-btn mm-btn--primary min-h-11 gap-2 px-4 text-sm">
                     {t("openKind", { item: s.label })}
-                    <span className="rounded-full bg-white/80 px-2 text-xs text-[#1a1238]">×{s.owned}</span>
+                    <span className="rounded-full bg-surface px-2 text-xs text-ink">×{s.owned}</span>
                   </button>
                 </li>
               ))}
@@ -125,7 +125,7 @@ export function BoostersPanel({ state, doubleOffer, challenge }: { state: Booste
       {/* 3. Acheter avec la MemeMoney : le prix est sur chaque bouton. */}
       <ul className="mm-online-only grid gap-3 sm:grid-cols-3">
         {shop.map((s) => (
-          <li key={s.item} className="grid grid-cols-[3rem_1fr] items-center gap-3 rounded-2xl border-2 border-[#1a1238] bg-white p-3 sm:grid-cols-1 sm:justify-items-center sm:text-center">
+          <li key={s.item} className="grid grid-cols-[3rem_1fr] items-center gap-3 rounded-2xl border-2 border-ink bg-surface p-3 sm:grid-cols-1 sm:justify-items-center sm:text-center">
             <div className={`mm-pack ${PACK_CLASS[s.kind]} w-12 sm:w-14`} aria-hidden="true" />
             <div className="grid gap-2 sm:justify-items-center">
               <p className="font-extrabold leading-tight">{s.label}</p>
@@ -146,19 +146,19 @@ export function BoostersPanel({ state, doubleOffer, challenge }: { state: Booste
       {/* 4. La Boutique : une vraie case, avec l'offre de la première recharge. */}
       <Link
         href="/boutique"
-        className="mm-online-only group grid grid-cols-[auto_1fr] items-center gap-4 rounded-2xl border-2 border-[#1a1238] bg-[linear-gradient(120deg,#ffd23f,#ff8fb1)] p-4 text-[#1a1238] shadow-[0_3px_0_0_#1a1238] transition-transform hover:-translate-y-0.5 sm:grid-cols-[auto_1fr_auto]"
+        className="mm-online-only group grid grid-cols-[auto_1fr] items-center gap-4 rounded-2xl border-2 border-ink bg-surface p-4 text-ink shadow-[0_3px_0_0_var(--mm-shadow)] transition-transform hover:-translate-y-0.5 sm:grid-cols-[auto_1fr_auto]"
       >
-        <span className="grid size-14 place-items-center rounded-full border-2 border-[#1a1238] bg-white text-2xl" aria-hidden="true">
+        <span className="grid size-14 place-items-center rounded-full border-2 border-ink bg-paper text-2xl" aria-hidden="true">
           <MemeCoin />
         </span>
         <span className="grid gap-0.5">
           {doubleOffer ? (
-            <span className="justify-self-start rounded-full bg-[#1a1238] px-2.5 py-0.5 text-xs font-extrabold text-white">{t("shopBadge")}</span>
+            <span className="justify-self-start rounded-full bg-ink px-2.5 py-0.5 text-xs font-extrabold text-paper">{t("shopBadge")}</span>
           ) : null}
           <span className="font-display text-2xl leading-tight">{doubleOffer ? t("shopTitleDouble") : t("shopTitle")}</span>
-          <span className="text-sm font-semibold">{t("shopLead")}</span>
+          <span className="text-sm font-semibold text-ink-soft">{t("shopLead")}</span>
         </span>
-        <span className="col-span-2 justify-self-start rounded-full border-2 border-[#1a1238] bg-white px-4 py-2 text-sm font-extrabold group-hover:underline sm:col-span-1">
+        <span className="col-span-2 justify-self-start rounded-full border-2 border-ink bg-paper px-4 py-2 text-sm font-extrabold group-hover:underline sm:col-span-1">
           {t("shopCta")} <span aria-hidden="true" className="inline-block rtl:rotate-180">→</span>
         </span>
       </Link>

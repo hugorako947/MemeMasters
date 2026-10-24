@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useActionState, useCallback, useEffect, useRef, useState, startTransition, type FormEvent } from "react";
 import { CardDetailDialog } from "@/components/card/CardDetailDialog";
 import { MemeCard } from "@/components/card/MemeCard";
+import { startNavigationProgress } from "@/components/layout/NavigationProgress";
 import { Button } from "@/components/ui/Button";
 import { ImagePicker, type ImagePickerLabels } from "@/components/ui/ImagePicker";
 import { toast } from "@/components/ui/Toast";
@@ -61,7 +62,10 @@ export function CardEditor({ card, community, isSuper }: { card: EditorCard | nu
   useEffect(() => {
     if (state.status === "done") {
       toast.success(state.message);
-      if (state.next) router.push(state.next);
+      if (state.next) {
+        startNavigationProgress();
+        router.push(state.next);
+      }
     } else if (state.status === "error") {
       toast.error(state.message);
     }

@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
+import { reloadIfStaleBuild } from "@/lib/client/stale-build";
 import "./globals.css";
 
 /**
@@ -8,6 +10,11 @@ import "./globals.css";
  * traductions disponibles ici, le message est donc en français et en anglais.
  */
 export default function GlobalError({ error, retry }: { error: Error & { digest?: string }; retry: () => void }) {
+  // Ancienne version du jeu restée ouverte après une mise en ligne : on recharge.
+  useEffect(() => {
+    reloadIfStaleBuild(error);
+  }, [error]);
+
   return (
     <html lang="fr">
       <body className="min-h-dvh antialiased">
