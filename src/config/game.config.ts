@@ -168,8 +168,8 @@ const gameConfigSchema = z
 export type GameConfig = z.infer<typeof gameConfigSchema>;
 
 export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
-  GAME_NAME: "MemeMasters",
-  GAME_SHORT_NAME: "MemeMasters",
+  GAME_NAME: "Battle Meme",
+  GAME_SHORT_NAME: "Battle Meme",
   GAME_TAGLINE: "Ouvre des boosters, complète ta collection et affronte des joueurs du monde entier.",
 
   DUPLICATES: {

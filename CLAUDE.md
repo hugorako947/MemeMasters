@@ -9,7 +9,7 @@ Ce fichier est lu automatiquement au début de chaque session. Il contient ce qu
 Jeu web multijoueur de cartes à collectionner sur le thème des memes (PWA installable sur téléphone et ordinateur). Les joueurs ouvrent des boosters, collectionnent, font évoluer leurs cartes, se classent, se font des amis et discutent. Public jeune et mobile ; interface en 7 langues.
 
 - **Propriétaire** : un développeur seul, francophone, qui valide chaque fonctionnalité. **Toujours répondre en français**, clairement, sans jargon inutile.
-- **Nom du jeu** : constante unique `GAME_CONFIG.GAME_NAME` (`src/config/game.config.ts`). Ne jamais écrire « MemeMasters » en dur dans l'interface.
+- **Nom du jeu** : **« Battle Meme »**, provisoire (un jeu du même nom existe : il changera encore). Constantes uniques `GAME_CONFIG.GAME_NAME` et `GAME_SHORT_NAME` (`src/config/game.config.ts`) ; ne jamais écrire le nom en dur dans l'interface. Seules exceptions, à mettre à jour à chaque changement de nom : les modèles d'e-mails `supabase/templates/*.html` (à recoller ensuite dans Supabase, avec le « Sender name » du SMTP) et le pseudo réservé de `src/lib/validation/username.ts`. Le dépôt, `package.json`, les tables, les cookies `mm-…` et les documents de `docs/` gardent l'ancien nom technique « MemeMasters ».
 - **État** : l'essentiel est en place (comptes, cartes, boosters, collection, évolutions, revente, classements, amis, messagerie, défi du jour, communauté, tableau de bord). **Restent** : les batailles (concept non validé, voir §8), les paiements Stripe (phase 5), les finitions (performances, audit de sécurité).
 
 ## 2. Règles de travail (à suivre à chaque tâche)
@@ -22,9 +22,10 @@ Jeu web multijoueur de cartes à collectionner sur le thème des memes (PWA inst
 6. **Consigner les décisions** : toute décision non triviale s'ajoute en fin de `DECISIONS.md` (section par sujet, en français, avec le « pourquoi »).
 7. **Ne pas réécrire ce qui marche** sans demande explicite, et ne jamais supprimer une fonctionnalité sans accord.
 8. **Après la tâche**, résumer au propriétaire ce qui a changé, comment le tester, et s'il doit lancer `npm install` ou `npx supabase db push`.
-9. **Annoncer avant de modifier** (demande du propriétaire) : expliquer ce qui va changer, et dans quels fichiers, avant de le faire, surtout quand plusieurs fichiers sont touchés.
+9. **Annoncer avant de modifier, puis attendre l'accord** (règle permanente du propriétaire) : annoncer les fichiers concernés et ce qui change dans chacun ; **attendre son accord quand plusieurs fichiers sont touchés**. Pour un choix technique, proposer les options avec leurs avantages et leurs risques, et une recommandation.
 10. **Tenir ce fichier à jour** : toute nouvelle règle ou décision durable est ajoutée ici (et détaillée dans `DECISIONS.md`) dans la même tâche.
-11. **Vérifier à l'exécution, pas seulement à la compilation** : une erreur d'affichage d'un composant serveur n'apparaît ni au typecheck ni au build. Afficher les pages touchées (`/apercu?vue=…` avec `npm run dev`) et lire le journal du serveur ; pour la base, tester les écritures dans une transaction annulée.
+11. **Vérifier à l'exécution, pas seulement à la compilation** (« ne fais pas d'erreurs ») : une erreur d'affichage d'un composant serveur n'apparaît ni au typecheck ni au build. Afficher les pages touchées (`/apercu?vue=…` avec `npm run dev`) et lire le journal du serveur ; pour la base, tester les écritures dans une transaction annulée. Pour un parcours de joueur connecté (accord du propriétaire donné le 2026-10-24) : `npm run build && npm start`, Chrome local piloté par `puppeteer-core` installé dans le dossier temporaire (jamais dans le projet), compte de test créé par l'API d'administration de Supabase puis supprimé, avec vérification qu'il ne reste aucune ligne.
+12. **Rigueur** : vérifier chaque API de Next.js 16 dans `node_modules/next/dist/docs/` plutôt que de se fier à sa mémoire ; écrire les tests **avant** la logique de jeu.
 
 ## 3. Commandes
 
@@ -56,12 +57,11 @@ Next.js 16 diffère de ce que tu connais : consulter `node_modules/next/dist/doc
 src/
   app/                 Pages et routes API (App Router)
     (auth)/            connexion, inscription, mot de passe (actions serveur dans actions.ts)
-    (jeu)/             boutique, infos, parametres, profil/[pseudo] (cadre joueur)
+    (jeu)/             accueil (page.tsx), boutique, infos, parametres, profil/[pseudo] (cadre joueur)
     admin/             tableau de bord (Super Admin / admins) : page.tsx, actions.ts, CardEditor
     api/               routes JSON (une action = une route ; voir §6)
     apercu/            prévisualisation sans compte (développement)
     bataille/          bataille d'entraînement — NON reliée à l'interface (§8)
-    page.tsx           accueil : visiteur (vitrine) ou joueur (Collection | Boosters | Batailles)
   components/          par domaine : card, collection, booster, infos, player, friends, messages,
                        moderation, community, challenges, install, pwa, layout, ui, battle, home, legal
   config/              game.config.ts (réglages validés par Zod), rarities.ts, ranks.ts, shop.ts, legal.config.ts
@@ -94,6 +94,7 @@ docs/                  guides pour le propriétaire (Google OAuth et e-mails, St
   ```
   Les erreurs métier lèvent `new ApiError(status, "code_erreur")` ; chaque code doit avoir sa phrase dans `errors.*` des 7 langues.
 - **Pages** : `requirePlayer()` (redirige vers la connexion, `/bienvenue` ou `/banni`), `requireAdmin()` / `requireAdmin("superadmin")` (renvoie une **404** aux autres : l'existence du tableau de bord n'est pas révélée).
+- **Groupe `(jeu)`** : il contient l'Accueil (`(jeu)/page.tsx`), pour que le cadre du joueur (rang, trophées, MemeMoney, navigation) reste affiché pendant le chargement. Son layout laisse donc passer les visiteurs sans cadre (seul l'Accueil vitrine leur est montré) : **chaque page du groupe doit appeler `requirePlayer()` elle-même** (vérifié par `src/app/(jeu)/guards.test.ts` ; `src/proxy.ts` protège aussi `/boutique`, `/infos`, `/profil`, `/parametres`).
 - **Limites de débit** : déclarées dans `RATE_LIMITS` (`src/lib/server/rate-limit.ts`) ; toute nouvelle route sensible en reçoit une.
 - **Captcha** : Cloudflare Turnstile sur connexion, inscription, mot de passe oublié et contact (`verifyCaptcha`, composant `Captcha`). En local sans clés : clés de test de Cloudflare automatiques. Ne pas activer en plus le captcha de Supabase (un jeton ne sert qu'une fois).
 - **Adresse du site** : `publicBaseUrl()` (`site-url.ts`) suit l'adresse réelle de la requête (Vercel, tunnel, ou adresse Wi-Fi en local) ; elle alimente le QR code d'installation.
@@ -113,10 +114,12 @@ docs/                  guides pour le propriétaire (Google OAuth et e-mails, St
 
 ## 8. Batailles : ATTENTION
 
-Le cœur du jeu n'est **pas encore décidé**. Le code d'une bataille en temps réel de type « arène à tours » existe (`src/lib/battle/` : moteur pur et déterministe en nombres entiers, bot, decks ; `src/components/battle/` ; page `/bataille`), mais **aucun lien n'y mène** et la page Batailles de l'accueil affiche « Bientôt ».
+**Concept choisi par le propriétaire (2026-10-24)** : un **battle royale 2D vu de dessus, jusqu'à 100 participants** ; chaque carte est un personnage jouable ; partie classée en solo contre des bots portant les personnages de vrais joueurs, parties entre amis en pair-à-pair. Cahier des charges complet : `docs/PROMPT_CLAUDE_CODE_Battle_Meme.md` ; conception (phase 0) : `docs/BATTLE_ROYALE_CONCEPTION.md`, **à faire valider avant tout code**. Travail par phases (0 conception → 7 finitions), avec un arrêt pour validation après la phase 0.
 
-- Ne pas relier, étendre ni supprimer ce code sans demande explicite du propriétaire.
-- Le propriétaire choisit le concept parmi plusieurs idées (duel tactique au tour par tour, bataille de stats, auto-battler, vote, aventure solo, plateau tactique, arène en temps réel…), éventuellement combinées. Quand il aura choisi : proposer un plan, le faire valider, puis coder avec le moteur comme **fonction pure testée** (`état + action → nouvel état`) et une vérification serveur des parties classées.
+L'ancien code d'une bataille « arène à tours » existe encore (`src/lib/battle/` : moteur pur et déterministe en nombres entiers, bot, decks ; `src/components/battle/` ; page `/bataille`), mais **aucun lien n'y mène** et la page Batailles de l'accueil affiche « Bientôt ». Il est remplacé par le battle royale ; son sort est proposé en phase 0.
+
+- Ne pas relier, étendre ni supprimer l'ancien code sans accord du propriétaire (proposition attendue en phase 0).
+- Moteur du battle royale : **fonction pure et déterministe** (`état + commandes du tick → nouvel état`), entiers ou virgule fixe, aucun `Math.random`/`sin`/`cos`/`atan2`/`sqrt` flottant dans la simulation, tests d'abord, rejeu et vérification par le serveur des parties classées (le client ne décide jamais).
 - Les trophées (+25 / −25 / 0), les récompenses de victoire et les défis liés aux batailles sont déjà prévus dans la configuration et la base, en attente.
 
 ## 9. Traductions (next-intl, 7 langues)

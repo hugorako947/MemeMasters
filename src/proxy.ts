@@ -8,7 +8,7 @@ import { updateSession } from "@/lib/supabase/proxy";
  */
 
 /** Pages réservées aux joueurs connectés. */
-const PROTECTED_PREFIXES = ["/bienvenue", "/profil", "/parametres", "/nouveau-mot-de-passe"];
+const PROTECTED_PREFIXES = ["/bienvenue", "/profil", "/parametres", "/boutique", "/infos", "/nouveau-mot-de-passe"];
 /** Pages inutiles une fois connecté. */
 const GUEST_ONLY = ["/connexion", "/inscription"];
 

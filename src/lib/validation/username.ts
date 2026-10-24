@@ -10,7 +10,7 @@ export const USERNAME_MAX = 20;
 /** Noms réservés à l'équipe ou trompeurs. */
 const RESERVED = [
   "admin", "administrateur", "administrator", "moderateur", "moderator", "modo", "staff",
-  "support", "system", "systeme", "officiel", "official", "root", "bot", "mememasters",
+  "support", "system", "systeme", "officiel", "official", "root", "bot", "mememasters", "battlememe",
   "anthropic", "claude", "null", "undefined",
 ];
 

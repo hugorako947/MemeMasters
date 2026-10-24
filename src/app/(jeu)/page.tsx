@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { InteractiveCard } from "@/components/card/InteractiveCard";
 import { RarityShowcase } from "@/components/card/RarityShowcase";
@@ -10,22 +9,25 @@ import { PlayOnPhone } from "@/components/install/PlayOnPhone";
 import { PlayerCounts } from "@/components/player/PlayerCounts";
 import { playerCounts } from "@/lib/server/presence";
 import { GAME_CONFIG } from "@/config/game.config";
-import { AppShell } from "@/components/layout/AppShell";
 import { PlayerFeatures } from "@/components/player/PlayerFeatures";
 import { ButtonLink } from "@/components/ui/Button";
-import { getAuthUser } from "@/lib/server/auth";
+import { getAuthUser, requirePlayer } from "@/lib/server/auth";
 import { getBoosterState } from "@/lib/server/boosters";
 import { getCollection } from "@/lib/server/cards";
 import { resaleLeftCents } from "@/lib/server/duplicates";
 import { getBadges } from "@/lib/server/notifications";
 import { getDailyChallenge } from "@/lib/server/challenges";
-import { getPlayer } from "@/lib/server/players";
 
+/**
+ * Accueil : la vitrine pour un visiteur, le jeu (Collection | Boosters | Batailles)
+ * pour un joueur. Il est dans le groupe (jeu) : le cadre du joueur (rang, trophées,
+ * MemeMoney, navigation) reste affiché pendant le chargement, comme sur les autres pages.
+ */
 export default async function HomePage({ searchParams }: PageProps<"/">) {
   const user = await getAuthUser();
   if (!user) return <GuestHome />;
-  const player = await getPlayer(user.id);
-  if (!player || !player.consentUpToDate) redirect("/bienvenue");
+  // Mêmes règles que les autres pages du jeu : profil créé, conditions acceptées, compte non banni.
+  const { player } = await requirePlayer();
   const { vue } = await searchParams;
   const [collection, boosters, resaleLeft, badges, challenge, counts] = await Promise.all([
     getCollection(player.id),
@@ -35,13 +37,12 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
     getDailyChallenge(player),
     playerCounts(),
   ]);
+  // Le cadre (AppShell) est fourni par le layout du groupe (jeu).
   return (
-    <AppShell player={player} badges={badges}>
-      <div className="grid gap-6">
-        <h1 className="font-display text-4xl leading-none md:text-5xl">{(await getTranslations("playerHome"))("title", { username: player.username })}</h1>
-        <PlayerFeatures player={player} collection={collection} boosters={boosters} resaleLeftCents={resaleLeft} boostersBadge={badges.boosters} challenge={challenge} counts={counts} initial={typeof vue === "string" ? vue : undefined} />
-      </div>
-    </AppShell>
+    <div className="grid gap-6">
+      <h1 className="font-display text-4xl leading-none md:text-5xl">{(await getTranslations("playerHome"))("title", { username: player.username })}</h1>
+      <PlayerFeatures player={player} collection={collection} boosters={boosters} resaleLeftCents={resaleLeft} boostersBadge={badges.boosters} challenge={challenge} counts={counts} initial={typeof vue === "string" ? vue : undefined} />
+    </div>
   );
 }
 

@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* ==========================================================================
-   Design system MemeMasters
+   Design system du jeu
    Fond lavande « écran de téléphone », encre violet nuit, rose notification.
    L'audace est réservée aux cartes ; l'interface reste calme autour.
    ========================================================================== */
@@ -1072,6 +1072,8 @@ body:has(> dialog.mm-detail[open]) #mm-app {
 }
 .mm-logo__text {
   display: inline-block;
+  /* Le nom du jeu reste sur une seule ligne, même s'il contient un espace. */
+  white-space: nowrap;
   /* Petit dandinement de temps en temps, pour attirer l'œil sans gêner. */
   animation: mm-logo-idle 8s ease-in-out infinite;
 }
@@ -1755,4 +1757,9 @@ body:has(> dialog.mm-detail[open]) #mm-app {
   .mm-reveal-card {
     animation: none;
   }
+}
+
+/* Visiteur sur l'Accueil (groupe (jeu) sans cadre) : écran de chargement plein écran, comme avant. */
+.mm-public-frame .mm-loading {
+  min-height: 100dvh;
 }
