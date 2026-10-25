@@ -1,5 +1,5 @@
 import { getFormatter, getTranslations } from "next-intl/server";
-import { MemeCard } from "@/components/card/MemeCard";
+import { InteractiveCard } from "@/components/card/InteractiveCard";
 import { sampleOf } from "@/components/card/sample-cards";
 import { GAME_CONFIG } from "@/config/game.config";
 import { RARITIES } from "@/config/rarities";
@@ -23,7 +23,7 @@ export async function UpgradesPanel() {
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {LEVELS.map((level) => (
             <li key={level} className="grid gap-2 text-center">
-              <MemeCard card={demo} size="compact" level={level} />
+              <InteractiveCard card={demo} size="compact" level={level} />
               <p className="text-sm font-extrabold">{tl(String(level) as "0")}</p>
               <p className="text-xs text-ink-soft">{level === 0 ? t("base") : t("bonus", { percent: STAT_BONUS_PERCENT[level] })}</p>
             </li>

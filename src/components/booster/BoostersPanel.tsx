@@ -146,9 +146,9 @@ export function BoostersPanel({ state, doubleOffer, challenge }: { state: Booste
       {/* 4. La Boutique : une vraie case, avec l'offre de la première recharge. */}
       <Link
         href="/boutique"
-        className="mm-online-only group grid grid-cols-[auto_1fr] items-center gap-4 rounded-2xl border-2 border-ink bg-surface p-4 text-ink shadow-[0_3px_0_0_var(--mm-shadow)] transition-transform hover:-translate-y-0.5 sm:grid-cols-[auto_1fr_auto]"
+        className="mm-online-only mm-shop-promo group grid grid-cols-[auto_1fr] items-center gap-4 rounded-2xl border-2 border-ink p-4 text-ink shadow-[0_3px_0_0_var(--mm-shadow)] transition-transform hover:-translate-y-0.5 sm:grid-cols-[auto_1fr_auto]"
       >
-        <span className="grid size-14 place-items-center rounded-full border-2 border-ink bg-paper text-2xl" aria-hidden="true">
+        <span className="grid place-items-center text-[2.6rem] leading-none">
           <MemeCoin />
         </span>
         <span className="grid gap-0.5">

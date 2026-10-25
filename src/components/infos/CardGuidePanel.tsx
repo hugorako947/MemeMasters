@@ -1,5 +1,5 @@
 import { getFormatter, getTranslations } from "next-intl/server";
-import { MemeCard } from "@/components/card/MemeCard";
+import { InteractiveCard } from "@/components/card/InteractiveCard";
 import { sampleOf } from "@/components/card/sample-cards";
 import { BR_WEAPONS, GAME_CONFIG } from "@/config/game.config";
 import { battleCharacter, bulletDamage, damageTakenPermille } from "@/lib/br/character";
@@ -53,7 +53,7 @@ export async function CardGuidePanel() {
   return (
     <div className="grid items-start gap-6 md:grid-cols-[minmax(0,20rem)_1fr]">
       <div className="mx-auto w-full max-w-[20rem] md:sticky md:top-6">
-        <MemeCard card={card} quantity={3} />
+        <InteractiveCard card={card} quantity={3} />
       </div>
       <InfoSection title={t("title")}>
         <p className="text-ink-soft">{t("lead")}</p>

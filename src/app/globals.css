@@ -1056,6 +1056,45 @@ body:has(> dialog.mm-detail[open]) #mm-app {
   margin-inline-start: -0.7em;
 }
 
+/* Case « Boutique » de la page Boosters : dégradé tiré des couleurs du thème
+   (mêlées au fond des cases, pour que le texte reste lisible en clair comme en
+   sombre), traversé de temps en temps par un reflet. */
+.mm-shop-promo {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: linear-gradient(
+    125deg,
+    color-mix(in srgb, var(--color-surface), var(--color-candy) 30%),
+    color-mix(in srgb, var(--color-surface), var(--color-sticker) 34%) 50%,
+    color-mix(in srgb, var(--color-surface), var(--color-link) 26%)
+  );
+}
+.mm-shop-promo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.3) 50%, transparent 65%);
+  translate: -100% 0;
+  animation: mm-shop-shine 5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes mm-shop-shine {
+  0%,
+  55% {
+    translate: -100% 0;
+  }
+  100% {
+    translate: 100% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mm-shop-promo::before {
+    display: none;
+  }
+}
+
 /* ==========================================================================
    Logo : il se dandine au survol, rebondit et lance des confettis au clic.
    ========================================================================== */
