@@ -9,7 +9,7 @@
  *   (position approximative) ; mémoire des derniers ennemis vus. Comme le joueur, ils voient la
  *   barre de vie et l'arme des ennemis visibles, le cercle de zone suivant et le fil des éliminations.
  * - Décision (4 fois par seconde, bots répartis sur les calculs) : scores de 0 à 1 000 pour
- *   ramasser, se soigner, combattre, fuir, se couvrir, rejoindre la zone, chasser, explorer ;
+ *   ramasser (un soin compris : il est immédiat), combattre, fuir, se couvrir, rejoindre la zone, chasser, explorer ;
  *   un bruit à graine, plus fort aux bas niveaux, rend les choix moins bons et moins identiques.
  * - Contrôle (à chaque tick) : suivi de chemin, visée (réaction, erreur, anticipation), tir,
  *   rechargement, changement d'arme, capacité, pas de côté, anti-blocage.
@@ -23,14 +23,14 @@ import { circleHitsSolid, ITEM, lineOfSight } from "./map";
 import { clearPath, FAR, fieldNext, findPath, navFor, nearestVertex, vertexX, vertexY, zoneField } from "./nav";
 import { chance, nextBelow, nextRange, STREAM } from "./rng";
 import { BURN_SHOT, msToTicks, SUB, type BotRules } from "./rules";
-import { BOT_MEMORY, BOT_MEMORY_FIELDS as MF, BOT_PATH, weaponInHand, Z, type MatchState } from "./state";
+import { BOT_MEMORY, BOT_MEMORY_FIELDS as MF, BOT_PATH, canTake, weaponInHand, Z, type MatchState } from "./state";
 import { canSee, canSeePoint, inView } from "./vision";
 
 /** Personnalités (conception §7.5). */
 export const PERSONA = { cautious: 0, aggressive: 1, mobile: 2, sniper: 3 } as const;
 /** Décisions possibles. */
-export const ACTION = { roam: 0, zone: 1, loot: 2, heal: 3, fight: 4, flee: 5, cover: 6, hunt: 7 } as const;
-const ACTIONS = 8;
+export const ACTION = { roam: 0, zone: 1, loot: 2, fight: 3, flee: 4, cover: 5, hunt: 6 } as const;
+const ACTIONS = 7;
 
 const kindIndex = <K extends string>(list: readonly K[]) => Object.fromEntries(list.map((k, i) => [k, i])) as Record<K, number>;
 const AB = kindIndex(ABILITY_KINDS);
@@ -345,7 +345,6 @@ function decide(s: MatchState, i: number): void {
   const item = bestItem(s, i);
   // S'équiper d'abord : le butin compte davantage tant qu'on n'a que l'arme de départ.
   if (item >= 0) scores[ACTION.loot] = (nearest >= 0 && nearestD < 300 * SUB ? idiv(itemScore, 2) : itemScore) + (use === R.startWeapon ? 150 : 0);
-  scores[ACTION.heal] = healScore(s, i, hp1000, nearest, nearestD);
   if (target >= 0) scores[ACTION.fight] = targetScore;
   if (nearest >= 0) scores[ACTION.flee] = fleeScore(s, i, hp1000, threats, nearest, nearestD, deficit);
   scores[ACTION.cover] = coverScore(s, i, hp1000, deficit);
@@ -390,8 +389,6 @@ function decide(s: MatchState, i: number): void {
       B.needPath[i] = 0;
       B.pathLen[i] = 0;
       break;
-    case ACTION.heal:
-      break;
     case ACTION.flee:
       // Au loin (8 tuiles) : un abri tout proche laisse le fuyard à portée de son poursuivant (tournois de bots).
       fleeGoal(s, i, idiv(sumX, seenCount), idiv(sumY, seenCount));
@@ -420,16 +417,25 @@ function setTarget(s: MatchState, i: number, j: number): void {
   B.tgtY[i] = s.p.y[j];
 }
 
-/** Nouveau but : on garde le chemin s'il mène au même endroit ; sinon ligne droite, ou chemin à calculer. */
+/**
+ * Nouveau but : on garde le chemin s'il mène presque au même endroit (moins d'une case d'écart, ou moins d'un quart de
+ * la distance restante : un ennemi entendu n'a qu'une position approximative, qui change à chaque décision ; sans cela,
+ * le bot recalculait sans cesse son chemin et piétinait) ; sinon ligne droite, ou chemin à calculer.
+ */
 function setGoal(s: MatchState, i: number, gx: number, gy: number): void {
   const B = s.b;
   const ts = s.map.tileSub;
   B.goalX[i] = gx;
   B.goalY[i] = gy;
-  if (B.pathLen[i] > 0 && sq(B.pathGX[i] - gx, B.pathGY[i] - gy) <= ts * ts) return;
+  if (B.pathLen[i] > 0) {
+    const moved = sq(B.pathGX[i] - gx, B.pathGY[i] - gy);
+    if (moved <= ts * ts || 16 * moved <= sq(gx - s.p.x[i], gy - s.p.y[i])) return;
+  }
   B.pathLen[i] = 0;
   const far = sq(gx - s.p.x[i], gy - s.p.y[i]) > 144 * ts * ts;
-  B.needPath[i] = far || !clearPath(s.map, s.p.x[i], s.p.y[i], gx, gy, s.fighters[i].radius) ? 1 : 0;
+  const need = far || !clearPath(s.map, s.p.x[i], s.p.y[i], gx, gy, s.fighters[i].radius) ? 1 : 0;
+  // Une demande prioritaire (bot coincé) le reste tant qu'un chemin est nécessaire.
+  B.needPath[i] = need && B.needPath[i] === 2 ? 2 : need;
 }
 
 /** Envie de combattre l'ennemi visible j (0 à 1 000). */
@@ -524,22 +530,27 @@ function itemValue(s: MatchState, i: number, k: number): number {
       if (w >= 0 && s.rules.weapons[w].ammo === a) return 150 + idiv((max - have) * 500, max);
       return 2 * have < max ? 60 : 0;
     }
-    case ITEM.heal:
-      return P.heals[i] >= items.healsMax ? 0 : Math.max(80, 480 - 150 * P.heals[i]);
+    case ITEM.heal: {
+      // Soin immédiat : il vaut ce qu'il rend, davantage quand les PV sont bas (rien avec tous ses PV).
+      const max = s.fighters[i].maxHp;
+      const useful = Math.min(max - P.hp[i], items.healHp);
+      if (useful <= 0) return 0;
+      return 100 + idiv(useful * 500, items.healHp) + (idiv(P.hp[i] * 1000, max) < s.b.caution[i] ? 250 : 0);
+    }
     case ITEM.vest:
       return P.shield[i] >= items.vestShield ? 0 : 100 + idiv((items.vestShield - P.shield[i]) * 450, items.vestShield);
   }
   return 0;
 }
 
-/** Le moteur ramasserait bien cet objet : à portée, et le plus proche (à égalité, le plus ancien). */
+/** Le moteur ramasserait bien cet objet : à portée, et le plus proche des objets utiles (à égalité, le plus ancien). */
 function pickable(s: MatchState, i: number, k: number): boolean {
   const I = s.it;
   const range = s.rules.items.pickupRange;
   const d = sq(I.x[k] - s.p.x[i], I.y[k] - s.p.y[i]);
   if (d > range * range) return false;
   for (let m = 0; m < s.itemCount; m++) {
-    if (m === k || I.kind[m] === ITEM.none) continue;
+    if (m === k || I.kind[m] === ITEM.none || !canTake(s, i, m)) continue;
     const dm = sq(I.x[m] - s.p.x[i], I.y[m] - s.p.y[i]);
     if (dm < d || (dm === d && m < k)) return false;
   }
@@ -572,19 +583,6 @@ function bestItem(s: MatchState, i: number): number {
     consider(k, 0, true);
   }
   return best;
-}
-
-function healScore(s: MatchState, i: number, hp1000: number, nearest: number, nearestD: number): number {
-  const P = s.p;
-  const Zs = s.zone;
-  if (P.healing[i] > 0) return 900;
-  if (P.heals[i] <= 0 || P.hp[i] > s.fighters[i].maxHp - idiv(s.rules.items.healHp, 2)) return 0;
-  let sc = idiv((1000 - hp1000) * 900, 1000);
-  if (hp1000 < s.b.caution[i]) sc += 200;
-  if (nearest >= 0 && nearestD <= s.rules.weapons[weaponInHand(s, nearest)].range) sc = idiv(sc, 3);
-  else if (s.tick - P.lastHit[i] < s.rules.tickRate) sc = idiv(sc, 2);
-  if (!insideCircle(P.x[i], P.y[i], Zs[Z.cx], Zs[Z.cy], Zs[Z.r])) sc = idiv(sc, 2);
-  return clamp(sc, 0, 1000);
 }
 
 /** Un bon joueur rompt un combat qu'il perd (plus le niveau est haut, plus tôt) ; `deficit` : retard de PV sur la menace. */
@@ -763,8 +761,20 @@ function exploreGoal(s: MatchState, i: number): void {
 
 // ---------------------------------------------------------------- chemins (budget partagé)
 
-/** Calcule au plus pathsPerTick chemins demandés, chacun son tour (tourniquet sur les emplacements). */
+/** Chemins calculés en priorité par tick pour les bots coincés (en plus du budget normal). */
+const URGENT_PATHS = 2;
+
+/**
+ * Calcule au plus pathsPerTick chemins demandés, chacun son tour (tourniquet sur les emplacements). Les bots coincés
+ * (demande urgente, needPath = 2) passent avant, avec un budget à part de URGENT_PATHS par tick.
+ */
 function servePaths(s: MatchState): void {
+  let urgent = URGENT_PATHS;
+  for (let i = 0; i < s.n && urgent > 0; i++) {
+    if (s.b.needPath[i] !== 2 || s.b.level[i] < 0 || !s.p.alive[i]) continue;
+    computePath(s, i);
+    urgent--;
+  }
   let budget = s.rules.bots.pathsPerTick;
   const n = s.n;
   const start = s.bmisc[0];
@@ -845,10 +855,6 @@ function control(s: MatchState, i: number): number {
     case ACTION.zone:
       move = moveZone(s, i);
       break;
-    case ACTION.heal:
-      if (P.healing[i] === 0) buttons |= press(prev, BTN.heal);
-      if (tick - B.threatTick[i] <= R.tickRate) move = steer(s, i, iatan2(P.y[i] - B.threatY[i], P.x[i] - B.threatX[i]));
-      break;
     default:
       move = moveTo(s, i, B.goalX[i], B.goalY[i]);
   }
@@ -867,7 +873,7 @@ function control(s: MatchState, i: number): number {
     aim = (iatan2(py - P.y[i], px - P.x[i]) + B.aimOff[i]) & 255;
     ready = tick >= B.seenTick[i] + B.react[i];
     aligned = Math.abs(angleDiff(aim, P.aim[i])) <= R.aimTurn;
-    if (ready && aligned && d <= W.range && P.healing[i] === 0 && action !== ACTION.heal) buttons |= BTN.fire;
+    if (ready && aligned && d <= W.range) buttons |= BTN.fire;
   } else if (tick - B.threatTick[i] <= R.tickRate) aim = iatan2(B.threatY[i] - P.y[i], B.threatX[i] - P.x[i]);
   else if (tick - B.heardTick[i] <= R.tickRate) aim = iatan2(B.heardY[i] - P.y[i], B.heardX[i] - P.x[i]);
   else if (move !== 0) aim = directionAngle(move);
@@ -876,11 +882,11 @@ function control(s: MatchState, i: number): number {
   const want = wantedSlot(s, i, visible ? d : -1);
   if (want !== P.active[i] && P.reload[i] === 0) buttons |= press(prev, BTN.nextWeapon);
   // Rechargement hors de vue d'un ennemi, chargeur à moins de moitié.
-  else if (!visible && P.reload[i] === 0 && P.healing[i] === 0 && 2 * magazineInHand(s, i) < W.magazine && (W.ammo === 0 || s.m.ammo[4 * i + W.ammo] > 0)) {
+  else if (!visible && P.reload[i] === 0 && 2 * magazineInHand(s, i) < W.magazine && (W.ammo === 0 || s.m.ammo[4 * i + W.ammo] > 0)) {
     buttons |= press(prev, BTN.reload);
   }
 
-  if (P.abilityCd[i] === 0 && P.healing[i] === 0 && wantsAbility(s, i, action, willing, d, ready, aligned)) buttons |= press(prev, BTN.ability);
+  if (P.abilityCd[i] === 0 && wantsAbility(s, i, action, willing, d, ready, aligned)) buttons |= press(prev, BTN.ability);
 
   return packCommand({ move, aim: aim & 255, buttons });
 }
@@ -898,7 +904,8 @@ function combatMove(s: MatchState, i: number, t: number, d: number): number {
     B.strafeDir[i] = -B.strafeDir[i];
     B.strafeUntil[i] = s.tick + nextRange(s.rng, STREAM.bot0 + i, 10, 30);
   }
-  if (d < lo) return steer(s, i, toward + 128 + 24 * B.strafeDir[i]);
+  // Trop près : on recule, sauf juste après un blocage (dos au mur) : on reste alors sur place ou de côté pendant 2 s.
+  if (d < lo && s.tick >= B.unstickUntil[i] + 2 * s.rules.tickRate) return steer(s, i, toward + 128 + 24 * B.strafeDir[i]);
   return B.strafeDir[i] !== 0 ? steer(s, i, toward + 64 * B.strafeDir[i]) : 0;
 }
 
@@ -924,11 +931,11 @@ function moveTo(s: MatchState, i: number, gx: number, gy: number): number {
     if (k < len) return steer(s, i, iatan2(py(k) - y, px(k) - x));
     // Chemin terminé : s'il était partiel (but encore loin), on en redemande un.
     B.pathLen[i] = 0;
-    if (sq(gx - x, gy - y) > 16 * s.map.tileSub * s.map.tileSub) B.needPath[i] = 1;
+    if (sq(gx - x, gy - y) > 16 * s.map.tileSub * s.map.tileSub) B.needPath[i] = Math.max(B.needPath[i], 1);
   }
   const move = steer(s, i, iatan2(gy - y, gx - x));
   // Tout droit, rien n'avance : il faut un chemin.
-  if (steerBlocked && B.pathLen[i] === 0) B.needPath[i] = 1;
+  if (steerBlocked && B.pathLen[i] === 0) B.needPath[i] = Math.max(B.needPath[i], 1);
   return move;
 }
 
@@ -962,7 +969,7 @@ function antiStuck(s: MatchState, i: number, move: number): number {
   const R = s.rules.bots;
   const tick = s.tick;
   if (tick < B.unstickUntil[i]) return B.unstickDir[i];
-  const still = move === 0 || P.stun[i] > 0 || P.healing[i] > 0;
+  const still = move === 0 || P.stun[i] > 0;
   if (still || sq(P.x[i] - B.anchorX[i], P.y[i] - B.anchorY[i]) >= R.stuckDistance * R.stuckDistance) {
     B.anchorX[i] = P.x[i];
     B.anchorY[i] = P.y[i];
@@ -975,7 +982,7 @@ function antiStuck(s: MatchState, i: number, move: number): number {
   B.unstickDir[i] = steer(s, i, directionAngle(((move - 1 + turn + 32) % 16) + 1));
   B.unstickUntil[i] = tick + 8;
   if (B.action[i] !== ACTION.zone) {
-    B.needPath[i] = 1;
+    B.needPath[i] = 2;
     B.pathLen[i] = 0;
   }
   B.anchorX[i] = P.x[i];

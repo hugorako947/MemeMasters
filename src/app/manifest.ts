@@ -13,7 +13,8 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: "/?source=pwa",
     scope: "/",
     display: "standalone",
-    orientation: "portrait",
+    // Libre : le jeu se joue en portrait, les parties de Battle Royale en paysage (conception §12).
+    orientation: "any",
     background_color: "#f3f0ff",
     theme_color: "#f3f0ff",
     categories: ["games", "entertainment"],

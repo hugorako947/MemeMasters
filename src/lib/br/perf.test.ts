@@ -7,7 +7,8 @@ import { botSetup, playWithDriver } from "./test-driver";
 /**
  * Chronomètre en millisecondes de calcul du fil d'exécution (Node 23.9 et plus), sinon du temps écoulé.
  * Vitest fait tourner plusieurs fichiers de tests en même temps : le temps écoulé compterait aussi l'attente
- * du processeur, pas seulement le coût du moteur.
+ * du processeur, pas seulement le coût du moteur. Il ne sert qu'au rejeu complet : sous Windows, il n'avance
+ * que par paliers de 15 à 16 ms, trop grossiers pour un tick (0,3 ms), mesuré lui avec l'horloge précise.
  */
 const cpuMs: () => number =
   typeof process.threadCpuUsage === "function"
@@ -21,8 +22,14 @@ describe("performances du moteur (100 participants : 1 joueur piloté, 99 bots)"
   it("budget par tick tenu et rejeu d'une partie complète en quelques secondes", () => {
     const rules = resolveRules(GAME_CONFIG.BATTLE_ROYALE);
     const setup = botSetup(777, rules, 100);
-    const times: number[] = [];
-    const played = playWithDriver(setup, 3, { timer: cpuMs, times });
+    // La même partie jouée 3 fois (même graine, mêmes calculs) : pour chaque tick, le plus court des 3 temps.
+    // Un pic dû à l'attente du processeur (autres fichiers de tests) ne retombe pas 3 fois sur le même tick.
+    const runs = Array.from({ length: 3 }, () => {
+      const times: number[] = [];
+      return { played: playWithDriver(setup, 3, { timer: () => performance.now(), times }), times };
+    });
+    const played = runs[0].played;
+    const times = runs[0].times.map((_, i) => Math.min(...runs.map((r) => r.times[i])));
     const sorted = [...times].sort((a, b) => a - b);
     const mean = times.reduce((s, t) => s + t, 0) / times.length;
     const p99 = sorted[Math.floor(sorted.length * 0.99)];

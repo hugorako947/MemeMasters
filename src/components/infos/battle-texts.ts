@@ -5,7 +5,7 @@ import type { BattleCharacter } from "@/lib/br/character";
  * Phrases qui décrivent la capacité active et le passif d'un personnage du Battle Royale,
  * avec ses vrais chiffres (pages d'Infos, et plus tard la fiche personnage de la Collection).
  */
-export async function battleTexts(c: BattleCharacter, regenDelayMs: number): Promise<{ ability: string; passive: string }> {
+export async function battleTexts(c: BattleCharacter, regenDelayMs: number, regenCapPercent: number): Promise<{ ability: string; passive: string }> {
   const t = await getTranslations("battleRoyale");
   const ts = await getTranslations("statLower");
   const format = await getFormatter();
@@ -25,7 +25,7 @@ export async function battleTexts(c: BattleCharacter, regenDelayMs: number): Pro
   }[a.kind]();
   const p = c.passive;
   const passive = {
-    regen: () => t("passive.regen", { delay: seconds(regenDelayMs), percent: percent(p.permille) }),
+    regen: () => t("passive.regen", { delay: seconds(regenDelayMs), percent: percent(p.permille), cap: regenCapPercent }),
     dodge: () => t("passive.dodge", { percent: percent(p.permille) }),
     reflect: () => t("passive.reflect", { percent: percent(p.permille) }),
     cleanse: () => t("passive.cleanse", { percent: percent(p.permille) }),

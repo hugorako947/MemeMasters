@@ -1032,11 +1032,106 @@
       "debuff": "Weaken: your next bullet (within {window} s) lowers the target's {stat} by {percent}% for {seconds} s"
     },
     "passive": {
-      "regen": "Regeneration: after {delay} s without being hit, you recover {percent}% of your max HP per second",
+      "regen": "Regeneration: after {delay} s without being hit, you recover {percent}% of your max HP per second, up to {cap}% of your max HP",
       "dodge": "Dodge: {percent}% chance to avoid each bullet",
       "reflect": "Reflect: {percent}% of the damage you take goes back to the shooter",
       "cleanse": "Immunity: stuns, burns and weakening last {percent}% shorter",
       "recharge": "Quick recharge: your ability recharges {percent}% faster"
     }
+  },
+  "match": {
+    "title": "Training",
+    "teamOnly": "Preview for the team only until the Battle Royale opens.",
+    "lead": "A match against 99 bots to practise: no trophies or MemeMoney at stake, and it even works offline.",
+    "botsNotice": "All your opponents are bots (BOT badge) using cards from the game.",
+    "character": "Your character",
+    "characterHint": "Pick a card from your collection.",
+    "noCards": "You don't have any cards yet: open a booster to get your first character.",
+    "difficulty": "Difficulty",
+    "easy": "Easy",
+    "easyHint": "Beginner bots.",
+    "normal": "Normal",
+    "normalHint": "Like a ranked match: based on your trophies.",
+    "hard": "Hard",
+    "hardHint": "Bots stronger than your level.",
+    "start": "Start the match",
+    "back": "Back to home",
+    "loading": "Getting the match ready…",
+    "rotate": "Turn your phone sideways (landscape) to play.",
+    "bot": "BOT",
+    "hud": {
+      "survivors": "{count, plural, one {# alive} other {# alive}}",
+      "kills": "{count, plural, one {# elimination} other {# eliminations}}",
+      "zoneWait": "The Scroll moves in {time}",
+      "zoneShrink": "The Scroll is moving! {time} left",
+      "zoneClosed": "The Scroll has covered everything",
+      "outside": "You're in the Scroll: get back to the zone!",
+      "hp": "HP",
+      "shield": "Vest",
+      "reloading": "Reloading…",
+      "ability": "Ability",
+      "abilityReady": "Ready",
+      "stunned": "Stunned!",
+      "pickup": "Pick up: {item}",
+      "ammo": {
+        "light": "Light ammo",
+        "shell": "Shells",
+        "heavy": "Heavy ammo"
+      },
+      "seconds": "{count}s"
+    },
+    "controls": {
+      "title": "Controls",
+      "move": "Move",
+      "aim": "Aim",
+      "fire": "Shoot",
+      "ability": "Ability",
+      "weapon": "Switch weapon",
+      "reload": "Reload",
+      "pickup": "Pick up",
+      "menu": "Menu",
+      "keysMove": "WASD, ZQSD or arrow keys",
+      "keysAim": "Mouse",
+      "keysFire": "Left click (hold)",
+      "keysAbility": "C",
+      "keysPickup": "Right click",
+      "keysReload": "R",
+      "keysWeapon": "Mouse wheel, 1, 2 or Tab",
+      "keysMenu": "Esc",
+      "touch": "Left joystick: move. Right joystick: aim, and shoot by pushing it all the way.",
+      "heal": "Heals work as soon as you pick them up."
+    },
+    "menu": {
+      "title": "Menu",
+      "resume": "Resume",
+      "quit": "Leave the match",
+      "quitConfirm": "Leave? Training doesn't count: no penalty.",
+      "quitYes": "Yes, leave",
+      "running": "The match keeps going while the menu is open."
+    },
+    "feed": {
+      "kill": "{killer} eliminated {victim}",
+      "zone": "{victim} was swallowed by the Scroll",
+      "killedYou": "{killer} eliminated you",
+      "youKilled": "You eliminated {victim}",
+      "zoneYou": "The Scroll swallowed you"
+    },
+    "end": {
+      "victory": "Top 1!",
+      "place": "Top {place}",
+      "outOf": "out of {total}",
+      "kills": "Eliminations",
+      "damage": "Damage dealt",
+      "survived": "Time survived",
+      "eliminatedBy": "Eliminated by {name}",
+      "eliminatedByZone": "Eliminated by the Scroll",
+      "rewards": "Rewards",
+      "noRewards": "Training: no trophies or MemeMoney.",
+      "again": "Play again",
+      "change": "Change character",
+      "home": "Back to home"
+    },
+    "homeButton": "Training",
+    "homeHint": "Team only during testing."
   }
 }

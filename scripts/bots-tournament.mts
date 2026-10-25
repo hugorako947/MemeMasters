@@ -81,6 +81,11 @@ async function main() {
 
   const result = analyse(reports, { quick, tickMeanMs });
   print(result);
+  const stuck = reports.flatMap((r) => r.stuckList);
+  if (stuck.length > 0) {
+    console.log("\nBlocages non résolus (série, numéro de partie, tick, bot, action) :");
+    for (const line of stuck) console.log(`  ${line}`);
+  }
   const ok = result.ok && sameReplay;
   console.log(`\n${ok ? "✓ Tous les seuils bloquants sont tenus." : "✕ Seuil non tenu : voir les lignes marquées ✕."}`);
   process.exit(ok ? 0 : 1);

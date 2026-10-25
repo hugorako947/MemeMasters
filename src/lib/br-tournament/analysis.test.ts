@@ -18,6 +18,7 @@ function report(over: Partial<GameReport> & { winner: number; cardsCount?: numbe
     places,
     idleBots: 0,
     stuckEpisodes: 0,
+    stuckList: [],
     unstickEpisodes: 0,
     tickMsSum: 0,
     ticksTimed: 0,

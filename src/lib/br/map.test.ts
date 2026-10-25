@@ -57,6 +57,22 @@ describe("carte générée par la graine", () => {
     }
   });
 
+  it("derrière une porte du haut ou du bas, aucun mur (cloison) sur trois cases de large", () => {
+    for (const seed of [11, 12, 13, 14, 15, 16, 17, 18]) {
+      const { map } = build(seed);
+      const at = (i: number, j: number) => map.tiles[j * map.size + i];
+      for (let b = 0; b < map.buildings.length; b += 4) {
+        const [x, y, w, h] = [map.buildings[b], map.buildings[b + 1], map.buildings[b + 2], map.buildings[b + 3]];
+        for (let i = x + 1; i < x + w - 1; i++) {
+          for (const [wall, inside] of [[y, y + 1], [y + h - 1, y + h - 2]]) {
+            if (at(i, wall) === TILE.wall) continue;
+            for (let di = -1; di <= 1; di++) if (i + di > x && i + di < x + w - 1) expect(at(i + di, inside)).not.toBe(TILE.wall);
+          }
+        }
+      }
+    }
+  });
+
   it("points d'apparition : un par participant, libres, bien répartis", () => {
     const { map, rng } = build(21);
     const spawns = placeSpawns(map, RULES, rng, 100, MAX_RADIUS);

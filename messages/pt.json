@@ -1032,11 +1032,106 @@
       "debuff": "Enfraquecimento: sua próxima bala (em até {window} s) reduz em {percent} % o atributo de {stat} do alvo por {seconds} s"
     },
     "passive": {
-      "regen": "Regeneração: depois de {delay} s sem ser atingido, você recupera {percent} % dos PV máx. por segundo",
+      "regen": "Regeneração: depois de {delay} s sem ser atingido, você recupera {percent} % dos PV máx. por segundo, até {cap} % dos PV máx.",
       "dodge": "Esquiva: {percent} % de chance de evitar cada bala",
       "reflect": "Reflexo: {percent} % do dano recebido volta para o atirador",
       "cleanse": "Imunidade: atordoamentos, queimaduras e enfraquecimentos duram {percent} % menos",
       "recharge": "Recarga rápida: sua habilidade recarrega {percent} % mais rápido"
     }
+  },
+  "match": {
+    "title": "Treino",
+    "teamOnly": "Prévia reservada à equipe até a abertura do Battle Royale.",
+    "lead": "Uma partida contra 99 bots para treinar: nada de troféus ou MemeMoney em jogo, e funciona até offline.",
+    "botsNotice": "Todos os seus adversários são bots (selo BOT) que usam cartas do jogo.",
+    "character": "Seu personagem",
+    "characterHint": "Escolha uma carta da sua coleção.",
+    "noCards": "Você ainda não tem cartas: abra um booster para ganhar seu primeiro personagem.",
+    "difficulty": "Dificuldade",
+    "easy": "Fácil",
+    "easyHint": "Bots iniciantes.",
+    "normal": "Normal",
+    "normalHint": "Como numa partida ranqueada: de acordo com seus troféus.",
+    "hard": "Difícil",
+    "hardHint": "Bots mais fortes que o seu nível.",
+    "start": "Começar a partida",
+    "back": "Voltar ao início",
+    "loading": "Preparando a partida…",
+    "rotate": "Vire o celular na horizontal para jogar.",
+    "bot": "BOT",
+    "hud": {
+      "survivors": "{count, plural, one {# vivo} other {# vivos}}",
+      "kills": "{count, plural, one {# eliminação} other {# eliminações}}",
+      "zoneWait": "O Scroll avança em {time}",
+      "zoneShrink": "O Scroll está avançando! Faltam {time}",
+      "zoneClosed": "O Scroll cobriu tudo",
+      "outside": "Você está no Scroll: volte para a zona!",
+      "hp": "PV",
+      "shield": "Colete",
+      "reloading": "Recarregando…",
+      "ability": "Habilidade",
+      "abilityReady": "Pronta",
+      "stunned": "Atordoado!",
+      "pickup": "Pegar: {item}",
+      "ammo": {
+        "light": "Munição leve",
+        "shell": "Cartuchos",
+        "heavy": "Munição pesada"
+      },
+      "seconds": "{count} s"
+    },
+    "controls": {
+      "title": "Controles",
+      "move": "Andar",
+      "aim": "Mirar",
+      "fire": "Atirar",
+      "ability": "Habilidade",
+      "weapon": "Trocar de arma",
+      "reload": "Recarregar",
+      "pickup": "Pegar",
+      "menu": "Menu",
+      "keysMove": "WASD, ZQSD ou setas",
+      "keysAim": "Mouse",
+      "keysFire": "Clique esquerdo (segurando)",
+      "keysAbility": "C",
+      "keysPickup": "Clique direito",
+      "keysReload": "R",
+      "keysWeapon": "Rodinha, 1, 2 ou Tab",
+      "keysMenu": "Esc",
+      "touch": "Joystick esquerdo: andar. Joystick direito: mirar, e atirar empurrando até o fim.",
+      "heal": "Os curativos agem assim que você os pega."
+    },
+    "menu": {
+      "title": "Menu",
+      "resume": "Continuar",
+      "quit": "Sair da partida",
+      "quitConfirm": "Sair? O treino não conta: sem penalidade.",
+      "quitYes": "Sim, sair",
+      "running": "A partida continua enquanto o menu está aberto."
+    },
+    "feed": {
+      "kill": "{killer} eliminou {victim}",
+      "zone": "{victim} foi engolido pelo Scroll",
+      "killedYou": "{killer} eliminou você",
+      "youKilled": "Você eliminou {victim}",
+      "zoneYou": "O Scroll engoliu você"
+    },
+    "end": {
+      "victory": "Top 1!",
+      "place": "Top {place}",
+      "outOf": "de {total}",
+      "kills": "Eliminações",
+      "damage": "Dano causado",
+      "survived": "Tempo de sobrevivência",
+      "eliminatedBy": "Eliminado por {name}",
+      "eliminatedByZone": "Eliminado pelo Scroll",
+      "rewards": "Recompensas",
+      "noRewards": "Treino: nada de troféus nem MemeMoney.",
+      "again": "Jogar de novo",
+      "change": "Trocar de personagem",
+      "home": "Voltar ao início"
+    },
+    "homeButton": "Treino",
+    "homeHint": "Só para a equipe durante os testes."
   }
 }

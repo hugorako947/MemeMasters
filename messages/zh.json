@@ -1032,11 +1032,106 @@
       "debuff": "削弱：你的下一发子弹（{window} 秒内）使目标的{stat}降低 {percent}%，持续 {seconds} 秒"
     },
     "passive": {
-      "regen": "再生：{delay} 秒未被击中后，每秒回复最大生命的 {percent}%",
+      "regen": "再生：{delay} 秒未被击中后，每秒回复最大生命的 {percent}%，最多回复至最大生命的 {cap}%",
       "dodge": "闪避：每发子弹有 {percent}% 的几率躲开",
       "reflect": "反弹：受到伤害的 {percent}% 会返还给射击者",
       "cleanse": "免疫：眩晕、灼烧和削弱的持续时间缩短 {percent}%",
       "recharge": "快速充能：技能冷却加快 {percent}%"
     }
+  },
+  "match": {
+    "title": "训练",
+    "teamOnly": "大逃杀开放前仅供团队预览。",
+    "lead": "与 99 个机器人对战来练习：不涉及奖杯和 MemeMoney，离线也能玩。",
+    "botsNotice": "你的对手全是机器人（BOT 标记），使用游戏中的卡牌。",
+    "character": "你的角色",
+    "characterHint": "从你的收藏中选择一张卡牌。",
+    "noCards": "你还没有卡牌：打开一个卡包来获得你的第一个角色。",
+    "difficulty": "难度",
+    "easy": "简单",
+    "easyHint": "新手机器人。",
+    "normal": "普通",
+    "normalHint": "与排位赛相同：取决于你的奖杯数。",
+    "hard": "困难",
+    "hardHint": "比你水平更强的机器人。",
+    "start": "开始对局",
+    "back": "返回首页",
+    "loading": "正在准备对局…",
+    "rotate": "请将手机横过来玩。",
+    "bot": "BOT",
+    "hud": {
+      "survivors": "{count, plural, other {# 人存活}}",
+      "kills": "{count, plural, other {# 次淘汰}}",
+      "zoneWait": "{time} 后 Scroll 推进",
+      "zoneShrink": "Scroll 正在推进！剩余 {time}",
+      "zoneClosed": "Scroll 已覆盖一切",
+      "outside": "你在 Scroll 里：快回到安全区！",
+      "hp": "生命",
+      "shield": "背心",
+      "reloading": "换弹中…",
+      "ability": "技能",
+      "abilityReady": "就绪",
+      "stunned": "眩晕！",
+      "pickup": "拾取：{item}",
+      "ammo": {
+        "light": "轻型弹药",
+        "shell": "霰弹",
+        "heavy": "重型弹药"
+      },
+      "seconds": "{count} 秒"
+    },
+    "controls": {
+      "title": "操作",
+      "move": "移动",
+      "aim": "瞄准",
+      "fire": "射击",
+      "ability": "技能",
+      "weapon": "切换武器",
+      "reload": "换弹",
+      "pickup": "拾取",
+      "menu": "菜单",
+      "keysMove": "WASD、ZQSD 或方向键",
+      "keysAim": "鼠标",
+      "keysFire": "鼠标左键（按住）",
+      "keysAbility": "C",
+      "keysPickup": "鼠标右键",
+      "keysReload": "R",
+      "keysWeapon": "滚轮、1、2 或 Tab",
+      "keysMenu": "Esc",
+      "touch": "左摇杆：移动。右摇杆：瞄准，推到底即射击。",
+      "heal": "治疗物品一拾取就立即生效。"
+    },
+    "menu": {
+      "title": "菜单",
+      "resume": "继续",
+      "quit": "退出对局",
+      "quitConfirm": "要退出吗？训练不计入成绩：没有惩罚。",
+      "quitYes": "是，退出",
+      "running": "菜单打开时对局仍在进行。"
+    },
+    "feed": {
+      "kill": "{killer} 淘汰了 {victim}",
+      "zone": "{victim} 被 Scroll 吞没",
+      "killedYou": "{killer} 淘汰了你",
+      "youKilled": "你淘汰了 {victim}",
+      "zoneYou": "你被 Scroll 吞没了"
+    },
+    "end": {
+      "victory": "第 1 名！",
+      "place": "第 {place} 名",
+      "outOf": "共 {total} 人",
+      "kills": "淘汰",
+      "damage": "造成伤害",
+      "survived": "存活时间",
+      "eliminatedBy": "被 {name} 淘汰",
+      "eliminatedByZone": "被 Scroll 淘汰",
+      "rewards": "奖励",
+      "noRewards": "训练：没有奖杯和 MemeMoney。",
+      "again": "再来一局",
+      "change": "更换角色",
+      "home": "返回首页"
+    },
+    "homeButton": "训练",
+    "homeHint": "测试期间仅限团队。"
   }
 }

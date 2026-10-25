@@ -23,12 +23,9 @@ export const PARTICIPANT_FIELDS = [
   "active",
   "mag0",
   "mag1",
-  "heals",
   "fireCd",
   /** Ticks restants avant la fin du rechargement (0 = aucun). */
   "reload",
-  /** Ticks restants avant la fin du soin (0 = aucun). */
-  "healing",
   "abilityCd",
   /** Ticks restants de l'effet de la capacité (sprint, vol de vie, perce-armure, boost) ou de la fenêtre « prochaine balle ». */
   "abilityLeft",
@@ -109,6 +106,7 @@ export const BOT_FIELDS = [
   "pathIdx",
   "pathGX",
   "pathGY",
+  /** Chemin à calculer : 0 non, 1 oui, 2 en priorité (bot coincé). */
   "needPath",
   /** Combat : tick où la cible est apparue (réaction), dernier tick où elle était visible, sa position à ce moment, erreur de visée en cours, pas de côté. */
   "seenTick",
@@ -186,6 +184,26 @@ export interface MatchState {
 /** Arme en main (indice dans rules.weapons). */
 export function weaponInHand(s: MatchState, i: number): number {
   return s.p.active[i] === 1 && s.p.weapon1[i] >= 0 ? s.p.weapon1[i] : s.rules.startWeapon;
+}
+
+/**
+ * L'objet k peut-il être ramassé par i ? Un soin (PV pleins), un gilet (protection pleine) ou des munitions
+ * (réserve pleine) inutiles restent au sol, et ne gênent pas le ramassage d'un autre objet.
+ */
+export function canTake(s: MatchState, i: number, k: number): boolean {
+  const I = s.it;
+  const items = s.rules.items;
+  switch (I.kind[k]) {
+    case ITEM.weapon:
+      return true;
+    case ITEM.ammo:
+      return s.m.ammo[4 * i + I.sub[k]] < items.ammoMax[I.sub[k]];
+    case ITEM.heal:
+      return s.p.hp[i] < s.fighters[i].maxHp;
+    case ITEM.vest:
+      return s.p.shield[i] < items.vestShield;
+  }
+  return false;
 }
 
 export const SHOT_CAPACITY = 4096;

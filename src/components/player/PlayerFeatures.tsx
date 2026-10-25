@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { InteractiveCard } from "@/components/card/InteractiveCard";
 import { sampleOf } from "@/components/card/sample-cards";
 import { SlideDeck } from "@/components/ui/SlideDeck";
+import { ButtonLink } from "@/components/ui/Button";
 import { DailyChallengeCard } from "@/components/challenges/DailyChallengeCard";
 import type { DailyChallenge } from "@/lib/server/challenges";
 import { isOfferActive, OFFERS } from "@/config/shop";
@@ -87,6 +88,7 @@ async function BoostersSlide({ state, challenge }: { state: BoosterStateView; ch
 /** Battle Royale (bientôt) : rang, trophées, prochaine récompense, et deux personnages pour donner envie. */
 async function BattlesSlide({ player, counts }: { player: Player; counts?: { accounts: number; online: number } }) {
   const t = await getTranslations("playerHome.battles");
+  const tm = await getTranslations("match");
   const tr = await getTranslations("rank");
   const format = await getFormatter();
   const rank = rankFor(player.trophies);
@@ -109,6 +111,15 @@ async function BattlesSlide({ player, counts }: { player: Player; counts?: { acc
           <p className="rounded-xl border-2 border-ink bg-surface px-4 py-2.5 text-sm font-bold">
             {t("nextReward", { boosters: RANK_REWARDS[next].boosters, money: RANK_REWARDS[next].memeMoney })}
           </p>
+        ) : null}
+        {/* Mode Entraînement (phase 3) : réservé à l'équipe jusqu'à l'ouverture du Battle Royale (phase 5). */}
+        {player.role !== "player" ? (
+          <div className="grid justify-items-center gap-1 text-center">
+            <ButtonLink href="/partie" className="min-h-11 px-6">
+              {tm("homeButton")}
+            </ButtonLink>
+            <p className="text-xs font-semibold text-ink-soft">{tm("homeHint")}</p>
+          </div>
         ) : null}
         <div className="mx-auto grid w-full max-w-sm grid-cols-[1fr_auto_1fr] items-center gap-3">
           <div className="-rotate-6">

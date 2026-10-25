@@ -19,7 +19,7 @@ export async function CardGuidePanel() {
   const card = sampleOf("rare");
   const special = card.specialAttack;
   const c = battleCharacter(card, 0, BR, DUPLICATES.STAT_BONUS_PERCENT);
-  const { ability, passive } = await battleTexts(c, BR.PASSIVE.REGEN_DELAY_MS);
+  const { ability, passive } = await battleTexts(c, BR.PASSIVE.REGEN_DELAY_MS, BR.PASSIVE.REGEN_CAP_PERCENT);
   // Exemple chiffré : une balle de Rafaleuse 3000 contre un personnage moyen (la commune de référence).
   const example = BR.WEAPONS.rafaleuse;
   const averageDef = BR.CHARACTER.REFERENCE.def;

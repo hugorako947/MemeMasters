@@ -101,7 +101,11 @@ const battleRoyaleSchema = z.object({
   }),
   CHARACTER: z.object({
     /** Statistiques moyennes d'une commune : la compression rapproche chaque statistique de cette valeur. */
-    REFERENCE: z.object({ hp: positiveInt, atk: positiveInt, def: positiveInt, spd: positiveInt }),
+    /**
+     * Valeurs de référence (moyenne des communes) vers lesquelles la compression κ rapproche les statistiques,
+     * la puissance de l'attaque spéciale et l'intensité des passifs (soin, esquive, renvoi).
+     */
+    REFERENCE: z.object({ hp: positiveInt, atk: positiveInt, def: positiveInt, spd: positiveInt, power: positiveInt, heal: positiveInt, dodge: positiveInt, reflect: positiveInt }),
     /** κ en % : 50 = l'écart à la référence est divisé par deux (raretés plus proches). */
     COMPRESSION_PERCENT: z.number().int().min(0).max(100),
     /** Part du bonus d'évolution (★ +3 %, ★★ +6 %, ★★★ +10 %) appliquée en bataille, en %. */
@@ -146,9 +150,6 @@ const battleRoyaleSchema = z.object({
   ITEMS: z.object({
     /** « Patch de Lol » : PV rendus, durée d'utilisation (déplacement ralenti, pas de tir), nombre maximal. */
     HEAL_HP: positiveInt,
-    HEAL_MS: positiveInt,
-    HEALS_MAX: positiveInt,
-    HEAL_SLOW_PERCENT: z.number().int().min(0).max(100),
     /** « Gilet Cringe » : points de protection, consommés avant les PV. */
     VEST_SHIELD: positiveInt,
     AMMO_MAX: z.object({ light: positiveInt, shell: positiveInt, heavy: positiveInt }),
@@ -211,6 +212,12 @@ const battleRoyaleSchema = z.object({
     /** Variation du niveau de chaque bot, en niveaux (±), tirée à la création de la partie. */
     PERSONALITY_LEVEL_SPREAD: z.number().int().min(0).max(5),
   }),
+  /**
+   * Mode Entraînement (hors ligne, sans récompense) : 99 bots « BOT » portant des cartes du jeu. Difficulté choisie
+   * par le joueur : Facile (bots débutants), Normal (niveau selon ses trophées, comme en partie classée),
+   * Difficile (HARD_BONUS_LEVELS niveaux au-dessus).
+   */
+  TRAINING: z.object({ HARD_BONUS_LEVELS: z.number().int().min(1).max(10) }),
 });
 
 const gameConfigSchema = z
@@ -495,9 +502,10 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
 
   MIN_ACCOUNT_AGE: 18,
 
-  // Battle royale : valeurs de la conception validée (2026-10-24), à ajuster par les tournois de bots (phase 2).
+  // Battle royale : valeurs de la conception validée (2026-10-24), équilibrées par les tournois de bots (phase 2, 2026-10-25 :
+  // les 8 seuils de la conception tenus, voir DECISIONS.md). Toute modification : relancer npm run bots:tournament.
   BATTLE_ROYALE: {
-    CONFIG_VERSION: 2,
+    CONFIG_VERSION: 3,
     PARTICIPANTS: 100,
     TICK_RATE: 20,
     MAX_DURATION_S: 540,
@@ -530,9 +538,11 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
     },
     CHARACTER: {
       // Moyenne des 12 communes du jeu de départ.
-      REFERENCE: { hp: 92, atk: 39, def: 36, spd: 77 },
-      COMPRESSION_PERCENT: 50,
-      EVOLUTION_FACTOR_PERCENT: 50,
+      REFERENCE: { hp: 92, atk: 39, def: 36, spd: 77, power: 55, heal: 11, dodge: 17, reflect: 17 },
+      // Compression κ (statistiques, puissance de la capacité, intensité du passif) et part du bonus d'évolution comptée en
+      // bataille : au-delà, une godlevel ou une ★★★ gagnait trop souvent (seuils ×1,3 et ×1,15 de la conception).
+      COMPRESSION_PERCENT: 10,
+      EVOLUTION_FACTOR_PERCENT: 15,
     },
     ABILITY: {
       COOLDOWN_BASE_MS: 6000,
@@ -541,33 +551,32 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
       SPRINT_PERCENT: 40,
       SPRINT_MS: 2000,
       ARMED_MS: 3000,
-      STUN_BASE_MS: 400,
+      STUN_BASE_MS: 900,
       STUN_MS_PER_CHANCE: 10,
-      DRAIN_MS: 4000,
+      DRAIN_MS: 2500,
       PIERCE_MS: 4000,
-      BUFF_PERCENT: 25,
+      BUFF_PERCENT: 20,
       BUFF_MS: 5000,
-      DEBUFF_PERCENT: 20,
+      DEBUFF_PERCENT: 25,
       DEBUFF_MS: 4000,
-      MULTI_SPREAD_STEPS: 6,
+      MULTI_SPREAD_STEPS: 4,
       BURN_SHOT_DAMAGE: 10,
       BURN_SHOT_SPEED: 1400,
       BURN_SHOT_RANGE: 700,
     },
-    PASSIVE: { REGEN_DELAY_MS: 4000, REGEN_CAP_PERCENT: 100, DODGE_DIVISOR: 3, REFLECT_DIVISOR: 4, CLEANSE_PERCENT: 50, RECHARGE_PERCENT: 25 },
+    // Régénération : un filet de sécurité (jusqu'à 8 % des PV max, après 12 s sans être touché). Plus forte, elle écrasait
+    // les autres passifs (tournois de bots : 3 % de Top 1 contre 0,3 %), car on enchaîne les combats sans se soigner.
+    PASSIVE: { REGEN_DELAY_MS: 12000, REGEN_CAP_PERCENT: 8, DODGE_DIVISOR: 3, REFLECT_DIVISOR: 1, CLEANSE_PERCENT: 50, RECHARGE_PERCENT: 55 },
     // Lance-Pop (pistolet, arme de départ), Pétard Mouillé (fusil à pompe), Rafaleuse 3000 (mitraillette), Lunette à Like (précision).
     WEAPONS: {
-      pop: { damage: 10, pellets: 1, fireIntervalMs: 400, magazine: 12, reloadMs: 1500, spreadSteps: 2, speed: 1600, range: 700, ammo: "none" },
-      petard: { damage: 9, pellets: 6, fireIntervalMs: 900, magazine: 5, reloadMs: 2500, spreadSteps: 10, speed: 1300, range: 350, ammo: "shell" },
-      rafaleuse: { damage: 8, pellets: 1, fireIntervalMs: 100, magazine: 30, reloadMs: 2000, spreadSteps: 5, speed: 1700, range: 600, ammo: "light" },
-      lunette: { damage: 60, pellets: 1, fireIntervalMs: 1500, magazine: 4, reloadMs: 3000, spreadSteps: 0, speed: 2800, range: 1400, ammo: "heavy" },
+      pop: { damage: 8, pellets: 1, fireIntervalMs: 400, magazine: 12, reloadMs: 1500, spreadSteps: 2, speed: 1600, range: 700, ammo: "none" },
+      petard: { damage: 6, pellets: 6, fireIntervalMs: 900, magazine: 5, reloadMs: 2500, spreadSteps: 10, speed: 1300, range: 350, ammo: "shell" },
+      rafaleuse: { damage: 5, pellets: 1, fireIntervalMs: 100, magazine: 30, reloadMs: 2000, spreadSteps: 5, speed: 1700, range: 600, ammo: "light" },
+      lunette: { damage: 42, pellets: 1, fireIntervalMs: 1500, magazine: 4, reloadMs: 3000, spreadSteps: 0, speed: 2800, range: 1400, ammo: "heavy" },
     },
     STARTING_WEAPON: "pop",
     ITEMS: {
       HEAL_HP: 40,
-      HEAL_MS: 1000,
-      HEALS_MAX: 3,
-      HEAL_SLOW_PERCENT: 50,
       VEST_SHIELD: 50,
       AMMO_MAX: { light: 120, shell: 30, heavy: 20 },
       AMMO_BOX: { light: 30, shell: 10, heavy: 6 },
@@ -614,7 +623,7 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
       HEARING_RANGE: 1200,
       MEMORY_MS: 5000,
       PATH_MAX_NODES: 2000,
-      PATHS_PER_TICK: 2,
+      PATHS_PER_TICK: 6,
       STUCK_MS: 1000,
       STUCK_UNITS: 16,
       // Niveau 0 (débutant) → niveau 10 (Immortel, 6 000 trophées et plus).
@@ -627,6 +636,7 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
       STRAFE_PERCENT: [0, 80],
       PERSONALITY_LEVEL_SPREAD: 1,
     },
+    TRAINING: { HARD_BONUS_LEVELS: 3 },
   },
 });
 

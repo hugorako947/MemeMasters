@@ -25,7 +25,6 @@ function lootTotals(s: MatchState): number[] {
       totals[0]++;
       totals[2 + ammoOf(P.weapon1[i])] += P.mag1[i];
     }
-    totals[1] += P.heals[i];
     for (let a = 1; a < 4; a++) totals[2 + a] += s.m.ammo[4 * i + a];
   }
   totals[1] += s.counters[C.usedHeals];

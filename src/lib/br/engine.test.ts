@@ -6,11 +6,13 @@ import { advance, createMatch, matchResult, step } from "./engine";
 import { angleDiff, idiv } from "./fixed";
 import { ITEM, TILE, type GameMap, type LootItem } from "./map";
 import { resolveRules, SUB, type Rules } from "./rules";
-import { cloneState, KILL_ZONE, stateHash, type MatchState } from "./state";
+import { C, cloneState, KILL_ZONE, stateHash, type MatchState } from "./state";
 
 const BASE = resolveRules(GAME_CONFIG.BATTLE_ROYALE);
 const TS = BASE.map.tileSub;
 const RATE = BASE.tickRate;
+/** Dégâts d'une balle de l'arme de départ (lus dans la configuration : ils changent avec l'équilibrage). */
+const START_DAMAGE = BASE.weapons[BASE.startWeapon].damage;
 
 /** Règles de test : sans dispersion ni aide à la visée, pour des tirs exacts. */
 function rules(over: Partial<Rules> = {}): Rules {
@@ -125,7 +127,7 @@ describe("moteur : armes et dégâts", () => {
     const shooter = character({ weaponPercent: 106 });
     const target = character({ stats: { hp: 92, atk: 39, def: 50, spd: 77 } });
     const s = match({ chars: [shooter, target] });
-    const per = expectedHit(12, 106, 50);
+    const per = expectedHit(START_DAMAGE, 106, 50);
     advance(s, [cmd(0, 0, BTN.fire), 0]);
     run(s, 10, () => 0);
     expect(s.p.hp[1]).toBe(140 - per);
@@ -157,7 +159,6 @@ describe("moteur : armes et dégâts", () => {
     s.p.hp[1] = 1;
     s.p.weapon1[1] = 2;
     s.p.mag1[1] = 7;
-    s.p.heals[1] = 2;
     s.m.ammo[4 * 1 + 1] = 30;
     advance(s, [cmd(0, 0, BTN.fire), 0, 0]);
     run(s, 10, () => 0);
@@ -168,7 +169,7 @@ describe("moteur : armes et dégâts", () => {
     expect(s.aliveCount).toBe(2);
     expect(Array.from(s.log.slice(0, 4))).toEqual([s.p.deathTick[1], 0, 1, s.rules.startWeapon]);
     const dropped = Array.from({ length: s.itemCount }, (_, k) => [s.it.kind[k], s.it.sub[k], s.it.qty[k]]);
-    expect(dropped).toEqual(expect.arrayContaining([[ITEM.weapon, 2, 7], [ITEM.ammo, 1, 30], [ITEM.heal, 0, 2]]));
+    expect(dropped).toEqual(expect.arrayContaining([[ITEM.weapon, 2, 7], [ITEM.ammo, 1, 30]]));
     s.p.hp[2] = 1;
     s.p.x[0] = tile(20);
     s.p.y[0] = tile(25);
@@ -205,23 +206,52 @@ describe("moteur : objets", () => {
     expect(s.m.ammo[1]).toBe(s.rules.items.ammoMax[1]);
     expect(s.it.qty[1]).toBe(200 - s.rules.items.ammoMax[1]);
     s.it.kind[1] = ITEM.none;
-    press();
-    expect(s.p.heals[0]).toBe(1);
-    press();
+    press(); // PV pleins : le soin, inutile, reste au sol ; le gilet (plus loin) est ramassé
     expect(s.p.shield[0]).toBe(s.rules.items.vestShield);
+    expect(s.it.kind[2]).toBe(ITEM.heal);
+    s.p.hp[0] = 50;
+    press(); // soin immédiat
+    expect(s.p.hp[0]).toBe(50 + s.rules.items.healHp);
+    expect(s.it.kind[2]).toBe(ITEM.none);
   });
 
-  it("soin : 1 s pendant laquelle on va moins vite, puis +40 PV (sans dépasser le maximum)", () => {
-    const s = match({});
-    s.p.hp[0] = 50;
-    s.p.heals[0] = 1;
-    advance(s, [cmd(1, 0, BTN.heal), 0]);
+  it("soin : immédiat au ramassage, surplus perdu au-delà des PV max, jamais ramassé avec tous ses PV", () => {
+    const s = match({ loot: [{ kind: ITEM.heal, sub: 0, qty: 2, x: tile(5), y: tile(16) }] });
+    const max = s.fighters[0].maxHp;
+    const press = () => {
+      advance(s, [cmd(0, 0, BTN.pickup), 0]);
+      advance(s, [0, 0]);
+    };
+    press();
+    expect([s.p.hp[0], s.it.qty[0], s.counters[C.usedHeals]]).toEqual([max, 2, 0]);
+    s.p.hp[0] = max - 10;
+    press();
+    expect([s.p.hp[0], s.it.qty[0], s.counters[C.usedHeals]]).toEqual([max, 1, 1]);
+    // Ni ralentissement ni attente : on avance à pleine vitesse juste après.
+    s.p.hp[0] = 20;
     const x0 = s.p.x[0];
-    run(s, s.rules.items.healTicks - 1, (i) => (i === 0 ? cmd(1, 0) : 0));
-    expect(s.p.x[0] - x0).toBe((s.rules.items.healTicks - 1) * idiv(idiv(300 * SUB, RATE) * 50, 100));
-    run(s, 1, () => 0);
-    expect(s.p.hp[0]).toBe(90);
-    expect(s.p.heals[0]).toBe(0);
+    advance(s, [cmd(1, 0, BTN.pickup), 0]);
+    expect(s.p.hp[0]).toBe(20 + s.rules.items.healHp);
+    expect(s.p.x[0] - x0).toBe(idiv(300 * SUB, RATE));
+    expect(s.it.kind[0]).toBe(ITEM.none);
+  });
+
+  it("une caisse a toujours deux cases libres autour d'elle (aucun passage d'une seule case)", () => {
+    for (let seed = 1; seed <= 5; seed++) {
+      const s = createMatch({ seed, rules: BASE, characters: Array.from({ length: 4 }, () => character()) });
+      const { size, tiles } = s.map;
+      for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+          if (tiles[y * size + x] !== TILE.crate) continue;
+          for (let dy = -2; dy <= 2; dy++) {
+            for (let dx = -2; dx <= 2; dx++) {
+              const t = tiles[(y + dy) * size + x + dx];
+              if (dx || dy) expect(t === TILE.floor || t === TILE.bush).toBe(true);
+            }
+          }
+        }
+      }
+    }
   });
 });
 
@@ -275,12 +305,12 @@ describe("moteur : capacités et passifs", () => {
     advance(p, [cmd(0, 0, BTN.ability), 0]);
     advance(p, [cmd(0, 0, BTN.fire), 0]);
     run(p, 8, () => 0);
-    expect(140 - p.p.hp[1]).toBe(12);
+    expect(140 - p.p.hp[1]).toBe(START_DAMAGE);
     const f = match({ chars: [withAbility({ kind: "buff", stat: "atk", durationMs: 5000, permille: 250 }), character()] });
     advance(f, [cmd(0, 0, BTN.ability), 0]);
     advance(f, [cmd(0, 0, BTN.fire), 0]);
     run(f, 8, () => 0);
-    expect(140 - f.p.hp[1]).toBe(expectedHit(12, 125, 36));
+    expect(140 - f.p.hp[1]).toBe(expectedHit(START_DAMAGE, 125, 36));
     const w = match({ chars: [withAbility({ kind: "debuff", stat: "spd", durationMs: 3000, effectMs: 4000, permille: 200 }), character()] });
     advance(w, [cmd(0, 0, BTN.ability), 0]);
     advance(w, [cmd(0, 0, BTN.fire), 0]);
@@ -289,11 +319,14 @@ describe("moteur : capacités et passifs", () => {
     expect(w.m.debuffPermille[3 * 1 + 2]).toBe(200);
   });
 
-  it("passifs : régénération après 4 s sans dégâts, esquive, renvoi, immunité", () => {
+  it("passifs : régénération après quelques secondes sans dégâts (jusqu'au plafond), esquive, renvoi, immunité", () => {
     const r = match({ chars: [character(), character({ passive: { kind: "regen", permille: 20 } })] });
-    r.p.hp[1] = 100;
-    run(r, 4 * RATE + RATE, () => 0);
-    expect(r.p.hp[1]).toBeGreaterThan(100);
+    const cap = Math.floor((140 * BASE.regenCapPercent) / 100);
+    r.p.hp[1] = 1;
+    run(r, BASE.regenDelayTicks - RATE, () => 0);
+    expect(r.p.hp[1]).toBe(1);
+    run(r, 20 * RATE, () => 0);
+    expect(r.p.hp[1]).toBe(cap);
     // Esquive certaine (1000 ‰) : aucune balle ne touche.
     const d = match({ chars: [character(), character({ passive: { kind: "dodge", permille: 1000 } })] });
     advance(d, [cmd(0, 0, BTN.fire), 0]);

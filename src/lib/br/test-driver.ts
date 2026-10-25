@@ -146,7 +146,6 @@ export function driverCommands(s: MatchState, d: Driver, out: Uint32Array): void
     if (inRange) buttons |= BTN.fire;
     if (inRange && P.abilityCd[i] === 0 && (s.tick + i) % 15 === 0) buttons |= BTN.ability;
     if ((s.tick + i) % 25 === 0) buttons |= BTN.pickup;
-    if (P.heals[i] > 0 && 2 * P.hp[i] < s.fighters[i].maxHp && (s.tick + i) % 10 === 0) buttons |= BTN.heal;
     if (P.active[i] === 0 && P.weapon1[i] >= 0 && (s.tick + i) % 30 === 0) buttons |= BTN.nextWeapon;
     out[i] = packCommand({ move, aim, buttons });
   }

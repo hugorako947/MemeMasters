@@ -344,6 +344,11 @@ function attempt(rules: Rules, rng: Uint32Array): GameMap {
     if (w >= 9) {
       const wx = x + rand(3, w - 4);
       const gap = rand(y + 1, y + h - 3);
+      // Pas de cloison au ras d'une porte : elle réduirait le passage à une seule case (trop étroit pour les gros personnages).
+      if (keepClear[idx(wx, y + 1)] || keepClear[idx(wx, y + h - 2)]) {
+        buildings.push(x, y, w, h);
+        continue;
+      }
       for (let j = y + 1; j < y + h - 1; j++) {
         if (j === gap || j === gap + 1) {
           for (let di = -1; di <= 1; di++) keepClear[idx(wx + di, j)] = 1;
@@ -353,12 +358,14 @@ function attempt(rules: Rules, rng: Uint32Array): GameMap {
     buildings.push(x, y, w, h);
   }
 
-  // Caisses : isolées, jamais collées à un obstacle (pas de passage d'une seule case) ni devant une porte.
+  // Caisses : isolées, avec deux cases libres tout autour (un passage d'une seule case, 32 unités, bloquerait les
+  // plus gros personnages, jusqu'à 44 unités de large), jamais devant une porte.
   for (let tries = 0, placed = 0; tries < M.crates * 10 && placed < M.crates; tries++) {
-    const x = rand(B + 1, n - B - 2);
-    const y = rand(B + 1, n - B - 2);
+    const x = rand(B + 2, n - B - 3);
+    const y = rand(B + 2, n - B - 3);
     let ok = true;
-    for (let dj = -1; dj <= 1 && ok; dj++) for (let di = -1; di <= 1 && ok; di++) if (tiles[idx(x + di, y + dj)] !== TILE.floor || keepClear[idx(x + di, y + dj)]) ok = false;
+    for (let dj = -2; dj <= 2 && ok; dj++)
+      for (let di = -2; di <= 2 && ok; di++) if (tiles[idx(x + di, y + dj)] !== TILE.floor || (di * di <= 1 && dj * dj <= 1 && keepClear[idx(x + di, y + dj)])) ok = false;
     if (!ok) continue;
     tiles[idx(x, y)] = TILE.crate;
     placed++;

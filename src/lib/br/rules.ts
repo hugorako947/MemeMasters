@@ -67,9 +67,6 @@ export interface Rules {
   regenCapPercent: number;
   items: {
     healHp: number;
-    healTicks: number;
-    healsMax: number;
-    healSlowPercent: number;
     vestShield: number;
     /** Indexés comme AMMO_KINDS (la case 0 est inutilisée). */
     ammoMax: number[];
@@ -175,9 +172,6 @@ export function resolveRules(br: BrConfig): Rules {
     regenCapPercent: br.PASSIVE.REGEN_CAP_PERCENT,
     items: {
       healHp: I.HEAL_HP,
-      healTicks: ticks(I.HEAL_MS),
-      healsMax: I.HEALS_MAX,
-      healSlowPercent: I.HEAL_SLOW_PERCENT,
       vestShield: I.VEST_SHIELD,
       ammoMax: [0, I.AMMO_MAX.light, I.AMMO_MAX.shell, I.AMMO_MAX.heavy],
       ammoBox: [0, I.AMMO_BOX.light, I.AMMO_BOX.shell, I.AMMO_BOX.heavy],

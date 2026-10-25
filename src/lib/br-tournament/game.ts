@@ -37,6 +37,8 @@ export interface GameReport {
   idleBots: number;
   /** Épisodes de blocage non résolus : 3 s sans avancer de 16 unités en voulant avancer. */
   stuckEpisodes: number;
+  /** Détail de chaque blocage non résolu (pour rejouer la partie) : « série numéro tick bot action ». */
+  stuckList: string[];
   /** Blocages d'au moins une seconde (l'anti-blocage des bots s'en charge). */
   unstickEpisodes: number;
   /** Mesure du temps (si un chronomètre est fourni) : somme et maximum, en ms, sur ticksTimed ticks. */
@@ -91,7 +93,7 @@ export function playGame(series: Series, index: number, timer?: () => number): G
   const P = s.p;
   const n = s.n;
   const idle = new Uint32Array(n);
-  // Immobile : position et tick de référence (remis à zéro dès qu'il bouge de 32 unités, tire, se couvre ou se soigne).
+  // Immobile : position et tick de référence (remis à zéro dès qu'il bouge de 32 unités, tire ou se couvre).
   const idleX = Int32Array.from(P.x);
   const idleY = Int32Array.from(P.y);
   const idleSince = new Int32Array(n);
@@ -103,6 +105,7 @@ export function playGame(series: Series, index: number, timer?: () => number): G
   const stuckCounted = new Uint8Array(n);
   const unstickCounted = new Uint8Array(n);
   let stuckEpisodes = 0;
+  const stuckList: string[] = [];
   let unstickEpisodes = 0;
   let tickMsSum = 0;
   let tickMsMax = 0;
@@ -120,13 +123,13 @@ export function playGame(series: Series, index: number, timer?: () => number): G
     for (let i = 0; i < n; i++) {
       if (!P.alive[i]) continue;
       const action = s.b.action[i];
-      const busy = P.lastShot[i] === tick || action === ACTION.cover || action === ACTION.heal || P.stun[i] > 0;
+      const busy = P.lastShot[i] === tick || action === ACTION.cover || P.stun[i] > 0;
       if (busy || (P.x[i] - idleX[i]) ** 2 + (P.y[i] - idleY[i]) ** 2 >= idleD * idleD) {
         idleX[i] = P.x[i];
         idleY[i] = P.y[i];
         idleSince[i] = tick;
       } else if (tick - idleSince[i] >= IDLE_TICKS) wasIdle[i] = 1;
-      const wantsToMove = unpackMove(s.b.cmd[i]) !== 0 && P.stun[i] === 0 && P.healing[i] === 0;
+      const wantsToMove = unpackMove(s.b.cmd[i]) !== 0 && P.stun[i] === 0;
       if (!wantsToMove || (P.x[i] - stuckX[i]) ** 2 + (P.y[i] - stuckY[i]) ** 2 >= stuckD * stuckD) {
         stuckX[i] = P.x[i];
         stuckY[i] = P.y[i];
@@ -142,6 +145,7 @@ export function playGame(series: Series, index: number, timer?: () => number): G
         if (blocked >= STUCK_TICKS && !stuckCounted[i]) {
           stuckCounted[i] = 1;
           stuckEpisodes++;
+          stuckList.push(`${series} ${index} tick ${tick} bot ${i} action ${s.b.action[i]}`);
         }
       }
     }
@@ -160,6 +164,7 @@ export function playGame(series: Series, index: number, timer?: () => number): G
     places: Array.from(P.place),
     idleBots: wasIdle.reduce((a, v) => a + v, 0),
     stuckEpisodes,
+    stuckList,
     unstickEpisodes,
     tickMsSum,
     ticksTimed: timer ? s.tick : 0,

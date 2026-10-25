@@ -1032,11 +1032,106 @@
       "debuff": "Affaiblissement : ta prochaine balle (dans les {window} s) baisse la {stat} de la cible de {percent} % pendant {seconds} s"
     },
     "passive": {
-      "regen": "Régénération : après {delay} s sans être touché, tu récupères {percent} % de tes PV max par seconde",
+      "regen": "Régénération : après {delay} s sans être touché, tu récupères {percent} % de tes PV max par seconde, jusqu'à {cap} % de tes PV max",
       "dodge": "Esquive : {percent} % de chances d'éviter chaque balle",
       "reflect": "Renvoi : {percent} % des dégâts reçus reviennent au tireur",
       "cleanse": "Immunité : étourdissements, brûlures et affaiblissements durent {percent} % moins longtemps",
       "recharge": "Recharge rapide : ta capacité se recharge {percent} % plus vite"
     }
+  },
+  "match": {
+    "title": "Entraînement",
+    "teamOnly": "Aperçu réservé à l'équipe jusqu'à l'ouverture du Battle Royale.",
+    "lead": "Une partie contre 99 bots pour t'entraîner : ni trophées ni MemeMoney en jeu, et elle marche même hors ligne.",
+    "botsNotice": "Tes adversaires sont tous des bots (badge BOT) qui portent des cartes du jeu.",
+    "character": "Ton personnage",
+    "characterHint": "Choisis une carte de ta collection.",
+    "noCards": "Tu n'as encore aucune carte : ouvre un booster pour obtenir ton premier personnage.",
+    "difficulty": "Difficulté",
+    "easy": "Facile",
+    "easyHint": "Des bots débutants.",
+    "normal": "Normal",
+    "normalHint": "Comme en partie classée : selon tes trophées.",
+    "hard": "Difficile",
+    "hardHint": "Des bots plus forts que ton niveau.",
+    "start": "Lancer la partie",
+    "back": "Retour à l'accueil",
+    "loading": "Préparation de la partie…",
+    "rotate": "Tourne ton téléphone en mode paysage pour jouer.",
+    "bot": "BOT",
+    "hud": {
+      "survivors": "{count, plural, one {# en vie} other {# en vie}}",
+      "kills": "{count, plural, one {# élimination} other {# éliminations}}",
+      "zoneWait": "Le Scroll avance dans {time}",
+      "zoneShrink": "Le Scroll avance ! Encore {time}",
+      "zoneClosed": "Le Scroll a tout recouvert",
+      "outside": "Tu es dans le Scroll : rejoins la zone !",
+      "hp": "PV",
+      "shield": "Gilet",
+      "reloading": "Rechargement…",
+      "ability": "Capacité",
+      "abilityReady": "Prête",
+      "stunned": "Étourdi !",
+      "pickup": "Ramasser : {item}",
+      "ammo": {
+        "light": "Munitions légères",
+        "shell": "Cartouches",
+        "heavy": "Munitions lourdes"
+      },
+      "seconds": "{count} s"
+    },
+    "controls": {
+      "title": "Commandes",
+      "move": "Se déplacer",
+      "aim": "Viser",
+      "fire": "Tirer",
+      "ability": "Capacité",
+      "weapon": "Changer d'arme",
+      "reload": "Recharger",
+      "pickup": "Ramasser",
+      "menu": "Menu",
+      "keysMove": "ZQSD, WASD ou flèches",
+      "keysAim": "Souris",
+      "keysFire": "Clic gauche (maintenu)",
+      "keysAbility": "C",
+      "keysPickup": "Clic droit",
+      "keysReload": "R",
+      "keysWeapon": "Molette, 1, 2 ou Tab",
+      "keysMenu": "Échap",
+      "touch": "Joystick gauche : se déplacer. Joystick droit : viser, et tirer en le poussant à fond.",
+      "heal": "Les soins agissent dès que tu les ramasses."
+    },
+    "menu": {
+      "title": "Menu",
+      "resume": "Reprendre",
+      "quit": "Quitter la partie",
+      "quitConfirm": "Quitter ? L'Entraînement ne compte pas : aucune pénalité.",
+      "quitYes": "Oui, quitter",
+      "running": "La partie continue pendant que le menu est ouvert."
+    },
+    "feed": {
+      "kill": "{killer} a éliminé {victim}",
+      "zone": "{victim} a été avalé par le Scroll",
+      "killedYou": "{killer} t'a éliminé",
+      "youKilled": "Tu as éliminé {victim}",
+      "zoneYou": "Le Scroll t'a avalé"
+    },
+    "end": {
+      "victory": "Top 1 !",
+      "place": "Top {place}",
+      "outOf": "sur {total}",
+      "kills": "Éliminations",
+      "damage": "Dégâts infligés",
+      "survived": "Temps de survie",
+      "eliminatedBy": "Éliminé par {name}",
+      "eliminatedByZone": "Éliminé par le Scroll",
+      "rewards": "Récompenses",
+      "noRewards": "Entraînement : aucun trophée ni MemeMoney.",
+      "again": "Rejouer",
+      "change": "Changer de personnage",
+      "home": "Retour à l'accueil"
+    },
+    "homeButton": "Entraînement",
+    "homeHint": "Réservé à l'équipe pendant les essais."
   }
 }

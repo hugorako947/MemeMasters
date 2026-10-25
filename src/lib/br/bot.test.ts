@@ -140,13 +140,16 @@ describe("bots : comportement", () => {
     expect(s.p.weapon1[0]).toBe(RAFALEUSE);
   });
 
-  it("se soigne quand il est blessé et hors de danger", () => {
-    const s = match({ botLevels: [50, null], spawns: [tile(10), tile(20), tile(36), tile(36)] });
+  it("blessé, va ramasser un soin qu'il voit (soin immédiat) ; en pleine forme, le laisse au sol", () => {
+    const loot = [{ kind: ITEM.heal, sub: 0, qty: 1, x: tile(14), y: tile(20) }];
+    const s = match({ botLevels: [50, null], spawns: [tile(10), tile(20), tile(36), tile(36)], loot });
     s.p.hp[0] = 50;
-    s.p.heals[0] = 2;
-    run(s, 3 * RATE);
-    expect(s.p.heals[0]).toBeLessThan(2);
+    run(s, 4 * RATE);
     expect(s.p.hp[0]).toBeGreaterThan(50);
+    expect(s.it.kind[0]).toBe(ITEM.none);
+    const full = match({ botLevels: [50, null], spawns: [tile(10), tile(20), tile(36), tile(36)], loot });
+    run(full, 4 * RATE);
+    expect(full.it.kind[0]).toBe(ITEM.heal);
   });
 
   it("rejoint la zone à temps, en contournant un mur par son ouverture", () => {
@@ -181,7 +184,6 @@ describe("bots : comportement", () => {
   it("fuit un ennemi quand il lui reste peu de PV", () => {
     const s = match({ botLevels: [80, null], spawns: [tile(16), tile(20), tile(24), tile(20)] });
     s.p.hp[0] = 20;
-    s.p.heals[0] = 0;
     const before = dist(s, 0, s.p.x[1], s.p.y[1]);
     let fled = false;
     run(s, 2 * RATE, (st) => (fled ||= st.b.action[0] === ACTION.flee));

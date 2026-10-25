@@ -118,7 +118,7 @@ export function battleCharacter(card: CharacterCard, level: EvolutionLevel, br: 
     def: stat(card.def, REFERENCE.def, 20, 65),
     spd: stat(card.spd, REFERENCE.spd, 10, 100),
   };
-  const passive = passiveOf(card.defenseAbility.effect, br);
+  const passive = passiveOf(card.defenseAbility.effect, br, kappa);
   return {
     stats,
     maxHp: maxHpFor(stats.hp),
@@ -126,14 +126,15 @@ export function battleCharacter(card: CharacterCard, level: EvolutionLevel, br: 
     damageTakenPercent: idiv(damageTakenPermille(stats.def), 10),
     speed: speedFor(stats.spd),
     weaponPercent: weaponPercentFor(stats.atk),
-    ability: abilityOf(card.specialAttack, passive, br),
+    ability: abilityOf(card.specialAttack, passive, br, kappa),
     passive,
   };
 }
 
-function abilityOf(special: CharacterCard["specialAttack"], passive: BattlePassive, br: BrConfig): BattleAbility {
+function abilityOf(special: CharacterCard["specialAttack"], passive: BattlePassive, br: BrConfig, kappa: number): BattleAbility {
   const A = br.ABILITY;
-  const intensity = idiv(special.power * 1000, A.POWER_REFERENCE);
+  // La puissance est comprimée comme les statistiques : une capacité de godlevel ne vaut guère plus que celle d'une commune.
+  const intensity = idiv(compress(special.power, br.CHARACTER.REFERENCE.power, kappa) * 1000, A.POWER_REFERENCE);
   const scaled = (permille: number) => idiv(permille * intensity, 1000);
   let cooldownMs = A.COOLDOWN_BASE_MS + A.COOLDOWN_PER_ENERGY_MS * special.energyCost;
   if (passive.kind === "recharge") cooldownMs = idiv(cooldownMs * (1000 - passive.permille), 1000);
@@ -159,16 +160,18 @@ function abilityOf(special: CharacterCard["specialAttack"], passive: BattlePassi
   }
 }
 
-function passiveOf(effect: CharacterCard["defenseAbility"]["effect"], br: BrConfig): BattlePassive {
+/** Passif ; son intensité (soin, esquive, renvoi) est comprimée vers celle des communes, comme les statistiques. */
+function passiveOf(effect: CharacterCard["defenseAbility"]["effect"], br: BrConfig, kappa: number): BattlePassive {
   const P = br.PASSIVE;
+  const R = br.CHARACTER.REFERENCE;
   switch (effect.kind) {
     case "heal":
       // percent / 10 % des PV max par seconde = percent ‰.
-      return { kind: "regen", permille: effect.percent };
+      return { kind: "regen", permille: compress(effect.percent, R.heal, kappa) };
     case "dodge":
-      return { kind: "dodge", permille: idiv(effect.chance * 10, P.DODGE_DIVISOR) };
+      return { kind: "dodge", permille: idiv(compress(effect.chance, R.dodge, kappa) * 10, P.DODGE_DIVISOR) };
     case "reflect":
-      return { kind: "reflect", permille: idiv(effect.percent * 10, P.REFLECT_DIVISOR) };
+      return { kind: "reflect", permille: idiv(compress(effect.percent, R.reflect, kappa) * 10, P.REFLECT_DIVISOR) };
     case "cleanse":
       return { kind: "cleanse", permille: P.CLEANSE_PERCENT * 10 };
     case "recharge":

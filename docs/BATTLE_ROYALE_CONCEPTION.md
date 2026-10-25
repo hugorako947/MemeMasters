@@ -1,7 +1,7 @@
 # Battle royale — document de conception (phase 0)
 
 > Statut : **validé par le propriétaire le 2026-10-24**, propositions du §16 retenues (détail dans `DECISIONS.md`). Reste à préciser : les offres Vercel et Supabase (question n° 5), avant la phase 4.
-> **Phase 1 (moteur) livrée le 2026-10-24**, en attente de validation : `src/lib/br/`, mesures et choix de détail dans `DECISIONS.md`.
+> **Phase 1 (moteur) livrée le 2026-10-24 et validée. Phase 2 (bots) terminée le 2026-10-25** : les 8 seuils du §7.7 sont tenus après équilibrage (régénération réduite, compression κ étendue aux capacités et passifs, soin immédiat au ramassage) ; chiffres et raisons dans `DECISIONS.md`. **Phase 3 (jouabilité) terminée le 2026-10-25** : page `/partie`, rendu PixiJS, commandes ordinateur et téléphone, interface, écran de fin et mode Entraînement (réservé à l'équipe jusqu'à la phase 5). Les valeurs chiffrées des §6 et §7 ci-dessous sont celles de la conception d'origine : les valeurs en vigueur sont dans `GAME_CONFIG.BATTLE_ROYALE`.
 > Cahier des charges : `docs/PROMPT_CLAUDE_CODE_Battle_Meme.md`. Règles du projet : `CLAUDE.md`.
 > Toutes les valeurs chiffrées (stats, trophées, MemeMoney, durées) sont des **propositions** rangées dans `GAME_CONFIG` (validée par Zod) et ajustées ensuite par les tournois de bots.
 

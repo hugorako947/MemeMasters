@@ -11,7 +11,8 @@
  * Toute valeur hors bornes, tranche manquante ou en trop fait refuser la partie.
  */
 
-export const BTN = { fire: 1, ability: 2, heal: 4, nextWeapon: 8, reload: 16, pickup: 32 } as const;
+/** Boutons. Le bit 4 (ancien bouton de soin : le soin est désormais immédiat au ramassage) est réservé, accepté et ignoré. */
+export const BTN = { fire: 1, ability: 2, nextWeapon: 8, reload: 16, pickup: 32 } as const;
 
 export const MOVE_DIRECTIONS = 16;
 const MOVE_MASK = 0x1f;

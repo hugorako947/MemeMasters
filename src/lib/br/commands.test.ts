@@ -10,7 +10,8 @@ describe("commandes du joueur (3 octets par tick)", () => {
   });
 
   it("refuse les commandes impossibles", () => {
-    expect(isValidCommand(packCommand({ move: 3, aim: 10, buttons: BTN.heal }))).toBe(true);
+    expect(isValidCommand(packCommand({ move: 3, aim: 10, buttons: BTN.reload }))).toBe(true);
+    expect(isValidCommand(packCommand({ move: 3, aim: 10, buttons: 4 }))).toBe(true); // bit 4 (ancien bouton de soin) : réservé, ignoré
     expect(isValidCommand(16)).toBe(true);
     expect(isValidCommand(17)).toBe(false); // déplacement 17 : réservé (marche lente)
     expect(isValidCommand(31)).toBe(false); // déplacement 31 : réservé

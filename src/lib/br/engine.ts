@@ -25,10 +25,10 @@ import { buildGrid, forEachNear } from "./grid";
 import { circleHitsSolid, generateMap, ITEM, isPassable, placeLoot, placeSpawns, segmentWallHit, tileAt, type GameMap, type LootItem } from "./map";
 import { chance, createStreams, nextBelow, nextRange, STREAM } from "./rng";
 import { BURN_SHOT, SUB, type Rules } from "./rules";
-import { allocateState, C, cloneState, KILL_BURN, KILL_REFLECT, KILL_ZONE, SHOT_CAPACITY, SHOT_FIELDS, weaponInHand, Z, type MatchState } from "./state";
+import { allocateState, C, canTake, cloneState, KILL_BURN, KILL_REFLECT, KILL_ZONE, SHOT_CAPACITY, SHOT_FIELDS, weaponInHand, Z, type MatchState } from "./state";
 import { canSee } from "./vision";
 
-export const ENGINE_VERSION = 2;
+export const ENGINE_VERSION = 3;
 
 const kindIndex = <K extends string>(list: readonly K[]) => Object.fromEntries(list.map((k, i) => [k, i])) as Record<K, number>;
 const AB = kindIndex(ABILITY_KINDS);
@@ -135,7 +135,6 @@ export function advance(s: MatchState, commands: ArrayLike<number>): MatchState 
     wantsAbility[i] = pressed & BTN.ability ? 1 : 0;
     if (pressed & BTN.nextWeapon) switchWeapon(s, i);
     if (pressed & BTN.reload) startReload(s, i);
-    if (pressed & BTN.heal) startHeal(s, i);
     if (pressed & BTN.pickup) pickup(s, i);
   }
 
@@ -154,7 +153,7 @@ export function advance(s: MatchState, commands: ArrayLike<number>): MatchState 
 
   // 4. Capacités et tirs.
   for (let i = 0; i < n; i++) {
-    if (!P.alive[i] || P.stun[i] > 0 || P.healing[i] > 0) continue;
+    if (!P.alive[i] || P.stun[i] > 0) continue;
     if (wantsAbility[i] && P.abilityCd[i] === 0) activateAbility(s, i);
     if (wantsFire[i]) tryFire(s, i);
   }
@@ -210,9 +209,7 @@ function currentSpeed(s: MatchState, i: number): number {
   const f = s.fighters[i];
   let mod = 1000 + statModifier(s, i, ST.spd);
   if (abilityActive(s, i, AB.sprint)) mod += f.abilityPermille;
-  let speed = idiv(f.speed * Math.max(100, mod), 1000);
-  if (s.p.healing[i] > 0) speed = idiv(speed * (100 - s.rules.items.healSlowPercent), 100);
-  return speed;
+  return idiv(f.speed * Math.max(100, mod), 1000);
 }
 
 // ---------------------------------------------------------------- armes, soins, objets
@@ -240,7 +237,6 @@ function startReload(s: MatchState, i: number): void {
   if (P.reload[i] > 0 || magazineOf(s, i) >= W.magazine) return;
   if (W.ammo > 0 && s.m.ammo[4 * i + W.ammo] <= 0) return;
   P.reload[i] = W.reloadTicks;
-  P.healing[i] = 0;
 }
 
 function finishReload(s: MatchState, i: number): void {
@@ -250,20 +246,6 @@ function finishReload(s: MatchState, i: number): void {
   const take = W.ammo === 0 ? need : Math.min(need, s.m.ammo[4 * i + W.ammo]);
   setMagazine(s, i, mag + take);
   if (W.ammo > 0) s.m.ammo[4 * i + W.ammo] -= take;
-}
-
-function startHeal(s: MatchState, i: number): void {
-  const P = s.p;
-  if (P.heals[i] <= 0 || P.hp[i] >= s.fighters[i].maxHp || P.healing[i] > 0) return;
-  P.healing[i] = s.rules.items.healTicks;
-  P.reload[i] = 0;
-}
-
-function finishHeal(s: MatchState, i: number): void {
-  const P = s.p;
-  P.hp[i] = Math.min(s.fighters[i].maxHp, P.hp[i] + s.rules.items.healHp);
-  P.heals[i]--;
-  s.counters[C.usedHeals]++;
 }
 
 function pushItem(s: MatchState, kind: number, sub: number, qty: number, x: number, y: number): void {
@@ -277,7 +259,7 @@ function pushItem(s: MatchState, kind: number, sub: number, qty: number, x: numb
   s.it.y[k] = y;
 }
 
-/** Ramasse l'objet le plus proche à portée (à égalité : le plus ancien). */
+/** Ramasse l'objet utile le plus proche à portée (à égalité : le plus ancien) ; voir canTake. */
 function pickup(s: MatchState, i: number): void {
   const P = s.p;
   const I = s.it;
@@ -289,7 +271,7 @@ function pickup(s: MatchState, i: number): void {
     const dx = I.x[k] - P.x[i];
     const dy = I.y[k] - P.y[i];
     const d = dx * dx + dy * dy;
-    if (d <= range2 && d < bestD) {
+    if (d <= range2 && d < bestD && canTake(s, i, k)) {
       best = k;
       bestD = d;
     }
@@ -324,11 +306,10 @@ function pickup(s: MatchState, i: number): void {
       break;
     }
     case ITEM.heal: {
-      const take = Math.min(items.healsMax - P.heals[i], I.qty[k]);
-      if (take <= 0) return;
-      P.heals[i] += take;
-      I.qty[k] -= take;
-      if (I.qty[k] === 0) I.kind[k] = ITEM.none;
+      // Soin immédiat, un à la fois ; le surplus au-delà des PV max est perdu.
+      P.hp[i] = Math.min(s.fighters[i].maxHp, P.hp[i] + items.healHp);
+      if (--I.qty[k] <= 0) I.kind[k] = ITEM.none;
+      s.counters[C.usedHeals]++;
       break;
     }
     case ITEM.vest: {
@@ -576,7 +557,6 @@ function hitParticipant(s: MatchState, k: number, t: number): void {
   if (!P.alive[t]) return;
   if (S.stunTicks[k] > 0) {
     P.stun[t] = Math.max(P.stun[t], negativeDuration(s, t, S.stunTicks[k]));
-    P.healing[t] = 0;
   }
   if (S.debuffStat[k] >= 0) {
     const slot = 3 * t + S.debuffStat[k];
@@ -631,7 +611,7 @@ function kill(s: MatchState, v: number, killer: number, cause: number): void {
   s.log[e + 1] = killer;
   s.log[e + 2] = v;
   s.log[e + 3] = cause;
-  // Butin lâché sur place : arme ramassée (avec son chargeur), munitions, soins.
+  // Butin lâché sur place : arme ramassée (avec son chargeur), munitions.
   let d = 0;
   const drop = (kind: number, sub: number, qty: number) => {
     if (qty <= 0 && kind !== ITEM.weapon) return;
@@ -640,15 +620,12 @@ function kill(s: MatchState, v: number, killer: number, cause: number): void {
   };
   if (P.weapon1[v] >= 0) drop(ITEM.weapon, P.weapon1[v], P.mag1[v]);
   for (let a = 1; a < 4; a++) drop(ITEM.ammo, a, s.m.ammo[4 * v + a]);
-  drop(ITEM.heal, 0, P.heals[v]);
   if (P.weapon1[v] >= 0) {
     P.weapon1[v] = -1;
     P.mag1[v] = 0;
   }
   for (let a = 1; a < 4; a++) s.m.ammo[4 * v + a] = 0;
-  P.heals[v] = 0;
   P.shield[v] = 0;
-  P.healing[v] = 0;
   P.reload[v] = 0;
   P.stun[v] = 0;
   P.burnLeft[v] = 0;
@@ -668,7 +645,6 @@ function updateTimers(s: MatchState): void {
     if (P.stun[i] > 0) P.stun[i]--;
     for (let st = 0; st < 3; st++) if (s.m.debuffLeft[3 * i + st] > 0 && --s.m.debuffLeft[3 * i + st] === 0) s.m.debuffPermille[3 * i + st] = 0;
     if (P.reload[i] > 0 && --P.reload[i] === 0) finishReload(s, i);
-    if (P.healing[i] > 0 && --P.healing[i] === 0) finishHeal(s, i);
     // Brûlure : des dégâts à chaque seconde écoulée depuis la touche.
     if (P.burnLeft[i] > 0) {
       P.burnLeft[i]--;

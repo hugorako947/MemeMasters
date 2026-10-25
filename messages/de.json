@@ -1032,11 +1032,106 @@
       "debuff": "Schwächung: Deine nächste Kugel (innerhalb von {window} s) senkt den Wert „{stat}“ des Ziels um {percent} % für {seconds} s"
     },
     "passive": {
-      "regen": "Regeneration: Nach {delay} s ohne Treffer erhältst du {percent} % deiner max. KP pro Sekunde zurück",
+      "regen": "Regeneration: Nach {delay} s ohne Treffer erhältst du {percent} % deiner max. KP pro Sekunde zurück, bis zu {cap} % deiner max. KP",
       "dodge": "Ausweichen: {percent} % Chance, jeder Kugel auszuweichen",
       "reflect": "Rückstoß: {percent} % des erlittenen Schadens gehen an den Schützen zurück",
       "cleanse": "Immunität: Betäubungen, Verbrennungen und Schwächungen dauern {percent} % kürzer",
       "recharge": "Schnelles Aufladen: Deine Fähigkeit lädt {percent} % schneller auf"
     }
+  },
+  "match": {
+    "title": "Training",
+    "teamOnly": "Vorschau nur für das Team, bis das Battle Royale startet.",
+    "lead": "Ein Match gegen 99 Bots zum Üben: keine Trophäen und kein MemeMoney im Spiel, und es klappt sogar offline.",
+    "botsNotice": "Alle deine Gegner sind Bots (Abzeichen BOT) mit Karten aus dem Spiel.",
+    "character": "Deine Figur",
+    "characterHint": "Wähle eine Karte aus deiner Sammlung.",
+    "noCards": "Du hast noch keine Karten: Öffne einen Booster, um deine erste Figur zu bekommen.",
+    "difficulty": "Schwierigkeit",
+    "easy": "Leicht",
+    "easyHint": "Anfänger-Bots.",
+    "normal": "Normal",
+    "normalHint": "Wie im Ranglisten-Match: nach deinen Trophäen.",
+    "hard": "Schwer",
+    "hardHint": "Bots, die stärker sind als du.",
+    "start": "Match starten",
+    "back": "Zurück zum Start",
+    "loading": "Das Match wird vorbereitet …",
+    "rotate": "Dreh dein Handy ins Querformat, um zu spielen.",
+    "bot": "BOT",
+    "hud": {
+      "survivors": "{count, plural, one {# lebt noch} other {# leben noch}}",
+      "kills": "{count, plural, one {# Ausschaltung} other {# Ausschaltungen}}",
+      "zoneWait": "Der Scroll rückt vor in {time}",
+      "zoneShrink": "Der Scroll rückt vor! Noch {time}",
+      "zoneClosed": "Der Scroll hat alles bedeckt",
+      "outside": "Du bist im Scroll: Zurück in die Zone!",
+      "hp": "KP",
+      "shield": "Weste",
+      "reloading": "Lädt nach …",
+      "ability": "Fähigkeit",
+      "abilityReady": "Bereit",
+      "stunned": "Betäubt!",
+      "pickup": "Aufheben: {item}",
+      "ammo": {
+        "light": "Leichte Munition",
+        "shell": "Schrot",
+        "heavy": "Schwere Munition"
+      },
+      "seconds": "{count} s"
+    },
+    "controls": {
+      "title": "Steuerung",
+      "move": "Bewegen",
+      "aim": "Zielen",
+      "fire": "Schießen",
+      "ability": "Fähigkeit",
+      "weapon": "Waffe wechseln",
+      "reload": "Nachladen",
+      "pickup": "Aufheben",
+      "menu": "Menü",
+      "keysMove": "WASD, ZQSD oder Pfeiltasten",
+      "keysAim": "Maus",
+      "keysFire": "Linksklick (gedrückt halten)",
+      "keysAbility": "C",
+      "keysPickup": "Rechtsklick",
+      "keysReload": "R",
+      "keysWeapon": "Mausrad, 1, 2 oder Tab",
+      "keysMenu": "Esc",
+      "touch": "Linker Joystick: bewegen. Rechter Joystick: zielen, und schießen, wenn du ihn ganz durchdrückst.",
+      "heal": "Heilungen wirken, sobald du sie aufhebst."
+    },
+    "menu": {
+      "title": "Menü",
+      "resume": "Weiter",
+      "quit": "Match verlassen",
+      "quitConfirm": "Verlassen? Das Training zählt nicht: keine Strafe.",
+      "quitYes": "Ja, verlassen",
+      "running": "Das Match läuft weiter, während das Menü offen ist."
+    },
+    "feed": {
+      "kill": "{killer} hat {victim} ausgeschaltet",
+      "zone": "{victim} wurde vom Scroll verschluckt",
+      "killedYou": "{killer} hat dich ausgeschaltet",
+      "youKilled": "Du hast {victim} ausgeschaltet",
+      "zoneYou": "Der Scroll hat dich verschluckt"
+    },
+    "end": {
+      "victory": "Top 1!",
+      "place": "Top {place}",
+      "outOf": "von {total}",
+      "kills": "Ausschaltungen",
+      "damage": "Verursachter Schaden",
+      "survived": "Überlebenszeit",
+      "eliminatedBy": "Ausgeschaltet von {name}",
+      "eliminatedByZone": "Vom Scroll ausgeschaltet",
+      "rewards": "Belohnungen",
+      "noRewards": "Training: keine Trophäen und kein MemeMoney.",
+      "again": "Nochmal spielen",
+      "change": "Figur wechseln",
+      "home": "Zurück zum Start"
+    },
+    "homeButton": "Training",
+    "homeHint": "Während der Tests nur für das Team."
   }
 }

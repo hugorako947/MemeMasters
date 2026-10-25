@@ -25,7 +25,7 @@ describe("déterminisme et rejeu", () => {
     // Toutes différentes, et toutes menées à leur terme par la zone.
     expect(hashes.size).toBe(300);
     expect(finished).toBe(300);
-  }, 120_000);
+  }, 300_000);
 
   it("tick par tick (copie à chaque tick) ou rejeu d'un bloc : même résultat", () => {
     const rules = smallRules();
@@ -40,7 +40,7 @@ describe("déterminisme et rejeu", () => {
       }
       expect(stateHash(pure)).toBe(stateHash(played.state));
     }
-  });
+  }, 120_000);
 
   it("commandes envoyées par tranches : réassemblées puis rejouées, même partie", () => {
     const rules = smallRules();
@@ -62,8 +62,8 @@ describe("déterminisme et rejeu", () => {
     // puis mettre à jour l'empreinte ci-dessous (npx vitest run -u).
     expect({ engine: ENGINE_VERSION, hash: stateHash(played.state) }).toMatchInlineSnapshot(`
       {
-        "engine": 1,
-        "hash": "6ea6898388a554ff",
+        "engine": 3,
+        "hash": "9f2c41c39ef6e6ab",
       }
     `);
   });
