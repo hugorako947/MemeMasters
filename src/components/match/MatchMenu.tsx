@@ -3,19 +3,26 @@
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { FullscreenToggle } from "@/components/install/FullscreenToggle";
-import { Button, buttonClass } from "@/components/ui/Button";
+import { Button, buttonClass, ButtonLink } from "@/components/ui/Button";
+import { useBrSettings } from "@/lib/client/br-settings";
+import { useBindingLabel } from "./useBindingLabel";
 
-/** Les commandes au clavier et à la souris, puis au toucher (menu de partie et écran de préparation). */
-export function ControlsHelp() {
+/**
+ * Les commandes au clavier et à la souris, puis au toucher (menu de partie et page Battle Royale).
+ * `editHref` : bouton « Modifier » vers les réglages du Battle Royale (pas pendant une partie).
+ */
+export function ControlsHelp({ editHref }: { editHref?: string }) {
   const t = useTranslations("match.controls");
+  const { keys } = useBrSettings();
+  const label = useBindingLabel();
   const rows: Array<[string, string]> = [
-    [t("move"), t("keysMove")],
+    [t("move"), `${[keys.up, keys.left, keys.down, keys.right].map(label).join(" ")} · ${t("arrows")}`],
     [t("aim"), t("keysAim")],
-    [t("fire"), t("keysFire")],
-    [t("ability"), t("keysAbility")],
-    [t("pickup"), t("keysPickup")],
-    [t("reload"), t("keysReload")],
-    [t("weapon"), t("keysWeapon")],
+    [t("fire"), t("hold", { key: label(keys.fire) })],
+    [t("ability"), label(keys.ability)],
+    [t("pickup"), label(keys.pickup)],
+    [t("reload"), label(keys.reload)],
+    [t("weapon"), `${label(keys.weapon)}, ${t("wheel")}`],
     [t("menu"), t("keysMenu")],
   ];
   return (
@@ -29,7 +36,11 @@ export function ControlsHelp() {
         ))}
       </dl>
       <p className="text-ink-soft">{t("touch")}</p>
-      <p className="text-ink-soft">{t("heal")}</p>
+      {editHref ? (
+        <ButtonLink href={editHref} variant="secondary" className="min-h-11 justify-self-start px-5 text-sm">
+          {t("edit")}
+        </ButtonLink>
+      ) : null}
     </div>
   );
 }

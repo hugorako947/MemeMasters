@@ -4,7 +4,7 @@ import type { BattleCharacter } from "@/lib/br/character";
 import { BTN, packCommand } from "@/lib/br/commands";
 import { advance, createMatch } from "@/lib/br/engine";
 import { ITEM, TILE, type GameMap, type LootItem } from "@/lib/br/map";
-import { resolveRules, type Rules } from "@/lib/br/rules";
+import { KNIFE, resolveRules, type Rules } from "@/lib/br/rules";
 import { damageEvents, hpTotals, hudState, newKills, pickupCandidate, viewScale, visibleParticipants } from "./view";
 
 const BASE = resolveRules(GAME_CONFIG.BATTLE_ROYALE);
@@ -58,7 +58,7 @@ describe("ce que voit le joueur (mêmes règles que les bots)", () => {
     const s = match({ spawns: [tile(5), tile(16), tile(25), tile(16)] });
     s.p.shield[0] = 20;
     const hud = hudState(s, 0);
-    expect(hud).toMatchObject({ alive: true, hp: 140, maxHp: 140, shield: 20, weapon: s.rules.startWeapon, otherWeapon: -1, reserve: null, survivors: 2, kills: 0 });
+    expect(hud).toMatchObject({ alive: true, hp: 140, maxHp: 140, shield: 20, weapon: s.rules.startWeapon, slots: [s.rules.startWeapon, -1, KNIFE], slot: 0, reserve: null, scope: 1, boostSeconds: 0, survivors: 2, kills: 0 });
     expect(hud.magazine).toBe(s.rules.weapons[s.rules.startWeapon].magazine);
     expect(hud.zone).toMatchObject({ stage: 0, phase: 0 });
     expect(hud.zone.secondsLeft).toBe(Math.ceil(s.rules.zone[0].waitTicks / RATE));
@@ -66,6 +66,11 @@ describe("ce que voit le joueur (mêmes règles que les bots)", () => {
     advance(s, [cmd(0, 0, BTN.ability), 0]);
     expect(hudState(s, 0).abilityReady).toBe(false);
     expect(hudState(s, 0).abilityCooldown).toBeGreaterThan(0.9);
+    // Couteau en main (sans munitions), lunette ×4, boisson énergisante.
+    s.p.active[0] = 2;
+    s.p.scope[0] = 4;
+    s.p.boostLeft[0] = 2 * RATE + 1;
+    expect(hudState(s, 0)).toMatchObject({ weapon: KNIFE, slot: 2, magazine: 0, magazineSize: 0, reserve: null, scope: 4, boostSeconds: 3 });
   });
 
   it("objet à ramasser : le plus proche des objets utiles à portée (un soin inutile avec tous ses PV est ignoré)", () => {

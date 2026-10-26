@@ -147,10 +147,29 @@ const battleRoyaleSchema = z.object({
   }),
   WEAPONS: z.object(Object.fromEntries(BR_WEAPONS.map((w) => [w, brWeaponSchema])) as Record<BrWeaponId, typeof brWeaponSchema>),
   STARTING_WEAPON: z.enum(BR_WEAPONS),
+  /** Couteau de combat : toujours porté (troisième arme), frappe ce qui est devant soi, sans munitions. */
+  KNIFE: z.object({
+    DAMAGE: positiveInt,
+    INTERVAL_MS: positiveInt,
+    /** Portée, en unités, depuis le bord du personnage. */
+    RANGE: positiveInt,
+    /** Demi-ouverture de l'arc frappé, en pas d'angle (un tour = 256). */
+    ARC_STEPS: z.number().int().min(1).max(128),
+  }),
+  /** Caisses destructibles : résistance, et l'objet qu'elles lâchent une fois brisées. */
+  CRATE: z.object({
+    HP: positiveInt,
+    LOOT_WEIGHTS: z.object({ heal: nonNegativeInt, ammo: nonNegativeInt, vest: nonNegativeInt, weapon: nonNegativeInt, speed: nonNegativeInt, scope: nonNegativeInt }),
+    /** Lunettes : grossissement du champ de vision et poids de chacune. */
+    SCOPES: z.array(z.object({ zoom: z.number().int().min(2).max(32), weight: positiveInt })).min(1),
+    /** Boisson énergisante : vitesse en plus (%) et durée. */
+    SPEED_BOOST_PERCENT: z.number().int().min(1).max(100),
+    SPEED_BOOST_MS: positiveInt,
+  }),
   ITEMS: z.object({
-    /** « Patch de Lol » : PV rendus, durée d'utilisation (déplacement ralenti, pas de tir), nombre maximal. */
+    /** Trousse de soins : PV rendus aussitôt au ramassage. */
     HEAL_HP: positiveInt,
-    /** « Gilet Cringe » : points de protection, consommés avant les PV. */
+    /** Gilet pare-balles : points de protection, consommés avant les PV. */
     VEST_SHIELD: positiveInt,
     AMMO_MAX: z.object({ light: positiveInt, shell: positiveInt, heavy: positiveInt }),
     AMMO_BOX: z.object({ light: positiveInt, shell: positiveInt, heavy: positiveInt }),
@@ -396,14 +415,12 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
       rare: [4, 8, 12],
       epique: [3, 6, 9],
       legendaire: [2, 4, 6],
-      brainrot: [2, 3, 4],
-      superbrainrot: [1, 2, 3],
       godlevel: [1, 2, 3],
     },
     // Volontairement modeste : une carte améliorée reste battable par la même carte non améliorée.
     STAT_BONUS_PERCENT: [0, 3, 6, 10],
-    // 0,1 MemeMoney par commune, 0,25 par rare, 0,5 par épique, puis 3 / 10 / 25 / 60.
-    SELL_CENTS: { commune: 10, rare: 25, epique: 50, legendaire: 300, brainrot: 1000, superbrainrot: 2500, godlevel: 6000 },
+    // 0,1 MemeMoney par commune, 0,25 par rare, 0,5 par épique, 3 par légendaire, 60 par godlevel.
+    SELL_CENTS: { commune: 10, rare: 25, epique: 50, legendaire: 300, godlevel: 6000 },
     // Toutes les raretés se revendent jusqu'au dernier exemplaire (sauf une carte Dorée ou Divine).
     CAP_EXEMPT_FROM: "legendaire",
     // MemeMoney maximum gagnée chaque jour (fuseau du joueur) en revendant des communes,
@@ -418,17 +435,17 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
       flex: { usual: "epique", upgrade: "legendaire", upgradeChance: 15 },
       godlevelChance: 0.05,
     },
-    // 3 communes, 3 rares, 2 épiques, 1 légendaire + 1 légendaire (88 %) ou 1 brainrot (12 %).
+    // Super Booster : 3 communes, 3 rares, 2 épiques, 1 légendaire + 1 épique (60 %) ou 1 légendaire (40 %).
     special: {
       fixed: { commune: 3, rare: 3, epique: 2, legendaire: 1 },
-      flex: { usual: "legendaire", upgrade: "brainrot", upgradeChance: 12 },
-      godlevelChance: 0.1,
+      flex: { usual: "epique", upgrade: "legendaire", upgradeChance: 40 },
+      godlevelChance: 0.5,
     },
-    // 2 communes, 2 rares, 2 épiques, 2 légendaires, 1 brainrot + 1 brainrot (90 %) ou 1 superbrainrot (10 %).
+    // Ultra Booster : 2 communes, 2 rares, 2 épiques, 3 légendaires + 1 légendaire (97 %) ou 1 godlevel (3 %).
     very_special: {
-      fixed: { commune: 2, rare: 2, epique: 2, legendaire: 2, brainrot: 1 },
-      flex: { usual: "brainrot", upgrade: "superbrainrot", upgradeChance: 10 },
-      godlevelChance: 0.25,
+      fixed: { commune: 2, rare: 2, epique: 2, legendaire: 3 },
+      flex: { usual: "legendaire", upgrade: "godlevel", upgradeChance: 3 },
+      godlevelChance: 0.5,
     },
   },
   PITY_THRESHOLD: 10,
@@ -443,8 +460,6 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
     rare: 10,
     epique: 25,
     legendaire: 100,
-    brainrot: 250,
-    superbrainrot: 600,
     godlevel: 1500,
   },
   CRAFT_MULTIPLIER: 4,
@@ -505,22 +520,23 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
   // Battle royale : valeurs de la conception validée (2026-10-24), équilibrées par les tournois de bots (phase 2, 2026-10-25 :
   // les 8 seuils de la conception tenus, voir DECISIONS.md). Toute modification : relancer npm run bots:tournament.
   BATTLE_ROYALE: {
-    CONFIG_VERSION: 3,
-    PARTICIPANTS: 100,
+    CONFIG_VERSION: 4,
+    // 50 participants (décision du propriétaire, 2026-10-26) : plus de calcul et de mémoire pour les graphismes.
+    PARTICIPANTS: 50,
     TICK_RATE: 20,
     MAX_DURATION_S: 540,
-    // 176 × 176 tuiles (environ 6 écrans de large) : avec 128, les participants se voyaient presque tous dès l'apparition
-    // (tournois de bots, phase 2). Bâtiments, caisses, buissons et lacs gardent la même densité.
+    // 124 × 124 tuiles pour 50 participants : la même place par participant qu'avec 176 × 176 pour 100 (phase 2).
+    // Bâtiments, caisses, buissons et lacs gardent la même densité.
     MAP: {
-      TILES: 176,
+      TILES: 124,
       TILE_UNITS: 32,
       BORDER_TILES: 2,
-      LAKES: [5, 9],
+      LAKES: [3, 5],
       LAKE_RADIUS_TILES: [3, 7],
-      BUILDINGS: [34, 48],
+      BUILDINGS: [17, 24],
       BUILDING_SIZE_TILES: [6, 11],
-      CRATES: 226,
-      BUSH_CLUSTERS: 47,
+      CRATES: 113,
+      BUSH_CLUSTERS: 24,
       BUSH_CLUSTER_SIZE: [3, 8],
     },
     VIEW: { HALF_WIDTH: 450, HALF_HEIGHT: 250, BUSH_REVEAL: 64 },
@@ -528,12 +544,12 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
     // 6 phases : 7 min de zone (conception : 6 min 30 à 7 min 30), puis la zone fermée achève la partie.
     ZONE: {
       PHASES: [
-        { waitS: 60, shrinkS: 40, radiusPercent: 65, dps: 1 },
-        { waitS: 45, shrinkS: 35, radiusPercent: 60, dps: 2 },
-        { waitS: 40, shrinkS: 30, radiusPercent: 55, dps: 4 },
-        { waitS: 35, shrinkS: 25, radiusPercent: 50, dps: 6 },
-        { waitS: 30, shrinkS: 25, radiusPercent: 40, dps: 10 },
-        { waitS: 25, shrinkS: 30, radiusPercent: 0, dps: 15 },
+        { waitS: 75, shrinkS: 50, radiusPercent: 65, dps: 1 },
+        { waitS: 56, shrinkS: 44, radiusPercent: 60, dps: 2 },
+        { waitS: 50, shrinkS: 38, radiusPercent: 55, dps: 4 },
+        { waitS: 44, shrinkS: 31, radiusPercent: 50, dps: 6 },
+        { waitS: 38, shrinkS: 31, radiusPercent: 40, dps: 10 },
+        { waitS: 31, shrinkS: 38, radiusPercent: 0, dps: 15 },
       ],
     },
     CHARACTER: {
@@ -567,7 +583,7 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
     // Régénération : un filet de sécurité (jusqu'à 8 % des PV max, après 12 s sans être touché). Plus forte, elle écrasait
     // les autres passifs (tournois de bots : 3 % de Top 1 contre 0,3 %), car on enchaîne les combats sans se soigner.
     PASSIVE: { REGEN_DELAY_MS: 12000, REGEN_CAP_PERCENT: 8, DODGE_DIVISOR: 3, REFLECT_DIVISOR: 1, CLEANSE_PERCENT: 50, RECHARGE_PERCENT: 55 },
-    // Lance-Pop (pistolet, arme de départ), Pétard Mouillé (fusil à pompe), Rafaleuse 3000 (mitraillette), Lunette à Like (précision).
+    // Pistolet (arme de départ), fusil à pompe, mitraillette, fusil de précision ; le couteau de combat est à part (KNIFE).
     WEAPONS: {
       pop: { damage: 8, pellets: 1, fireIntervalMs: 400, magazine: 12, reloadMs: 1500, spreadSteps: 2, speed: 1600, range: 700, ammo: "none" },
       petard: { damage: 6, pellets: 6, fireIntervalMs: 900, magazine: 5, reloadMs: 2500, spreadSteps: 10, speed: 1300, range: 350, ammo: "shell" },
@@ -575,6 +591,18 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
       lunette: { damage: 42, pellets: 1, fireIntervalMs: 1500, magazine: 4, reloadMs: 3000, spreadSteps: 0, speed: 2800, range: 1400, ammo: "heavy" },
     },
     STARTING_WEAPON: "pop",
+    KNIFE: { DAMAGE: 20, INTERVAL_MS: 500, RANGE: 50, ARC_STEPS: 32 },
+    // Caisses : 40 de résistance ; butin validé par le propriétaire le 2026-10-26.
+    CRATE: {
+      HP: 40,
+      LOOT_WEIGHTS: { heal: 30, ammo: 25, vest: 15, weapon: 12, speed: 10, scope: 8 },
+      SCOPES: [
+        { zoom: 2, weight: 60 },
+        { zoom: 4, weight: 40 },
+      ],
+      SPEED_BOOST_PERCENT: 20,
+      SPEED_BOOST_MS: 15000,
+    },
     ITEMS: {
       HEAL_HP: 40,
       VEST_SHIELD: 50,

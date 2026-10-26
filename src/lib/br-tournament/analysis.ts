@@ -19,8 +19,8 @@ export const THRESHOLDS = {
   idleMaxPercent: 1,
   /** Bots coincés non résolus (3 s sans avancer en voulant avancer). */
   stuckMax: 0,
-  /** Taux de Top 1 de chaque carte jouée au moins cardMinPlays fois, en % (attendu : 1 %). */
-  cardTop1Percent: [0.5, 2] as const,
+  /** Taux de Top 1 de chaque carte jouée au moins cardMinPlays fois, en % (attendu : 2 % à 50 participants ; plage du 2026-10-26). */
+  cardTop1Percent: [1, 4] as const,
   cardMinPlays: 2000,
   /** Godlevel / commune (Top 1, à évolution égale). */
   rarityMaxRatio: 1.3,

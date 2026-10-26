@@ -10,10 +10,8 @@ describe("budget de stats", () => {
     expect(statBudget("godlevel")).toBeCloseTo(208, 10);
   });
 
-  it("augmente de 5 % du budget de base à chaque rang", () => {
-    for (let i = 1; i < RARITIES.length; i++) {
-      expect(statBudget(RARITIES[i]) - statBudget(RARITIES[i - 1])).toBeCloseTo(8, 10);
-    }
+  it("croît avec la rareté : 160, 168, 176, 184, puis 208 pour la godlevel", () => {
+    expect(RARITIES.map((r) => Math.round(statBudget(r)))).toEqual([160, 168, 176, 184, 208]);
   });
 
   it("calcule l'indice PV/2 + ATK + DEF + VIT/2", () => {
@@ -27,7 +25,7 @@ describe("budget de stats", () => {
 });
 
 describe("cartes de démonstration", () => {
-  it("couvrent les 7 raretés", () => {
+  it("couvrent les 5 raretés", () => {
     expect(new Set(SAMPLE_CARDS.map((c) => c.rarity))).toEqual(new Set(RARITIES));
   });
 

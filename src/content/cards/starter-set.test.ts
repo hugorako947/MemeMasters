@@ -8,7 +8,7 @@ const count = (pred: (c: (typeof STARTER_SET)[number]) => boolean) => STARTER_SE
 describe("jeu de départ", () => {
   it("compte 40 cartes réparties selon les raretés prévues", () => {
     expect(STARTER_SET).toHaveLength(40);
-    const expected = { commune: 12, rare: 10, epique: 8, legendaire: 5, brainrot: 3, superbrainrot: 1, godlevel: 1 };
+    const expected = { commune: 12, rare: 10, epique: 8, legendaire: 9, godlevel: 1 };
     for (const [rarity, n] of Object.entries(expected)) expect(count((c) => c.rarity === rarity), rarity).toBe(n);
   });
 

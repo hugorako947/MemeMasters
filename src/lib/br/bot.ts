@@ -9,7 +9,8 @@
  *   (position approximative) ; mémoire des derniers ennemis vus. Comme le joueur, ils voient la
  *   barre de vie et l'arme des ennemis visibles, le cercle de zone suivant et le fil des éliminations.
  * - Décision (4 fois par seconde, bots répartis sur les calculs) : scores de 0 à 1 000 pour
- *   ramasser (un soin compris : il est immédiat), combattre, fuir, se couvrir, rejoindre la zone, chasser, explorer ;
+ *   ramasser (un soin compris : il est immédiat), ouvrir une caisse, combattre, fuir, se couvrir, rejoindre la zone,
+ *   chasser, explorer ;
  *   un bruit à graine, plus fort aux bas niveaux, rend les choix moins bons et moins identiques.
  * - Contrôle (à chaque tick) : suivi de chemin, visée (réaction, erreur, anticipation), tir,
  *   rechargement, changement d'arme, capacité, pas de côté, anti-blocage.
@@ -19,18 +20,25 @@ import { ABILITY_KINDS, BOOST_STATS, type BattleCharacter } from "./character";
 import { BTN, packCommand } from "./commands";
 import { angleDiff, clamp, iatan2, icos, idiv, isin, isqrt, Q14 } from "./fixed";
 import { forEachNear } from "./grid";
-import { circleHitsSolid, ITEM, lineOfSight } from "./map";
-import { clearPath, FAR, fieldNext, findPath, navFor, nearestVertex, vertexX, vertexY, zoneField } from "./nav";
+import { circleHitsSolid, isPassable, ITEM, lineOfSight } from "./map";
+import { clearPath, FAR, fieldNext, findPath, nearestVertex, vertexX, vertexY, zoneField } from "./nav";
 import { chance, nextBelow, nextRange, STREAM } from "./rng";
-import { BURN_SHOT, msToTicks, SUB, type BotRules } from "./rules";
+import { BURN_SHOT, KNIFE, msToTicks, SUB, type BotRules } from "./rules";
 import { BOT_MEMORY, BOT_MEMORY_FIELDS as MF, BOT_PATH, canTake, weaponInHand, Z, type MatchState } from "./state";
 import { canSee, canSeePoint, inView } from "./vision";
 
 /** Personnalités (conception §7.5). */
 export const PERSONA = { cautious: 0, aggressive: 1, mobile: 2, sniper: 3 } as const;
 /** Décisions possibles. */
-export const ACTION = { roam: 0, zone: 1, loot: 2, fight: 3, flee: 4, cover: 5, hunt: 6 } as const;
-const ACTIONS = 7;
+export const ACTION = { roam: 0, zone: 1, loot: 2, fight: 3, flee: 4, cover: 5, hunt: 6, crate: 7 } as const;
+const ACTIONS = 8;
+
+/**
+ * Valeur d'une caisse à ouvrir (avant la distance, comme un objet) : seulement l'arme de départ, ou mieux armé. Une caisse
+ * à portée vaut alors un peu plus qu'explorer (350 / 150) ; à une demi-largeur d'écran, nettement moins.
+ */
+const CRATE_VALUE_UNARMED = 450;
+const CRATE_VALUE = 250;
 
 const kindIndex = <K extends string>(list: readonly K[]) => Object.fromEntries(list.map((k, i) => [k, i])) as Record<K, number>;
 const AB = kindIndex(ABILITY_KINDS);
@@ -49,7 +57,7 @@ const TRAITS = [500, 450, 1000] as const;
 /** Pas de côté en plus pour la personnalité « mobile » (‰). */
 const MOBILE_STRAFE = 150;
 
-/** Préférence d'arme par personnalité, sur 1 000 (Lance-Pop, Pétard Mouillé, Rafaleuse 3000, Lunette à Like). */
+/** Préférence d'arme par personnalité, sur 1 000 (pistolet, fusil à pompe, mitraillette, fusil de précision). */
 const WEAPON_PREF = [
   [200, 600, 800, 650],
   [200, 800, 750, 450],
@@ -57,13 +65,18 @@ const WEAPON_PREF = [
   [200, 500, 650, 850],
 ] as const;
 
-/** Distance de combat voulue selon l'arme en main, en unités : [au moins, au plus]. */
+/** Distance de combat voulue selon l'arme en main, en unités : [au moins, au plus] (indices de rules.weapons : armes à feu, projectile de brûlure, couteau). */
 const WEAPON_BAND = [
   [200, 420],
   [50, 170],
   [140, 360],
   [260, 440],
+  [200, 420],
+  [0, 30],
 ] as const;
+
+/** Marge (en unités) au-delà de la portée du couteau avant de reprendre une arme à feu. */
+const KNIFE_KEEP = 40;
 
 /** Niveau des bots (en dixièmes) pour un joueur qui a ce nombre de trophées. */
 export function botLevelForTrophies(trophies: number, rules: { bots: BotRules }): number {
@@ -115,6 +128,7 @@ export function initBots(s: MatchState, characters: readonly BattleCharacter[], 
     B.target[i] = -1;
     B.item[i] = -1;
     B.building[i] = -1;
+    B.crate[i] = -1;
     B.goalX[i] = B.anchorX[i] = s.p.x[i];
     B.goalY[i] = B.anchorY[i] = s.p.y[i];
     B.seenTick[i] = B.visTick[i] = B.heardTick[i] = B.threatTick[i] = NEVER;
@@ -147,6 +161,18 @@ function usableWeapon(s: MatchState, i: number): number {
   if (w < 0) return s.rules.startWeapon;
   const ammo = s.rules.weapons[w].ammo;
   return s.p.mag1[i] > 0 || ammo === 0 || s.m.ammo[4 * i + ammo] > 0 ? w : s.rules.startWeapon;
+}
+
+/** Distance entre les centres à laquelle un coup de couteau de i atteint t. */
+function knifeReach(s: MatchState, i: number, t: number): number {
+  return s.rules.weapons[KNIFE].range + s.fighters[i].radius + s.fighters[t].radius;
+}
+
+/** Le couteau frappe-t-il plus fort que cette arme au contact ? (dégâts par tick, tous les plombs touchant) */
+function knifeBeats(s: MatchState, w: number): boolean {
+  const K = s.rules.weapons[KNIFE];
+  const W = s.rules.weapons[w];
+  return K.damage * W.fireTicks > W.damage * Math.max(1, W.pellets) * K.fireTicks;
 }
 
 function magazineInHand(s: MatchState, i: number): number {
@@ -249,7 +275,10 @@ function perceive(s: MatchState, i: number): void {
   const x = P.x[i];
   const y = P.y[i];
   const st = STREAM.bot0 + i;
-  const { halfWidth, halfHeight } = R.view;
+  // Champ de vision, agrandi par la lunette (la même règle que pour le joueur, voir vision.ts).
+  const zoom = Math.max(1, P.scope[i]);
+  const halfWidth = R.view.halfWidth * zoom;
+  const halfHeight = R.view.halfHeight * zoom;
   seenCount = 0;
   forEachNear(x - halfWidth, y - halfHeight, x + halfWidth, y + halfHeight, (j) => {
     if (j !== i && seenCount < seen.length && canSee(s, i, j)) seen[seenCount++] = j;
@@ -345,6 +374,9 @@ function decide(s: MatchState, i: number): void {
   const item = bestItem(s, i);
   // S'équiper d'abord : le butin compte davantage tant qu'on n'a que l'arme de départ.
   if (item >= 0) scores[ACTION.loot] = (nearest >= 0 && nearestD < 300 * SUB ? idiv(itemScore, 2) : itemScore) + (use === R.startWeapon ? 150 : 0);
+  // Ouvrir une caisse : seulement sans ennemi en vue.
+  const crate = seenCount === 0 ? bestCrate(s, i, use) : -1;
+  if (crate >= 0) scores[ACTION.crate] = crateScore;
   if (target >= 0) scores[ACTION.fight] = targetScore;
   if (nearest >= 0) scores[ACTION.flee] = fleeScore(s, i, hp1000, threats, nearest, nearestD, deficit);
   scores[ACTION.cover] = coverScore(s, i, hp1000, deficit);
@@ -382,6 +414,10 @@ function decide(s: MatchState, i: number): void {
     case ACTION.loot:
       B.item[i] = item;
       setGoal(s, i, s.it.x[item], s.it.y[item]);
+      break;
+    case ACTION.crate:
+      B.crate[i] = crate;
+      setGoal(s, i, crateGX, crateGY);
       break;
     case ACTION.zone:
       B.goalX[i] = s.zone[Z.tx];
@@ -481,7 +517,7 @@ function zoneDeadline(s: MatchState, x: number, y: number): number {
 /** Ticks de marche jusqu'au cercle suivant, par la carte des distances (chemin réel, pas la ligne droite). */
 function zoneTravelTicks(s: MatchState, i: number): number {
   const Zs = s.zone;
-  const nav = navFor(s.map);
+  const nav = s.nav!;
   const field = zoneField(nav, Zs[Z.tx], Zs[Z.ty], Zs[Z.tr]);
   const v = nearestVertex(nav, s.p.x[i], s.p.y[i]);
   const distance = v >= 0 && field[v] < FAR ? idiv(field[v] * s.map.tileSub, 10) : isqrt(sq(s.p.x[i] - Zs[Z.tx], s.p.y[i] - Zs[Z.ty]));
@@ -539,6 +575,10 @@ function itemValue(s: MatchState, i: number, k: number): number {
     }
     case ITEM.vest:
       return P.shield[i] >= items.vestShield ? 0 : 100 + idiv((items.vestShield - P.shield[i]) * 450, items.vestShield);
+    case ITEM.speed:
+      return P.boostLeft[i] > 0 ? 80 : 260;
+    case ITEM.scope:
+      return I.sub[k] > P.scope[i] ? 300 : 0;
   }
   return 0;
 }
@@ -581,6 +621,52 @@ function bestItem(s: MatchState, i: number): number {
   for (let k = 0; k < s.itemCount; k++) {
     if (I.kind[k] === ITEM.none || k === current || !inView(s, i, I.x[k], I.y[k])) continue;
     consider(k, 0, true);
+  }
+  return best;
+}
+
+let crateScore = 0;
+let crateGX = 0;
+let crateGY = 0;
+
+/**
+ * Caisse dans le champ de vision à ouvrir (valeur moins distance, comme un objet ; +50 pour celle déjà visée), avec
+ * une case libre à côté pour la frapper : son score est rangé dans crateScore, le centre de cette case dans crateGX / crateGY.
+ */
+function bestCrate(s: MatchState, i: number, use: number): number {
+  const P = s.p;
+  const n = s.map.size;
+  const ts = s.map.tileSub;
+  const hw = s.rules.view.halfWidth;
+  const value = use === s.rules.startWeapon ? CRATE_VALUE_UNARMED : CRATE_VALUE;
+  let best = -1;
+  crateScore = 0;
+  for (let k = 0; k < s.crateTiles.length; k++) {
+    const t = s.crateTiles[k];
+    if (s.crates[t] <= 0) continue;
+    const cx = (t % n) * ts + (ts >> 1);
+    const cy = idiv(t, n) * ts + (ts >> 1);
+    if (!inView(s, i, cx, cy)) continue;
+    const sc = value - idiv(isqrt(sq(cx - P.x[i], cy - P.y[i])) * 400, hw) + (t === s.b.crate[i] ? 50 : 0);
+    if (sc <= crateScore) continue;
+    // Case libre à côté, la plus proche du bot.
+    let stand = -1;
+    let standD = 0;
+    for (let q = 0; q < 4; q++) {
+      const x = (t % n) + (q === 0 ? 1 : q === 1 ? -1 : 0);
+      const y = idiv(t, n) + (q === 2 ? 1 : q === 3 ? -1 : 0);
+      if (x < 0 || y < 0 || x >= n || y >= n || !isPassable(s.map.tiles[y * n + x])) continue;
+      const d = sq(x * ts + (ts >> 1) - P.x[i], y * ts + (ts >> 1) - P.y[i]);
+      if (stand < 0 || d < standD) {
+        stand = y * n + x;
+        standD = d;
+      }
+    }
+    if (stand < 0) continue;
+    best = t;
+    crateScore = sc;
+    crateGX = (stand % n) * ts + (ts >> 1);
+    crateGY = idiv(stand, n) * ts + (ts >> 1);
   }
   return best;
 }
@@ -644,7 +730,7 @@ function huntGoal(s: MatchState, i: number): boolean {
 function fleeGoal(s: MatchState, i: number, fromX: number, fromY: number): void {
   const P = s.p;
   const Zs = s.zone;
-  const nav = navFor(s.map);
+  const nav = s.nav!;
   const away = iatan2(P.y[i] - fromY, P.x[i] - fromX);
   const len = 8 * s.map.tileSub;
   for (const offset of [0, 24, -24, 48, -48, 80, -80]) {
@@ -668,7 +754,7 @@ function findCover(s: MatchState, i: number, tx: number, ty: number): boolean {
   const P = s.p;
   const B = s.b;
   const Zs = s.zone;
-  const nav = navFor(s.map);
+  const nav = s.nav!;
   // La couverture visée protège encore : on y reste.
   if (B.action[i] === ACTION.cover && !lineOfSight(s.map, tx, ty, B.goalX[i], B.goalY[i])) {
     goalX = B.goalX[i];
@@ -716,7 +802,7 @@ function exploreGoal(s: MatchState, i: number): void {
   const Zs = s.zone;
   const ts = s.map.tileSub;
   const st = STREAM.bot0 + i;
-  const nav = navFor(s.map);
+  const nav = s.nav!;
   const bld = s.map.buildings;
   const safeR = Zs[Z.tr] - 2 * ts;
   const [cx, cy, r] = safeR > ts ? [Zs[Z.tx], Zs[Z.ty], safeR] : [Zs[Z.cx], Zs[Z.cy], Zs[Z.r] - 2 * ts];
@@ -789,7 +875,7 @@ function servePaths(s: MatchState): void {
 
 function computePath(s: MatchState, i: number): void {
   const B = s.b;
-  const nav = navFor(s.map);
+  const nav = s.nav!;
   B.needPath[i] = 0;
   B.pathIdx[i] = 0;
   B.pathGX[i] = B.goalX[i];
@@ -821,6 +907,8 @@ function control(s: MatchState, i: number): number {
   let move = 0;
   let buttons = 0;
   let aim = P.aim[i];
+  /** Direction de la caisse à frapper (−1 : aucune). */
+  let crateAim = -1;
 
   // La cible est-elle visible à ce tick ? Sa vitesse se lit sur deux ticks de suite.
   const t = B.target[i];
@@ -855,6 +943,17 @@ function control(s: MatchState, i: number): number {
     case ACTION.zone:
       move = moveZone(s, i);
       break;
+    case ACTION.crate: {
+      // À une case et demie au plus : on s'arrête et on frappe la caisse ; sinon on va à la case libre d'à côté.
+      const c = B.crate[i];
+      if (c < 0 || s.crates[c] <= 0) break;
+      const ts = s.map.tileSub;
+      const cx = (c % s.map.size) * ts + (ts >> 1);
+      const cy = idiv(c, s.map.size) * ts + (ts >> 1);
+      if (4 * sq(cx - P.x[i], cy - P.y[i]) <= 9 * ts * ts) crateAim = iatan2(cy - P.y[i], cx - P.x[i]);
+      else move = moveTo(s, i, B.goalX[i], B.goalY[i]);
+      break;
+    }
     default:
       move = moveTo(s, i, B.goalX[i], B.goalY[i]);
   }
@@ -867,19 +966,24 @@ function control(s: MatchState, i: number): number {
   let ready = false;
   let aligned = false;
   if (willing) {
-    const flight = idiv(d, Math.max(1, W.speed));
+    const flight = W.speed > 0 ? idiv(d, W.speed) : 0;
     const px = P.x[t] + idiv(vx * flight * B.lead[i], 1000);
     const py = P.y[t] + idiv(vy * flight * B.lead[i], 1000);
     aim = (iatan2(py - P.y[i], px - P.x[i]) + B.aimOff[i]) & 255;
     ready = tick >= B.seenTick[i] + B.react[i];
     aligned = Math.abs(angleDiff(aim, P.aim[i])) <= R.aimTurn;
-    if (ready && aligned && d <= W.range) buttons |= BTN.fire;
+    if (ready && aligned && d <= (weaponInHand(s, i) === KNIFE ? knifeReach(s, i, t) : W.range)) buttons |= BTN.fire;
+  } else if (crateAim >= 0) {
+    // Caisse : au couteau s'il frappe plus fort que l'arme à feu, dès que la visée est alignée et l'arme prête.
+    aim = crateAim;
+    if (Math.abs(angleDiff(aim, P.aim[i])) <= R.aimTurn) buttons |= BTN.fire;
   } else if (tick - B.threatTick[i] <= R.tickRate) aim = iatan2(B.threatY[i] - P.y[i], B.threatX[i] - P.x[i]);
   else if (tick - B.heardTick[i] <= R.tickRate) aim = iatan2(B.heardY[i] - P.y[i], B.heardX[i] - P.x[i]);
   else if (move !== 0) aim = directionAngle(move);
 
-  // Arme : l'arme ramassée si elle a des balles (le Lance-Pop si la cible est trop loin pour le Pétard Mouillé).
-  const want = wantedSlot(s, i, visible ? d : -1);
+  // Arme : le couteau au contact, l'arme ramassée si elle a des balles (le pistolet si la cible est trop loin pour le fusil à pompe).
+  const gun = wantedSlot(s, i, visible ? d : -1, t);
+  const want = crateAim >= 0 && !willing && knifeBeats(s, gun === 1 ? P.weapon1[i] : R.startWeapon) ? 2 : gun;
   if (want !== P.active[i] && P.reload[i] === 0) buttons |= press(prev, BTN.nextWeapon);
   // Rechargement hors de vue d'un ennemi, chargeur à moins de moitié.
   else if (!visible && P.reload[i] === 0 && 2 * magazineInHand(s, i) < W.magazine && (W.ammo === 0 || s.m.ammo[4 * i + W.ammo] > 0)) {
@@ -919,7 +1023,7 @@ function moveTo(s: MatchState, i: number, gx: number, gy: number): number {
   if (sq(gx - x, gy - y) <= step * step) return 0;
   const len = B.pathLen[i];
   if (len > 0) {
-    const nav = navFor(s.map);
+    const nav = s.nav!;
     const base = i * BOT_PATH;
     const px = (k: number) => vertexX(nav, s.bpath[base + k]);
     const py = (k: number) => vertexY(nav, s.bpath[base + k]);
@@ -943,7 +1047,7 @@ function moveTo(s: MatchState, i: number, gx: number, gy: number): number {
 function moveZone(s: MatchState, i: number): number {
   const P = s.p;
   const Zs = s.zone;
-  const nav = navFor(s.map);
+  const nav = s.nav!;
   const x = P.x[i];
   const y = P.y[i];
   const field = zoneField(nav, Zs[Z.tx], Zs[Z.ty], Zs[Z.tr]);
@@ -991,10 +1095,16 @@ function antiStuck(s: MatchState, i: number, move: number): number {
   return B.unstickDir[i];
 }
 
-/** Emplacement d'arme voulu : 1 (arme ramassée) si elle a des balles et convient à la distance, sinon 0 (Lance-Pop). */
-function wantedSlot(s: MatchState, i: number, d: number): number {
+/**
+ * Emplacement d'arme voulu (`d` : distance de la cible visible `t`, −1 sans cible) : 2 (couteau) au contact s'il frappe
+ * plus fort que l'arme à feu, 1 (arme ramassée) si elle a des balles et convient à la distance, sinon 0 (arme de départ).
+ */
+function wantedSlot(s: MatchState, i: number, d: number, t: number): number {
   const w = s.p.weapon1[i];
-  if (w < 0 || usableWeapon(s, i) !== w) return 0;
+  const gun = w >= 0 && usableWeapon(s, i) === w;
+  // Le couteau est gardé un peu au-delà de sa portée : sinon le bot changerait d'arme à chaque pas (sans jamais frapper).
+  if (d >= 0 && knifeBeats(s, gun ? w : s.rules.startWeapon) && d <= knifeReach(s, i, t) + (s.p.active[i] === 2 ? KNIFE_KEEP * SUB : 0)) return 2;
+  if (!gun) return 0;
   const W = s.rules.weapons[w];
   if (d >= 0 && W.range < s.rules.weapons[s.rules.startWeapon].range && d > idiv(W.range * 12, 10)) return 0;
   return 1;

@@ -12,7 +12,7 @@ describe("améliorations", () => {
 
   it("demande moins d'exemplaires pour les cartes plus rares", () => {
     const total = (r: Parameters<typeof nextUpgrade>[0]) => GAME_CONFIG.DUPLICATES.UPGRADES[r].reduce((a, b) => a + b, 0);
-    const order = ["commune", "rare", "epique", "legendaire", "brainrot", "superbrainrot", "godlevel"] as const;
+    const order = ["commune", "rare", "epique", "legendaire", "godlevel"] as const;
     for (let i = 1; i < order.length; i++) expect(total(order[i])).toBeLessThanOrEqual(total(order[i - 1]));
   });
 

@@ -32,6 +32,7 @@ export const RATE_LIMITS = {
   communityPropose: { scope: "community_propose", limit: 3, windowSeconds: 86_400 },
   communityVote: { scope: "community_vote", limit: 30, windowSeconds: 60 },
   communityReview: { scope: "community_review", limit: 120, windowSeconds: 60 },
+  battleCharacter: { scope: "battle_character", limit: 30, windowSeconds: 60 },
 } as const satisfies Record<string, RateLimitRule>;
 
 /**

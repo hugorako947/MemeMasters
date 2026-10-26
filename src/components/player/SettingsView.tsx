@@ -11,6 +11,7 @@ import { AppearanceForm } from "@/app/(jeu)/parametres/AppearanceForm";
 import { DeleteAccount } from "@/app/(jeu)/parametres/DeleteAccount";
 import { LanguageForm } from "@/app/(jeu)/parametres/LanguageForm";
 import { TimezoneForm } from "@/app/(jeu)/parametres/TimezoneForm";
+import { BattleSettings } from "./BattleSettings";
 
 /**
  * Réglages du compte. La déconnexion et la suppression du compte sont ici,
@@ -61,6 +62,12 @@ export async function SettingsView({ player, email }: { player: Player; email: s
         <h2 className="text-xl font-extrabold">{t("appTitle")}</h2>
         <FullscreenToggle />
         <PlayOnPhone layout="row" />
+      </Panel>
+
+      {/* Battle Royale : touches et son (bouton « Modifier » des commandes de jeu). */}
+      <Panel className="grid scroll-mt-24 gap-3" id="battle-royale">
+        <h2 className="text-xl font-extrabold">{(await getTranslations("settings.br"))("title")}</h2>
+        <BattleSettings />
       </Panel>
 
       {/* Aide : dans les réglages, là où l'on cherche naturellement du support. */}

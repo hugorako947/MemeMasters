@@ -17,6 +17,7 @@ import { getCollection } from "@/lib/server/cards";
 import { resaleLeftCents } from "@/lib/server/duplicates";
 import { getBadges } from "@/lib/server/notifications";
 import { getDailyChallenge } from "@/lib/server/challenges";
+import { getBattleCharacterId } from "@/lib/server/battle";
 
 /**
  * Accueil : la vitrine pour un visiteur, le jeu (Collection | Boosters | Battle Royale)
@@ -29,19 +30,20 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
   // Mêmes règles que les autres pages du jeu : profil créé, conditions acceptées, compte non banni.
   const { player } = await requirePlayer();
   const { vue } = await searchParams;
-  const [collection, boosters, resaleLeft, badges, challenge, counts] = await Promise.all([
+  const [collection, boosters, resaleLeft, badges, challenge, counts, battleCardId] = await Promise.all([
     getCollection(player.id),
     getBoosterState(player),
     resaleLeftCents(player),
     getBadges(player),
     getDailyChallenge(player),
     playerCounts(),
+    getBattleCharacterId(player.id),
   ]);
   // Le cadre (AppShell) est fourni par le layout du groupe (jeu).
   return (
     <div className="grid gap-6">
       <h1 className="font-display text-4xl leading-none md:text-5xl">{(await getTranslations("playerHome"))("title", { username: player.username })}</h1>
-      <PlayerFeatures player={player} collection={collection} boosters={boosters} resaleLeftCents={resaleLeft} boostersBadge={badges.boosters} challenge={challenge} counts={counts} initial={typeof vue === "string" ? vue : undefined} />
+      <PlayerFeatures player={player} collection={collection} boosters={boosters} resaleLeftCents={resaleLeft} boostersBadge={badges.boosters} challenge={challenge} counts={counts} battleCardId={battleCardId} initial={typeof vue === "string" ? vue : undefined} />
     </div>
   );
 }

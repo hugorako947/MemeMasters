@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { InteractiveCard } from "@/components/card/InteractiveCard";
 import { SAMPLE_CARDS } from "@/components/card/sample-cards";
 import { GAME_CONFIG } from "@/config/game.config";
+import { CharacterBubble } from "./CharacterBubble";
 
 const card = (slug: string) => SAMPLE_CARDS.find((c) => c.slug === slug)!;
 
@@ -26,7 +27,7 @@ export async function FeatureShowcase() {
       </Feature>
       <Feature
         title={t("battle.title")}
-        text={t("battle.text", { team: GAME_CONFIG.TEAM_SIZE, seconds: GAME_CONFIG.TURN_SECONDS })}
+        text={t("battle.text", { count: GAME_CONFIG.BATTLE_ROYALE.PARTICIPANTS })}
         tint="bg-[#fff6c9]"
       >
         <BattleScene />
@@ -125,37 +126,56 @@ async function CollectionScene() {
   );
 }
 
-/** Deux cartes face à face, barres de PV, minuteur et ELO. */
+/** Une partie de Battle Royale vue de dessus : un bâtiment, des caisses, le Scroll qui avance, trois personnages qui se tirent dessus. */
 async function BattleScene() {
   const t = await getTranslations("features.battle");
-  const fighters = [
-    { c: card("le-stagiaire-en-pls"), hp: 72, side: "-rotate-[6deg]" },
-    { c: card("le-chat-qui-juge"), hp: 41, side: "rotate-[6deg]" },
-  ];
+  const count = GAME_CONFIG.BATTLE_ROYALE.PARTICIPANTS;
   return (
     <div className="relative mx-auto max-w-sm">
-      <div className="mb-3 flex justify-between text-xs font-extrabold">
-        <span className="rounded-full border-2 border-ink bg-surface px-3 py-1">⏱ {t("timer", { seconds: GAME_CONFIG.TURN_SECONDS })}</span>
-        <span className="rounded-full border-2 border-ink bg-surface px-3 py-1">{t("trophies")}</span>
+      <div className="mb-3 flex justify-between gap-2 text-xs font-extrabold">
+        <span className="rounded-full border-2 border-ink bg-surface px-3 py-1">{t("alive", { count: Math.round(count * 0.46) })}</span>
+        <span className="rounded-full border-2 border-ink bg-surface px-3 py-1">{t("scroll")}</span>
       </div>
-      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-        {fighters.map(({ c, hp, side }, i) => (
-          <div key={c.id} className={i === 1 ? "order-3" : ""}>
-            <div className="mm-stat-bar mb-2 border-2 border-ink" aria-hidden="true">
-              <span style={{ width: `${hp}%`, ["--bar" as string]: hp > 50 ? "#127a4b" : "#f5a400" }} />
-            </div>
-            <div className={side}>
-              <InteractiveCard card={c} size="compact" />
-            </div>
-          </div>
+      <svg viewBox="0 0 360 240" role="img" aria-label={t("sceneLabel")} className="w-full overflow-hidden rounded-xl border-2 border-ink">
+        <rect width="360" height="240" fill="#8fc46a" />
+        <path d="M0 40 Q90 20 180 46 T360 34" stroke="#7fb65c" strokeWidth="18" fill="none" opacity="0.6" />
+        <path d="M0 196 Q120 176 220 204 T360 190" stroke="#7fb65c" strokeWidth="14" fill="none" opacity="0.6" />
+        {/* Étang et buisson. */}
+        <ellipse cx="300" cy="200" rx="54" ry="28" fill="#4fa3d9" stroke="#2f7fb5" strokeWidth="3" />
+        <path d="M268 196 q12 -6 24 0 M300 210 q12 -6 24 0" stroke="#bfe6ff" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+        <g fill="#3f8f45" stroke="#2c6b33" strokeWidth="2.5">
+          <circle cx="44" cy="190" r="17" />
+          <circle cx="66" cy="200" r="15" />
+          <circle cx="52" cy="210" r="14" />
+        </g>
+        {/* Bâtiment : sol en bois, murs en briques avec une porte. */}
+        <rect x="120" y="34" width="130" height="92" fill="#d8b98b" />
+        <path d="M120 54 H250 M120 74 H250 M120 94 H250 M120 114 H250" stroke="#c4a173" strokeWidth="1.5" />
+        <path d="M116 30 H254 V130 H206 M168 130 H116 Z" fill="none" stroke="#5b4a6e" strokeWidth="9" strokeLinejoin="round" />
+        {/* Caisses en bois. */}
+        {[
+          [78, 94],
+          [278, 70],
+        ].map(([x, y]) => (
+          <g key={x} transform={`translate(${x} ${y})`}>
+            <rect width="26" height="26" rx="3" fill="#c98a4b" stroke="#6e4220" strokeWidth="3" />
+            <path d="M4 4 L22 22 M4 13 H22" stroke="#6e4220" strokeWidth="2.5" />
+          </g>
         ))}
-        <span
-          className="meme-caption order-2 grid size-14 place-items-center rounded-full border-2 border-ink bg-sticker text-2xl"
-          style={{ WebkitTextStroke: "0.1em var(--color-ink)" }}
-        >
-          VS
-        </span>
-      </div>
+        {/* Le Scroll : l'extérieur de la zone, en violet, avec son bord. */}
+        <path d="M360 0 V240 H316 A260 260 0 0 0 340 0 Z" fill="#6b2fd6" opacity="0.35" />
+        <path d="M316 240 A260 260 0 0 0 340 0" stroke="#ff3d7f" strokeWidth="4" fill="none" />
+        {/* Tirs. */}
+        <path d="M104 162 L150 150" stroke="#ffd23f" strokeWidth="4" strokeLinecap="round" />
+        <circle cx="154" cy="149" r="4" fill="#ffffff" stroke="#1a1238" strokeWidth="2" />
+        <path d="M232 152 L214 154" stroke="#ffd23f" strokeWidth="4" strokeLinecap="round" />
+        <CharacterBubble card={card("lundi-matin")} x={66} y={170} r={22} angle={-14} id="mm-scene-a" />
+        <CharacterBubble card={card("le-chat-qui-juge")} x={186} y={92} r={22} angle={150} id="mm-scene-b" />
+        <CharacterBubble card={card("l-algorithme-supreme")} x={262} y={150} r={22} angle={176} id="mm-scene-c" />
+        <text x="186" y="60" textAnchor="middle" fontSize="16" fontWeight="800" fill="#ffffff" stroke="#1a1238" strokeWidth="4" paintOrder="stroke">
+          12
+        </text>
+      </svg>
     </div>
   );
 }

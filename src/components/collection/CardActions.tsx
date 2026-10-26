@@ -11,12 +11,27 @@ import { useErrorText } from "@/lib/client/errors";
 import type { Card } from "@/lib/validation/card";
 
 /**
- * Les deux boutons posés sur la carte agrandie :
+ * Les boutons posés sur la carte agrandie :
+ * - Choisir pour le Battle Royale (ou « Ton personnage » si c'est déjà elle) ;
  * - Évoluer : niveau suivant et exemplaires nécessaires (« 3 / 5 ») ;
  * - Vendre : tous les exemplaires en trop d'un coup, avec le prix total.
  */
-export function CardActions({ card, quantity, level, resaleLeftCents }: { card: Card; quantity: number; level: Level; resaleLeftCents: number }) {
+export function CardActions({
+  card,
+  quantity,
+  level,
+  resaleLeftCents,
+  battleCharacter = false,
+}: {
+  card: Card;
+  quantity: number;
+  level: Level;
+  resaleLeftCents: number;
+  /** Cette carte est le personnage du Battle Royale du joueur. */
+  battleCharacter?: boolean;
+}) {
   const t = useTranslations("dup");
+  const tb = useTranslations("collection.battle");
   const errorText = useErrorText();
   const format = useFormatter();
   const router = useRouter();
@@ -44,6 +59,18 @@ export function CardActions({ card, quantity, level, resaleLeftCents }: { card: 
 
   return (
     <div className="mm-online-only contents">
+      {battleCharacter ? (
+        <p className="rounded-full border-2 border-ink bg-candy px-3 py-2 text-center text-sm font-extrabold text-[var(--mm-accent-ink)]">{tb("chosen")}</p>
+      ) : (
+        <button
+          type="button"
+          disabled={pending}
+          onClick={() => run("/api/battle/character", { cardId: card.id }, () => tb("done", { name: card.name }))}
+          className="mm-btn mm-btn--primary min-h-10 w-full px-3 text-sm"
+        >
+          {tb("choose")}
+        </button>
+      )}
       {next ? (
         <button
           type="button"

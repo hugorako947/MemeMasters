@@ -1,10 +1,10 @@
 import { getFormatter, getTranslations } from "next-intl/server";
 import { PlayerCounts } from "@/components/player/PlayerCounts";
 import type { ReactNode } from "react";
-import { InteractiveCard } from "@/components/card/InteractiveCard";
 import { sampleOf } from "@/components/card/sample-cards";
 import { SlideDeck } from "@/components/ui/SlideDeck";
-import { ButtonLink } from "@/components/ui/Button";
+import { DuelScene } from "@/components/home/DuelScene";
+import { TrainingPanel } from "@/components/match/TrainingPanel";
 import { DailyChallengeCard } from "@/components/challenges/DailyChallengeCard";
 import type { DailyChallenge } from "@/lib/server/challenges";
 import { isOfferActive, OFFERS } from "@/config/shop";
@@ -30,6 +30,7 @@ export async function PlayerFeatures({
   boostersBadge = 0,
   challenge = null,
   counts,
+  battleCardId = null,
   initial,
   param,
 }: {
@@ -40,6 +41,8 @@ export async function PlayerFeatures({
   boostersBadge?: number;
   challenge?: DailyChallenge | null;
   counts?: { accounts: number; online: number };
+  /** Personnage du Battle Royale choisi dans la Collection (null : pas encore choisi). */
+  battleCardId?: string | null;
   initial?: string;
   param?: string;
 }) {
@@ -51,9 +54,9 @@ export async function PlayerFeatures({
       param={param}
       initial={index === -1 ? 1 : index}
       slides={[
-        { key: "collection", label: t("collection.title"), content: <CollectionSlide items={collection} resaleLeftCents={resaleLeftCents} /> },
+        { key: "collection", label: t("collection.title"), content: <CollectionSlide items={collection} resaleLeftCents={resaleLeftCents} battleCardId={battleCardId} /> },
         { key: "boosters", label: t("boosters.title"), content: <BoostersSlide state={boosters} challenge={challenge} />, badge: boostersBadge },
-        { key: "batailles", label: t("battles.title"), content: <BattlesSlide player={player} counts={counts} /> },
+        { key: "batailles", label: t("battles.title"), content: <BattlesSlide player={player} counts={counts} collection={collection} battleCardId={battleCardId} /> },
       ]}
     />
   );
@@ -85,17 +88,31 @@ async function BoostersSlide({ state, challenge }: { state: BoosterStateView; ch
   );
 }
 
-/** Battle Royale (bientôt) : rang, trophées, prochaine récompense, et deux personnages pour donner envie. */
-async function BattlesSlide({ player, counts }: { player: Player; counts?: { accounts: number; online: number } }) {
+/**
+ * Battle Royale : une illustration, rang, trophées et prochaine récompense, puis les modes de jeu et
+ * l'Entraînement (personnage choisi dans la Collection, difficulté, commandes, lancement).
+ */
+async function BattlesSlide({
+  player,
+  counts,
+  collection,
+  battleCardId,
+}: {
+  player: Player;
+  counts?: { accounts: number; online: number };
+  collection: CollectionItem[];
+  battleCardId: string | null;
+}) {
   const t = await getTranslations("playerHome.battles");
-  const tm = await getTranslations("match");
   const tr = await getTranslations("rank");
+  const chosen = collection.find((e) => e.card.id === battleCardId && e.quantity > 0);
   const format = await getFormatter();
   const rank = rankFor(player.trophies);
   const next = RANKS[rankIndex(player.trophies) + 1];
   return (
-    <SlideFrame soon>
-      <div className="mx-auto grid max-w-lg gap-5">
+    <SlideFrame>
+      <div className="mx-auto grid max-w-2xl gap-5">
+        <DuelScene left={sampleOf("epique")} right={sampleOf("legendaire")} />
         {counts ? <PlayerCounts initial={counts} compact /> : null}
         <div className="flex items-center gap-3">
           <RankShield rank={rank} size={44} />
@@ -112,36 +129,21 @@ async function BattlesSlide({ player, counts }: { player: Player; counts?: { acc
             {t("nextReward", { boosters: RANK_REWARDS[next].boosters, money: RANK_REWARDS[next].memeMoney })}
           </p>
         ) : null}
-        {/* Mode Entraînement (phase 3) : réservé à l'équipe jusqu'à l'ouverture du Battle Royale (phase 5). */}
-        {player.role !== "player" ? (
-          <div className="grid justify-items-center gap-1 text-center">
-            <ButtonLink href="/partie" className="min-h-11 px-6">
-              {tm("homeButton")}
-            </ButtonLink>
-            <p className="text-xs font-semibold text-ink-soft">{tm("homeHint")}</p>
-          </div>
-        ) : null}
-        <div className="mx-auto grid w-full max-w-sm grid-cols-[1fr_auto_1fr] items-center gap-3">
-          <div className="-rotate-6">
-            <InteractiveCard card={sampleOf("epique")} size="compact" />
-          </div>
-          <span className="meme-caption grid size-14 place-items-center rounded-full border-2 border-ink bg-surface text-2xl" aria-hidden="true">
-            VS
-          </span>
-          <div className="rotate-6">
-            <InteractiveCard card={sampleOf("legendaire")} size="compact" />
-          </div>
-        </div>
+        <TrainingPanel
+          player={{ name: player.username, trophies: player.trophies }}
+          character={chosen ? { card: chosen.card, level: chosen.level } : null}
+          cards={collection.map((e) => e.card)}
+        />
       </div>
     </SlideFrame>
   );
 }
 
 /** La collection du joueur, directement consultable. */
-async function CollectionSlide({ items, resaleLeftCents }: { items: CollectionItem[]; resaleLeftCents: number }) {
+async function CollectionSlide({ items, resaleLeftCents, battleCardId }: { items: CollectionItem[]; resaleLeftCents: number; battleCardId: string | null }) {
   return (
     <section className="rounded-[1.75rem] border-2 border-ink bg-surface p-4 shadow-[0_3px_0_0_var(--mm-shadow)] sm:p-6">
-      <CollectionBrowser items={items} resaleLeftCents={resaleLeftCents} />
+      <CollectionBrowser items={items} resaleLeftCents={resaleLeftCents} battleCardId={battleCardId} />
     </section>
   );
 }

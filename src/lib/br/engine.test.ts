@@ -5,8 +5,9 @@ import { BTN, packCommand } from "./commands";
 import { advance, createMatch, matchResult, step } from "./engine";
 import { angleDiff, idiv } from "./fixed";
 import { ITEM, TILE, type GameMap, type LootItem } from "./map";
-import { resolveRules, SUB, type Rules } from "./rules";
-import { C, cloneState, KILL_ZONE, stateHash, type MatchState } from "./state";
+import { KNIFE, resolveRules, SUB, type Rules } from "./rules";
+import { C, cloneState, KILL_KNIFE, KILL_ZONE, stateHash, weaponInHand, type MatchState } from "./state";
+import { canSee } from "./vision";
 
 const BASE = resolveRules(GAME_CONFIG.BATTLE_ROYALE);
 const TS = BASE.map.tileSub;
@@ -56,6 +57,9 @@ const cmd = (move: number, aim: number, buttons = 0) => packCommand({ move, aim,
 function run(s: MatchState, ticks: number, commands: (i: number, t: number) => number) {
   for (let t = 0; t < ticks; t++) advance(s, Array.from({ length: s.n }, (_, i) => commands(i, s.tick)));
 }
+
+/** Règle du couteau. */
+const s0Knife = () => BASE.weapons[KNIFE];
 
 /** Dégâts attendus d'une balle : arme × ATQ (%), puis armure 200 / (200 + DÉF) ; la même formule sert à l'affichage. */
 const expectedHit = (damage: number, weaponPercent: number, def: number) => {
@@ -372,6 +376,115 @@ describe("moteur : zone et fin de partie", () => {
     expect(s.finished).toBe(true);
     expect(matchResult(s).killedBy).toEqual([-1, -1].map((v, i) => (s.p.place[i] === 1 ? -2 : v)));
     expect(Array.from(s.log.slice(3, 4))).toEqual([KILL_ZONE]);
+  });
+});
+
+describe("moteur : couteau, caisses, lunettes et boisson énergisante", () => {
+  const settle = (s: MatchState) => run(s, BASE.switchTicks + 1, () => 0);
+
+  it("trois armes : arme de départ → arme ramassée → couteau → arme de départ (sans arme ramassée : directement le couteau)", () => {
+    const s = match({});
+    advance(s, [cmd(0, 0, BTN.nextWeapon), 0]);
+    expect(weaponInHand(s, 0)).toBe(KNIFE);
+    advance(s, [0, 0]);
+    advance(s, [cmd(0, 0, BTN.nextWeapon), 0]);
+    expect(weaponInHand(s, 0)).toBe(s.rules.startWeapon);
+    advance(s, [0, 0]);
+    s.p.weapon1[0] = 2;
+    s.p.mag1[0] = 10;
+    const order: number[] = [];
+    for (let k = 0; k < 3; k++) {
+      advance(s, [cmd(0, 0, BTN.nextWeapon), 0]);
+      advance(s, [0, 0]);
+      order.push(weaponInHand(s, 0));
+    }
+    expect(order).toEqual([2, KNIFE, s.rules.startWeapon]);
+  });
+
+  it("couteau : frappe ce qui est devant, à courte portée (armure comprise), sans munitions ; élimination au couteau", () => {
+    const knife = s0Knife();
+    const s = match({ chars: [character(), character(), character()], spawns: [tile(10), tile(16), tile(12), tile(16), tile(10), tile(22)] });
+    advance(s, [cmd(0, 0, BTN.nextWeapon), 0, 0]);
+    settle(s);
+    advance(s, [cmd(0, 0, BTN.fire), 0, 0]);
+    expect(s.p.hp[1]).toBe(140 - expectedHit(knife.damage, 100, 36));
+    expect(s.p.hp[2]).toBe(140);
+    expect(s.shotCount).toBe(0);
+    // Cadence : un seul coup tant que le couteau n'est pas prêt.
+    advance(s, [cmd(0, 0, BTN.fire), 0, 0]);
+    expect(s.p.hp[1]).toBe(140 - expectedHit(knife.damage, 100, 36));
+    s.p.hp[1] = 1;
+    run(s, knife.fireTicks + 1, (i) => (i === 0 ? cmd(0, 0, BTN.fire) : 0));
+    expect(s.p.alive[1]).toBe(0);
+    expect(s.log[3]).toBe(KILL_KNIFE);
+  });
+
+  it("caisses : les balles les abîment ; brisée, la caisse devient du sol et lâche un objet ; le couteau aussi", () => {
+    const map = openMap();
+    map.tiles[16 * 32 + 8] = TILE.crate;
+    map.tiles[16 * 32 + 6] = TILE.crate;
+    const s = match({ map, spawns: [tile(4), tile(16), tile(16), tile(16)] });
+    expect(s.crates[16 * 32 + 6]).toBe(s.rules.crate.hp);
+    // La caisse d'à côté, au couteau.
+    advance(s, [cmd(0, 0, BTN.nextWeapon), 0]);
+    settle(s);
+    const before = s.itemCount;
+    run(s, 10 * RATE, (i) => (i === 0 ? cmd(0, 0, BTN.fire) : 0));
+    expect(s.map.tiles[16 * 32 + 6]).toBe(TILE.floor);
+    expect(s.itemCount).toBe(before + 1);
+    expect(s.counters[C.cratesBroken]).toBe(1);
+    // La suivante, à l'arme de départ : les balles s'arrêtent sur la caisse tant qu'elle tient.
+    advance(s, [cmd(0, 0, BTN.nextWeapon), 0]);
+    settle(s);
+    run(s, 15 * RATE, (i) => (i === 0 ? cmd(0, 0, BTN.fire) : 0));
+    expect(s.map.tiles[16 * 32 + 8]).toBe(TILE.floor);
+    expect(s.counters[C.cratesBroken]).toBe(2);
+    expect(s.crates[16 * 32 + 8]).toBe(0);
+    // L'état copié garde sa propre carte : la copie et l'original ne se mélangent pas.
+    const copy = cloneState(s);
+    copy.map.tiles[5] = TILE.wall;
+    expect(s.map.tiles[5]).toBe(TILE.floor);
+  });
+
+  it("couteau collé à une caisse : la lame touche la première caisse sur sa trajectoire, pas au-delà d'un mur", () => {
+    const map = openMap();
+    map.tiles[16 * 32 + 8] = TILE.crate;
+    map.tiles[20 * 32 + 8] = TILE.wall;
+    map.tiles[20 * 32 + 9] = TILE.crate;
+    const s = match({ map, spawns: [8 * TS - 300, tile(16), 8 * TS - 300, tile(20)] });
+    run(s, 1, () => cmd(0, 0, BTN.nextWeapon));
+    settle(s);
+    run(s, 1, () => cmd(0, 0, BTN.fire));
+    expect(s.crates[16 * 32 + 8]).toBeLessThan(s.rules.crate.hp);
+    expect(s.crates[20 * 32 + 9]).toBe(s.rules.crate.hp);
+  });
+
+  it("lunette ×2 puis ×4 : champ de vision agrandi (jamais réduit) ; boisson énergisante : +20 % de vitesse pendant 15 s", () => {
+    const far = tile(5) + idiv(3 * BASE.view.halfWidth, 2);
+    const at = { x: tile(5), y: tile(16) };
+    const loot: LootItem[] = [
+      { kind: ITEM.scope, sub: 2, qty: 1, ...at },
+      { kind: ITEM.speed, sub: 0, qty: 1, x: at.x, y: at.y + 200 },
+    ];
+    const s = match({ loot, map: openMap(200), spawns: [at.x, at.y, far, at.y] });
+    expect(canSee(s, 0, 1)).toBe(false);
+    advance(s, [cmd(0, 0, BTN.pickup), 0]);
+    advance(s, [0, 0]);
+    expect(s.p.scope[0]).toBe(2);
+    expect(canSee(s, 0, 1)).toBe(true);
+    // Une lunette moins forte que la sienne reste au sol.
+    s.p.scope[0] = 4;
+    s.it.kind[0] = ITEM.scope;
+    s.it.sub[0] = 2;
+    advance(s, [cmd(0, 0, BTN.pickup), 0]);
+    advance(s, [0, 0]);
+    expect(s.p.scope[0]).toBe(4);
+    expect(s.p.boostLeft[0]).toBeGreaterThan(s.rules.crate.boostTicks - 4);
+    const x0 = s.p.x[0];
+    advance(s, [cmd(1, 0), 0]);
+    expect(s.p.x[0] - x0).toBe(idiv(idiv(300 * SUB, RATE) * (1000 + s.rules.crate.boostPermille), 1000));
+    run(s, s.rules.crate.boostTicks, () => 0);
+    expect(s.p.boostLeft[0]).toBe(0);
   });
 });
 

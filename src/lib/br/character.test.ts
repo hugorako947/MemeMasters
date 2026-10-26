@@ -21,8 +21,8 @@ describe("carte → personnage du battle royale", () => {
         expect(c.maxHp).toBeLessThanOrEqual(200);
         expect(c.hitRadius).toBeGreaterThanOrEqual(14);
         expect(c.hitRadius).toBeLessThanOrEqual(22);
-        expect(c.speed).toBeGreaterThanOrEqual(220);
-        expect(c.speed).toBeLessThanOrEqual(400);
+        expect(c.speed).toBeGreaterThanOrEqual(143);
+        expect(c.speed).toBeLessThanOrEqual(260);
         expect(c.weaponPercent).toBeGreaterThanOrEqual(90);
         expect(c.weaponPercent).toBeLessThanOrEqual(110);
         expect(c.damageTakenPercent).toBeGreaterThanOrEqual(75);
@@ -39,9 +39,9 @@ describe("carte → personnage du battle royale", () => {
   it("formules sans compression (κ = 100 %) : celles de la conception", () => {
     const raw = RAW;
     const tank = battleCharacter(make({ hp: 140, atk: 20, def: 65, spd: 10 }), 0, raw, BONUS);
-    expect([tank.maxHp, tank.hitRadius, tank.speed, tank.weaponPercent, tank.damageTakenPercent]).toEqual([200, 22, 220, 90, 75]);
+    expect([tank.maxHp, tank.hitRadius, tank.speed, tank.weaponPercent, tank.damageTakenPercent]).toEqual([200, 22, 143, 90, 75]);
     const fast = battleCharacter(make({ hp: 60, atk: 65, def: 20, spd: 100 }), 0, raw, BONUS);
-    expect([fast.maxHp, fast.hitRadius, fast.speed, fast.weaponPercent, fast.damageTakenPercent]).toEqual([100, 14, 400, 110, 90]);
+    expect([fast.maxHp, fast.hitRadius, fast.speed, fast.weaponPercent, fast.damageTakenPercent]).toEqual([100, 14, 260, 110, 90]);
   });
 
   it("avantages et inconvénients : robuste = gros et lent, rapide = fragile", () => {

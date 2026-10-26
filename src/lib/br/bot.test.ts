@@ -199,6 +199,24 @@ describe("bots : comportement", () => {
     expect(used).toBe(true);
   });
 
+  it("sans ennemi en vue, un bot ouvre une caisse proche (au couteau) et en lâche le contenu", () => {
+    const map = openMap();
+    const crate = 20 * 40 + 14;
+    map.tiles[crate] = TILE.crate;
+    const s = match({ botLevels: [50, null], spawns: [tile(10), tile(20), tile(35), tile(35)], map });
+    let opened = false;
+    let knife = false;
+    run(s, 10 * RATE, (st) => {
+      opened ||= st.b.action[0] === ACTION.crate;
+      knife ||= st.p.active[0] === 2;
+    });
+    expect(opened).toBe(true);
+    expect(knife).toBe(true);
+    expect(s.crates[crate]).toBe(0);
+    expect(s.map.tiles[crate]).toBe(TILE.floor);
+    expect(s.itemCount).toBe(1);
+  });
+
   it("temps de réaction : le premier tir d'un bot de niveau 10 part bien avant celui d'un bot de niveau 0", () => {
     const firstShot = (level: number) => {
       const s = match({ botLevels: [level, null], spawns: [tile(10), tile(20), tile(16), tile(20)] });
@@ -215,12 +233,12 @@ describe("bots : comportement", () => {
   });
 
   it("en duel, le niveau 10 bat le niveau 0 presque toujours", () => {
-    // Avec la seule arme de départ, aucun des deux ne cherche le combat : le duel peut prendre une minute ou deux.
+    // Avec la seule arme de départ, aucun des deux ne cherche le combat : le duel peut prendre jusqu'à trois minutes.
     let wins = 0;
     for (let seed = 1; seed <= 12; seed++) {
       const [a, b] = seed % 2 ? [tile(10), tile(22)] : [tile(22), tile(10)];
       const s = match({ seed, botLevels: [100, 0], spawns: [a, tile(20), b, tile(20)] });
-      run(s, 120 * RATE);
+      run(s, 180 * RATE);
       if (s.finished && s.p.place[0] === 1) wins++;
     }
     expect(wins).toBeGreaterThanOrEqual(10);

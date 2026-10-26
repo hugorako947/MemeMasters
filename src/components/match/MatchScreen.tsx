@@ -3,12 +3,17 @@
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { aimFromVector, CommandBuilder, moveFromKeys, moveFromVector } from "@/lib/br-client/input";
+import { bindingOfMouse, brSettings, type BrAction } from "@/lib/client/br-settings";
+import { startMusic, stopMusic } from "@/lib/client/music";
+import { setSfxVolume } from "@/lib/client/sfx";
+import { createAudioDirector } from "./audio-director";
+import { createEventTracker } from "@/lib/br-client/events";
 import { MatchClock } from "@/lib/br-client/loop";
 import type { RosterEntry } from "@/lib/br-client/training";
 import { damageEvents, hpTotals, hudState, newKills, pickupCandidate, visibleParticipants } from "@/lib/br-client/view";
 import { BTN } from "@/lib/br/commands";
 import { advance, createMatch, type MatchSetup } from "@/lib/br/engine";
-import type { MatchState } from "@/lib/br/state";
+import { C, type MatchState } from "@/lib/br/state";
 import { EndScreen, type MatchResult } from "./EndScreen";
 import { Hud, useItemName } from "./Hud";
 import { createStore, type FeedEntry, type MatchSnapshot } from "./match-store";
@@ -42,18 +47,26 @@ const reduced = mediaStore("(prefers-reduced-motion: reduce)");
  * Le moteur avance à 20 ticks par seconde en suivant l'horloge réelle (pas de pause), PixiJS dessine à chaque image
  * en lissant entre deux ticks, l'interface React se met à jour dix fois par seconde.
  */
-export function MatchScreen({ setup, roster, onQuit, onReplay, onChange }: { setup: MatchSetup; roster: readonly RosterEntry[]; onQuit(): void; onReplay(): void; onChange(): void }) {
+export function MatchScreen({ setup, roster, onQuit, onReplay }: { setup: MatchSetup; roster: readonly RosterEntry[]; onQuit(): void; onReplay(): void }) {
   const t = useTranslations("match");
   const tc = useTranslations("match.controls");
   const itemName = useItemName();
   const host = useRef<HTMLDivElement>(null);
   const minimap = useRef<HTMLCanvasElement>(null);
+  const bigMap = useRef<HTMLCanvasElement>(null);
+  /** Emplacement d'arme demandé (touches 1, 2, 3) : on change d'arme tick après tick jusqu'à l'atteindre ; −1 : aucun. */
+  const wantSlot = useRef(-1);
   const builder = useRef(new CommandBuilder());
   const match = useRef<MatchState | null>(null);
   const store = useMemo(() => createStore<MatchSnapshot | null>(null), []);
   const [phase, setPhase] = useState<"loading" | "playing" | "ended">("loading");
   const [result, setResult] = useState<MatchResult | null>(null);
   const [menu, setMenu] = useState(false);
+  const [mapOpen, setMapOpen] = useState(false);
+  const mapShown = useRef(false);
+  useEffect(() => {
+    mapShown.current = mapOpen;
+  }, [mapOpen]);
   const menuOpen = useRef(false);
   const isCoarse = useSyncExternalStore(coarse.subscribe, coarse.get, () => false);
   const isPortrait = useSyncExternalStore(portrait.subscribe, portrait.get, () => false);
@@ -84,12 +97,17 @@ export function MatchScreen({ setup, roster, onQuit, onReplay, onChange }: { set
     const visible = new Uint8Array(s.n);
     const commands = new Uint32Array(s.n);
     const clock = new MatchClock(1000 / s.rules.tickRate, 200);
-    const base = minimapBase(s.map);
+    let base = minimapBase(s.map);
+    let cratesBroken = s.counters[C.cratesBroken];
+    const events = createEventTracker(s);
     const b = builder.current;
     let feed: FeedEntry[] = [];
     let logSeen = 0;
     let lastUi = 0;
     let ended = false;
+    const settings = brSettings.get();
+    setSfxVolume(settings.sfx);
+    const sounds = createAudioDirector(s, ME);
     // Une partie en cours : aucune invite de mise à jour ne doit la couper (voir PwaProvider).
     document.documentElement.dataset.mmMatch = "1";
 
@@ -115,15 +133,23 @@ export function MatchScreen({ setup, roster, onQuit, onReplay, onChange }: { set
         prevX.set(s.p.x);
         prevY.set(s.p.y);
         const before = hpTotals(s);
+        if (wantSlot.current >= 0) {
+          if (s.p.active[ME] === wantSlot.current) wantSlot.current = -1;
+          else b.press(BTN.nextWeapon);
+        }
         commands[ME] = s.p.alive[ME] ? b.next() : 0;
         advance(s, commands);
         visibleParticipants(s, ME, visible);
-        // Pendant un rattrapage, seuls les derniers ticks font apparaître des chiffres.
-        if (ticks - k <= 3) renderer.addDamage(damageEvents(before, s, ME, visible), s);
-        if (s.logCount > logSeen) {
-          for (const e of newKills(s, logSeen)) feed.push({ id: e.tick * 1000 + e.victim, killer: e.killer, victim: e.victim, cause: e.cause, at: now });
-          logSeen = s.logCount;
-        }
+        // Pendant un rattrapage, seuls les derniers ticks font apparaître des chiffres et du son.
+        const loud = ticks - k <= 3;
+        const damage = damageEvents(before, s, ME, visible);
+        if (loud) renderer.addDamage(damage, s);
+        const kills = s.logCount > logSeen ? newKills(s, logSeen) : [];
+        for (const e of kills) feed.push({ id: e.tick * 1000 + e.victim, killer: e.killer, victim: e.victim, cause: e.cause, at: now });
+        logSeen = s.logCount;
+        const happened = events.after(s);
+        renderer.addEffects(s, happened, kills, visible, loud);
+        sounds.afterTick(s, damage, kills, happened, loud);
         if (!s.p.alive[ME] || s.finished) finish();
       }
       visibleParticipants(s, ME, visible);
@@ -132,7 +158,13 @@ export function MatchScreen({ setup, roster, onQuit, onReplay, onChange }: { set
         lastUi = now;
         feed = feed.filter((e) => now - e.at < FEED_MS).slice(-5);
         store.set({ hud: hudState(s, ME), pickup: s.p.alive[ME] ? pickupCandidate(s, ME) : null, feed });
+        // Une caisse brisée disparaît aussi de la mini-carte.
+        if (s.counters[C.cratesBroken] !== cratesBroken) {
+          cratesBroken = s.counters[C.cratesBroken];
+          base = minimapBase(s.map);
+        }
         if (minimap.current) drawMinimap(minimap.current, base, s, ME);
+        if (bigMap.current) drawMinimap(bigMap.current, base, s, ME);
       }
       if (!ended) raf = requestAnimationFrame(frame);
     }
@@ -148,6 +180,7 @@ export function MatchScreen({ setup, roster, onQuit, onReplay, onChange }: { set
       renderer = r;
       if (process.env.NODE_ENV !== "production") (window as unknown as { __mmMatch?: unknown }).__mmMatch = { state: s, renderer: r };
       clock.start(performance.now());
+      startMusic(settings.music);
       setPhase("playing");
       raf = requestAnimationFrame(frame);
     })();
@@ -162,11 +195,12 @@ export function MatchScreen({ setup, roster, onQuit, onReplay, onChange }: { set
       cancelled = true;
       cancelAnimationFrame(raf);
       renderer?.destroy();
+      stopMusic();
       document.removeEventListener("visibilitychange", onHidden);
       window.removeEventListener("blur", onHidden);
       delete document.documentElement.dataset.mmMatch;
     };
-    // La partie est créée une fois par écran (un nouvel écran par partie, voir la clé dans TrainingLauncher).
+    // La partie est créée une fois par écran (un nouvel écran par partie, voir la clé dans TrainingPanel).
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -177,31 +211,40 @@ export function MatchScreen({ setup, roster, onQuit, onReplay, onChange }: { set
     const keys = { up: false, down: false, left: false, right: false };
     const pointer = { x: 0, y: 0, active: false };
     const el = host.current;
-    const KEYS: Record<string, keyof typeof keys> = { KeyW: "up", ArrowUp: "up", KeyS: "down", ArrowDown: "down", KeyA: "left", ArrowLeft: "left", KeyD: "right", ArrowRight: "right" };
+    // Touches choisies dans les Réglages (Battle Royale) ; les flèches déplacent toujours.
+    const bound = new Map<string, BrAction>(Object.entries(brSettings.get().keys).map(([action, binding]) => [binding, action as BrAction]));
+    const ARROWS: Record<string, keyof typeof keys> = { ArrowUp: "up", ArrowDown: "down", ArrowLeft: "left", ArrowRight: "right" };
+    const PULSE: Partial<Record<BrAction, number>> = { ability: BTN.ability, reload: BTN.reload, weapon: BTN.nextWeapon, pickup: BTN.pickup };
+
+    /** Une action pressée (down) ou relâchée : déplacement et tir maintenus, les autres sur l'appui. */
+    const act = (action: BrAction | undefined, down: boolean, repeat = false): boolean => {
+      if (!action) return false;
+      if (action === "up" || action === "down" || action === "left" || action === "right") {
+        keys[action] = down;
+        b.move = moveFromKeys(keys);
+      } else if (action === "fire") b.fire = down;
+      else if (down && !repeat) b.press(PULSE[action] ?? 0);
+      return true;
+    };
 
     const onKey = (e: KeyboardEvent, down: boolean) => {
       if (e.code === "Escape" && down) {
-        openMenu(!menuOpen.current);
+        if (mapShown.current) setMapOpen(false);
+        else openMenu(!menuOpen.current);
         e.preventDefault();
         return;
       }
       if (menuOpen.current) return;
-      const dir = KEYS[e.code];
-      if (dir) {
-        keys[dir] = down;
-        b.move = moveFromKeys(keys);
+      if (act(bound.get(e.code) ?? ARROWS[e.code], down, e.repeat)) {
         e.preventDefault();
         return;
       }
       if (!down || e.repeat) return;
-      if (e.code === "KeyC") b.press(BTN.ability);
-      else if (e.code === "KeyR") b.press(BTN.reload);
-      else if (e.code === "Tab") b.press(BTN.nextWeapon);
-      else if (e.code === "Digit1" || e.code === "Digit2") {
-        // L'arme voulue (1 : arme de départ, 2 : arme ramassée) : on change seulement si ce n'est pas déjà celle en main.
+      const slot = { Digit1: 0, Digit2: 1, Digit3: 2 }[e.code];
+      if (slot !== undefined) {
+        // L'arme voulue (1 : arme de départ, 2 : arme ramassée, 3 : couteau) : les armes défilent jusqu'à elle.
         const st = match.current;
-        const want = e.code === "Digit1" ? 0 : 1;
-        if (!st || (st.p.weapon1[ME] >= 0 && st.p.active[ME] !== want)) b.press(BTN.nextWeapon);
+        if (st && (slot !== 1 || st.p.weapon1[ME] >= 0) && st.p.active[ME] !== slot) wantSlot.current = slot;
       } else return;
       e.preventDefault();
     };
@@ -223,11 +266,10 @@ export function MatchScreen({ setup, roster, onQuit, onReplay, onChange }: { set
     const onDown = (e: PointerEvent) => {
       if (e.pointerType !== "mouse" || menuOpen.current) return;
       onMove(e);
-      if (e.button === 0) b.fire = true;
-      else if (e.button === 2) b.press(BTN.pickup);
+      act(bound.get(bindingOfMouse(e.button)), true);
     };
     const onUp = (e: PointerEvent) => {
-      if (e.pointerType === "mouse" && e.button === 0) b.fire = false;
+      if (e.pointerType === "mouse") act(bound.get(bindingOfMouse(e.button)), false);
     };
     let lastWheel = 0;
     const onWheel = (e: WheelEvent) => {
@@ -289,9 +331,23 @@ export function MatchScreen({ setup, roster, onQuit, onReplay, onChange }: { set
           >
             ☰
           </button>
-          <canvas ref={minimap} width={240} height={240} className="size-[7.5rem] rounded-xl border-2 border-ink sm:size-[9.5rem]" aria-hidden="true" />
+          <button type="button" onClick={() => setMapOpen(true)} className="block rounded-xl" aria-label={t("map.open")} aria-haspopup="dialog">
+            <canvas ref={minimap} width={240} height={240} className="block size-[7.5rem] rounded-xl border-2 border-ink sm:size-[9.5rem]" aria-hidden="true" />
+          </button>
         </div>
       </div>
+
+      {/* Carte agrandie : un clic (ou Échap) la referme ; la partie continue. */}
+      {mapOpen && phase === "playing" ? (
+        <div className="absolute inset-0 z-30 grid place-items-center bg-ink/60 p-4" role="dialog" aria-modal="true" aria-label={t("map.title")} onClick={() => setMapOpen(false)}>
+          <div className="grid justify-items-center gap-2">
+            <canvas ref={bigMap} width={720} height={720} className="block size-[min(80vh,80vw)] rounded-2xl border-2 border-ink shadow-[3px_3px_0_var(--color-ink)]" aria-hidden="true" />
+            <button type="button" className="mm-btn mm-btn--secondary min-h-11 px-4 text-sm" onClick={() => setMapOpen(false)}>
+              {t("map.close")}
+            </button>
+          </div>
+        </div>
+      ) : null}
 
       {phase === "playing" && touch && hud?.alive ? (
         <TouchControls
@@ -316,7 +372,7 @@ export function MatchScreen({ setup, roster, onQuit, onReplay, onChange }: { set
       ) : null}
 
       {menu && phase === "playing" ? <MatchMenu onResume={() => openMenu(false)} onQuit={onQuit} /> : null}
-      {phase === "ended" && result ? <EndScreen result={result} roster={roster} onReplay={onReplay} onChange={onChange} /> : null}
+      {phase === "ended" && result ? <EndScreen result={result} roster={roster} onReplay={onReplay} onClose={onQuit} /> : null}
 
       {touch && isPortrait ? (
         <div className="absolute inset-0 z-40 grid place-items-center bg-ink/85 p-6 text-center font-display text-2xl text-paper" role="alert">

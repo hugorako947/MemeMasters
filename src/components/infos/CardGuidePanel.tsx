@@ -20,7 +20,7 @@ export async function CardGuidePanel() {
   const special = card.specialAttack;
   const c = battleCharacter(card, 0, BR, DUPLICATES.STAT_BONUS_PERCENT);
   const { ability, passive } = await battleTexts(c, BR.PASSIVE.REGEN_DELAY_MS, BR.PASSIVE.REGEN_CAP_PERCENT);
-  // Exemple chiffré : une balle de Rafaleuse 3000 contre un personnage moyen (la commune de référence).
+  // Exemple chiffré : une balle de mitraillette contre un personnage moyen (la commune de référence).
   const example = BR.WEAPONS.rafaleuse;
   const averageDef = BR.CHARACTER.REFERENCE.def;
   const { shot, hit } = bulletDamage(example.damage, c.weaponPercent, averageDef);
@@ -35,7 +35,7 @@ export async function CardGuidePanel() {
     { title: t("spdTitle", { spd: card.spd }), text: t("spd", { speed: c.speed }) },
     {
       title: t("attackTitle", { name: card.normalAttack.name, power: card.normalAttack.power }),
-      text: t("attack", { weapons: format.list(BR_WEAPONS.map((w) => tw(w)), { type: "conjunction" }) }),
+      text: t("attack", { weapons: format.list(BR_WEAPONS.filter((w) => w !== BR.STARTING_WEAPON).map((w) => tw(w)), { type: "conjunction" }) }),
     },
     {
       title: t("exampleTitle"),

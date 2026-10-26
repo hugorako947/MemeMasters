@@ -25,7 +25,7 @@ export async function RarityShowcase({ className = "" }: { className?: string })
         className="pointer-events-none absolute -right-20 -top-24 size-72 rounded-full bg-[radial-gradient(circle,rgb(255_200_61/0.35),transparent_65%)]"
       />
       <h2 id="raretes-titre" className="meme-caption relative text-4xl">
-        {t("title")}
+        {t("title", { count: RARITIES.length })}
       </h2>
       <p className="relative mt-2 text-sm text-[#d9d3f5]">{t("lead")}</p>
 

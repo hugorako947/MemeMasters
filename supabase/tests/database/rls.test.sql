@@ -6,7 +6,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set search_path = public, extensions;
 
-select plan(38);
+select plan(41);
 
 -- ---------------------------------------------------------------- données
 insert into auth.users (id, email) values
@@ -61,6 +61,7 @@ select is((select count(*)::int from public.player_wallets), 0, 'anonyme : ne vo
 select ok((select count(*) from public.card_rankings) >= 1, 'anonyme : lit le classement des cartes');
 select throws_ok('select * from public.player_rankings', '42501', null,
   'anonyme : le classement des joueurs est réservé aux connectés');
+select throws_ok('select * from public.br_characters', '42501', null, 'anonyme : ne lit pas les personnages du Battle Royale');
 reset role;
 
 -- ---------------------------------------------------------------- alice
@@ -90,8 +91,11 @@ select throws_ok($$update public.player_wallets set dust = 999999$$, '42501', nu
 select throws_ok($$update public.profiles set trophies = 9999$$, '42501', null,
   'joueur : ne peut pas modifier ses trophées');
 select throws_ok($$delete from public.cards$$, '42501', null, 'joueur : ne peut pas supprimer de carte');
-select throws_ok($$select public.check_rate_limit('x', 1, 60)$$, '42501', null,
+select throws_ok($select public.check_rate_limit('x', 1, 60)$, '42501', null,
   'joueur : ne peut pas appeler la limitation de débit');
+select throws_ok('select * from public.br_characters', '42501', null, 'joueur : ne lit pas directement les personnages du Battle Royale');
+select throws_ok($insert into public.br_characters (player_id, card_id) select '11111111-1111-1111-1111-111111111111', id from public.cards limit 1$,
+  '42501', null, 'joueur : ne choisit pas son personnage directement (passe par le serveur)');
 
 -- Realtime : le sujet est fixé par connexion, d'où realtime.topic()
 set local realtime.topic = 'battle:44444444-4444-4444-4444-444444444444';

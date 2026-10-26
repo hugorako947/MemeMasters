@@ -1,12 +1,13 @@
 /**
  * Budget de statistiques par rareté (conception, section 7) :
- *   PV/2 + ATK + DEF + VIT/2 = 160 × (1 + 0,05 × rang)
- * Le rang va de 0 (commune, budget 160) à 6 (godlevel, budget 208).
+ *   PV/2 + ATK + DEF + VIT/2 = 160 × multiplicateur de la rareté
+ * Commune 160, rare 168, épique 176, légendaire 184, godlevel 208 (inchangés lors du passage à 5 raretés).
  */
-import { rarityTier, type Rarity } from "@/config/rarities";
+import type { Rarity } from "@/config/rarities";
 
 export const STAT_BUDGET_BASE = 160;
-export const STAT_BUDGET_STEP = 0.05;
+/** Multiplicateur du budget de chaque rareté. */
+export const STAT_BUDGET_FACTOR: Record<Rarity, number> = { commune: 1, rare: 1.05, epique: 1.1, legendaire: 1.15, godlevel: 1.3 };
 /** Écart toléré autour du budget (±3 %). */
 export const STAT_BUDGET_TOLERANCE = 0.03;
 
@@ -22,7 +23,7 @@ export function statIndex({ hp, atk, def, spd }: StatLine): number {
 }
 
 export function statBudget(rarity: Rarity): number {
-  return STAT_BUDGET_BASE * (1 + STAT_BUDGET_STEP * rarityTier(rarity));
+  return STAT_BUDGET_BASE * STAT_BUDGET_FACTOR[rarity];
 }
 
 export interface BudgetCheck {

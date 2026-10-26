@@ -3,17 +3,19 @@
  * pour le joueur, l'aide à la visée et les bots. L'affichage de la phase 3 devra la respecter
  * (aucun ennemi ni objet montré au joueur hors de ces règles), sinon les bots ne seraient plus honnêtes.
  *
- * - Champ de vision : un rectangle fixe autour du participant (le même pour tous, quelle que soit la taille de l'écran).
+ * - Champ de vision : un rectangle fixe autour du participant (le même pour tous, quelle que soit la taille de l'écran),
+ *   agrandi par une lunette ramassée dans une caisse (×2, ×4 : la même règle pour les bots).
  * - Ligne de vue : un mur ou une caisse entre les deux cache ce qui est derrière (l'eau et les buissons non).
  * - Buissons : un participant dans un buisson n'est visible que de tout près.
  */
 import { lineOfSight, TILE, tileAt } from "./map";
 import type { MatchState } from "./state";
 
-/** Le point est dans le champ de vision du participant i. */
+/** Le point est dans le champ de vision du participant i (lunette comprise). */
 export function inView(s: MatchState, i: number, x: number, y: number): boolean {
   const { halfWidth, halfHeight } = s.rules.view;
-  return Math.abs(x - s.p.x[i]) <= halfWidth && Math.abs(y - s.p.y[i]) <= halfHeight;
+  const zoom = Math.max(1, s.p.scope[i]);
+  return Math.abs(x - s.p.x[i]) <= halfWidth * zoom && Math.abs(y - s.p.y[i]) <= halfHeight * zoom;
 }
 
 /** Le point (un objet au sol) est visible du participant i : dans son champ de vision, sans mur entre les deux. */

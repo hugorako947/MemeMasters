@@ -5,6 +5,7 @@
  */
 import type { KillEntry } from "@/lib/br/engine";
 import { ITEM, lineOfSight } from "@/lib/br/map";
+import { KNIFE } from "@/lib/br/rules";
 import { canTake, weaponInHand, Z, type MatchState } from "@/lib/br/state";
 import { canSee, canSeePoint, inView } from "@/lib/br/vision";
 
@@ -36,13 +37,19 @@ export interface HudState {
   hp: number;
   maxHp: number;
   shield: number;
-  /** Arme en main et l'autre arme portée (indices de BR_WEAPONS ; −1 : aucune). */
+  /** Arme en main (indice des armes du moteur : BR_WEAPONS, puis le couteau KNIFE). */
   weapon: number;
-  otherWeapon: number;
+  /** Les trois emplacements (arme de départ, arme ramassée ou −1, couteau) et celui en main (0 à 2). */
+  slots: [number, number, number];
+  slot: number;
   magazine: number;
+  /** Taille du chargeur (0 : couteau, sans munitions). */
   magazineSize: number;
-  /** Munitions en réserve pour l'arme en main ; null : illimitées (arme de départ). */
+  /** Munitions en réserve pour l'arme en main ; null : illimitées (arme de départ) ou sans objet (couteau). */
   reserve: number | null;
+  /** Lunette portée (1 : aucune, 2 ou 4) ; secondes restantes de boisson énergisante (0 : aucune). */
+  scope: number;
+  boostSeconds: number;
   /** Rechargement en cours : part restante (1 → 0), 0 si aucun. */
   reloading: number;
   abilityReady: boolean;
@@ -74,10 +81,13 @@ export function hudState(s: MatchState, me: number): HudState {
     maxHp: f.maxHp,
     shield: P.shield[me],
     weapon: w,
-    otherWeapon: P.weapon1[me] < 0 ? -1 : held ? s.rules.startWeapon : P.weapon1[me],
-    magazine: held ? P.mag1[me] : P.mag0[me],
+    slots: [s.rules.startWeapon, P.weapon1[me], KNIFE],
+    slot: w === KNIFE ? 2 : held ? 1 : 0,
+    magazine: w === KNIFE ? 0 : held ? P.mag1[me] : P.mag0[me],
     magazineSize: W.magazine,
     reserve: W.ammo === 0 ? null : s.m.ammo[4 * me + W.ammo],
+    scope: Math.max(1, P.scope[me]),
+    boostSeconds: Math.ceil(P.boostLeft[me] / s.rules.tickRate),
     reloading: P.reload[me] > 0 ? P.reload[me] / W.reloadTicks : 0,
     abilityReady: P.abilityCd[me] === 0,
     abilityCooldown: f.abilityCooldown > 0 ? P.abilityCd[me] / f.abilityCooldown : 0,

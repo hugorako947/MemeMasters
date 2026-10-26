@@ -76,8 +76,9 @@ export function maxHpFor(hp: number): number {
 export function hitRadiusFor(hp: number): number {
   return 14 + idiv(hp - 60, 10);
 }
+/** Vitesse en unités par seconde : 130 + 1,3 × VIT (143 à 260 ; réduite de 35 % le 2026-10-26, choix du propriétaire). */
 export function speedFor(spd: number): number {
-  return 200 + 2 * spd;
+  return 130 + idiv(13 * spd, 10);
 }
 export function weaponPercentFor(atk: number): number {
   return 90 + idiv((atk - 20) * 20, 45);

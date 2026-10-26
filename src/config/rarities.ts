@@ -1,5 +1,5 @@
 /**
- * Les 8 raretés, de la plus commune à la plus rare.
+ * Les 5 raretés, de la plus commune à la plus rare (Brainrot et SuperBrainrot ont rejoint Légendaire le 2026-10-26).
  * L'ordre de ce tableau est la référence pour tous les tris et comparaisons ;
  * il doit rester identique à l'enum SQL `public.rarity`.
  */
@@ -8,14 +8,12 @@ export const RARITIES = [
   "rare",
   "epique",
   "legendaire",
-  "brainrot",
-  "superbrainrot",
   "godlevel",
 ] as const;
 
 export type Rarity = (typeof RARITIES)[number];
 
-/** Rang de 0 (commune) à 6 (godlevel). */
+/** Rang de 0 (commune) à 4 (godlevel). */
 export function rarityTier(rarity: Rarity): number {
   return RARITIES.indexOf(rarity);
 }
@@ -38,7 +36,5 @@ export const RARITY_GLYPH: Record<Rarity, string> = {
   rare: "◆",
   epique: "▲",
   legendaire: "★",
-  brainrot: "✺",
-  superbrainrot: "⌘",
   godlevel: "♛",
 };

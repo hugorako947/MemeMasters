@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { GAME_CONFIG, gameConfigSchema } from "./game.config";
 import { RARITIES, isAtLeast, rarityTier } from "./rarities";
@@ -34,14 +34,19 @@ describe("configuration du jeu", () => {
 describe("raretés", () => {
   it("ordonne les raretés de commune à godlevel", () => {
     expect(rarityTier("commune")).toBe(0);
-    expect(rarityTier("godlevel")).toBe(6);
+    expect(rarityTier("godlevel")).toBe(4);
     expect(isAtLeast("legendaire", "rare")).toBe(true);
     expect(isAtLeast("rare", "legendaire")).toBe(false);
   });
 
-  it("reste alignée avec l'enum SQL public.rarity (dernière définition)", () => {
-    const sql = readFileSync("supabase/migrations/20261008000700_nouvelles_raretes.sql", "utf8");
-    const match = sql.match(/create type public\.rarity as enum \(([\s\S]*?)\);/);
+  it("reste alignée avec l'enum SQL public.rarity (dernière définition, toutes migrations confondues)", () => {
+    const dir = "supabase/migrations";
+    const match = readdirSync(dir)
+      .filter((f) => f.endsWith(".sql"))
+      .sort()
+      .map((f) => readFileSync(`${dir}/${f}`, "utf8").match(/create type public\.rarity as enum \(([\s\S]*?)\);/))
+      .filter((m) => m !== null)
+      .at(-1);
     const values = match?.[1].match(/'([a-z]+)'/g)?.map((v) => v.slice(1, -1));
     expect(values).toEqual([...RARITIES]);
   });

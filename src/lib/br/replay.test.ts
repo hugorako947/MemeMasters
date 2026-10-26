@@ -62,8 +62,8 @@ describe("déterminisme et rejeu", () => {
     // puis mettre à jour l'empreinte ci-dessous (npx vitest run -u).
     expect({ engine: ENGINE_VERSION, hash: stateHash(played.state) }).toMatchInlineSnapshot(`
       {
-        "engine": 3,
-        "hash": "9f2c41c39ef6e6ab",
+        "engine": 4,
+        "hash": "71485d765799eb28",
       }
     `);
   });

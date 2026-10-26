@@ -1,6 +1,6 @@
 /**
- * Banc d'essai du moteur du battle royale : joue des parties complètes à 100 participants
- * (1 joueur simulé par le pilote de test, 99 bots), puis les rejoue sans affichage à partir
+ * Banc d'essai du moteur du battle royale : joue des parties complètes avec tous les participants (50)
+ * (1 joueur simulé par le pilote de test, les autres sont des bots), puis les rejoue sans affichage à partir
  * des seules commandes du joueur, comme le fera le serveur.
  * Usage : npm run br:bench [-- nombre_de_parties]   (5 par défaut)
  *

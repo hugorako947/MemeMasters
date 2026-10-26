@@ -4,7 +4,7 @@
  * La colonne historique `vibe` (supprimée par la migration 20261021001800) reçoit une
  * valeur fixe : cette migration s'exécute avant sa suppression.
  */
-import { writeFileSync } from "node:fs";
+import { existsSync, writeFileSync } from "node:fs";
 import { STARTER_SET } from "../src/content/cards/starter-set";
 
 const q = (s: string) => `'${s.replaceAll("'", "''")}'`;
@@ -30,5 +30,13 @@ ${rows.join(",\n")}
 on conflict (slug) do nothing;
 `;
 
-writeFileSync("supabase/migrations/20261010000900_jeu_de_depart.sql", sql);
+// Cette migration est livrée : elle ne doit plus jamais être réécrite (le jeu de départ a évolué depuis,
+// par de nouvelles migrations, par exemple 20261026000200_cinq_raretes.sql). Le script ne sert plus qu'à
+// une base vierge, sans ce fichier.
+const target = "supabase/migrations/20261010000900_jeu_de_depart.sql";
+if (existsSync(target)) {
+  console.error(`${target} existe déjà et a été livré : il ne doit pas être modifié. Toute évolution du jeu de départ passe par une nouvelle migration.`);
+  process.exit(1);
+}
+writeFileSync(target, sql);
 console.log(`${STARTER_SET.length} cartes écrites.`);

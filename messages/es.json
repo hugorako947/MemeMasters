@@ -1,6 +1,6 @@
 {
   "meta": {
-    "description": "Juego de cartas coleccionables sobre memes: abre sobres, completa tu colección y enfréntate a jugadores de todo el mundo."
+    "description": "Battle Meme: un juego de cartas coleccionables de memes con un battle royale 2D donde cada carta se convierte en un personaje jugable."
   },
   "nav": {
     "label": "Navegación principal",
@@ -16,8 +16,6 @@
     "rare": "Rara",
     "epique": "Épica",
     "legendaire": "Legendaria",
-    "brainrot": "Brainrot",
-    "superbrainrot": "SuperBrainrot",
     "godlevel": "Godlevel"
   },
   "card": {
@@ -52,7 +50,7 @@
   },
   "home": {
     "guestTitle": "Los memes por fin tienen sus cartas.",
-    "guestLead": "Abre sobres, completa tu colección y enfréntate a jugadores de todo el mundo.",
+    "guestLead": "Colecciona cartas de memes, hazlas evolucionar y luego juégalas en un battle royale 2D: gana el último en pie.",
     "createAccount": "Registrarse",
     "signIn": "Iniciar sesión",
     "contact": "Contáctanos"
@@ -195,10 +193,28 @@
     "randomHint": "Cada clic genera una nueva paleta de colores para todo el juego.",
     "randomAgain": "Nuevos colores",
     "adminSpace": "Espacio Admin",
-    "superAdminSpace": "Espacio Super Admin"
+    "superAdminSpace": "Espacio Super Admin",
+    "br": {
+      "title": "Battle Royale",
+      "lead": "Tus controles de juego y el sonido de las partidas. Estos ajustes se guardan en este dispositivo.",
+      "keysTitle": "Teclas (teclado y ratón)",
+      "keysLead": "Toca un botón y luego pulsa la nueva tecla o haz clic con el ratón. Las flechas, 1, 2, la rueda y Esc siempre siguen activos.",
+      "up": "Avanzar",
+      "down": "Retroceder",
+      "left": "Ir a la izquierda",
+      "right": "Ir a la derecha",
+      "press": "Pulsa una tecla… (Esc para cancelar)",
+      "change": "Cambiar tecla: {action}",
+      "reset": "Volver a las teclas originales",
+      "soundTitle": "Sonido",
+      "sfx": "Efectos de sonido",
+      "music": "Música",
+      "musicSoon": "La música del juego llega pronto.",
+      "test": "Escuchar"
+    }
   },
   "rarities": {
-    "title": "Las 7 rarezas"
+    "title": "Las {count} rarezas"
   },
   "offline": {
     "title": "Modo sin conexión",
@@ -295,7 +311,7 @@
     "statBonus": "+{percent} %"
   },
   "showcase": {
-    "title": "Las 7 rarezas",
+    "title": "Las {count} rarezas",
     "lead": "De la más rara a la más común. Toca una carta para ver su ficha."
   },
   "features": {
@@ -307,19 +323,20 @@
     },
     "collection": {
       "title": "Completa tu colección",
-      "text": "Filtra por rareza, ordena, busca y sigue tu progreso. Las cartas que te faltan siguen borrosas hasta que las encuentres. La clasificación compara todas las cartas del juego: popularidad, ataque, porcentaje de victorias…",
+      "text": "Filtra por rareza, ordena por evolución o por estadísticas, busca y sigue tu progreso. Las cartas que te faltan siguen borrosas hasta que las encuentres. Aquí también eliges tu personaje para el Battle Royale.",
       "progress": "87 / 240 cartas",
       "chipRarity": "Rareza",
       "chipOwned": "Obtenidas",
-      "chipSort": "Orden: popularidad",
+      "chipSort": "Orden: evolución",
       "filtersLabel": "Ejemplos de filtros",
-      "rankingHint": "Clasificación: popularidad · rareza · PS · ataque · velocidad · % de victorias"
+      "rankingHint": "Orden: rareza · evolución · PS · ataque · defensa · velocidad"
     },
     "battle": {
-      "title": "Enfréntate al mundo",
-      "text": "Forma un equipo de {team} cartas y desafía en tiempo real a jugadores de tu nivel de todo el planeta. {seconds} segundos por turno: cada victoria te da trofeos y MemeMoney.",
-      "timer": "{seconds} s",
-      "trophies": "1240"
+      "title": "El Battle Royale",
+      "text": "Cada carta se convierte en un personaje jugable, con sus PS, su velocidad, su habilidad especial y su pasiva. Hasta {count} participantes en un mapa visto desde arriba: recoge armas, rompe cajas, escapa del Scroll y sé el último en pie. Entrena ya contra bots; las partidas clasificatorias y con amigos llegan pronto.",
+      "alive": "{count} con vida",
+      "scroll": "El Scroll avanza",
+      "sceneLabel": "Una partida de Battle Royale vista desde arriba"
     }
   },
   "password": {
@@ -394,7 +411,16 @@
     "battles": {
       "title": "Battle Royale",
       "lead": "Las batallas llegan pronto: prepara tu colección.",
-      "nextReward": "Próximo rango alcanzado → {boosters} sobres y {money} MemeMoney de regalo"
+      "nextReward": "Próximo rango alcanzado → {boosters} sobres y {money} MemeMoney de regalo",
+      "duelAlt": "Dos personajes se apuntan en el Battle Royale",
+      "modes": "Modos de juego",
+      "modeRanked": "Clasificatoria",
+      "modeFriends": "Con amigos",
+      "soon": "Pronto",
+      "character": "Tu personaje",
+      "changeCharacter": "Cambiarlo en la Colección",
+      "noCharacter": "Elige tu personaje en tu Colección: abre una carta y toca «Elegir para el Battle Royale».",
+      "goCollection": "Ir a mi Colección"
     },
     "collection": {
       "title": "Colección",
@@ -602,7 +628,7 @@
       "spdTitle": "VEL: {spd}",
       "spd": "Velocidad. En batalla, te mueves a {speed} unidades por segundo. Los personajes rápidos suelen ser más frágiles.",
       "attackTitle": "Ataque: {name} ({power})",
-      "attack": "El golpe básico le da su estilo a la carta. En el Battle Royale, disparas con las armas que recoges en el terreno: {weapons}.",
+      "attack": "El golpe básico le da su estilo a la carta. En el Battle Royale, empiezas con una pistola y un cuchillo de combate, y luego recoges otras armas en el terreno o en las cajas: {weapons}.",
       "specialTitle": "Ataque especial: {name} ({power})",
       "special": "Se convierte en tu habilidad, que activas cuando quieras: {ability}. Cuanto mayor es su potencia, más fuerte es el efecto.",
       "energyTitle": "Energía: {count, plural, one {# punto} other {# puntos}}",
@@ -638,7 +664,8 @@
       "atk": "Ataque",
       "def": "Defensa",
       "spd": "Velocidad",
-      "special": "Poder especial"
+      "special": "Poder especial",
+      "evolution": "Evolución"
     },
     "empty": "Ninguna carta coincide.",
     "firstBooster": "Tu colección está vacía: ¡abre tu primer sobre en la pestaña Sobres!",
@@ -654,6 +681,12 @@
       "def": "DEF",
       "spd": "VEL",
       "special": "ESP"
+    },
+    "battle": {
+      "choose": "Elegir para el Battle Royale",
+      "chosen": "Tu personaje del Battle Royale",
+      "done": "¡{name} es tu personaje del Battle Royale!",
+      "badge": "Personaje"
     }
   },
   "boostersPanel": {
@@ -1012,14 +1045,17 @@
   },
   "battleRoyale": {
     "weapons": {
-      "pop": "Lanza-Pop",
-      "petard": "Petardo Mojado",
-      "rafaleuse": "Ráfaga 3000",
-      "lunette": "Mira de Likes"
+      "pop": "Pistola",
+      "petard": "Escopeta",
+      "rafaleuse": "Subfusil",
+      "lunette": "Rifle de francotirador",
+      "knife": "Cuchillo de combate"
     },
     "items": {
-      "heal": "Parche LOL",
-      "vest": "Chaleco Cringe"
+      "heal": "Botiquín",
+      "vest": "Chaleco antibalas",
+      "speed": "Bebida energética",
+      "scope": "Mira ×{zoom}"
     },
     "ability": {
       "sprint": "Sprint: +{percent} % de velocidad durante {seconds} s",
@@ -1041,12 +1077,8 @@
   },
   "match": {
     "title": "Entrenamiento",
-    "teamOnly": "Vista previa solo para el equipo hasta que abra el Battle Royale.",
-    "lead": "Una partida contra 99 bots para entrenar: no hay trofeos ni MemeMoney en juego, y funciona incluso sin conexión.",
+    "lead": "Una partida contra {bots} bots para entrenar: no hay trofeos ni MemeMoney en juego, y funciona incluso sin conexión.",
     "botsNotice": "Todos tus rivales son bots (insignia BOT) que llevan cartas del juego.",
-    "character": "Tu personaje",
-    "characterHint": "Elige una carta de tu colección.",
-    "noCards": "Todavía no tienes cartas: abre un booster para conseguir tu primer personaje.",
     "difficulty": "Dificultad",
     "easy": "Fácil",
     "easyHint": "Bots principiantes.",
@@ -1055,7 +1087,6 @@
     "hard": "Difícil",
     "hardHint": "Bots más fuertes que tu nivel.",
     "start": "Empezar la partida",
-    "back": "Volver al inicio",
     "loading": "Preparando la partida…",
     "rotate": "Gira el teléfono en horizontal para jugar.",
     "bot": "BOT",
@@ -1078,10 +1109,11 @@
         "shell": "Cartuchos",
         "heavy": "Munición pesada"
       },
-      "seconds": "{count} s"
+      "seconds": "{count} s",
+      "melee": "Cuerpo a cuerpo"
     },
     "controls": {
-      "title": "Controles",
+      "title": "Controles del juego",
       "move": "Moverse",
       "aim": "Apuntar",
       "fire": "Disparar",
@@ -1090,16 +1122,18 @@
       "reload": "Recargar",
       "pickup": "Recoger",
       "menu": "Menú",
-      "keysMove": "WASD, ZQSD o flechas",
       "keysAim": "Ratón",
-      "keysFire": "Clic izquierdo (mantenido)",
-      "keysAbility": "C",
-      "keysPickup": "Clic derecho",
-      "keysReload": "R",
-      "keysWeapon": "Rueda, 1, 2 o Tab",
       "keysMenu": "Esc",
       "touch": "Joystick izquierdo: moverse. Joystick derecho: apuntar, y disparar empujándolo a fondo.",
-      "heal": "Las curas actúan en cuanto las recoges."
+      "edit": "Modificar",
+      "arrows": "o flechas",
+      "hold": "{key} (mantenido)",
+      "wheel": "rueda, 1, 2 o 3",
+      "mouseLeft": "Clic izquierdo",
+      "mouseMiddle": "Clic central",
+      "mouseRight": "Clic derecho",
+      "mouseButton": "Botón del ratón {n}",
+      "space": "Espacio"
     },
     "menu": {
       "title": "Menú",
@@ -1128,10 +1162,12 @@
       "rewards": "Recompensas",
       "noRewards": "Entrenamiento: sin trofeos ni MemeMoney.",
       "again": "Volver a jugar",
-      "change": "Cambiar de personaje",
-      "home": "Volver al inicio"
+      "back": "Volver"
     },
-    "homeButton": "Entrenamiento",
-    "homeHint": "Solo para el equipo durante las pruebas."
+    "map": {
+      "open": "Ampliar el mapa",
+      "close": "Cerrar el mapa",
+      "title": "Mapa"
+    }
   }
 }

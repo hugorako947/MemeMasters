@@ -14,6 +14,8 @@ export const SUB = 16;
 export const AMMO_KINDS = ["none", "light", "shell", "heavy"] as const;
 /** Arme spéciale « projectile de brûlure » (capacité), après les 4 armes. */
 export const BURN_SHOT = BR_WEAPONS.length;
+/** Couteau de combat : toujours porté, troisième arme en main (après le projectile de brûlure dans rules.weapons). */
+export const KNIFE = BR_WEAPONS.length + 1;
 
 export interface WeaponRule {
   damage: number;
@@ -59,8 +61,13 @@ export interface Rules {
   aimAssist: number;
   switchTicks: number;
   zone: ZonePhaseRule[];
+  /** Armes à feu (indices de BR_WEAPONS), projectile de brûlure (BURN_SHOT), couteau (KNIFE : pas de projectile ni de munitions, `range` depuis le bord du personnage). */
   weapons: WeaponRule[];
   startWeapon: number;
+  /** Couteau : demi-ouverture de l'arc frappé, en pas d'angle. */
+  knifeArc: number;
+  /** Caisses : résistance ; poids du butin (soin, munitions, gilet, arme, boisson, lunette) ; lunettes ; boisson énergisante. */
+  crate: { hp: number; lootWeights: number[]; scopes: Array<{ zoom: number; weight: number }>; boostPermille: number; boostTicks: number };
   multiSpread: number;
   regenDelayTicks: number;
   /** La régénération s'arrête à ce pourcentage des PV max. */
@@ -165,8 +172,18 @@ export function resolveRules(br: BrConfig): Rules {
       ...BR_WEAPONS.map((id) => weaponRule(br.WEAPONS[id])),
       // Projectile de brûlure : un seul, sans dispersion, porté par la capacité.
       { damage: A.BURN_SHOT_DAMAGE, pellets: 1, fireTicks: 1, magazine: 1, reloadTicks: 1, spread: 0, speed: speedPerTick(A.BURN_SHOT_SPEED, rate), range: A.BURN_SHOT_RANGE * SUB, ammo: 0 },
+      // Couteau : un coup au corps à corps à chaque intervalle, sans projectile ni munitions.
+      { damage: br.KNIFE.DAMAGE, pellets: 0, fireTicks: ticks(br.KNIFE.INTERVAL_MS), magazine: 0, reloadTicks: 0, spread: 0, speed: 0, range: br.KNIFE.RANGE * SUB, ammo: 0 },
     ],
     startWeapon: BR_WEAPONS.indexOf(br.STARTING_WEAPON),
+    knifeArc: br.KNIFE.ARC_STEPS,
+    crate: {
+      hp: br.CRATE.HP,
+      lootWeights: [br.CRATE.LOOT_WEIGHTS.heal, br.CRATE.LOOT_WEIGHTS.ammo, br.CRATE.LOOT_WEIGHTS.vest, br.CRATE.LOOT_WEIGHTS.weapon, br.CRATE.LOOT_WEIGHTS.speed, br.CRATE.LOOT_WEIGHTS.scope],
+      scopes: br.CRATE.SCOPES.map((c) => ({ zoom: c.zoom, weight: c.weight })),
+      boostPermille: br.CRATE.SPEED_BOOST_PERCENT * 10,
+      boostTicks: ticks(br.CRATE.SPEED_BOOST_MS),
+    },
     multiSpread: A.MULTI_SPREAD_STEPS,
     regenDelayTicks: ticks(br.PASSIVE.REGEN_DELAY_MS),
     regenCapPercent: br.PASSIVE.REGEN_CAP_PERCENT,

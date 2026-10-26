@@ -1,6 +1,6 @@
 {
   "meta": {
-    "description": "Sammelkartenspiel rund um Memes: Öffne Booster, vervollständige deine Sammlung und tritt gegen Spieler aus aller Welt an."
+    "description": "Battle Meme: ein Sammelkartenspiel mit Memes und einem 2D-Battle-Royale, in dem jede Karte zur spielbaren Figur wird."
   },
   "nav": {
     "label": "Hauptnavigation",
@@ -16,8 +16,6 @@
     "rare": "Selten",
     "epique": "Episch",
     "legendaire": "Legendär",
-    "brainrot": "Brainrot",
-    "superbrainrot": "SuperBrainrot",
     "godlevel": "Godlevel"
   },
   "card": {
@@ -52,7 +50,7 @@
   },
   "home": {
     "guestTitle": "Memes haben endlich ihre eigenen Karten.",
-    "guestLead": "Öffne Booster, vervollständige deine Sammlung und tritt gegen Spieler aus aller Welt an.",
+    "guestLead": "Sammle Meme-Karten, entwickle sie weiter und spiele sie dann in einem 2D-Battle-Royale: Wer zuletzt steht, gewinnt.",
     "createAccount": "Registrieren",
     "signIn": "Anmelden",
     "contact": "Kontaktiere uns"
@@ -195,10 +193,28 @@
     "randomHint": "Jeder Klick würfelt eine neue Farbpalette für das ganze Spiel aus.",
     "randomAgain": "Neue Farben",
     "adminSpace": "Admin-Bereich",
-    "superAdminSpace": "Super-Admin-Bereich"
+    "superAdminSpace": "Super-Admin-Bereich",
+    "br": {
+      "title": "Battle Royale",
+      "lead": "Deine Spielsteuerung und der Ton der Matches. Diese Einstellungen werden auf diesem Gerät gespeichert.",
+      "keysTitle": "Tasten (Tastatur und Maus)",
+      "keysLead": "Tippe auf eine Schaltfläche und drücke dann die neue Taste oder klicke mit der Maus. Pfeiltasten, 1, 2, das Mausrad und Esc bleiben immer aktiv.",
+      "up": "Nach oben",
+      "down": "Nach unten",
+      "left": "Nach links",
+      "right": "Nach rechts",
+      "press": "Drücke eine Taste … (Esc zum Abbrechen)",
+      "change": "Taste ändern: {action}",
+      "reset": "Standardtasten wiederherstellen",
+      "soundTitle": "Ton",
+      "sfx": "Soundeffekte",
+      "music": "Musik",
+      "musicSoon": "Die Spielmusik kommt bald.",
+      "test": "Anhören"
+    }
   },
   "rarities": {
-    "title": "Die 7 Seltenheiten"
+    "title": "Die {count} Seltenheiten"
   },
   "offline": {
     "title": "Offline-Modus",
@@ -295,7 +311,7 @@
     "statBonus": "+{percent} %"
   },
   "showcase": {
-    "title": "Die 7 Seltenheiten",
+    "title": "Die {count} Seltenheiten",
     "lead": "Von der seltensten bis zur häufigsten. Tippe auf eine Karte, um sie anzusehen."
   },
   "features": {
@@ -307,19 +323,20 @@
     },
     "collection": {
       "title": "Vervollständige deine Sammlung",
-      "text": "Filtere nach Seltenheit, sortiere, suche und verfolge deinen Fortschritt. Fehlende Karten bleiben unscharf, bis du sie findest. Die Rangliste vergleicht alle Karten des Spiels: Beliebtheit, Angriff, Siegquote …",
+      "text": "Filtere nach Seltenheit, sortiere nach Entwicklung oder Werten, suche und verfolge deinen Fortschritt. Fehlende Karten bleiben verschwommen, bis du sie findest. Hier wählst du auch deine Figur für das Battle Royale.",
       "progress": "87 / 240 Karten",
       "chipRarity": "Seltenheit",
       "chipOwned": "Im Besitz",
-      "chipSort": "Sortierung: Beliebtheit",
+      "chipSort": "Sortierung: Entwicklung",
       "filtersLabel": "Beispielfilter",
-      "rankingHint": "Rangliste: Beliebtheit · Seltenheit · KP · Angriff · Tempo · Siegquote"
+      "rankingHint": "Sortierung: Seltenheit · Entwicklung · KP · Angriff · Verteidigung · Tempo"
     },
     "battle": {
-      "title": "Fordere die Welt heraus",
-      "text": "Stell ein Team aus {team} Karten zusammen und fordere in Echtzeit Spieler deines Niveaus auf der ganzen Welt heraus. {seconds} Sekunden pro Zug: Jeder Sieg bringt dir Trophäen und MemeMoney.",
-      "timer": "{seconds} s",
-      "trophies": "1.240"
+      "title": "Das Battle Royale",
+      "text": "Jede Karte wird zur spielbaren Figur, mit ihren KP, ihrem Tempo, ihrer Spezialfähigkeit und ihrem Passiv. Bis zu {count} Teilnehmende auf einer Karte von oben: Schnapp dir Waffen, zerschlag Kisten, entkomm dem Scroll und bleib als Letzter stehen. Trainiere schon jetzt gegen Bots; Ranglisten- und Freundesmatches kommen bald.",
+      "alive": "{count} am Leben",
+      "scroll": "Der Scroll rückt vor",
+      "sceneLabel": "Ein Battle-Royale-Match von oben"
     }
   },
   "password": {
@@ -394,7 +411,16 @@
     "battles": {
       "title": "Battle Royale",
       "lead": "Kämpfe kommen bald: Bereite deine Sammlung vor.",
-      "nextReward": "Nächster Rang erreicht → {boosters} Booster und {money} MemeMoney geschenkt"
+      "nextReward": "Nächster Rang erreicht → {boosters} Booster und {money} MemeMoney geschenkt",
+      "duelAlt": "Zwei Figuren zielen im Battle Royale aufeinander",
+      "modes": "Spielmodi",
+      "modeRanked": "Rangliste",
+      "modeFriends": "Mit Freunden",
+      "soon": "Bald",
+      "character": "Deine Figur",
+      "changeCharacter": "In der Sammlung ändern",
+      "noCharacter": "Wähle deine Figur in deiner Sammlung: Öffne eine Karte und tippe auf „Fürs Battle Royale wählen“.",
+      "goCollection": "Zu meiner Sammlung"
     },
     "collection": {
       "title": "Sammlung",
@@ -602,7 +628,7 @@
       "spdTitle": "TEM: {spd}",
       "spd": "Tempo. Im Kampf bewegst du dich mit {speed} Einheiten pro Sekunde. Schnelle Figuren sind oft zerbrechlicher.",
       "attackTitle": "Angriff: {name} ({power})",
-      "attack": "Die Grundattacke gibt der Karte ihren Stil. Im Battle Royale schießt du mit Waffen, die du auf dem Spielfeld aufhebst: {weapons}.",
+      "attack": "Die Grundattacke gibt der Karte ihren Stil. Im Battle Royale startest du mit einer Pistole und einem Kampfmesser und sammelst weitere Waffen auf dem Spielfeld oder in Kisten: {weapons}.",
       "specialTitle": "Spezialangriff: {name} ({power})",
       "special": "Wird zu deiner Fähigkeit, die du jederzeit auslöst: {ability}. Je höher ihre Stärke, desto stärker der Effekt.",
       "energyTitle": "Energie: {count, plural, one {# Punkt} other {# Punkte}}",
@@ -638,7 +664,8 @@
       "atk": "Angriff",
       "def": "Verteidigung",
       "spd": "Tempo",
-      "special": "Spezialstärke"
+      "special": "Spezialstärke",
+      "evolution": "Entwicklung"
     },
     "empty": "Keine Karte passt.",
     "firstBooster": "Deine Sammlung ist leer: Öffne deinen ersten Booster im Tab „Booster“!",
@@ -654,6 +681,12 @@
       "def": "VER",
       "spd": "TEM",
       "special": "SPZ"
+    },
+    "battle": {
+      "choose": "Fürs Battle Royale wählen",
+      "chosen": "Deine Figur im Battle Royale",
+      "done": "{name} ist jetzt deine Figur im Battle Royale!",
+      "badge": "Figur"
     }
   },
   "boostersPanel": {
@@ -1012,14 +1045,17 @@
   },
   "battleRoyale": {
     "weapons": {
-      "pop": "Pop-Werfer",
-      "petard": "Nasser Böller",
-      "rafaleuse": "Salvenschleuder 3000",
-      "lunette": "Like-Zielfernrohr"
+      "pop": "Pistole",
+      "petard": "Schrotflinte",
+      "rafaleuse": "Maschinenpistole",
+      "lunette": "Scharfschützengewehr",
+      "knife": "Kampfmesser"
     },
     "items": {
-      "heal": "LOL-Pflaster",
-      "vest": "Cringe-Weste"
+      "heal": "Verbandskasten",
+      "vest": "Schutzweste",
+      "speed": "Energydrink",
+      "scope": "{zoom}×-Zielfernrohr"
     },
     "ability": {
       "sprint": "Sprint: +{percent} % Tempo für {seconds} s",
@@ -1041,12 +1077,8 @@
   },
   "match": {
     "title": "Training",
-    "teamOnly": "Vorschau nur für das Team, bis das Battle Royale startet.",
-    "lead": "Ein Match gegen 99 Bots zum Üben: keine Trophäen und kein MemeMoney im Spiel, und es klappt sogar offline.",
+    "lead": "Ein Match gegen {bots} Bots zum Üben: keine Trophäen und kein MemeMoney im Spiel, und es klappt sogar offline.",
     "botsNotice": "Alle deine Gegner sind Bots (Abzeichen BOT) mit Karten aus dem Spiel.",
-    "character": "Deine Figur",
-    "characterHint": "Wähle eine Karte aus deiner Sammlung.",
-    "noCards": "Du hast noch keine Karten: Öffne einen Booster, um deine erste Figur zu bekommen.",
     "difficulty": "Schwierigkeit",
     "easy": "Leicht",
     "easyHint": "Anfänger-Bots.",
@@ -1055,7 +1087,6 @@
     "hard": "Schwer",
     "hardHint": "Bots, die stärker sind als du.",
     "start": "Match starten",
-    "back": "Zurück zum Start",
     "loading": "Das Match wird vorbereitet …",
     "rotate": "Dreh dein Handy ins Querformat, um zu spielen.",
     "bot": "BOT",
@@ -1078,10 +1109,11 @@
         "shell": "Schrot",
         "heavy": "Schwere Munition"
       },
-      "seconds": "{count} s"
+      "seconds": "{count} s",
+      "melee": "Nahkampf"
     },
     "controls": {
-      "title": "Steuerung",
+      "title": "Spielsteuerung",
       "move": "Bewegen",
       "aim": "Zielen",
       "fire": "Schießen",
@@ -1090,16 +1122,18 @@
       "reload": "Nachladen",
       "pickup": "Aufheben",
       "menu": "Menü",
-      "keysMove": "WASD, ZQSD oder Pfeiltasten",
       "keysAim": "Maus",
-      "keysFire": "Linksklick (gedrückt halten)",
-      "keysAbility": "C",
-      "keysPickup": "Rechtsklick",
-      "keysReload": "R",
-      "keysWeapon": "Mausrad, 1, 2 oder Tab",
       "keysMenu": "Esc",
       "touch": "Linker Joystick: bewegen. Rechter Joystick: zielen, und schießen, wenn du ihn ganz durchdrückst.",
-      "heal": "Heilungen wirken, sobald du sie aufhebst."
+      "edit": "Ändern",
+      "arrows": "oder Pfeiltasten",
+      "hold": "{key} (gedrückt halten)",
+      "wheel": "Mausrad, 1, 2 oder 3",
+      "mouseLeft": "Linksklick",
+      "mouseMiddle": "Mittelklick",
+      "mouseRight": "Rechtsklick",
+      "mouseButton": "Maustaste {n}",
+      "space": "Leertaste"
     },
     "menu": {
       "title": "Menü",
@@ -1128,10 +1162,12 @@
       "rewards": "Belohnungen",
       "noRewards": "Training: keine Trophäen und kein MemeMoney.",
       "again": "Nochmal spielen",
-      "change": "Figur wechseln",
-      "home": "Zurück zum Start"
+      "back": "Zurück"
     },
-    "homeButton": "Training",
-    "homeHint": "Während der Tests nur für das Team."
+    "map": {
+      "open": "Karte vergrößern",
+      "close": "Karte schließen",
+      "title": "Karte"
+    }
   }
 }

@@ -4,8 +4,9 @@
  * sont partagés entre les copies et ne sont jamais modifiés.
  */
 import type { BattleCharacter } from "./character";
-import { ITEM, type GameMap, type LootItem } from "./map";
-import { fighterFor, type Fighter, type Rules } from "./rules";
+import { ITEM, TILE, type GameMap, type LootItem } from "./map";
+import type { Nav } from "./nav";
+import { fighterFor, KNIFE, type Fighter, type Rules } from "./rules";
 
 /** Champs d'un participant (un entier par participant, sauf mention). */
 export const PARTICIPANT_FIELDS = [
@@ -19,7 +20,7 @@ export const PARTICIPANT_FIELDS = [
   "shield",
   /** Arme ramassée (indice), −1 si aucune ; l'arme de départ est toujours là. */
   "weapon1",
-  /** Arme en main : 0 = arme de départ, 1 = arme ramassée. */
+  /** Arme en main : 0 = arme de départ, 1 = arme ramassée, 2 = couteau. */
   "active",
   "mag0",
   "mag1",
@@ -40,6 +41,10 @@ export const PARTICIPANT_FIELDS = [
   /** Dernier tick où le participant a tiré (ouïe des bots). */
   "lastShot",
   "prevButtons",
+  /** Lunette : grossissement du champ de vision (1 = sans lunette, puis 2, 4…). */
+  "scope",
+  /** Ticks restants de la boisson énergisante (vitesse en plus). */
+  "boostLeft",
   /** Résultats : place (0 = encore en vie), éliminations, dégâts infligés, éliminé par (−1 zone, −2 personne), tick. */
   "place",
   "kills",
@@ -131,6 +136,8 @@ export const BOT_FIELDS = [
   "threatTick",
   /** Bâtiment visé pour explorer (−1 : aucun). */
   "building",
+  /** Caisse visée pour l'ouvrir (case ; −1 : aucune). */
+  "crate",
   /** Dernière commande produite (lecture seule : banc d'essai, débogage). */
   "cmd",
 ] as const;
@@ -145,17 +152,48 @@ export const BOT_PATH = 32;
 /** Zone : phase, étape (0 attente, 1 rétrécissement, 2 fermée), ticks dans l'étape, cercle actuel, de départ et visé. */
 export const Z = { phase: 0, stage: 1, t: 2, cx: 3, cy: 4, r: 5, fx: 6, fy: 7, fr: 8, tx: 9, ty: 10, tr: 11 } as const;
 
-/** Compteurs : prochain numéro de projectile, munitions tirées par type (1…3), soins utilisés, gilets utilisés. */
-export const C = { nextShot: 0, firedLight: 1, firedShell: 2, firedHeavy: 3, usedHeals: 4, usedVests: 5 } as const;
+/**
+ * Compteurs : prochain numéro de projectile, munitions tirées par type (1…3), soins et gilets utilisés ; ce que les
+ * caisses brisées ont fait apparaître (armes, soins, gilets, munitions par type — chargeurs compris —, boissons,
+ * lunettes) ; boissons et lunettes utilisées ; caisses brisées.
+ */
+export const C = {
+  nextShot: 0,
+  firedLight: 1,
+  firedShell: 2,
+  firedHeavy: 3,
+  usedHeals: 4,
+  usedVests: 5,
+  crateWeapons: 6,
+  crateHeals: 7,
+  crateVests: 8,
+  crateLight: 9,
+  crateShell: 10,
+  crateHeavy: 11,
+  crateBoosts: 12,
+  crateScopes: 13,
+  usedBoosts: 14,
+  usedScopes: 15,
+  cratesBroken: 16,
+} as const;
+const COUNTERS = 17;
 
 /** Raisons d'élimination du journal (après les indices d'armes 0…4). */
 export const KILL_BURN = 5;
 export const KILL_ZONE = 6;
 export const KILL_REFLECT = 7;
+export const KILL_KNIFE = 8;
 
 export interface MatchState {
   readonly rules: Rules;
+  /** Carte de la partie : une copie propre à l'état (les caisses brisées deviennent du sol), recopiée avec lui. */
   readonly map: GameMap;
+  /** Graphe de navigation des bots, calculé une fois sur la carte de départ et partagé par les copies (null sans bot). */
+  readonly nav: Nav | null;
+  /** Résistance restante de chaque caisse, par case (0 ailleurs et pour une caisse brisée). */
+  crates: Int32Array;
+  /** Cases des caisses de départ (liste fixe, partagée par les copies de l'état). */
+  readonly crateTiles: Int32Array;
   readonly fighters: readonly Fighter[];
   readonly n: number;
   tick: number;
@@ -181,9 +219,11 @@ export interface MatchState {
   bmisc: Int32Array;
 }
 
-/** Arme en main (indice dans rules.weapons). */
+/** Arme en main (indice dans rules.weapons : arme à feu, ou KNIFE). */
 export function weaponInHand(s: MatchState, i: number): number {
-  return s.p.active[i] === 1 && s.p.weapon1[i] >= 0 ? s.p.weapon1[i] : s.rules.startWeapon;
+  const active = s.p.active[i];
+  if (active === 2) return KNIFE;
+  return active === 1 && s.p.weapon1[i] >= 0 ? s.p.weapon1[i] : s.rules.startWeapon;
 }
 
 /**
@@ -202,6 +242,10 @@ export function canTake(s: MatchState, i: number, k: number): boolean {
       return s.p.hp[i] < s.fighters[i].maxHp;
     case ITEM.vest:
       return s.p.shield[i] < items.vestShield;
+    case ITEM.speed:
+      return true;
+    case ITEM.scope:
+      return I.sub[k] > s.p.scope[i];
   }
   return false;
 }
@@ -212,11 +256,21 @@ function table<K extends string>(keys: readonly K[], size: number): Record<K, In
   return Object.fromEntries(keys.map((k) => [k, new Int32Array(size)])) as Record<K, Int32Array>;
 }
 
-export function allocateState(rules: Rules, map: GameMap, characters: readonly BattleCharacter[], rng: Uint32Array, loot: readonly LootItem[], botCount = 0): MatchState {
+export function allocateState(rules: Rules, map: GameMap, characters: readonly BattleCharacter[], rng: Uint32Array, loot: readonly LootItem[], botCount = 0, nav: Nav | null = null): MatchState {
   const n = characters.length;
   const b = table(BOT_FIELDS, n);
   b.level.fill(-1);
-  const itemCapacity = loot.length + 6 * n;
+  const crates = new Int32Array(map.tiles.length);
+  let crateCount = 0;
+  for (let t = 0; t < map.tiles.length; t++) {
+    if (map.tiles[t] !== TILE.crate) continue;
+    crates[t] = rules.crate.hp;
+    crateCount++;
+  }
+  const crateTiles = new Int32Array(crateCount);
+  for (let t = 0, k = 0; t < map.tiles.length; t++) if (crates[t] > 0) crateTiles[k++] = t;
+  // Place pour le butin de départ, ce que lâchent les éliminés et le butin des caisses.
+  const itemCapacity = loot.length + 6 * n + crateCount;
   const it = table(ITEM_FIELDS, itemCapacity);
   loot.forEach((item, k) => {
     it.kind[k] = item.kind === ITEM.none ? ITEM.none : item.kind;
@@ -228,6 +282,9 @@ export function allocateState(rules: Rules, map: GameMap, characters: readonly B
   return {
     rules,
     map,
+    nav,
+    crates,
+    crateTiles,
     fighters: characters.map((c) => fighterFor(c, rules)),
     n,
     tick: 0,
@@ -241,7 +298,7 @@ export function allocateState(rules: Rules, map: GameMap, characters: readonly B
     itemCount: loot.length,
     it,
     zone: new Int32Array(12),
-    counters: new Int32Array(6),
+    counters: new Int32Array(COUNTERS),
     logCount: 0,
     log: new Int32Array(4 * n),
     botCount,
@@ -256,10 +313,12 @@ function cloneTable<K extends string>(t: Record<K, Int32Array>): Record<K, Int32
   return Object.fromEntries(Object.entries(t).map(([k, v]) => [k, (v as Int32Array).slice()])) as Record<K, Int32Array>;
 }
 
-/** Copie indépendante de l'état (la carte, les règles et les personnages restent partagés : ils ne changent jamais). */
+/** Copie indépendante de l'état (règles, personnages et graphe de navigation partagés : ils ne changent jamais). */
 export function cloneState(s: MatchState): MatchState {
   return {
     ...s,
+    map: { ...s.map, tiles: s.map.tiles.slice() },
+    crates: s.crates.slice(),
     rng: s.rng.slice(),
     p: cloneTable(s.p),
     m: cloneTable(s.m),
@@ -299,6 +358,7 @@ export function stateHash(s: MatchState): string {
   for (const k of SHOT_FIELDS) all(s.s[k], s.shotCount);
   for (const k of ITEM_FIELDS) all(s.it[k], s.itemCount);
   all(s.zone);
+  all(s.crates);
   all(s.counters);
   all(s.log, 4 * s.logCount);
   for (const k of BOT_FIELDS) all(s.b[k]);

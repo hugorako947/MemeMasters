@@ -1,12 +1,12 @@
 /**
- * Une partie du banc d'essai des bots (npm run bots:tournament) : 100 bots, sans joueur ni affichage.
+ * Une partie du banc d'essai des bots (npm run bots:tournament) : rules.participants bots (50), sans joueur ni affichage.
  * Mesure ce que demande la conception (§7.7) : durée, éliminations par la zone, bots immobiles ou
  * coincés, place de chaque personnage. Hors du moteur : ce module observe la partie sans jamais la modifier.
  *
  * Trois séries :
  * - « standard » : cartes du jeu de départ et niveaux d'évolution tirés au hasard ;
- * - « rarity » : 50 godlevel (emplacements 0 à 49) contre 50 communes, sans évolution ;
- * - « evolution » : 50 cartes ★★★ (emplacements 0 à 49) contre les 50 mêmes cartes sans évolution.
+ * - « rarity » : une moitié de godlevel (premiers emplacements) contre une moitié de communes, sans évolution ;
+ * - « evolution » : une moitié de cartes ★★★ (premiers emplacements) contre les mêmes cartes sans évolution.
  * Tous les bots d'une partie ont le même niveau (tiré au hasard pour chaque partie), à leur variation personnelle près.
  */
 import { GAME_CONFIG } from "@/config/game.config";

@@ -12,7 +12,8 @@ import { nextBelow, nextRange, STREAM } from "./rng";
 import { AMMO_KINDS, type Rules } from "./rules";
 
 export const TILE = { floor: 0, water: 1, wall: 2, bush: 3, crate: 4 } as const;
-export const ITEM = { none: 0, weapon: 1, ammo: 2, heal: 3, vest: 4 } as const;
+/** Objets au sol ; boisson énergisante (speed) et lunette (scope, sub = grossissement) ne sortent que des caisses. */
+export const ITEM = { none: 0, weapon: 1, ammo: 2, heal: 3, vest: 4, speed: 5, scope: 6 } as const;
 
 export interface GameMap {
   /** Côté de la carte, en tuiles. */
@@ -67,15 +68,16 @@ export function circleHitsSolid(map: GameMap, x: number, y: number, r: number): 
 
 /**
  * Première tuile qui arrête les tirs (mur, caisse, bord de carte) le long du segment :
- * renvoie la fraction du segment parcourue à l'entrée dans cette tuile (num / den, entre 0 et 1),
- * ou null si le segment est libre. Parcours de grille exact, en entiers.
+ * renvoie la fraction du segment parcourue à l'entrée dans cette tuile (num / den, entre 0 et 1) et la case
+ * touchée (indice, −1 hors de la carte), ou null si le segment est libre. Parcours de grille exact, en entiers.
  */
-export function segmentWallHit(map: GameMap, x0: number, y0: number, x1: number, y1: number): { num: number; den: number } | null {
+export function segmentWallHit(map: GameMap, x0: number, y0: number, x1: number, y1: number): { num: number; den: number; tile: number } | null {
   const ts = map.tileSub;
   let tx = floorDiv(x0, ts);
   let ty = floorDiv(y0, ts);
   const solid = (cx: number, cy: number) => cx < 0 || cy < 0 || cx >= map.size || cy >= map.size || blocksShots(map.tiles[cy * map.size + cx]);
-  if (solid(tx, ty)) return { num: 0, den: 1 };
+  const at = (cx: number, cy: number) => (cx < 0 || cy < 0 || cx >= map.size || cy >= map.size ? -1 : cy * map.size + cx);
+  if (solid(tx, ty)) return { num: 0, den: 1, tile: at(tx, ty) };
   const dx = x1 - x0;
   const dy = y1 - y0;
   const adx = Math.abs(dx);
@@ -91,12 +93,12 @@ export function segmentWallHit(map: GameMap, x0: number, y0: number, x1: number,
     if (xFirst) {
       if (nx > adx) return null;
       tx += stepX;
-      if (solid(tx, ty)) return { num: nx, den: adx };
+      if (solid(tx, ty)) return { num: nx, den: adx, tile: at(tx, ty) };
       nx += ts;
     } else {
       if (dy === 0 || ny > ady) return null;
       ty += stepY;
-      if (solid(tx, ty)) return { num: ny, den: ady };
+      if (solid(tx, ty)) return { num: ny, den: ady, tile: at(tx, ty) };
       ny += ts;
     }
   }

@@ -1,6 +1,6 @@
 {
   "meta": {
-    "description": "A collectible card game about memes: open boosters, complete your collection and battle players from all over the world."
+    "description": "Battle Meme: a collectible meme card game with a 2D battle royale where every card becomes a playable character."
   },
   "nav": {
     "label": "Main navigation",
@@ -16,8 +16,6 @@
     "rare": "Rare",
     "epique": "Epic",
     "legendaire": "Legendary",
-    "brainrot": "Brainrot",
-    "superbrainrot": "SuperBrainrot",
     "godlevel": "Godlevel"
   },
   "card": {
@@ -52,7 +50,7 @@
   },
   "home": {
     "guestTitle": "Memes finally have their own cards.",
-    "guestLead": "Open boosters, complete your collection and battle players from all over the world.",
+    "guestLead": "Collect meme cards, evolve them, then play them in a 2D battle royale: last one standing wins.",
     "createAccount": "Sign up",
     "signIn": "Log in",
     "contact": "Contact us"
@@ -195,10 +193,28 @@
     "randomHint": "Each click rolls a new color palette for the whole game.",
     "randomAgain": "New colors",
     "adminSpace": "Admin Area",
-    "superAdminSpace": "Super Admin Area"
+    "superAdminSpace": "Super Admin Area",
+    "br": {
+      "title": "Battle Royale",
+      "lead": "Your game controls and match sound. These settings are saved on this device.",
+      "keysTitle": "Keys (keyboard and mouse)",
+      "keysLead": "Tap a button, then press the new key or click with the mouse. Arrow keys, 1, 2, the mouse wheel and Esc always stay active.",
+      "up": "Move up",
+      "down": "Move down",
+      "left": "Move left",
+      "right": "Move right",
+      "press": "Press a key… (Esc to cancel)",
+      "change": "Change key: {action}",
+      "reset": "Restore default keys",
+      "soundTitle": "Sound",
+      "sfx": "Sound effects",
+      "music": "Music",
+      "musicSoon": "The game music is coming soon.",
+      "test": "Listen"
+    }
   },
   "rarities": {
-    "title": "The 7 rarities"
+    "title": "The {count} rarities"
   },
   "offline": {
     "title": "Offline mode",
@@ -295,7 +311,7 @@
     "statBonus": "+{percent}%"
   },
   "showcase": {
-    "title": "The 7 rarities",
+    "title": "The {count} rarities",
     "lead": "From the rarest to the most common. Tap a card to see its sheet."
   },
   "features": {
@@ -307,19 +323,20 @@
     },
     "collection": {
       "title": "Complete your collection",
-      "text": "Filter by rarity, sort, search and track your progress. Missing cards stay blurred until you find them. The ranking compares every card in the game: popularity, attack, win rate…",
+      "text": "Filter by rarity, sort by evolution or stats, search and track your progress. Missing cards stay blurred until you find them. This is also where you pick your character for the Battle Royale.",
       "progress": "87 / 240 cards",
       "chipRarity": "Rarity",
       "chipOwned": "Owned",
-      "chipSort": "Sort: popularity",
+      "chipSort": "Sort: evolution",
       "filtersLabel": "Example filters",
-      "rankingHint": "Ranking: popularity · rarity · HP · attack · speed · win rate"
+      "rankingHint": "Sort: rarity · evolution · HP · attack · defense · speed"
     },
     "battle": {
-      "title": "Take on the world",
-      "text": "Build a team of {team} cards and challenge players of your level in real time, all over the planet. {seconds} seconds per turn: every win earns you trophies and MemeMoney.",
-      "timer": "{seconds} s",
-      "trophies": "1,240"
+      "title": "The Battle Royale",
+      "text": "Every card becomes a playable character, with its HP, speed, special ability and passive. Up to {count} players on a top-down map: grab weapons, break crates, escape the Scroll and be the last one standing. Train against bots right now; ranked and friends matches are coming soon.",
+      "alive": "{count} alive",
+      "scroll": "The Scroll is moving",
+      "sceneLabel": "A Battle Royale match seen from above"
     }
   },
   "password": {
@@ -394,7 +411,16 @@
     "battles": {
       "title": "Battle Royale",
       "lead": "Battles are coming soon: get your collection ready.",
-      "nextReward": "Next rank reached → {boosters} boosters and {money} MemeMoney as a gift"
+      "nextReward": "Next rank reached → {boosters} boosters and {money} MemeMoney as a gift",
+      "duelAlt": "Two characters aiming at each other in the Battle Royale",
+      "modes": "Game modes",
+      "modeRanked": "Ranked",
+      "modeFriends": "With friends",
+      "soon": "Soon",
+      "character": "Your character",
+      "changeCharacter": "Change it in your Collection",
+      "noCharacter": "Pick your character in your Collection: open a card and tap “Pick for the Battle Royale”.",
+      "goCollection": "Go to my Collection"
     },
     "collection": {
       "title": "Collection",
@@ -602,7 +628,7 @@
       "spdTitle": "SPD: {spd}",
       "spd": "Speed. In battle, you move at {speed} units per second. Fast characters are often more fragile.",
       "attackTitle": "Attack: {name} ({power})",
-      "attack": "The basic attack gives the card its style. In the Battle Royale, you shoot with weapons picked up on the field: {weapons}.",
+      "attack": "The basic attack gives the card its style. In the Battle Royale, you start with a pistol and a combat knife, then pick up other weapons on the field or in crates: {weapons}.",
       "specialTitle": "Special attack: {name} ({power})",
       "special": "Becomes your ability, to trigger whenever you want: {ability}. The higher its power, the stronger the effect.",
       "energyTitle": "Energy: {count, plural, one {# point} other {# points}}",
@@ -638,7 +664,8 @@
       "atk": "Attack",
       "def": "Defense",
       "spd": "Speed",
-      "special": "Special power"
+      "special": "Special power",
+      "evolution": "Evolution"
     },
     "empty": "No card matches.",
     "firstBooster": "Your collection is empty: open your first booster in the Boosters tab!",
@@ -654,6 +681,12 @@
       "def": "DEF",
       "spd": "SPD",
       "special": "SPE"
+    },
+    "battle": {
+      "choose": "Pick for the Battle Royale",
+      "chosen": "Your Battle Royale character",
+      "done": "{name} is now your Battle Royale character!",
+      "badge": "Character"
     }
   },
   "boostersPanel": {
@@ -1012,14 +1045,17 @@
   },
   "battleRoyale": {
     "weapons": {
-      "pop": "Pop Launcher",
-      "petard": "Damp Squib",
-      "rafaleuse": "Burst-o-Matic 3000",
-      "lunette": "Like Scope"
+      "pop": "Pistol",
+      "petard": "Shotgun",
+      "rafaleuse": "Submachine gun",
+      "lunette": "Sniper rifle",
+      "knife": "Combat knife"
     },
     "items": {
-      "heal": "LOL Patch",
-      "vest": "Cringe Vest"
+      "heal": "First aid kit",
+      "vest": "Bulletproof vest",
+      "speed": "Energy drink",
+      "scope": "{zoom}× scope"
     },
     "ability": {
       "sprint": "Sprint: +{percent}% speed for {seconds} s",
@@ -1041,12 +1077,8 @@
   },
   "match": {
     "title": "Training",
-    "teamOnly": "Preview for the team only until the Battle Royale opens.",
-    "lead": "A match against 99 bots to practise: no trophies or MemeMoney at stake, and it even works offline.",
+    "lead": "A match against {bots} bots to practise: no trophies or MemeMoney at stake, and it even works offline.",
     "botsNotice": "All your opponents are bots (BOT badge) using cards from the game.",
-    "character": "Your character",
-    "characterHint": "Pick a card from your collection.",
-    "noCards": "You don't have any cards yet: open a booster to get your first character.",
     "difficulty": "Difficulty",
     "easy": "Easy",
     "easyHint": "Beginner bots.",
@@ -1055,7 +1087,6 @@
     "hard": "Hard",
     "hardHint": "Bots stronger than your level.",
     "start": "Start the match",
-    "back": "Back to home",
     "loading": "Getting the match ready…",
     "rotate": "Turn your phone sideways (landscape) to play.",
     "bot": "BOT",
@@ -1078,10 +1109,11 @@
         "shell": "Shells",
         "heavy": "Heavy ammo"
       },
-      "seconds": "{count}s"
+      "seconds": "{count}s",
+      "melee": "Melee"
     },
     "controls": {
-      "title": "Controls",
+      "title": "Game controls",
       "move": "Move",
       "aim": "Aim",
       "fire": "Shoot",
@@ -1090,16 +1122,18 @@
       "reload": "Reload",
       "pickup": "Pick up",
       "menu": "Menu",
-      "keysMove": "WASD, ZQSD or arrow keys",
       "keysAim": "Mouse",
-      "keysFire": "Left click (hold)",
-      "keysAbility": "C",
-      "keysPickup": "Right click",
-      "keysReload": "R",
-      "keysWeapon": "Mouse wheel, 1, 2 or Tab",
       "keysMenu": "Esc",
       "touch": "Left joystick: move. Right joystick: aim, and shoot by pushing it all the way.",
-      "heal": "Heals work as soon as you pick them up."
+      "edit": "Edit",
+      "arrows": "or arrow keys",
+      "hold": "{key} (hold)",
+      "wheel": "mouse wheel, 1, 2 or 3",
+      "mouseLeft": "Left click",
+      "mouseMiddle": "Middle click",
+      "mouseRight": "Right click",
+      "mouseButton": "Mouse button {n}",
+      "space": "Space"
     },
     "menu": {
       "title": "Menu",
@@ -1128,10 +1162,12 @@
       "rewards": "Rewards",
       "noRewards": "Training: no trophies or MemeMoney.",
       "again": "Play again",
-      "change": "Change character",
-      "home": "Back to home"
+      "back": "Back"
     },
-    "homeButton": "Training",
-    "homeHint": "Team only during testing."
+    "map": {
+      "open": "Enlarge the map",
+      "close": "Close the map",
+      "title": "Map"
+    }
   }
 }

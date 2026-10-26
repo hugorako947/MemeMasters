@@ -4,9 +4,11 @@ import { useTranslations } from "next-intl";
 import { useSyncExternalStore } from "react";
 import { BR_WEAPONS } from "@/config/game.config";
 import { ITEM } from "@/lib/br/map";
-import { AMMO_KINDS } from "@/lib/br/rules";
+import { AMMO_KINDS, KNIFE } from "@/lib/br/rules";
 import type { RosterEntry } from "@/lib/br-client/training";
 import type { MatchSnapshot, Store } from "./match-store";
+import { useBrSettings } from "@/lib/client/br-settings";
+import { useBindingLabel } from "./useBindingLabel";
 
 /** mm:ss, chiffres isolés pour l'arabe. */
 export function clock(seconds: number): string {
@@ -14,14 +16,22 @@ export function clock(seconds: number): string {
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 }
 
+/** Nom affiché d'une arme du moteur (BR_WEAPONS, puis le couteau). */
+export function useWeaponName() {
+  const tw = useTranslations("battleRoyale.weapons");
+  return (weapon: number): string => (weapon === KNIFE ? tw("knife") : tw(BR_WEAPONS[weapon] ?? BR_WEAPONS[0]));
+}
+
 /** Nom affiché d'un objet au sol. */
 export function useItemName() {
-  const tw = useTranslations("battleRoyale.weapons");
+  const weaponName = useWeaponName();
   const ti = useTranslations("battleRoyale.items");
   const ta = useTranslations("match.hud.ammo");
   return (kind: number, sub: number): string => {
-    if (kind === ITEM.weapon) return tw(BR_WEAPONS[sub] ?? BR_WEAPONS[0]);
+    if (kind === ITEM.weapon) return weaponName(sub);
     if (kind === ITEM.ammo) return ta((AMMO_KINDS[sub] ?? "light") as "light");
+    if (kind === ITEM.speed) return ti("speed");
+    if (kind === ITEM.scope) return ti("scope", { zoom: sub });
     return kind === ITEM.heal ? ti("heal") : ti("vest");
   };
 }
@@ -31,9 +41,11 @@ export function Hud({ store, roster, me, touch }: { store: Store<MatchSnapshot |
   const t = useTranslations("match.hud");
   const tm = useTranslations("match");
   const tf = useTranslations("match.feed");
-  const tc = useTranslations("match.controls");
-  const tw = useTranslations("battleRoyale.weapons");
+  const ti = useTranslations("battleRoyale.items");
+  const weaponName = useWeaponName();
   const itemName = useItemName();
+  const label = useBindingLabel();
+  const { keys } = useBrSettings();
   const snap = useSyncExternalStore(store.subscribe, store.get, store.get);
   if (!snap) return null;
   const { hud, pickup, feed } = snap;
@@ -93,21 +105,46 @@ export function Hud({ store, roster, me, touch }: { store: Store<MatchSnapshot |
       </ol>
 
       {/* En bas (au centre sur ordinateur, en haut à gauche sous les PV sur téléphone) : arme, chargeur, capacité. */}
-      <div className={`absolute grid gap-1 ${touch ? "left-3 top-[6.5rem] w-56" : "bottom-4 left-1/2 w-72 -translate-x-1/2"}`}>
+      <div className={`absolute grid gap-1 ${touch ? "left-3 top-[6.5rem] w-60" : "bottom-4 left-1/2 w-[22rem] -translate-x-1/2"}`}>
         {!touch && pickup ? (
           <p className="justify-self-center rounded-full border-2 border-ink bg-sticker px-3 py-1 text-xs font-extrabold">
-            {t("pickup", { item: itemName(pickup.kind, pickup.sub) })} · {tc("keysPickup")}
+            {t("pickup", { item: itemName(pickup.kind, pickup.sub) })} · {label(keys.pickup)}
           </p>
         ) : null}
-        <div className="grid grid-cols-[1fr_auto] items-center gap-x-3 rounded-xl border-2 border-ink bg-surface/90 px-3 py-1.5 text-xs font-extrabold">
-          <span className="truncate">{tw(BR_WEAPONS[hud.weapon] ?? BR_WEAPONS[0])}</span>
+        {hud.scope > 1 || hud.boostSeconds > 0 ? (
+          <p className="flex flex-wrap justify-center gap-1 text-[0.7rem] font-extrabold">
+            {hud.scope > 1 ? <span className="rounded-full border-2 border-ink bg-surface/90 px-2">{ti("scope", { zoom: hud.scope })}</span> : null}
+            {hud.boostSeconds > 0 ? (
+              <span className="rounded-full border-2 border-ink bg-sticker px-2">
+                {ti("speed")} · <bdi dir="ltr">{t("seconds", { count: hud.boostSeconds })}</bdi>
+              </span>
+            ) : null}
+          </p>
+        ) : null}
+        <div className="grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1 rounded-xl border-2 border-ink bg-surface/90 px-3 py-1.5 text-xs font-extrabold">
+          <span className="truncate">{weaponName(hud.weapon)}</span>
           <bdi dir="ltr" className="text-sm">
-            {hud.magazine} / {hud.reserve === null ? "∞" : hud.reserve}
+            {hud.magazineSize === 0 ? t("melee") : `${hud.magazine} / ${hud.reserve === null ? "∞" : hud.reserve}`}
           </bdi>
-          <span className="font-semibold text-ink-soft">{hud.reloading > 0 ? t("reloading") : hud.otherWeapon >= 0 ? `⇄ ${tw(BR_WEAPONS[hud.otherWeapon])}` : ""}</span>
+          {touch ? (
+            // Sur écran tactile, le bouton ⇄ passe à l'arme suivante : on l'annonce.
+            <span className="truncate font-semibold text-ink-soft">⇄ {weaponName(hud.slots[hud.slot === 0 ? (hud.slots[1] >= 0 ? 1 : 2) : hud.slot === 1 ? 2 : 0])}</span>
+          ) : (
+            // Les trois emplacements (touches 1, 2, 3) : arme de départ, arme ramassée, couteau ; celui en main est surligné.
+            <span className="flex min-w-0 gap-1">
+              {hud.slots.map((w, k) =>
+                w < 0 ? null : (
+                  <span key={k} className={`truncate rounded-md border px-1 text-[0.65rem] ${k === hud.slot ? "border-ink bg-candy text-[var(--mm-accent-ink)]" : "border-ink/40 text-ink-soft"}`}>
+                    <bdi dir="ltr">{k + 1}</bdi> {weaponName(w)}
+                  </span>
+                ),
+              )}
+            </span>
+          )}
           <span className={`rounded-full px-2 ${hud.abilityReady ? "bg-candy text-[var(--mm-accent-ink)]" : "bg-paper text-ink-soft"}`}>
             {t("ability")} · {hud.abilityReady ? t("abilityReady") : <bdi dir="ltr">{t("seconds", { count: hud.abilitySeconds })}</bdi>}
           </span>
+          {hud.reloading > 0 ? <span className="col-span-2 font-semibold text-ink-soft">{t("reloading")}</span> : null}
         </div>
       </div>
     </div>

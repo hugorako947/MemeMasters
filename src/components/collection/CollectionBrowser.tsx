@@ -17,7 +17,7 @@ export interface CollectionItem {
 }
 
 type Show = "all" | "owned" | "missing";
-type Sort = "rarity" | "name" | "recent" | "quantity" | "total" | "hp" | "atk" | "def" | "spd" | "special";
+type Sort = "rarity" | "evolution" | "name" | "recent" | "quantity" | "total" | "hp" | "atk" | "def" | "spd" | "special";
 const STAT_SORTS = ["total", "hp", "atk", "def", "spd", "special"] as const;
 type StatSort = (typeof STAT_SORTS)[number];
 
@@ -33,7 +33,7 @@ function statValue(item: CollectionItem, sort: StatSort): number {
  * La collection : progression, filtres simples et grille de cartes.
  * Les cartes manquantes restent floutées ; un clic ouvre la fiche de la carte.
  */
-export function CollectionBrowser({ items, resaleLeftCents }: { items: CollectionItem[]; resaleLeftCents: number }) {
+export function CollectionBrowser({ items, resaleLeftCents, battleCardId = null }: { items: CollectionItem[]; resaleLeftCents: number; battleCardId?: string | null }) {
   const t = useTranslations("collection");
   const tr = useTranslations("rarity");
   const format = useFormatter();
@@ -61,6 +61,7 @@ export function CollectionBrowser({ items, resaleLeftCents }: { items: Collectio
     return [...list].sort((a, b) => {
       if (sort === "name") return dir * -a.card.name.localeCompare(b.card.name);
       if (statSort) return dir * (statValue(b, statSort) - statValue(a, statSort)) || byRarity(a, b);
+      if (sort === "evolution") return dir * (b.level - a.level) || byRarity(a, b) || a.card.name.localeCompare(b.card.name);
       if (sort === "quantity") return dir * (b.quantity - a.quantity) || byRarity(a, b);
       if (sort === "recent") return dir * (b.firstObtainedAt ?? "").localeCompare(a.firstObtainedAt ?? "") || byRarity(a, b);
       return dir * byRarity(a, b) || a.card.name.localeCompare(b.card.name);
@@ -116,7 +117,7 @@ export function CollectionBrowser({ items, resaleLeftCents }: { items: Collectio
           <div className="flex min-w-0 gap-1.5">
             <select aria-label={t("sortLabel")} value={sort} onChange={(e) => setSort(e.target.value as Sort)} className={select}>
               <optgroup label={t("sortGeneral")}>
-                {(["rarity", "name", "recent", "quantity"] as const).map((s) => (
+                {(["rarity", "evolution", "name", "recent", "quantity"] as const).map((s) => (
                   <option key={s} value={s}>
                     {t(`sort.${s}`)}
                   </option>
@@ -163,8 +164,11 @@ export function CollectionBrowser({ items, resaleLeftCents }: { items: Collectio
                 owned={quantity > 0}
                 level={level}
                 quantity={quantity}
-                actions={<CardActions card={card} quantity={quantity} level={level} resaleLeftCents={resaleLeftCents} />}
+                actions={<CardActions card={card} quantity={quantity} level={level} resaleLeftCents={resaleLeftCents} battleCharacter={card.id === battleCardId} />}
               />
+              {card.id === battleCardId ? (
+                <p className="justify-self-center rounded-full border-2 border-ink bg-candy px-2.5 py-0.5 text-[0.65rem] font-extrabold text-[var(--mm-accent-ink)]">{t("battle.badge")}</p>
+              ) : null}
               {statSort ? (
                 <p className="flex items-center justify-between rounded-full bg-paper px-2.5 py-0.5 text-xs font-bold">
                   <span className="text-ink-soft">#{index + 1}</span>

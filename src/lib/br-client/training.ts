@@ -1,5 +1,5 @@
 /**
- * Partie d'Entraînement (conception §9.7) : le joueur contre 99 bots « BOT » portant des cartes du jeu,
+ * Partie d'Entraînement (conception §9.7) : le joueur contre des bots « BOT » (participants − 1) portant des cartes du jeu,
  * sans récompense ni envoi au serveur, jouable hors ligne une fois la page chargée.
  */
 import { GAME_CONFIG } from "@/config/game.config";

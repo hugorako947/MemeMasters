@@ -22,13 +22,14 @@ import { ABILITY_KINDS, BOOST_STATS, PASSIVE_KINDS, type BattleCharacter } from 
 import { BTN, isValidCommand, unpackAim, unpackButtons, unpackMove } from "./commands";
 import { angleDiff, clamp, iatan2, icos, idiv, isin, isqrt, Q14 } from "./fixed";
 import { buildGrid, forEachNear } from "./grid";
-import { circleHitsSolid, generateMap, ITEM, isPassable, placeLoot, placeSpawns, segmentWallHit, tileAt, type GameMap, type LootItem } from "./map";
+import { circleHitsSolid, generateMap, ITEM, isPassable, lineOfSight, placeLoot, placeSpawns, segmentWallHit, TILE, tileAt, type GameMap, type LootItem } from "./map";
+import { navFor } from "./nav";
 import { chance, createStreams, nextBelow, nextRange, STREAM } from "./rng";
-import { BURN_SHOT, SUB, type Rules } from "./rules";
-import { allocateState, C, canTake, cloneState, KILL_BURN, KILL_REFLECT, KILL_ZONE, SHOT_CAPACITY, SHOT_FIELDS, weaponInHand, Z, type MatchState } from "./state";
+import { BURN_SHOT, KNIFE, SUB, type Rules } from "./rules";
+import { allocateState, C, canTake, cloneState, KILL_BURN, KILL_KNIFE, KILL_REFLECT, KILL_ZONE, SHOT_CAPACITY, SHOT_FIELDS, weaponInHand, Z, type MatchState } from "./state";
 import { canSee } from "./vision";
 
-export const ENGINE_VERSION = 3;
+export const ENGINE_VERSION = 4;
 
 const kindIndex = <K extends string>(list: readonly K[]) => Object.fromEntries(list.map((k, i) => [k, i])) as Record<K, number>;
 const AB = kindIndex(ABILITY_KINDS);
@@ -59,18 +60,20 @@ export function createMatch(setup: MatchSetup): MatchState {
   const { rules, characters } = setup;
   const n = characters.length;
   const rng = createStreams(setup.seed >>> 0, STREAM.bot0 + n);
-  const map = setup.map ?? generateMap(rules, rng);
+  const map = setup.map ? { ...setup.map, tiles: setup.map.tiles.slice() } : generateMap(rules, rng);
   const maxRadius = characters.reduce((m, c) => Math.max(m, c.hitRadius * SUB), 0);
   const spawns = setup.spawns ?? placeSpawns(map, rules, rng, n, maxRadius);
   const loot = setup.loot ?? placeLoot(map, rules, rng, n);
   const botLevels = setup.botLevels ?? [];
   const botCount = characters.reduce((count, _, i) => count + (botLevels[i] === null || botLevels[i] === undefined ? 0 : 1), 0);
-  const s = allocateState(rules, map, characters, rng, loot, botCount);
+  const nav = botCount > 0 ? navFor({ ...map, tiles: map.tiles.slice() }) : null;
+  const s = allocateState(rules, map, characters, rng, loot, botCount, nav);
   const P = s.p;
   const size = map.size * map.tileSub;
   const middle = size >> 1;
   for (let i = 0; i < n; i++) {
     P.alive[i] = 1;
+    P.scope[i] = 1;
     P.x[i] = spawns[2 * i];
     P.y[i] = spawns[2 * i + 1];
     P.aim[i] = iatan2(middle - P.y[i], middle - P.x[i]);
@@ -209,6 +212,7 @@ function currentSpeed(s: MatchState, i: number): number {
   const f = s.fighters[i];
   let mod = 1000 + statModifier(s, i, ST.spd);
   if (abilityActive(s, i, AB.sprint)) mod += f.abilityPermille;
+  if (s.p.boostLeft[i] > 0) mod += s.rules.crate.boostPermille;
   return idiv(f.speed * Math.max(100, mod), 1000);
 }
 
@@ -216,8 +220,8 @@ function currentSpeed(s: MatchState, i: number): number {
 
 function switchWeapon(s: MatchState, i: number): void {
   const P = s.p;
-  if (P.weapon1[i] < 0) return;
-  P.active[i] ^= 1;
+  const active = P.active[i];
+  P.active[i] = active === 0 ? (P.weapon1[i] >= 0 ? 1 : 2) : active === 1 ? 2 : 0;
   P.reload[i] = 0;
   P.fireCd[i] = Math.max(P.fireCd[i], s.rules.switchTicks);
 }
@@ -319,6 +323,18 @@ function pickup(s: MatchState, i: number): void {
       s.counters[C.usedVests]++;
       break;
     }
+    case ITEM.speed: {
+      P.boostLeft[i] = s.rules.crate.boostTicks;
+      I.kind[k] = ITEM.none;
+      s.counters[C.usedBoosts]++;
+      break;
+    }
+    case ITEM.scope: {
+      P.scope[i] = Math.max(P.scope[i], I.sub[k]);
+      I.kind[k] = ITEM.none;
+      s.counters[C.usedScopes]++;
+      break;
+    }
   }
 }
 
@@ -403,6 +419,10 @@ function tryFire(s: MatchState, i: number): void {
   const w = weaponInHand(s, i);
   const W = s.rules.weapons[w];
   if (P.reload[i] > 0 || P.fireCd[i] > 0) return;
+  if (w === KNIFE) {
+    stab(s, i);
+    return;
+  }
   const mag = magazineOf(s, i);
   if (mag <= 0) {
     startReload(s, i);
@@ -440,8 +460,8 @@ function activateAbility(s: MatchState, i: number): void {
   P.abilityCd[i] = f.abilityCooldown;
   if (f.ability === AB.multi || f.ability === AB.burn) P.lastShot[i] = s.tick;
   if (f.ability === AB.multi) {
-    // Rafale : `hits` balles de l'arme en main, en éventail, sans munitions.
-    const w = weaponInHand(s, i);
+    // Rafale : `hits` balles de l'arme en main (l'arme de départ si c'est le couteau), en éventail, sans munitions.
+    const w = weaponInHand(s, i) === KNIFE ? s.rules.startWeapon : weaponInHand(s, i);
     const damage = Math.max(1, idiv(shotDamage(s, i, s.rules.weapons[w].damage) * f.abilityPermille, 1000));
     const base = assistedAim(s, i);
     const spread = s.rules.multiSpread;
@@ -457,6 +477,102 @@ function activateAbility(s: MatchState, i: number): void {
     return;
   }
   P.abilityLeft[i] = f.abilityDuration;
+}
+
+// ---------------------------------------------------------------- couteau et caisses
+
+/**
+ * Coup de couteau : touche chaque adversaire dont le bord est à portée, dans l'arc devant soi et sans mur entre les
+ * deux (armure, esquive et renvoi comme pour une balle), ainsi qu'une caisse juste devant.
+ */
+function stab(s: MatchState, i: number): void {
+  const P = s.p;
+  const K = s.rules.weapons[KNIFE];
+  P.fireCd[i] = K.fireTicks;
+  P.lastShot[i] = s.tick;
+  const aim = P.aim[i];
+  const raw = shotDamage(s, i, K.damage);
+  const reach = K.range + s.fighters[i].radius;
+  for (let j = 0; j < s.n; j++) {
+    if (j === i || !P.alive[j]) continue;
+    const dx = P.x[j] - P.x[i];
+    const dy = P.y[j] - P.y[i];
+    const r = reach + s.fighters[j].radius;
+    if (dx * dx + dy * dy > r * r) continue;
+    if (Math.abs(angleDiff(iatan2(dy, dx), aim)) > s.rules.knifeArc) continue;
+    if (!lineOfSight(s.map, P.x[i], P.y[i], P.x[j], P.y[j])) continue;
+    meleeHit(s, i, j, raw);
+  }
+  // La première caisse entre le personnage et le bout de la lame (un mur arrête la lame).
+  const hit = segmentWallHit(s.map, P.x[i], P.y[i], P.x[i] + idiv(reach * icos(aim), Q14), P.y[i] + idiv(reach * isin(aim), Q14));
+  if (hit !== null && hit.tile >= 0 && s.crates[hit.tile] > 0) damageCrate(s, hit.tile, raw);
+}
+
+function meleeHit(s: MatchState, i: number, t: number, raw: number): void {
+  const P = s.p;
+  const ft = s.fighters[t];
+  if (ft.passive === PS.dodge && chance(s.rng, STREAM.combat, ft.passivePermille)) return;
+  const def = idiv(ft.def * (1000 + statModifier(s, t, ST.def)), 1000);
+  const amount = Math.max(1, idiv(raw * 200, 200 + Math.max(0, def)));
+  const dealt = damage(s, t, amount, i, KILL_KNIFE, true);
+  P.damage[i] += dealt;
+  P.lastHit[t] = s.tick;
+  P.lastHitBy[t] = i;
+  if (ft.passive === PS.reflect && P.alive[i]) {
+    const back = idiv(dealt * ft.passivePermille, 1000);
+    if (back > 0) {
+      damage(s, i, back, t, KILL_REFLECT, true);
+      P.lastHit[i] = s.tick;
+      P.lastHitBy[i] = t;
+    }
+  }
+}
+
+/** Une caisse encaisse des dégâts ; à 0, elle devient du sol et lâche un objet tiré au hasard (flux du butin). */
+function damageCrate(s: MatchState, tile: number, amount: number): void {
+  s.crates[tile] = Math.max(0, s.crates[tile] - amount);
+  if (s.crates[tile] > 0) return;
+  s.map.tiles[tile] = TILE.floor;
+  s.counters[C.cratesBroken]++;
+  const ts = s.map.tileSub;
+  const x = (tile % s.map.size) * ts + (ts >> 1);
+  const y = idiv(tile, s.map.size) * ts + (ts >> 1);
+  const R = s.rules;
+  const weights = R.crate.lootWeights;
+  let roll = nextBelow(s.rng, STREAM.loot, weights.reduce((a, b) => a + b, 0));
+  let kind = 0;
+  while (kind < weights.length - 1 && roll >= weights[kind]) roll -= weights[kind++];
+  // Soin, munitions, gilet, arme, boisson, lunette.
+  if (kind === 0) {
+    pushItem(s, ITEM.heal, 0, 1, x, y);
+    s.counters[C.crateHeals]++;
+  } else if (kind === 1) {
+    const ammo = 1 + nextBelow(s.rng, STREAM.loot, 3);
+    pushItem(s, ITEM.ammo, ammo, R.items.ammoBox[ammo], x, y);
+    s.counters[C.crateLight + ammo - 1] += R.items.ammoBox[ammo];
+  } else if (kind === 2) {
+    pushItem(s, ITEM.vest, 0, 1, x, y);
+    s.counters[C.crateVests]++;
+  } else if (kind === 3) {
+    const ww = R.loot.weaponWeights;
+    let wr = nextBelow(s.rng, STREAM.loot, ww.reduce((a, b) => a + b, 0));
+    let w = 0;
+    while (w < ww.length - 1 && wr >= ww[w]) wr -= ww[w++];
+    const W = R.weapons[w];
+    pushItem(s, ITEM.weapon, w, W.magazine, x, y);
+    s.counters[C.crateWeapons]++;
+    if (W.ammo > 0) s.counters[C.crateLight + W.ammo - 1] += W.magazine;
+  } else if (kind === 4) {
+    pushItem(s, ITEM.speed, 0, 1, x, y);
+    s.counters[C.crateBoosts]++;
+  } else {
+    const scopes = R.crate.scopes;
+    let sr = nextBelow(s.rng, STREAM.loot, scopes.reduce((a, c) => a + c.weight, 0));
+    let k = 0;
+    while (k < scopes.length - 1 && sr >= scopes[k].weight) sr -= scopes[k++].weight;
+    pushItem(s, ITEM.scope, scopes[k].zoom, 1, x, y);
+    s.counters[C.crateScopes]++;
+  }
 }
 
 // ---------------------------------------------------------------- projectiles et dégâts
@@ -519,7 +635,10 @@ function moveShot(s: MatchState, k: number): boolean {
     hitParticipant(s, k, best);
     return false;
   }
-  if (wall !== null) return false;
+  if (wall !== null) {
+    if (wall.tile >= 0 && s.crates[wall.tile] > 0) damageCrate(s, wall.tile, S.damage[k]);
+    return false;
+  }
   S.x[k] = x1;
   S.y[k] = y1;
   S.left[k] = left - S.speed[k];
@@ -640,6 +759,7 @@ function updateTimers(s: MatchState): void {
   for (let i = 0; i < s.n; i++) {
     if (!P.alive[i]) continue;
     if (P.fireCd[i] > 0) P.fireCd[i]--;
+    if (P.boostLeft[i] > 0) P.boostLeft[i]--;
     if (P.abilityCd[i] > 0) P.abilityCd[i]--;
     if (P.abilityLeft[i] > 0) P.abilityLeft[i]--;
     if (P.stun[i] > 0) P.stun[i]--;

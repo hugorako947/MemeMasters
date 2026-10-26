@@ -470,7 +470,7 @@ L'historique des parties, les statistiques et le choix du personnage sont lus pa
 - **Accessibilité** : `prefers-reduced-motion` coupe les tremblements et les flashs ; menus utilisables au clavier ; contrastes suffisants.
 - **Plein écran** : réutilise `FullscreenToggle`.
 - **PWA** : aucune invite ni rechargement de mise à jour pendant une partie (indicateur « partie en cours »). Le mode classé exige le réseau au début et à la fin, avec un message clair hors ligne. Le mode Entraînement fonctionne hors ligne.
-- **Visuels originaux**. Armes : « Lance-Pop » (pistolet), « Pétard Mouillé » (fusil à pompe), « Rafaleuse 3000 » (mitraillette), « Lunette à Like » (fusil de précision). Objets : « Patch de Lol » (soin), « Gilet Cringe » (armure). Aucun nom ni image d'un autre jeu.
+- **Visuels originaux**. Armes : « Lance-Pop » (pistolet), « Pétard Mouillé » (fusil à pompe), « Rafaleuse 3000 » (mitraillette), « Lunette à Like » (fusil de précision). Objets : « Patch de Lol » (soin), « Gilet Cringe » (armure). Aucun nom ni image d'un autre jeu. *(Remplacés le 2026-10-26, à la demande du propriétaire, par des noms réalistes et génériques : Pistolet, Fusil à pompe, Mitraillette, Fusil de précision, Couteau de combat, Trousse de soins, Gilet pare-balles ; voir DECISIONS.md.)*
 - **Textes** : dans les 7 langues, avec le vocabulaire imposé.
 
 ---

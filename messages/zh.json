@@ -1,6 +1,6 @@
 {
   "meta": {
-    "description": "以表情包为主题的集换式卡牌游戏：开卡包、完成收藏，与全世界的玩家对战。"
+    "description": "Battle Meme：一款表情包收藏卡牌游戏，带有 2D 大逃杀，每张卡牌都是可操控的角色。"
   },
   "nav": {
     "label": "主导航",
@@ -16,8 +16,6 @@
     "rare": "稀有",
     "epique": "史诗",
     "legendaire": "传说",
-    "brainrot": "Brainrot",
-    "superbrainrot": "SuperBrainrot",
     "godlevel": "Godlevel"
   },
   "card": {
@@ -52,7 +50,7 @@
   },
   "home": {
     "guestTitle": "表情包终于有了自己的卡牌。",
-    "guestLead": "开卡包、完成收藏，与全世界的玩家对战。",
+    "guestLead": "收集表情包卡牌，让它们进化，再带它们进入 2D 大逃杀：最后存活的人获胜。",
     "createAccount": "注册",
     "signIn": "登录",
     "contact": "联系我们"
@@ -195,10 +193,28 @@
     "randomHint": "每点一次，整个游戏都会随机换一套新配色。",
     "randomAgain": "换一套颜色",
     "adminSpace": "管理员空间",
-    "superAdminSpace": "超级管理员空间"
+    "superAdminSpace": "超级管理员空间",
+    "br": {
+      "title": "大逃杀",
+      "lead": "你的游戏操作和对局声音。这些设置保存在本设备上。",
+      "keysTitle": "按键（键盘和鼠标）",
+      "keysLead": "点击一个按钮，然后按下新的按键或用鼠标点击。方向键、1、2、滚轮和 Esc 始终有效。",
+      "up": "向上",
+      "down": "向下",
+      "left": "向左",
+      "right": "向右",
+      "press": "请按一个键…（Esc 取消）",
+      "change": "更改按键：{action}",
+      "reset": "恢复默认按键",
+      "soundTitle": "声音",
+      "sfx": "音效",
+      "music": "音乐",
+      "musicSoon": "游戏音乐即将推出。",
+      "test": "试听"
+    }
   },
   "rarities": {
-    "title": "7 种稀有度"
+    "title": "{count} 种稀有度"
   },
   "offline": {
     "title": "离线模式",
@@ -295,7 +311,7 @@
     "statBonus": "+{percent}%"
   },
   "showcase": {
-    "title": "7 种稀有度",
+    "title": "{count} 种稀有度",
     "lead": "从最稀有到最常见。点一张卡牌查看详情。"
   },
   "features": {
@@ -307,19 +323,20 @@
     },
     "collection": {
       "title": "完成你的收藏",
-      "text": "按稀有度筛选、排序、搜索并追踪进度。缺少的卡牌会一直模糊，直到你找到它们。排行榜比较游戏中所有卡牌：人气、攻击、胜率……",
+      "text": "按稀有度筛选，按进化或属性排序，搜索并追踪你的进度。缺少的卡牌会保持模糊，直到你找到它们。你也在这里选择大逃杀中使用的角色。",
       "progress": "87 / 240 张卡牌",
       "chipRarity": "稀有度",
       "chipOwned": "已拥有",
-      "chipSort": "排序：人气",
+      "chipSort": "排序：进化",
       "filtersLabel": "筛选示例",
-      "rankingHint": "排行：人气 · 稀有度 · 生命 · 攻击 · 速度 · 胜率"
+      "rankingHint": "排序：稀有度 · 进化 · 生命 · 攻击 · 防御 · 速度"
     },
     "battle": {
-      "title": "挑战全世界",
-      "text": "组建一支 {team} 张卡牌的队伍，实时挑战全球与你水平相当的玩家。每回合 {seconds} 秒：每次胜利都能赢得奖杯和 MemeMoney。",
-      "timer": "{seconds} 秒",
-      "trophies": "1,240"
+      "title": "大逃杀",
+      "text": "每张卡牌都会成为可操控的角色，拥有自己的生命、速度、特技和被动。最多 {count} 名参与者在俯视地图上对战：捡起武器、打碎箱子、躲开 Scroll，成为最后的幸存者。现在就可以与机器人训练；排位赛和好友对战即将推出。",
+      "alive": "{count} 人存活",
+      "scroll": "Scroll 正在推进",
+      "sceneLabel": "俯视视角的大逃杀对局"
     }
   },
   "password": {
@@ -394,7 +411,16 @@
     "battles": {
       "title": "大逃杀",
       "lead": "对战即将上线：先准备好你的收藏吧。",
-      "nextReward": "达到下一段位 → 赠送 {boosters} 个卡包和 {money} MemeMoney"
+      "nextReward": "达到下一段位 → 赠送 {boosters} 个卡包和 {money} MemeMoney",
+      "duelAlt": "两名角色在大逃杀中互相瞄准",
+      "modes": "游戏模式",
+      "modeRanked": "排位赛",
+      "modeFriends": "好友对战",
+      "soon": "即将推出",
+      "character": "你的角色",
+      "changeCharacter": "在收藏中更换",
+      "noCharacter": "在收藏中选择你的角色：打开一张卡牌，点击“选为大逃杀角色”。",
+      "goCollection": "前往我的收藏"
     },
     "collection": {
       "title": "收藏",
@@ -602,7 +628,7 @@
       "spdTitle": "速度：{spd}",
       "spd": "速度。对战中，你的移动速度为每秒 {speed} 单位。速度快的角色往往更脆弱。",
       "attackTitle": "攻击：{name}（{power}）",
-      "attack": "基础攻击决定了卡牌的风格。在大逃杀中，你使用在场地上拾取的武器射击：{weapons}。",
+      "attack": "基础攻击决定了卡牌的风格。在大逃杀中，你开局带着一把手枪和一把战术匕首，然后在场地上或箱子里拾取其他武器：{weapons}。",
       "specialTitle": "特技：{name}（{power}）",
       "special": "变成你的技能，随时可以发动：{ability}。威力越高，效果越强。",
       "energyTitle": "能量：{count, plural, other {# 点}}",
@@ -638,7 +664,8 @@
       "atk": "攻击",
       "def": "防御",
       "spd": "速度",
-      "special": "特技威力"
+      "special": "特技威力",
+      "evolution": "进化"
     },
     "empty": "没有符合条件的卡牌。",
     "firstBooster": "你的收藏还是空的：去“卡包”页打开你的第一个卡包吧！",
@@ -654,6 +681,12 @@
       "def": "防御",
       "spd": "速度",
       "special": "特技"
+    },
+    "battle": {
+      "choose": "选为大逃杀角色",
+      "chosen": "你的大逃杀角色",
+      "done": "{name} 现在是你的大逃杀角色！",
+      "badge": "角色"
     }
   },
   "boostersPanel": {
@@ -1012,14 +1045,17 @@
   },
   "battleRoyale": {
     "weapons": {
-      "pop": "啵啵发射器",
-      "petard": "受潮鞭炮",
-      "rafaleuse": "连射机 3000",
-      "lunette": "点赞瞄准镜"
+      "pop": "手枪",
+      "petard": "霰弹枪",
+      "rafaleuse": "冲锋枪",
+      "lunette": "狙击步枪",
+      "knife": "战术匕首"
     },
     "items": {
-      "heal": "哈哈创可贴",
-      "vest": "尴尬背心"
+      "heal": "急救包",
+      "vest": "防弹背心",
+      "speed": "能量饮料",
+      "scope": "{zoom} 倍镜"
     },
     "ability": {
       "sprint": "冲刺：{seconds} 秒内速度 +{percent}%",
@@ -1041,12 +1077,8 @@
   },
   "match": {
     "title": "训练",
-    "teamOnly": "大逃杀开放前仅供团队预览。",
-    "lead": "与 99 个机器人对战来练习：不涉及奖杯和 MemeMoney，离线也能玩。",
+    "lead": "与 {bots} 个机器人对战来练习：不涉及奖杯和 MemeMoney，离线也能玩。",
     "botsNotice": "你的对手全是机器人（BOT 标记），使用游戏中的卡牌。",
-    "character": "你的角色",
-    "characterHint": "从你的收藏中选择一张卡牌。",
-    "noCards": "你还没有卡牌：打开一个卡包来获得你的第一个角色。",
     "difficulty": "难度",
     "easy": "简单",
     "easyHint": "新手机器人。",
@@ -1055,7 +1087,6 @@
     "hard": "困难",
     "hardHint": "比你水平更强的机器人。",
     "start": "开始对局",
-    "back": "返回首页",
     "loading": "正在准备对局…",
     "rotate": "请将手机横过来玩。",
     "bot": "BOT",
@@ -1078,10 +1109,11 @@
         "shell": "霰弹",
         "heavy": "重型弹药"
       },
-      "seconds": "{count} 秒"
+      "seconds": "{count} 秒",
+      "melee": "近战"
     },
     "controls": {
-      "title": "操作",
+      "title": "游戏操作",
       "move": "移动",
       "aim": "瞄准",
       "fire": "射击",
@@ -1090,16 +1122,18 @@
       "reload": "换弹",
       "pickup": "拾取",
       "menu": "菜单",
-      "keysMove": "WASD、ZQSD 或方向键",
       "keysAim": "鼠标",
-      "keysFire": "鼠标左键（按住）",
-      "keysAbility": "C",
-      "keysPickup": "鼠标右键",
-      "keysReload": "R",
-      "keysWeapon": "滚轮、1、2 或 Tab",
       "keysMenu": "Esc",
       "touch": "左摇杆：移动。右摇杆：瞄准，推到底即射击。",
-      "heal": "治疗物品一拾取就立即生效。"
+      "edit": "修改",
+      "arrows": "或方向键",
+      "hold": "{key}（按住）",
+      "wheel": "滚轮、1、2 或 3",
+      "mouseLeft": "鼠标左键",
+      "mouseMiddle": "鼠标中键",
+      "mouseRight": "鼠标右键",
+      "mouseButton": "鼠标按键 {n}",
+      "space": "空格"
     },
     "menu": {
       "title": "菜单",
@@ -1128,10 +1162,12 @@
       "rewards": "奖励",
       "noRewards": "训练：没有奖杯和 MemeMoney。",
       "again": "再来一局",
-      "change": "更换角色",
-      "home": "返回首页"
+      "back": "返回"
     },
-    "homeButton": "训练",
-    "homeHint": "测试期间仅限团队。"
+    "map": {
+      "open": "放大地图",
+      "close": "关闭地图",
+      "title": "地图"
+    }
   }
 }

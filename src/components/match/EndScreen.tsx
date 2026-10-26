@@ -2,7 +2,7 @@
 
 import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
-import { buttonClass, ButtonLink } from "@/components/ui/Button";
+import { buttonClass } from "@/components/ui/Button";
 import type { RosterEntry } from "@/lib/br-client/training";
 import { clock } from "./Hud";
 
@@ -16,8 +16,8 @@ export interface MatchResult {
   killedBy: number;
 }
 
-/** Écran de fin : place, éliminations, dégâts, temps de survie, qui a éliminé le joueur, récompenses, Rejouer. */
-export function EndScreen({ result, roster, onReplay, onChange }: { result: MatchResult; roster: readonly RosterEntry[]; onReplay(): void; onChange(): void }) {
+/** Écran de fin : place, éliminations, dégâts, temps de survie, qui a éliminé le joueur, récompenses, Rejouer ou Retour. */
+export function EndScreen({ result, roster, onReplay, onClose }: { result: MatchResult; roster: readonly RosterEntry[]; onReplay(): void; onClose(): void }) {
   const t = useTranslations("match.end");
   const tm = useTranslations("match");
   const format = useFormatter();
@@ -56,12 +56,9 @@ export function EndScreen({ result, roster, onReplay, onChange }: { result: Matc
           <button ref={first} type="button" className={buttonClass("primary", "min-h-11 px-5")} onClick={onReplay}>
             {t("again")}
           </button>
-          <button type="button" className={buttonClass("secondary", "min-h-11 px-5")} onClick={onChange}>
-            {t("change")}
+          <button type="button" className={buttonClass("secondary", "min-h-11 px-5")} onClick={onClose}>
+            {t("back")}
           </button>
-          <ButtonLink href="/?vue=batailles" variant="ghost" className="min-h-11 px-5">
-            {t("home")}
-          </ButtonLink>
         </div>
       </div>
     </div>
