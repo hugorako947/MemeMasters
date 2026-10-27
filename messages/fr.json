@@ -31,7 +31,7 @@
     "ariaLabel": "{name}, carte {rarity}, {hp} PV",
     "tiltHint": "Bouge le doigt ou la souris sur la carte pour la faire briller.",
     "open": "Voir la fiche de {name}",
-    "copies": "{count, plural, one {# exemplaire} other {# exemplaires}}",
+    "copies": "{count, plural, one {# exemplaire en plus} other {# exemplaires en plus}}",
     "max": "MAX"
   },
   "effect": {
@@ -265,7 +265,6 @@
     "already_max_variant": "Cette carte a déjà sa dernière évolution (Divine).",
     "not_enough_duplicates": "Pas assez d'exemplaires pour cette évolution.",
     "cannot_sell": "Cet exemplaire ne peut pas être revendu.",
-    "daily_sell_cap": "Limite de revente du jour atteinte.",
     "player_not_found": "Aucun joueur ne porte ce pseudo.",
     "friend_self": "Tu ne peux pas t'ajouter toi-même.",
     "already_friends": "Vous êtes déjà amis.",
@@ -310,7 +309,8 @@
     "defense": "Défense",
     "power": "Puissance {power}",
     "notOwned": "Cette carte n'est pas encore dans ta collection. Ouvre des boosters pour la trouver !",
-    "statBonus": "+{percent} %"
+    "statBonus": "+{percent} %",
+    "lead": "Personnage"
   },
   "showcase": {
     "title": "Les {count} raretés",
@@ -567,7 +567,7 @@
       "sellPrice": "Prix par exemplaire",
       "sell1": "Touche une carte : le bouton « Vendre » vend d'un coup tous ses exemplaires en trop.",
       "sell2": "« Revendre mes exemplaires en trop » fait la même chose pour toute ta collection.",
-      "sell3": "Les communes, rares et épiques rapportent au plus {cap} MemeMoney par jour ; les cartes plus rares n'ont pas de limite.",
+      "sell3": "Toutes les raretés se revendent sans limite : tu peux vendre tous tes exemplaires en trop quand tu veux.",
       "sell4": "Les petites sommes (0,1 ; 0,25…) s'additionnent et ne sont jamais perdues.",
       "how6": "À ne pas confondre avec la Maîtrise, prévue avec le Battle Royale : en jouant un personnage, tu débloqueras pour lui des récompenses uniquement cosmétiques (cadre, traînée, titre).",
       "howAll": "Dans ta Collection, « Tout faire évoluer » fait évoluer d'un coup toutes les cartes qui ont assez d'exemplaires en trop."
@@ -577,7 +577,7 @@
       "what": "La MemeMoney est la monnaie du jeu. Ton solde s'affiche en haut à droite ; touche-le pour ouvrir la Boutique.",
       "earnTitle": "Comment en gagner",
       "earnRanks": "Atteindre un nouveau rang pour la première fois : jusqu'à {total} MemeMoney au total, avec des boosters (voir Rangs).",
-      "earnSell": "Revendre tes exemplaires en trop (voir Évolutions), jusqu'à {cap} MemeMoney par jour pour les communes, rares et épiques.",
+      "earnSell": "Revendre tes exemplaires en trop (voir Évolutions), sans limite quotidienne.",
       "earnShop": "L'acheter dans la Boutique avec de l'argent réel, à partir de {price}.",
       "earnFirst": "Ta toute première recharge rapporte deux fois plus de MemeMoney.",
       "spendTitle": "La dépenser",
@@ -687,7 +687,6 @@
     },
     "battle": {
       "done": "{name} est ton personnage du Battle Royale !",
-      "badge": "Personnage",
       "pickLead": "Touche une de tes cartes pour en faire ton personnage du Battle Royale.",
       "pickCancel": "Annuler",
       "pickCard": "Choisir {name} comme personnage"
@@ -712,7 +711,10 @@
     "title": "Ouverture de booster",
     "summary": "{count, plural, =0 {Aucune nouvelle carte cette fois.} one {# nouvelle carte !} other {# nouvelles cartes !}}",
     "newBadge": "Nouveau",
-    "done": "Continuer"
+    "done": "Continuer",
+    "progress": "{index} / {total}",
+    "next": "Suivante",
+    "reveal": "Voir mes cartes"
   },
   "installer": {
     "title": "Installe {name}",
@@ -777,13 +779,12 @@
       "button": "Revendre mes exemplaires en trop",
       "none": "Aucun exemplaire en trop à revendre",
       "summary": "{cards, plural, one {# exemplaire} other {# exemplaires}} → +{amount} MemeMoney",
-      "note": "Un exemplaire de chaque carte est toujours gardé. Les communes, rares et épiques s'arrêtent à la limite du jour.",
+      "note": "Un exemplaire de chaque carte est toujours gardé.",
       "confirm": "Confirmer la revente",
       "cancel": "Annuler",
       "done": "+{amount} MemeMoney ajoutés à ton solde."
     },
     "sellAll": "Vendre ×{count}",
-    "capPartial": "Limite du jour : {count} sur {total} peuvent être revendus aujourd'hui.",
     "level": {
       "0": "Normale",
       "1": "1 étoile",
@@ -1147,7 +1148,8 @@
       "mouseMiddle": "Clic molette",
       "mouseRight": "Clic droit",
       "mouseButton": "Bouton souris {n}",
-      "space": "Espace"
+      "space": "Espace",
+      "see": "Voir les commandes"
     },
     "menu": {
       "title": "Menu",
@@ -1180,7 +1182,6 @@
     },
     "map": {
       "open": "Agrandir la carte",
-      "close": "Fermer la carte",
       "title": "Carte"
     }
   }

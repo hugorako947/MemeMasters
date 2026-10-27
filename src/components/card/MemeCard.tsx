@@ -2,9 +2,9 @@
 
 import { useTranslations } from "next-intl";
 import { useCallback, useMemo, useRef, type PointerEvent, type ReactNode } from "react";
-import { RARITY_GLYPH, rarityTier } from "@/config/rarities";
+import { rarityTier } from "@/config/rarities";
 import { cardArtDataUri } from "@/lib/art/generate";
-import { boostedStats, lookOf, MAX_LEVEL, type Level } from "@/lib/economy/duplicates";
+import { boostedStats, duplicatesOf, lookOf, MAX_LEVEL, type Level } from "@/lib/economy/duplicates";
 import type { Card } from "@/lib/validation/card";
 
 export type MemeCardSize = "full" | "compact";
@@ -18,8 +18,10 @@ export interface MemeCardProps {
   owned?: boolean;
   /** Niveau d'évolution : 0 normale, 1 à 3 étoiles, 4 Divine (« MAX »). */
   level?: Level;
-  /** Nombre d'exemplaires possédés : badge « ×n » sur l'illustration quand il y en a plus d'un. */
+  /** Nombre d'exemplaires possédés : badge « +n » (exemplaires en plus) sur l'illustration. */
   quantity?: number;
+  /** Personnage choisi pour le Battle Royale : aura aux couleurs du thème autour de la carte. */
+  lead?: boolean;
   /** Boutons affichés sur la carte elle-même (vue agrandie : faire évoluer, vendre). */
   actions?: ReactNode;
   /** Si fourni, la carte devient cliquable et s'affiche en grand. */
@@ -44,11 +46,13 @@ export function MemeCard({
   owned = true,
   level = 0,
   quantity = 0,
+  lead = false,
   actions,
   onOpen,
   className,
 }: MemeCardProps) {
   const t = useTranslations();
+  const extra = duplicatesOf(quantity);
   // Les améliorations augmentent un peu les statistiques affichées (et utilisées en combat).
   const stats = boostedStats(card, level);
   const ref = useRef<HTMLElement>(null);
@@ -114,12 +118,14 @@ export function MemeCard({
       data-owned={owned ? "true" : "false"}
       data-variant={lookOf(level)}
       data-active="false"
+      data-lead={lead ? "true" : undefined}
       data-has-actions={actions ? "true" : undefined}
       aria-label={t("card.ariaLabel", { name: card.name, rarity: rarityLabel, hp: stats.hp })}
       onPointerMove={onMove}
       onPointerLeave={onLeave}
       onPointerCancel={onLeave}
     >
+      {lead ? <span className="mm-card__aura" aria-hidden="true" /> : null}
       <div className="mm-card__tilt">
         <div className="mm-card__frame">
           <div className="mm-card__inner">
@@ -138,9 +144,9 @@ export function MemeCard({
               <img src={art} alt="" draggable={false} decoding="async" />
               <div className="mm-card__fx" aria-hidden="true" />
               {level > 0 ? <LevelBadge level={level} maxLabel={t("card.max")} /> : null}
-              {quantity > 1 ? (
-                <span className="mm-card__qty" aria-label={t("card.copies", { count: quantity })}>
-                  ×{quantity}
+              {extra > 0 ? (
+                <span className="mm-card__qty" aria-label={t("card.copies", { count: extra })}>
+                  +{extra}
                 </span>
               ) : null}
             </div>
@@ -194,10 +200,7 @@ export function MemeCard({
 
             {actions ? <div className="mm-card__actions">{actions}</div> : null}
 
-            <footer className="mm-card__strip">
-              <span aria-hidden="true">{RARITY_GLYPH[card.rarity]}</span>
-              {rarityLabel}
-            </footer>
+            <footer className="mm-card__strip">{rarityLabel}</footer>
           </div>
           <div className="mm-card__glare" aria-hidden="true" />
         </div>
@@ -228,7 +231,7 @@ function LevelBadge({ level, maxLabel }: { level: Level; maxLabel: string }) {
     <span className="mm-card__variant" data-variant={divine ? "divine" : "stars"} aria-hidden="true">
       {Array.from({ length: divine ? 1 : level }, (_, i) => (
         <svg key={i} viewBox="0 0 24 24" className="mm-card__star">
-          <path d={STAR} fill={divine ? "#ffffff" : "#ffd23f"} stroke={divine ? "#7d89a6" : "#1a1238"} strokeWidth="1.8" strokeLinejoin="round" />
+          <path d={STAR} fill={divine ? "#ffffff" : "url(#mm-grad)"} stroke={divine ? "#7d89a6" : "#1a1238"} strokeWidth="1.8" strokeLinejoin="round" />
         </svg>
       ))}
       {divine ? <span className="mm-card__max">{maxLabel}</span> : null}

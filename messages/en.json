@@ -31,7 +31,7 @@
     "ariaLabel": "{name}, {rarity} card, {hp} HP",
     "tiltHint": "Move your finger or mouse over the card to make it shine.",
     "open": "Open the card sheet of {name}",
-    "copies": "{count, plural, one {# copy} other {# copies}}",
+    "copies": "{count, plural, one {# extra copy} other {# extra copies}}",
     "max": "MAX"
   },
   "effect": {
@@ -265,7 +265,6 @@
     "already_max_variant": "This card has already reached its last evolution (Divine).",
     "not_enough_duplicates": "Not enough copies for this evolution.",
     "cannot_sell": "This copy can't be sold.",
-    "daily_sell_cap": "Daily selling limit reached.",
     "player_not_found": "No player has this username.",
     "friend_self": "You can't add yourself.",
     "already_friends": "You're already friends.",
@@ -310,7 +309,8 @@
     "defense": "Defense",
     "power": "Power {power}",
     "notOwned": "This card isn't in your collection yet. Open boosters to find it!",
-    "statBonus": "+{percent}%"
+    "statBonus": "+{percent}%",
+    "lead": "Character"
   },
   "showcase": {
     "title": "The {count} rarities",
@@ -567,7 +567,7 @@
       "sellPrice": "Price per copy",
       "sell1": "Tap a card: the “Sell” button sells all its extra copies at once.",
       "sell2": "“Sell my extra copies” does the same for your whole collection.",
-      "sell3": "Commons, rares and epics earn at most {cap} MemeMoney per day; rarer cards have no limit.",
+      "sell3": "Every rarity can be sold with no limit: sell all your extra copies whenever you like.",
       "sell4": "Small amounts (0.1, 0.25…) add up and are never lost.",
       "how6": "Not to be confused with Mastery, planned with the Battle Royale: by playing a character, you'll unlock purely cosmetic rewards for it (frame, trail, title).",
       "howAll": "In your Collection, “Evolve everything” evolves every card with enough extra copies in one go."
@@ -577,7 +577,7 @@
       "what": "MemeMoney is the game's currency. Your balance is shown at the top right; tap it to open the Shop.",
       "earnTitle": "How to earn it",
       "earnRanks": "Reach a new rank for the first time: up to {total} MemeMoney in total, plus boosters (see Ranks).",
-      "earnSell": "Sell your extra copies (see Evolutions), up to {cap} MemeMoney per day for commons, rares and epics.",
+      "earnSell": "Sell your extra copies (see Evolutions), with no daily limit.",
       "earnShop": "Buy it in the Shop with real money, from {price}.",
       "earnFirst": "Your very first top-up gives twice as much MemeMoney.",
       "spendTitle": "Spending it",
@@ -687,7 +687,6 @@
     },
     "battle": {
       "done": "{name} is now your Battle Royale character!",
-      "badge": "Character",
       "pickLead": "Tap one of your cards to make it your Battle Royale character.",
       "pickCancel": "Cancel",
       "pickCard": "Pick {name} as your character"
@@ -712,7 +711,10 @@
     "title": "Opening a booster",
     "summary": "{count, plural, =0 {No new card this time.} one {# new card!} other {# new cards!}}",
     "newBadge": "New",
-    "done": "Continue"
+    "done": "Continue",
+    "progress": "{index} / {total}",
+    "next": "Next",
+    "reveal": "See my cards"
   },
   "installer": {
     "title": "Install {name}",
@@ -777,13 +779,12 @@
       "button": "Sell my extra copies",
       "none": "No extra copies to sell",
       "summary": "{cards, plural, one {# copy} other {# copies}} → +{amount} MemeMoney",
-      "note": "One copy of each card is always kept. Commons, rares and epics stop at the daily limit.",
+      "note": "One copy of each card is always kept.",
       "confirm": "Confirm the sale",
       "cancel": "Cancel",
       "done": "+{amount} MemeMoney added to your balance."
     },
     "sellAll": "Sell ×{count}",
-    "capPartial": "Daily limit: {count} of {total} can be sold today.",
     "level": {
       "0": "Standard",
       "1": "1 star",
@@ -1147,7 +1148,8 @@
       "mouseMiddle": "Middle click",
       "mouseRight": "Right click",
       "mouseButton": "Mouse button {n}",
-      "space": "Space"
+      "space": "Space",
+      "see": "View controls"
     },
     "menu": {
       "title": "Menu",
@@ -1180,7 +1182,6 @@
     },
     "map": {
       "open": "Enlarge the map",
-      "close": "Close the map",
       "title": "Map"
     }
   }

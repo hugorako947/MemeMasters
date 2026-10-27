@@ -20,12 +20,10 @@ export function CardActions({
   card,
   quantity,
   level,
-  resaleLeftCents,
 }: {
   card: Card;
   quantity: number;
   level: Level;
-  resaleLeftCents: number;
 }) {
   const t = useTranslations("dup");
   const errorText = useErrorText();
@@ -35,7 +33,7 @@ export function CardActions({
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
   const extra = duplicatesOf(quantity);
   const next = nextUpgrade(card.rarity, level);
-  const sale = sellAllDuplicates(card.rarity, quantity, resaleLeftCents);
+  const sale = sellAllDuplicates(card.rarity, quantity);
   const money = (cents: number) => format.number(cents / 100, { maximumFractionDigits: 2 });
 
   async function run(path: string, body: unknown, success: (d: { level?: Level; cents?: number }) => string) {
@@ -54,7 +52,7 @@ export function CardActions({
   }
 
   return (
-    <div className="mm-online-only contents">
+    <div className="mm-online-only grid gap-2">
       {next ? (
         <button
           type="button"
@@ -85,8 +83,6 @@ export function CardActions({
         <p role="status" className={`text-center text-xs font-bold ${message.ok ? "text-success" : "text-danger"}`}>
           {message.text}
         </p>
-      ) : sale.limited ? (
-        <p className="text-center text-xs text-ink-soft">{t("capPartial", { count: sale.count, total: extra })}</p>
       ) : null}
     </div>
   );

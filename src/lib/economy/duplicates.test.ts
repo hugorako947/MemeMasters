@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { GAME_CONFIG, gameConfigSchema } from "@/config/game.config";
-import { boostedStats, canUpgrade, countsTowardCap, creditCents, lookOf, MAX_LEVEL, maxSellable, nextUpgrade, planBulkSale, planBulkUpgrade, sellAllDuplicates, sellValueCents } from "./duplicates";
+import { boostedStats, canUpgrade, creditCents, lookOf, MAX_LEVEL, maxSellable, nextUpgrade, planBulkSale, planBulkUpgrade, sellAllDuplicates, sellValueCents } from "./duplicates";
 
 describe("évolutions", () => {
   it("passe de 1 à 2 puis 3 étoiles, puis Divine (5, 10, 15, 20 exemplaires pour une commune)", () => {
@@ -71,14 +71,11 @@ describe("revente", () => {
     expect(maxSellable(0)).toBe(0);
   });
 
-  it("revend tous les exemplaires en trop d'un coup (ex. : Lama Zen ×3 → revendre ×2)", () => {
-    expect(sellAllDuplicates("epique", 3, 2000)).toEqual({ count: 2, cents: 100, limited: false });
-    expect(sellAllDuplicates("epique", 1, 2000)).toEqual({ count: 0, cents: 0, limited: false });
-  });
-
-  it("s'arrête au plafond du jour pour les communes, mais pas pour une Godlevel", () => {
-    expect(sellAllDuplicates("commune", 50, 30)).toEqual({ count: 3, cents: 30, limited: true });
-    expect(sellAllDuplicates("godlevel", 3, 0)).toEqual({ count: 2, cents: 12000, limited: false });
+  it("revend tous les exemplaires en trop d'un coup (ex. : Lama Zen ×3 → revendre ×2), sans limite quotidienne", () => {
+    expect(sellAllDuplicates("epique", 3)).toEqual({ count: 2, cents: 100 });
+    expect(sellAllDuplicates("epique", 1)).toEqual({ count: 0, cents: 0 });
+    expect(sellAllDuplicates("commune", 50)).toEqual({ count: 49, cents: 490 });
+    expect(sellAllDuplicates("godlevel", 3)).toEqual({ count: 2, cents: 12000 });
   });
 
   it("applique les prix (en centièmes de MemeMoney)", () => {
@@ -107,8 +104,8 @@ describe("revente groupée", () => {
     { cardId: "solo", rarity: "rare" as const, quantity: 1 },
   ];
 
-  it("ne vend que des doublons, des plus courants aux plus rares", () => {
-    const plan = planBulkSale(items, 100_000);
+  it("ne vend que des doublons, des plus courants aux plus rares, sans limite quotidienne", () => {
+    const plan = planBulkSale(items);
     expect(plan.lines).toEqual([
       { cardId: "com", count: 3 },
       { cardId: "leg", count: 2 },
@@ -116,20 +113,10 @@ describe("revente groupée", () => {
     expect(plan.cents).toBe(30 + 600);
   });
 
-  it("arrête les communes, rares et épiques au plafond, mais pas les légendaires", () => {
-    const plan = planBulkSale(items, 20);
-    expect(plan.lines).toEqual([
-      { cardId: "com", count: 2 },
-      { cardId: "leg", count: 2 },
-    ]);
-    expect(plan.cappedCents).toBe(20);
-  });
-
-  it("laisse toujours vendre un doublon de Godlevel, même si sa valeur dépasse le plafond", () => {
-    expect(countsTowardCap("godlevel")).toBe(false);
-    expect(countsTowardCap("epique")).toBe(true);
-    const plan = planBulkSale([{ cardId: "god", rarity: "godlevel", quantity: 2 }], 0);
+  it("revend aussi les doublons de Godlevel", () => {
+    const plan = planBulkSale([{ cardId: "god", rarity: "godlevel", quantity: 2 }]);
     expect(plan.lines).toEqual([{ cardId: "god", count: 1 }]);
+    expect(plan.cents).toBe(6000);
   });
 
   it("refuse une configuration où une revente coûterait 0", () => {

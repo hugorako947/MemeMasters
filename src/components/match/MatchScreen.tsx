@@ -307,7 +307,8 @@ export function MatchScreen({ setup, roster, onQuit, onReplay }: { setup: MatchS
         if (e.pointerType === "touch" && !touched) setTouched(true);
       }}
     >
-      <div ref={host} className="absolute inset-0" />
+      {/* Sur PC, la souris devient un viseur pendant la partie (pour mieux viser) ; au toucher, aucun curseur. */}
+      <div ref={host} className={`absolute inset-0 ${phase === "playing" && !touch ? "mm-match-aim" : ""}`} />
 
       {phase === "loading" ? (
         <div className="absolute inset-0 grid place-items-center">
@@ -340,12 +341,8 @@ export function MatchScreen({ setup, roster, onQuit, onReplay }: { setup: MatchS
       {/* Carte agrandie : un clic (ou Échap) la referme ; la partie continue. */}
       {mapOpen && phase === "playing" ? (
         <div className="absolute inset-0 z-30 grid place-items-center bg-ink/60 p-4" role="dialog" aria-modal="true" aria-label={t("map.title")} onClick={() => setMapOpen(false)}>
-          <div className="grid justify-items-center gap-2">
-            <canvas ref={bigMap} width={720} height={720} className="block size-[min(80vh,80vw)] rounded-2xl border-2 border-ink shadow-[3px_3px_0_var(--color-ink)]" aria-hidden="true" />
-            <button type="button" className="mm-btn mm-btn--secondary min-h-11 px-4 text-sm" onClick={() => setMapOpen(false)}>
-              {t("map.close")}
-            </button>
-          </div>
+          {/* Un clic n'importe où (ou Échap) referme : pas de bouton « Fermer » nécessaire. */}
+          <canvas ref={bigMap} width={720} height={720} className="block size-[min(80vh,80vw)] rounded-2xl border-2 border-ink shadow-[3px_3px_0_var(--color-ink)]" aria-hidden="true" />
         </div>
       ) : null}
 

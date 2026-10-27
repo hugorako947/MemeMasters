@@ -669,7 +669,8 @@ body:has(> dialog.mm-detail[open]) #mm-app {
   width: min(100% - 2rem, 24rem);
   cursor: zoom-out;
 }
-.mm-detail--card .mm-card__actions {
+/* La carte, son libellé « Personnage » et ses boutons gardent un curseur normal ; seul le fond ferme (zoom-out). */
+.mm-detail--card .mm-detail__stack {
   cursor: auto;
 }
 /* Fenêtre étroite (signalement…) : centrée, à la largeur de son contenu. */
@@ -1361,6 +1362,54 @@ body:has(> dialog.mm-detail[open]) #mm-app {
   .mm-card__variant[data-variant="divine"] .mm-card__star { animation: none; }
 }
 
+/* --------------------------------------------------------------------------
+   Dégradé aux couleurs du thème (rose/jaune/bleu du thème choisi, ou couleurs
+   du thème personnalisé). Il colore les étoiles d'évolution (SVG #mm-grad),
+   l'aura du personnage du Battle Royale et le libellé « Personnage ».
+   -------------------------------------------------------------------------- */
+:root {
+  --mm-theme-gradient: linear-gradient(135deg, var(--color-candy), var(--color-sticker) 50%, var(--color-link));
+}
+/* Arrêts du dégradé partagé par les étoiles : stop-color accepte les variables du thème (contrairement à l'attribut). */
+#mm-grad stop:nth-child(1) { stop-color: var(--color-candy); }
+#mm-grad stop:nth-child(2) { stop-color: var(--color-sticker); }
+#mm-grad stop:nth-child(3) { stop-color: var(--color-link); }
+
+/* Aura du personnage choisi : un halo flou aux couleurs du thème qui déborde de la carte. */
+.mm-card__aura {
+  position: absolute;
+  inset: -7%;
+  z-index: 0;
+  border-radius: 12cqw;
+  background: var(--mm-theme-gradient);
+  filter: blur(3.4cqw) saturate(1.25);
+  opacity: 0.85;
+  pointer-events: none;
+  animation: mm-aura-pulse 3.2s ease-in-out infinite;
+}
+@keyframes mm-aura-pulse {
+  0%, 100% { opacity: 0.68; transform: scale(0.99); }
+  50% { opacity: 0.96; transform: scale(1.02); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mm-card__aura { animation: none; }
+}
+
+/* Libellé « Personnage » au-dessus de la carte agrandie, en dégradé du thème. */
+.mm-detail__lead {
+  justify-self: center;
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 5vw, 1.6rem);
+  line-height: 1;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: var(--mm-theme-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 2px 3px rgb(0 0 0 / 0.3));
+}
+
 /* Point rouge de notification (navigation et onglets). */
 .mm-dot {
   position: absolute;
@@ -1709,4 +1758,12 @@ body:has(> dialog.mm-detail[open]) #mm-app {
 /* Visiteur sur l'Accueil (groupe (jeu) sans cadre) : écran de chargement plein écran, comme avant. */
 .mm-public-frame .mm-loading {
   min-height: 100dvh;
+}
+
+/* Battle Royale sur PC : la souris devient un viseur (réticule) pour mieux viser (curseur système en secours). */
+.mm-match-aim {
+  cursor:
+    url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='32'%20height='32'%20viewBox='0%200%2032%2032'%3E%3Cg%20fill='none'%20stroke='black'%20stroke-width='3'%3E%3Ccircle%20cx='16'%20cy='16'%20r='9'/%3E%3Cpath%20d='M16%201v6M16%2025v6M1%2016h6M25%2016h6'/%3E%3C/g%3E%3Cg%20fill='none'%20stroke='white'%20stroke-width='1.5'%3E%3Ccircle%20cx='16'%20cy='16'%20r='9'/%3E%3Cpath%20d='M16%201v6M16%2025v6M1%2016h6M25%2016h6'/%3E%3C/g%3E%3Ccircle%20cx='16'%20cy='16'%20r='1.6'%20fill='white'%20stroke='black'%20stroke-width='1'/%3E%3C/svg%3E")
+      16 16,
+    crosshair;
 }

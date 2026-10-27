@@ -736,7 +736,6 @@ function Config() {
           <Stat label="Super / Ultra Booster" value={`${MEME_MONEY.SPECIAL_BOOSTER_PRICE} / ${MEME_MONEY.VERY_SPECIAL_BOOSTER_PRICE} MM`} />
           <Stat label="Battle Royale : trophées Top 1 / dernier" value={`+${eco.TROPHIES_BY_PLACE[0][1]} / −${-eco.TROPHIES_BY_PLACE.at(-1)![1]}`} />
           <Stat label="Battle Royale : MemeMoney max par jour" value={`${eco.MEME_MONEY_DAILY_CAP} MM`} />
-          <Stat label="Plafond de revente" value={`${DUPLICATES.DAILY_SELL_CAP} MM / jour`} />
         </div>
       </Box>
       <Box title="Évolutions (exemplaires ★ / ★★ / ★★★ / Divine) et revente">

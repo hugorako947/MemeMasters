@@ -5,9 +5,8 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { CharacterBubble } from "@/components/home/CharacterBubble";
-import { buttonClass } from "@/components/ui/Button";
+import { buttonClass, ButtonLink } from "@/components/ui/Button";
 import { GAME_CONFIG } from "@/config/game.config";
-import { RARITY_GLYPH } from "@/config/rarities";
 import type { Level } from "@/lib/economy/duplicates";
 import { DIFFICULTIES, trainingMatch, type Difficulty, type RosterEntry } from "@/lib/br-client/training";
 import type { MatchSetup } from "@/lib/br/engine";
@@ -124,9 +123,8 @@ export function TrainingPanel({ player, character, cards }: { player: { name: st
                 <p className="text-xs font-bold text-ink-soft">{tb("character")}</p>
                 <p className="flex flex-wrap items-center gap-x-2 gap-y-1">
                   <span className="font-extrabold">{character.card.name}</span>
-                  {/* Rareté : symbole, nom et couleur (jamais la couleur seule). */}
-                  <span className="inline-flex items-center gap-1 rounded-full border-2 border-ink bg-surface px-2 text-xs font-extrabold" style={{ color: `var(--color-r-${character.card.rarity})` }}>
-                    <span aria-hidden="true">{RARITY_GLYPH[character.card.rarity]}</span>
+                  {/* Rareté : nom coloré (le nom reste lisible, jamais la couleur seule). */}
+                  <span className="inline-flex items-center rounded-full border-2 border-ink bg-surface px-2 text-xs font-extrabold" style={{ color: `var(--color-r-${character.card.rarity})` }}>
                     <span className="text-ink">{tr(character.card.rarity)}</span>
                   </span>
                 </p>
@@ -166,10 +164,19 @@ export function TrainingPanel({ player, character, cards }: { player: { name: st
           </div>
         </div>
 
-        <details className="rounded-xl bg-paper p-3">
-          <summary className="min-h-11 cursor-pointer content-center font-extrabold">{tc("title")}</summary>
-          <ControlsHelp editHref="/parametres#battle-royale" />
-        </details>
+        <div className="grid gap-2 rounded-xl bg-paper p-3">
+          {/* Le bouton « Modifier » est à côté du titre : le joueur sait tout de suite qu'il peut changer ses commandes. */}
+          <div className="flex items-center justify-between gap-2">
+            <h4 className="min-w-0 truncate font-extrabold">{tc("title")}</h4>
+            <ButtonLink href="/parametres#battle-royale" variant="secondary" className="min-h-10 shrink-0 px-4 text-sm">
+              {tc("edit")}
+            </ButtonLink>
+          </div>
+          <details>
+            <summary className="min-h-10 cursor-pointer content-center text-sm font-semibold text-ink-soft">{tc("see")}</summary>
+            <ControlsHelp />
+          </details>
+        </div>
 
         <button type="button" onClick={start} disabled={!character} className={buttonClass("primary", "min-h-12 px-8 text-lg")}>
           {t("start")}

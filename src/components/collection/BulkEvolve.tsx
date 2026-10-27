@@ -41,7 +41,7 @@ export function BulkEvolve({ items }: { items: UpgradeItem[] }) {
       {!open ? (
         <button type="button" onClick={() => setOpen(true)} disabled={plan.lines.length === 0} className="mm-btn mm-btn--secondary min-h-10 justify-self-start gap-1.5 px-4 text-sm">
           <svg viewBox="0 0 24 24" className="size-5 shrink-0" aria-hidden="true">
-            <path d="M12 2.8l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.6l-5.4 2.9 1.1-6.1-4.5-4.2 6.1-.8z" fill="#ffd23f" stroke="#1a1238" strokeWidth="1.8" strokeLinejoin="round" />
+            <path d="M12 2.8l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.6l-5.4 2.9 1.1-6.1-4.5-4.2 6.1-.8z" fill="url(#mm-grad)" stroke="#1a1238" strokeWidth="1.8" strokeLinejoin="round" />
           </svg>
           {plan.lines.length === 0 ? t("none") : t("button")}
         </button>

@@ -16,6 +16,7 @@ export function CardDetailDialog({
   owned = true,
   level = 0,
   quantity = 0,
+  lead = false,
   actions,
   onClose,
 }: {
@@ -23,6 +24,8 @@ export function CardDetailDialog({
   owned?: boolean;
   level?: Level;
   quantity?: number;
+  /** Personnage choisi pour le Battle Royale : libellé « Personnage » en dégradé au-dessus de la carte. */
+  lead?: boolean;
   actions?: ReactNode;
   onClose: () => void;
 }) {
@@ -37,23 +40,26 @@ export function CardDetailDialog({
     return () => dialog?.removeEventListener("close", onCloseEvent);
   }, [onClose]);
 
-  // Un clic en dehors de la carte ferme la vue ; un clic sur la carte (ou ses boutons Évoluer, Vendre) la garde ouverte.
+  // Les boutons Évoluer/Vendre sont à côté de la carte (plus dessus) : un clic sur la carte, son libellé ou ses boutons
+  // garde la vue ouverte ; un clic en dehors de cet ensemble (ou Échap) ferme.
   function onBackdrop(e: MouseEvent<HTMLDialogElement>) {
-    if ((e.target as HTMLElement).closest(".mm-card")) return;
+    if ((e.target as HTMLElement).closest(".mm-detail__stack")) return;
     ref.current?.close();
   }
 
   return createPortal(
     <dialog ref={ref} className="mm-detail mm-detail--card" onClick={onBackdrop} aria-label={card.name}>
-      <div className="grid justify-items-center gap-3">
-        {/* Fermeture : clic en dehors de la carte ou Échap. Bouton invisible, pour le clavier et les lecteurs d'écran. */}
+      <div className="mm-detail__stack grid w-full max-w-[22rem] justify-items-center gap-3">
+        {/* Fermeture : clic en dehors de l'ensemble ou Échap. Bouton invisible, pour le clavier et les lecteurs d'écran. */}
         <button type="button" onClick={() => ref.current?.close()} className="sr-only">
           {t("close")}
         </button>
+        {lead ? <p className="mm-detail__lead">{t("lead")}</p> : null}
         <div className="w-full">
-          <MemeCard card={card} owned={owned} level={level} quantity={quantity} actions={owned ? actions : undefined} />
+          <MemeCard card={card} owned={owned} level={level} quantity={quantity} />
         </div>
         {!owned ? <p className="rounded-full bg-surface px-4 py-2 text-center text-sm font-semibold">{t("notOwned")}</p> : null}
+        {owned && actions ? <div className="w-full max-w-[20rem]">{actions}</div> : null}
       </div>
     </dialog>,
     document.body,

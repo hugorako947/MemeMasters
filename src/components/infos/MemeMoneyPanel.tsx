@@ -10,7 +10,7 @@ export async function MemeMoneyPanel() {
   const t = await getTranslations("infos.memeMoney");
   const th = await getTranslations("playerHome.boosters");
   const format = await getFormatter();
-  const { MEME_MONEY, DUPLICATES, PURCHASES, BATTLE_ROYALE } = GAME_CONFIG;
+  const { MEME_MONEY, PURCHASES, BATTLE_ROYALE } = GAME_CONFIG;
   const eco = BATTLE_ROYALE.ECONOMY;
   const rankTotal = RANKS.reduce((n, r) => n + RANK_REWARDS[r].memeMoney, 0);
   const firstDouble = OFFERS.some((o) => o.kind === "first_purchase_double" && isOfferActive(o, new Date()));
@@ -31,7 +31,7 @@ export async function MemeMoneyPanel() {
           items={[
             t("earnBattle", { top: eco.MEME_MONEY_BY_PLACE.at(-1)![0], cap: eco.MEME_MONEY_DAILY_CAP }),
             t("earnRanks", { total: format.number(rankTotal) }),
-            t("earnSell", { cap: DUPLICATES.DAILY_SELL_CAP }),
+            t("earnSell"),
             t("earnShop", { price: cheapest }),
             ...(firstDouble ? [t("earnFirst")] : []),
           ]}

@@ -26,7 +26,6 @@ export async function PlayerFeatures({
   player,
   collection,
   boosters,
-  resaleLeftCents,
   boostersBadge = 0,
   challenge = null,
   counts,
@@ -37,7 +36,6 @@ export async function PlayerFeatures({
   player: Player;
   collection: CollectionItem[];
   boosters: BoosterStateView;
-  resaleLeftCents: number;
   boostersBadge?: number;
   challenge?: DailyChallenge | null;
   counts?: { accounts: number; online: number };
@@ -54,7 +52,7 @@ export async function PlayerFeatures({
       param={param}
       initial={index === -1 ? 1 : index}
       slides={[
-        { key: "collection", label: t("collection.title"), content: <CollectionSlide items={collection} resaleLeftCents={resaleLeftCents} battleCardId={battleCardId} /> },
+        { key: "collection", label: t("collection.title"), content: <CollectionSlide items={collection} battleCardId={battleCardId} /> },
         { key: "boosters", label: t("boosters.title"), content: <BoostersSlide state={boosters} challenge={challenge} />, badge: boostersBadge },
         { key: "batailles", label: t("battles.title"), content: <BattlesSlide player={player} counts={counts} collection={collection} battleCardId={battleCardId} /> },
       ]}
@@ -140,10 +138,10 @@ async function BattlesSlide({
 }
 
 /** La collection du joueur, directement consultable. */
-async function CollectionSlide({ items, resaleLeftCents, battleCardId }: { items: CollectionItem[]; resaleLeftCents: number; battleCardId: string | null }) {
+async function CollectionSlide({ items, battleCardId }: { items: CollectionItem[]; battleCardId: string | null }) {
   return (
     <section className="rounded-[1.75rem] border-2 border-ink bg-surface p-4 shadow-[0_3px_0_0_var(--mm-shadow)] sm:p-6">
-      <CollectionBrowser items={items} resaleLeftCents={resaleLeftCents} battleCardId={battleCardId} />
+      <CollectionBrowser items={items} battleCardId={battleCardId} />
     </section>
   );
 }

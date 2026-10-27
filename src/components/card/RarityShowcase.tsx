@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { RARITIES, RARITY_GLYPH } from "@/config/rarities";
+import { RARITIES } from "@/config/rarities";
 import { InteractiveCard } from "./InteractiveCard";
 import { RarityOdds } from "./RarityOdds";
 import { sampleOf } from "./sample-cards";
@@ -33,10 +33,7 @@ export async function RarityShowcase({ className = "" }: { className?: string })
         {cards.map((card, i) => (
           <li key={card.id} className={`w-[8.25rem] shrink-0 snap-start lg:w-auto ${i % 2 === 1 ? "lg:translate-y-7" : ""}`}>
             <InteractiveCard card={card} size="compact" />
-            <p className="mt-2 text-center text-sm font-extrabold">
-              <span aria-hidden="true">{RARITY_GLYPH[card.rarity]} </span>
-              {tr(card.rarity)}
-            </p>
+            <p className="mt-2 text-center text-sm font-extrabold">{tr(card.rarity)}</p>
             <p className="text-center text-xs text-[#d9d3f5]">
               <RarityOdds rarity={card.rarity} />
             </p>

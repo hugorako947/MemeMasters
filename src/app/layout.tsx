@@ -59,6 +59,17 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           gestionnaires de mots de passe…) ajoutent des attributs au <body> avant que React ne démarre.
           Cela ne concerne que les attributs de cette balise, pas son contenu. */}
       <body className="min-h-dvh antialiased" suppressHydrationWarning>
+        {/* Dégradé des couleurs du thème, partagé par toutes les étoiles d'évolution (SVG `fill="url(#mm-grad)"`).
+            Les arrêts prennent leur couleur du thème via globals.css (#mm-grad stop). */}
+        <svg aria-hidden="true" focusable="false" style={{ position: "absolute", width: 0, height: 0 }}>
+          <defs>
+            <linearGradient id="mm-grad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" />
+              <stop offset="0.5" />
+              <stop offset="1" />
+            </linearGradient>
+          </defs>
+        </svg>
         <NextIntlClientProvider>
           {/* Respecte prefers-reduced-motion pour toutes les animations Motion. */}
           <MotionConfig reducedMotion="user">

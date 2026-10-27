@@ -31,7 +31,7 @@
     "ariaLabel": "{name}，{rarity}卡牌，{hp} 生命",
     "tiltHint": "在卡牌上移动手指或鼠标，让它闪闪发光。",
     "open": "查看 {name} 的详情",
-    "copies": "{count, plural, other {# 张}}",
+    "copies": "{count, plural, other {多出 # 张}}",
     "max": "满级"
   },
   "effect": {
@@ -265,7 +265,6 @@
     "already_max_variant": "这张卡牌已达到最终进化（神圣）。",
     "not_enough_duplicates": "卡牌张数不足，无法进化。",
     "cannot_sell": "这张卡牌无法出售。",
-    "daily_sell_cap": "今日出售额度已用完。",
     "player_not_found": "没有玩家使用这个用户名。",
     "friend_self": "不能添加自己。",
     "already_friends": "你们已经是好友了。",
@@ -310,7 +309,8 @@
     "defense": "防御",
     "power": "威力 {power}",
     "notOwned": "这张卡牌还不在你的收藏中。开卡包去找它吧！",
-    "statBonus": "+{percent}%"
+    "statBonus": "+{percent}%",
+    "lead": "角色"
   },
   "showcase": {
     "title": "{count} 种稀有度",
@@ -567,7 +567,7 @@
       "sellPrice": "每张价格",
       "sell1": "点击一张卡牌：“出售”按钮会一次卖掉所有多余的张数。",
       "sell2": "“出售多余的卡牌”会对整个收藏执行同样的操作。",
-      "sell3": "普通、稀有和史诗卡每天最多带来 {cap} MemeMoney；更稀有的卡牌没有上限。",
+      "sell3": "所有稀有度都可无限出售：随时卖掉你多出的卡牌。",
       "sell4": "零碎金额（0.1、0.25……）会累积，永远不会丢失。",
       "how6": "不要与随大逃杀推出的「精通」混淆：使用某个角色进行游戏，可为其解锁纯装饰性的奖励（头像框、拖尾、称号）。",
       "howAll": "在你的收藏中，“全部进化”会一次性进化所有拥有足够多余张数的卡牌。"
@@ -577,7 +577,7 @@
       "what": "MemeMoney 是游戏货币。余额显示在右上角；点击即可打开商店。",
       "earnTitle": "如何获得",
       "earnRanks": "首次达到新段位：总计最多 {total} MemeMoney，另有卡包（见段位）。",
-      "earnSell": "出售多余的卡牌（见进化），普通、稀有和史诗卡每天最多 {cap} MemeMoney。",
+      "earnSell": "出售你多出的卡牌（见进化），没有每日上限。",
       "earnShop": "在商店用真实货币购买，最低 {price}。",
       "earnFirst": "首次充值可获得双倍 MemeMoney。",
       "spendTitle": "如何使用",
@@ -687,7 +687,6 @@
     },
     "battle": {
       "done": "{name} 现在是你的大逃杀角色！",
-      "badge": "角色",
       "pickLead": "点击你的一张卡牌，让它成为你的大逃杀角色。",
       "pickCancel": "取消",
       "pickCard": "选择 {name} 作为角色"
@@ -712,7 +711,10 @@
     "title": "开卡包",
     "summary": "{count, plural, =0 {这次没有新卡牌。} other {获得 # 张新卡牌！}}",
     "newBadge": "新",
-    "done": "继续"
+    "done": "继续",
+    "progress": "{index} / {total}",
+    "next": "下一张",
+    "reveal": "查看我的卡牌"
   },
   "installer": {
     "title": "安装 {name}",
@@ -777,13 +779,12 @@
       "button": "出售多余的卡牌",
       "none": "没有可出售的多余卡牌",
       "summary": "{cards, plural, other {# 张}} → +{amount} MemeMoney",
-      "note": "每张卡牌都会保留一张。普通、稀有和史诗卡受每日额度限制。",
+      "note": "每张卡牌始终保留一张。",
       "confirm": "确认出售",
       "cancel": "取消",
       "done": "已获得 +{amount} MemeMoney。"
     },
     "sellAll": "出售 ×{count}",
-    "capPartial": "今日额度：{total} 张中今天可出售 {count} 张。",
     "level": {
       "0": "普通",
       "1": "1 星",
@@ -1147,7 +1148,8 @@
       "mouseMiddle": "鼠标中键",
       "mouseRight": "鼠标右键",
       "mouseButton": "鼠标按键 {n}",
-      "space": "空格"
+      "space": "空格",
+      "see": "查看操作"
     },
     "menu": {
       "title": "菜单",
@@ -1180,7 +1182,6 @@
     },
     "map": {
       "open": "放大地图",
-      "close": "关闭地图",
       "title": "地图"
     }
   }

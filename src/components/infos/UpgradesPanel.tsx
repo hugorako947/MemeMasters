@@ -12,7 +12,7 @@ export async function UpgradesPanel() {
   const tr = await getTranslations("rarity");
   const tl = await getTranslations("dup.level");
   const format = await getFormatter();
-  const { UPGRADES, STAT_BONUS_PERCENT, SELL_CENTS, DAILY_SELL_CAP } = GAME_CONFIG.DUPLICATES;
+  const { UPGRADES, STAT_BONUS_PERCENT, SELL_CENTS } = GAME_CONFIG.DUPLICATES;
   const factor = GAME_CONFIG.BATTLE_ROYALE.CHARACTER.EVOLUTION_FACTOR_PERCENT;
   const demo = sampleOf("rare");
   const money = (cents: number) => format.number(cents / 100, { maximumFractionDigits: 2 });
@@ -53,7 +53,7 @@ export async function UpgradesPanel() {
       </InfoSection>
 
       <InfoSection title={t("sellTitle")}>
-        <InfoList items={[t("sell1"), t("sell2"), t("sell3", { cap: DAILY_SELL_CAP }), t("sell4")]} />
+        <InfoList items={[t("sell1"), t("sell2"), t("sell3"), t("sell4")]} />
         <InfoTable head={[t("rarity"), t("sellPrice")]} rows={RARITIES.map((r) => [tr(r), `${money(SELL_CENTS[r])} MemeMoney`])} />
       </InfoSection>
     </div>

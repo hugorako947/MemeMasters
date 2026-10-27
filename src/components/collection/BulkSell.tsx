@@ -11,7 +11,7 @@ import { postJson } from "@/lib/client/api";
 import { useErrorText } from "@/lib/client/errors";
 
 /** « Revendre mes doublons » : aperçu du total, puis confirmation. Un exemplaire de chaque carte est gardé. */
-export function BulkSell({ items, resaleLeftCents }: { items: BulkItem[]; resaleLeftCents: number }) {
+export function BulkSell({ items }: { items: BulkItem[] }) {
   const t = useTranslations("dup.bulk");
   const errorText = useErrorText();
   const format = useFormatter();
@@ -19,7 +19,7 @@ export function BulkSell({ items, resaleLeftCents }: { items: BulkItem[]; resale
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState<{ tone: "success" | "error"; text: string } | null>(null);
-  const plan = useMemo(() => planBulkSale(items, resaleLeftCents), [items, resaleLeftCents]);
+  const plan = useMemo(() => planBulkSale(items), [items]);
   const cards = plan.lines.reduce((n, l) => n + l.count, 0);
   const money = (cents: number) => format.number(cents / 100, { maximumFractionDigits: 2 });
 

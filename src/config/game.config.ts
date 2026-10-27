@@ -258,9 +258,6 @@ const gameConfigSchema = z
       /** Bonus de statistiques (PV, attaque, défense, vitesse), en %, aux niveaux 0 (normale), ★, ★★, ★★★ et Divine. */
       STAT_BONUS_PERCENT: z.tuple([z.literal(0), nonNegativeInt, nonNegativeInt, nonNegativeInt, nonNegativeInt]),
       SELL_CENTS: z.record(z.enum(RARITIES), positiveInt),
-      /** À partir de cette rareté, la revente n'entre pas dans le plafond quotidien. */
-      CAP_EXEMPT_FROM: z.enum(RARITIES),
-      DAILY_SELL_CAP: positiveInt,
     }),
     BOOSTER_SIZE: z.number().int().min(1).max(10),
     /**
@@ -421,12 +418,9 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
     // l'ancienne dernière évolution (l'équilibre du Battle Royale ne change pas).
     STAT_BONUS_PERCENT: [0, 3, 6, 8, 10],
     // 0,1 MemeMoney par commune, 0,25 par rare, 0,5 par épique, 3 par légendaire, 60 par godlevel.
+    // Toutes les raretés se revendent jusqu'au dernier exemplaire en trop (le premier reste toujours),
+    // sans aucune limite quotidienne (choix du propriétaire, 2026-10-27).
     SELL_CENTS: { commune: 10, rare: 25, epique: 50, legendaire: 300, godlevel: 6000 },
-    // Toutes les raretés se revendent jusqu'au dernier exemplaire en trop (le premier reste toujours).
-    CAP_EXEMPT_FROM: "legendaire",
-    // MemeMoney maximum gagnée chaque jour (fuseau du joueur) en revendant des communes,
-    // rares et épiques. Les doublons de Légendaire et au-dessus, rares par nature, n'y sont pas soumis.
-    DAILY_SELL_CAP: 20,
   },
   BOOSTER_SIZE: 10,
   BOOSTERS: {

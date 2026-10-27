@@ -13,6 +13,7 @@ export function InteractiveCard({
   owned = true,
   level = 0,
   quantity = 0,
+  lead = false,
   actions,
   className,
 }: {
@@ -21,7 +22,9 @@ export function InteractiveCard({
   owned?: boolean;
   level?: Level;
   quantity?: number;
-  /** Boutons affichés sur la carte agrandie (collection : faire évoluer, vendre). */
+  /** Personnage choisi pour le Battle Royale : aura aux couleurs du thème autour de la carte. */
+  lead?: boolean;
+  /** Boutons affichés à côté de la carte agrandie (collection : faire évoluer, vendre). */
   actions?: ReactNode;
   className?: string;
 }) {
@@ -29,8 +32,8 @@ export function InteractiveCard({
   const close = useCallback(() => setOpen(false), []);
   return (
     <>
-      <MemeCard card={card} size={size} owned={owned} level={level} quantity={quantity} onOpen={() => setOpen(true)} className={className} />
-      {open ? <CardDetailDialog card={card} owned={owned} level={level} quantity={quantity} actions={actions} onClose={close} /> : null}
+      <MemeCard card={card} size={size} owned={owned} level={level} quantity={quantity} lead={lead} onOpen={() => setOpen(true)} className={className} />
+      {open ? <CardDetailDialog card={card} owned={owned} level={level} quantity={quantity} lead={lead} actions={actions} onClose={close} /> : null}
     </>
   );
 }

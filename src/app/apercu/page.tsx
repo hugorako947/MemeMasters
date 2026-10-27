@@ -134,7 +134,6 @@ export default async function PreviewPage({ searchParams }: PageProps<"/apercu">
               level: (i === 0 ? 2 : i === 1 ? 3 : i === 2 ? 1 : 0) as 0 | 1 | 2 | 3,
               firstObtainedAt: null,
             }))}
-            resaleLeftCents={1650}
             boostersBadge={3}
             challenge={{ id: "c1", type: "new_cards", difficulty: "medium", progress: 4, target: 6, reward: 2, completed: false, claimed: false }}
             boosters={{ freeLeft: 2, freePerDay: 3, dailyReserve: 1, special: 1, verySpecial: 0, memeMoney: player.memeMoney }}

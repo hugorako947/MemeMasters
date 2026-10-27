@@ -31,7 +31,7 @@
     "ariaLabel": "{name}, carta {rarity}, {hp} PS",
     "tiltHint": "Mueve el dedo o el ratón sobre la carta para hacerla brillar.",
     "open": "Ver la ficha de {name}",
-    "copies": "{count, plural, one {# ejemplar} other {# ejemplares}}",
+    "copies": "{count, plural, one {# ejemplar de más} other {# ejemplares de más}}",
     "max": "MAX"
   },
   "effect": {
@@ -265,7 +265,6 @@
     "already_max_variant": "Esta carta ya tiene su última evolución (Divina).",
     "not_enough_duplicates": "No tienes suficientes ejemplares para esta evolución.",
     "cannot_sell": "Este ejemplar no se puede vender.",
-    "daily_sell_cap": "Límite de ventas del día alcanzado.",
     "player_not_found": "Ningún jugador tiene este nombre.",
     "friend_self": "No puedes añadirte a ti mismo.",
     "already_friends": "Ya sois amigos.",
@@ -310,7 +309,8 @@
     "defense": "Defensa",
     "power": "Poder {power}",
     "notOwned": "Esta carta aún no está en tu colección. ¡Abre sobres para encontrarla!",
-    "statBonus": "+{percent} %"
+    "statBonus": "+{percent} %",
+    "lead": "Personaje"
   },
   "showcase": {
     "title": "Las {count} rarezas",
@@ -567,7 +567,7 @@
       "sellPrice": "Precio por ejemplar",
       "sell1": "Toca una carta: el botón «Vender» vende de una vez todos sus ejemplares de sobra.",
       "sell2": "«Vender mis ejemplares de sobra» hace lo mismo con toda tu colección.",
-      "sell3": "Las comunes, raras y épicas dan como máximo {cap} MemeMoney al día; las cartas más raras no tienen límite.",
+      "sell3": "Todas las rarezas se venden sin límite: vende todos tus ejemplares de más cuando quieras.",
       "sell4": "Las cantidades pequeñas (0,1; 0,25…) se suman y nunca se pierden.",
       "how6": "No hay que confundirlo con la Maestría, prevista con el Battle Royale: al jugar con un personaje, desbloquearás para él recompensas solo cosméticas (marco, estela, título).",
       "howAll": "En tu Colección, «Evolucionar todo» hace evolucionar de una vez todas las cartas que tienen suficientes ejemplares de sobra."
@@ -577,7 +577,7 @@
       "what": "La MemeMoney es la moneda del juego. Tu saldo aparece arriba a la derecha; tócalo para abrir la Tienda.",
       "earnTitle": "Cómo conseguirla",
       "earnRanks": "Alcanzar un rango nuevo por primera vez: hasta {total} MemeMoney en total, además de sobres (ver Rangos).",
-      "earnSell": "Vender tus ejemplares de sobra (ver Evoluciones), hasta {cap} MemeMoney al día por comunes, raras y épicas.",
+      "earnSell": "Vender tus ejemplares de más (ver Evoluciones), sin límite diario.",
       "earnShop": "Comprarla en la Tienda con dinero real, desde {price}.",
       "earnFirst": "Tu primera recarga da el doble de MemeMoney.",
       "spendTitle": "Gastarla",
@@ -687,7 +687,6 @@
     },
     "battle": {
       "done": "¡{name} es tu personaje del Battle Royale!",
-      "badge": "Personaje",
       "pickLead": "Toca una de tus cartas para convertirla en tu personaje del Battle Royale.",
       "pickCancel": "Cancelar",
       "pickCard": "Elegir {name} como personaje"
@@ -712,7 +711,10 @@
     "title": "Apertura de sobre",
     "summary": "{count, plural, =0 {Ninguna carta nueva esta vez.} one {¡# carta nueva!} other {¡# cartas nuevas!}}",
     "newBadge": "Nueva",
-    "done": "Continuar"
+    "done": "Continuar",
+    "progress": "{index} / {total}",
+    "next": "Siguiente",
+    "reveal": "Ver mis cartas"
   },
   "installer": {
     "title": "Instala {name}",
@@ -777,13 +779,12 @@
       "button": "Vender mis ejemplares de sobra",
       "none": "No hay ejemplares de sobra para vender",
       "summary": "{cards, plural, one {# ejemplar} other {# ejemplares}} → +{amount} MemeMoney",
-      "note": "Siempre se conserva un ejemplar de cada carta. Las comunes, raras y épicas se detienen en el límite del día.",
+      "note": "Siempre se conserva un ejemplar de cada carta.",
       "confirm": "Confirmar la venta",
       "cancel": "Cancelar",
       "done": "+{amount} MemeMoney añadidos a tu saldo."
     },
     "sellAll": "Vender ×{count}",
-    "capPartial": "Límite del día: hoy se pueden vender {count} de {total}.",
     "level": {
       "0": "Normal",
       "1": "1 estrella",
@@ -1147,7 +1148,8 @@
       "mouseMiddle": "Clic central",
       "mouseRight": "Clic derecho",
       "mouseButton": "Botón del ratón {n}",
-      "space": "Espacio"
+      "space": "Espacio",
+      "see": "Ver los controles"
     },
     "menu": {
       "title": "Menú",
@@ -1180,7 +1182,6 @@
     },
     "map": {
       "open": "Ampliar el mapa",
-      "close": "Cerrar el mapa",
       "title": "Mapa"
     }
   }

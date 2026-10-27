@@ -27,15 +27,3 @@ export function isRarity(value: unknown): value is Rarity {
   return typeof value === "string" && (RARITIES as readonly string[]).includes(value);
 }
 
-/**
- * Symbole affiché à côté du nom de la rareté : la rareté n'est jamais
- * portée par la seule couleur (accessibilité). Pas d'étoile : les étoiles
- * sont réservées aux évolutions (Légendaire ⬢ depuis le 2026-10-26).
- */
-export const RARITY_GLYPH: Record<Rarity, string> = {
-  commune: "●",
-  rare: "◆",
-  epique: "▲",
-  legendaire: "⬢",
-  godlevel: "♛",
-};

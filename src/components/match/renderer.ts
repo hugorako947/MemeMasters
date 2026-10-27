@@ -490,6 +490,8 @@ export async function createRenderer(host: HTMLElement, s: MatchState, roster: r
   const floating: FloatingNumber[] = [];
   const DAMAGE_MS = 800;
   const particles: Particle[] = [];
+  // Capacité active au tick précédent (par participant) : pour déclencher l'onde une seule fois, au démarrage.
+  const abilityWas = new Uint8Array(roster.length);
   const shake = { amp: 0, at: 0 };
   const SHAKE_MS = 260;
   let zoom = Math.max(1, s.p.scope[me]);
@@ -608,10 +610,24 @@ export async function createRenderer(host: HTMLElement, s: MatchState, roster: r
           b.weaponIndex = w;
         }
         b.weapon.rotation = (P.aim[i] / 256) * Math.PI * 2;
-        // Capacité prête : un halo doré, visible de tous ; capacité en cours : un disque à la couleur de la rareté.
+        // Capacité prête : un halo doré, visible de tous ; capacité en cours : un disque pulsant et tournant à la couleur
+        // de la rareté, avec une onde bien visible au démarrage, pour qu'on voie clairement qui utilise sa capacité.
         b.aura.visible = P.abilityCd[i] === 0;
         b.aura.alpha = pulse;
-        b.active.visible = P.abilityLeft[i] > 0;
+        const abilityOn = P.abilityLeft[i] > 0;
+        b.active.visible = abilityOn;
+        if (abilityOn) {
+          b.active.alpha = reducedMotion ? 0.95 : 0.6 + 0.4 * (0.5 + 0.5 * Math.sin(now / 90));
+          b.active.scale.set(reducedMotion ? 1 : 1 + 0.1 * Math.sin(now / 110));
+          b.active.rotation = reducedMotion ? 0 : now / 360;
+          if (!abilityWas[i] && shown) {
+            const aColor = colors[roster[i].card.rarity];
+            emit({ kind: FX.ring, x, y, vx: 0, vy: 0, life: 520, color: aColor, size: r * 1.3 }, now);
+            burst(FX.chip, x, y, 12, aColor, 0.55, 560, r * 0.22, now);
+            burst(FX.spark, x, y, 8, COLORS.white, 0.6, 220, ts * 0.05, now);
+          }
+        } else b.active.scale.set(1);
+        abilityWas[i] = abilityOn ? 1 : 0;
         // Touché : un éclair blanc bref sur le portrait.
         b.flash.alpha = Math.max(0, 0.75 * (1 - (now - b.flashAt) / 140));
         // Un participant étourdi est un peu transparent.
@@ -688,8 +704,12 @@ export async function createRenderer(host: HTMLElement, s: MatchState, roster: r
             break;
           }
           case FX.swing: {
-            const a0 = p.rot - 0.9 + 1.8 * Math.min(1, t * 2.5);
-            fx.arc(p.x, p.y, p.size, p.rot - 0.9, a0).stroke({ width: p.size * 0.16 * fade + 1, color: COLORS.white, alpha: 0.9 * fade, cap: "round" });
+            const start = p.rot - 0.9;
+            const a0 = start + 1.8 * Math.min(1, t * 2.5);
+            // moveTo au début de l'arc : sinon arc() relie le point courant (resté au coin 0,0) à l'arc = un trait blanc parasite.
+            fx.moveTo(p.x + Math.cos(start) * p.size, p.y + Math.sin(start) * p.size)
+              .arc(p.x, p.y, p.size, start, a0)
+              .stroke({ width: p.size * 0.16 * fade + 1, color: COLORS.white, alpha: 0.9 * fade, cap: "round" });
             break;
           }
         }
@@ -798,10 +818,17 @@ export async function createRenderer(host: HTMLElement, s: MatchState, roster: r
       for (const e of events.crates) {
         if (!inView(st, me, e.x, e.y)) continue;
         if (e.hp === 0) {
-          burst(FX.chip, e.x, e.y, 14, COLORS.crate, 0.55, 520, ts * 0.12, now);
-          burst(FX.chip, e.x, e.y, 6, COLORS.crateDark, 0.45, 520, ts * 0.1, now);
-          burst(FX.puff, e.x, e.y, 4, 0xd8c7a8, 0.12, 480, ts * 0.3, now);
-        } else burst(FX.chip, e.x, e.y, 4, COLORS.crateLight, 0.4, 300, ts * 0.07, now);
+          // Caisse brisée : une onde de bois qui s'ouvre, une volée d'éclats clairs et sombres, puis un nuage de poussière.
+          emit({ kind: FX.ring, x: e.x, y: e.y, vx: 0, vy: 0, life: 360, color: COLORS.crateLight, size: ts * 0.3 }, now);
+          burst(FX.chip, e.x, e.y, 18, COLORS.crate, 0.6, 560, ts * 0.13, now);
+          burst(FX.chip, e.x, e.y, 8, COLORS.crateDark, 0.5, 560, ts * 0.1, now);
+          burst(FX.chip, e.x, e.y, 5, COLORS.crateLight, 0.5, 520, ts * 0.09, now);
+          burst(FX.puff, e.x, e.y, 5, 0xd8c7a8, 0.12, 520, ts * 0.32, now);
+        } else {
+          // Caisse touchée (pas encore brisée) : quelques éclats et un peu de poussière.
+          burst(FX.chip, e.x, e.y, 5, COLORS.crateLight, 0.42, 320, ts * 0.07, now);
+          burst(FX.puff, e.x, e.y, 1, 0xd8c7a8, 0.05, 220, ts * 0.12, now);
+        }
       }
       for (const k of kills) {
         // Élimination : onde et confettis à la couleur de la rareté, là où le participant est tombé.

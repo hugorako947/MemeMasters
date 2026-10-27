@@ -31,7 +31,7 @@
     "ariaLabel": "{name}, Seltenheit {rarity}, {hp} KP",
     "tiltHint": "Bewege Finger oder Maus über die Karte, damit sie glänzt.",
     "open": "Karte {name} ansehen",
-    "copies": "{count, plural, one {# Exemplar} other {# Exemplare}}",
+    "copies": "{count, plural, one {# zusätzliches Exemplar} other {# zusätzliche Exemplare}}",
     "max": "MAX"
   },
   "effect": {
@@ -265,7 +265,6 @@
     "already_max_variant": "Diese Karte hat ihre letzte Entwicklung schon erreicht (Göttlich).",
     "not_enough_duplicates": "Nicht genug Exemplare für diese Entwicklung.",
     "cannot_sell": "Dieses Exemplar kann nicht verkauft werden.",
-    "daily_sell_cap": "Tageslimit für Verkäufe erreicht.",
     "player_not_found": "Kein Spieler trägt diesen Namen.",
     "friend_self": "Du kannst dich nicht selbst hinzufügen.",
     "already_friends": "Ihr seid schon befreundet.",
@@ -310,7 +309,8 @@
     "defense": "Verteidigung",
     "power": "Stärke {power}",
     "notOwned": "Diese Karte ist noch nicht in deiner Sammlung. Öffne Booster, um sie zu finden!",
-    "statBonus": "+{percent} %"
+    "statBonus": "+{percent} %",
+    "lead": "Figur"
   },
   "showcase": {
     "title": "Die {count} Seltenheiten",
@@ -567,7 +567,7 @@
       "sellPrice": "Preis pro Exemplar",
       "sell1": "Tippe auf eine Karte: „Verkaufen“ verkauft alle überzähligen Exemplare auf einmal.",
       "sell2": "„Überzählige Exemplare verkaufen“ macht dasselbe für deine ganze Sammlung.",
-      "sell3": "Gewöhnliche, seltene und epische Karten bringen höchstens {cap} MemeMoney pro Tag; seltenere Karten haben kein Limit.",
+      "sell3": "Alle Seltenheiten lassen sich ohne Limit verkaufen: Verkaufe deine zusätzlichen Exemplare, wann du willst.",
       "sell4": "Kleine Beträge (0,1; 0,25 …) summieren sich und gehen nie verloren.",
       "how6": "Nicht zu verwechseln mit der Meisterschaft, die mit dem Battle Royale kommt: Wenn du eine Figur spielst, schaltest du für sie rein kosmetische Belohnungen frei (Rahmen, Spur, Titel).",
       "howAll": "In deiner Sammlung entwickelt „Alles entwickeln“ auf einen Schlag alle Karten mit genug überzähligen Exemplaren."
@@ -577,7 +577,7 @@
       "what": "MemeMoney ist die Währung des Spiels. Dein Guthaben steht oben rechts; tippe darauf, um den Shop zu öffnen.",
       "earnTitle": "So verdienst du sie",
       "earnRanks": "Zum ersten Mal einen neuen Rang erreichen: insgesamt bis zu {total} MemeMoney, dazu Booster (siehe Ränge).",
-      "earnSell": "Überzählige Exemplare verkaufen (siehe Entwicklungen), bis zu {cap} MemeMoney pro Tag für gewöhnliche, seltene und epische Karten.",
+      "earnSell": "Verkaufe deine zusätzlichen Exemplare (siehe Entwicklungen), ohne Tageslimit.",
       "earnShop": "Im Shop mit echtem Geld kaufen, ab {price}.",
       "earnFirst": "Deine allererste Aufladung bringt doppelt so viel MemeMoney.",
       "spendTitle": "Ausgeben",
@@ -687,7 +687,6 @@
     },
     "battle": {
       "done": "{name} ist jetzt deine Figur im Battle Royale!",
-      "badge": "Figur",
       "pickLead": "Tippe auf eine deiner Karten, um sie zu deiner Figur im Battle Royale zu machen.",
       "pickCancel": "Abbrechen",
       "pickCard": "{name} als Figur wählen"
@@ -712,7 +711,10 @@
     "title": "Booster öffnen",
     "summary": "{count, plural, =0 {Diesmal keine neue Karte.} one {# neue Karte!} other {# neue Karten!}}",
     "newBadge": "Neu",
-    "done": "Weiter"
+    "done": "Weiter",
+    "progress": "{index} / {total}",
+    "next": "Weiter",
+    "reveal": "Meine Karten ansehen"
   },
   "installer": {
     "title": "{name} installieren",
@@ -777,13 +779,12 @@
       "button": "Überzählige Exemplare verkaufen",
       "none": "Keine überzähligen Exemplare zum Verkaufen",
       "summary": "{cards, plural, one {# Exemplar} other {# Exemplare}} → +{amount} MemeMoney",
-      "note": "Von jeder Karte bleibt immer ein Exemplar. Gewöhnliche, seltene und epische Karten stoppen am Tageslimit.",
+      "note": "Von jeder Karte bleibt immer ein Exemplar erhalten.",
       "confirm": "Verkauf bestätigen",
       "cancel": "Abbrechen",
       "done": "+{amount} MemeMoney deinem Guthaben hinzugefügt."
     },
     "sellAll": "×{count} verkaufen",
-    "capPartial": "Tageslimit: Heute können {count} von {total} verkauft werden.",
     "level": {
       "0": "Normal",
       "1": "1 Stern",
@@ -1147,7 +1148,8 @@
       "mouseMiddle": "Mittelklick",
       "mouseRight": "Rechtsklick",
       "mouseButton": "Maustaste {n}",
-      "space": "Leertaste"
+      "space": "Leertaste",
+      "see": "Steuerung ansehen"
     },
     "menu": {
       "title": "Menü",
@@ -1180,7 +1182,6 @@
     },
     "map": {
       "open": "Karte vergrößern",
-      "close": "Karte schließen",
       "title": "Karte"
     }
   }

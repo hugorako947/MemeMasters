@@ -42,7 +42,7 @@ function statValue(item: CollectionItem, sort: StatSort): number {
  * Mode « choisir son personnage » (bouton « Changer » de la page Battle Royale) : un toucher sur une carte possédée
  * en fait le personnage du Battle Royale, puis on revient à cette page.
  */
-export function CollectionBrowser({ items, resaleLeftCents, battleCardId = null }: { items: CollectionItem[]; resaleLeftCents: number; battleCardId?: string | null }) {
+export function CollectionBrowser({ items, battleCardId = null }: { items: CollectionItem[]; battleCardId?: string | null }) {
   const t = useTranslations("collection");
   const tr = useTranslations("rarity");
   const format = useFormatter();
@@ -179,10 +179,7 @@ export function CollectionBrowser({ items, resaleLeftCents, battleCardId = null 
 
       {owned > 0 ? (
         <div className="flex flex-wrap items-start gap-2">
-          <BulkSell
-            items={items.map((i) => ({ cardId: i.card.id, rarity: i.card.rarity, quantity: i.quantity }))}
-            resaleLeftCents={resaleLeftCents}
-          />
+          <BulkSell items={items.map((i) => ({ cardId: i.card.id, rarity: i.card.rarity, quantity: i.quantity }))} />
           <BulkEvolve items={items.map((i) => ({ cardId: i.card.id, rarity: i.card.rarity, quantity: i.quantity, level: i.level }))} />
         </div>
       ) : null}
@@ -200,7 +197,8 @@ export function CollectionBrowser({ items, resaleLeftCents, battleCardId = null 
                 owned={quantity > 0}
                 level={level}
                 quantity={quantity}
-                actions={<CardActions card={card} quantity={quantity} level={level} resaleLeftCents={resaleLeftCents} />}
+                lead={card.id === battleCardId}
+                actions={<CardActions card={card} quantity={quantity} level={level} />}
               />
               {picking && quantity > 0 ? (
                 <button
@@ -209,9 +207,6 @@ export function CollectionBrowser({ items, resaleLeftCents, battleCardId = null 
                   aria-label={t("battle.pickCard", { name: card.name })}
                   className="absolute inset-0 z-10 rounded-xl outline-dashed outline-2 outline-offset-2 outline-ink hover:bg-ink/10 focus-visible:bg-ink/10"
                 />
-              ) : null}
-              {card.id === battleCardId ? (
-                <p className="justify-self-center rounded-full border-2 border-ink bg-candy px-2.5 py-0.5 text-[0.65rem] font-extrabold text-[var(--mm-accent-ink)]">{t("battle.badge")}</p>
               ) : null}
               {statSort ? (
                 <p className="flex items-center justify-between rounded-full bg-paper px-2.5 py-0.5 text-xs font-bold">
