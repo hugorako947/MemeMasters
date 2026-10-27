@@ -1064,13 +1064,19 @@
       "petard": "Fusil à pompe",
       "rafaleuse": "Mitraillette",
       "lunette": "Fusil de précision",
+      "pop2": "Pistolet avancé",
+      "petard2": "Super fusil à pompe",
+      "rafaleuse2": "Méga-mitraillette",
+      "lunette2": "Fusil de précision lourd",
       "knife": "Couteau de combat"
     },
     "items": {
       "heal": "Trousse de soins",
       "vest": "Gilet pare-balles",
       "speed": "Boisson énergisante",
-      "scope": "Lunette ×{zoom}"
+      "scope": "Lunette ×{zoom}",
+      "ammo": "Munitions",
+      "range": "Booster de portée"
     },
     "ability": {
       "sprint": "Sprint : +{percent} % de vitesse pendant {seconds} s",
@@ -1119,11 +1125,6 @@
       "abilityReady": "Prête",
       "stunned": "Étourdi !",
       "pickup": "Ramasser : {item}",
-      "ammo": {
-        "light": "Munitions légères",
-        "shell": "Cartouches",
-        "heavy": "Munitions lourdes"
-      },
       "seconds": "{count} s",
       "melee": "Corps à corps"
     },

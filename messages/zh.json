@@ -1064,13 +1064,19 @@
       "petard": "霰弹枪",
       "rafaleuse": "冲锋枪",
       "lunette": "狙击步枪",
+      "pop2": "高级手枪",
+      "petard2": "超级霰弹枪",
+      "rafaleuse2": "巨型冲锋枪",
+      "lunette2": "重型狙击枪",
       "knife": "战术匕首"
     },
     "items": {
       "heal": "急救包",
       "vest": "防弹背心",
       "speed": "能量饮料",
-      "scope": "{zoom} 倍镜"
+      "scope": "{zoom} 倍镜",
+      "ammo": "弹药",
+      "range": "射程增强"
     },
     "ability": {
       "sprint": "冲刺：{seconds} 秒内速度 +{percent}%",
@@ -1119,11 +1125,6 @@
       "abilityReady": "就绪",
       "stunned": "眩晕！",
       "pickup": "拾取：{item}",
-      "ammo": {
-        "light": "轻型弹药",
-        "shell": "霰弹",
-        "heavy": "重型弹药"
-      },
       "seconds": "{count} 秒",
       "melee": "近战"
     },

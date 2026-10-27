@@ -34,8 +34,8 @@ export const ACTION = { roam: 0, zone: 1, loot: 2, fight: 3, flee: 4, cover: 5, 
 const ACTIONS = 8;
 
 /**
- * Valeur d'une caisse à ouvrir (avant la distance, comme un objet) : seulement l'arme de départ, ou mieux armé. Une caisse
- * à portée vaut alors un peu plus qu'explorer (350 / 150) ; à une demi-largeur d'écran, nettement moins.
+ * Valeur d'une caisse à ouvrir (avant la distance, comme un objet) : fort quand on n'a que le couteau, plus faible quand
+ * on est déjà armé. Une caisse à portée vaut alors un peu plus qu'explorer (350 / 150) ; à une demi-largeur d'écran, nettement moins.
  */
 const CRATE_VALUE_UNARMED = 450;
 const CRATE_VALUE = 250;
@@ -57,20 +57,27 @@ const TRAITS = [500, 450, 1000] as const;
 /** Pas de côté en plus pour la personnalité « mobile » (‰). */
 const MOBILE_STRAFE = 150;
 
-/** Préférence d'arme par personnalité, sur 1 000 (pistolet, fusil à pompe, mitraillette, fusil de précision). */
+/**
+ * Préférence d'arme par personnalité, sur 1 000 (indices de rules.weapons) : pistolet, fusil à pompe, mitraillette,
+ * fusil de précision, puis leurs versions supérieures (3A, préférées), le projectile de brûlure (jamais choisi) et le couteau.
+ */
 const WEAPON_PREF = [
-  [200, 600, 800, 650],
-  [200, 800, 750, 450],
-  [200, 700, 800, 500],
-  [200, 500, 650, 850],
+  [200, 600, 800, 650, 360, 720, 880, 760, 0, 120],
+  [200, 800, 750, 450, 360, 880, 840, 560, 0, 140],
+  [200, 700, 800, 500, 360, 800, 880, 620, 0, 130],
+  [200, 500, 650, 850, 360, 620, 740, 920, 0, 110],
 ] as const;
 
-/** Distance de combat voulue selon l'arme en main, en unités : [au moins, au plus] (indices de rules.weapons : armes à feu, projectile de brûlure, couteau). */
+/** Distance de combat voulue selon l'arme en main, en unités : [au moins, au plus] (mêmes indices que WEAPON_PREF). */
 const WEAPON_BAND = [
   [200, 420],
   [50, 170],
   [140, 360],
   [260, 440],
+  [220, 460],
+  [60, 200],
+  [160, 400],
+  [300, 500],
   [200, 420],
   [0, 30],
 ] as const;
@@ -155,12 +162,40 @@ const sq = (dx: number, dy: number) => dx * dx + dy * dy;
 const toDirection = (angle: number) => (((angle + 8) & 255) >> 4) + 1;
 const directionAngle = (move: number) => (move - 1) * 16;
 
-/** Arme utilisable au combat : l'arme ramassée si elle a des balles (chargeur ou réserve), sinon l'arme de départ. */
-function usableWeapon(s: MatchState, i: number): number {
-  const w = s.p.weapon1[i];
-  if (w < 0) return s.rules.startWeapon;
-  const ammo = s.rules.weapons[w].ammo;
-  return s.p.mag1[i] > 0 || ammo === 0 || s.m.ammo[4 * i + ammo] > 0 ? w : s.rules.startWeapon;
+/** L'arme à feu de l'emplacement `slot` (0 ou 1) a-t-elle de quoi tirer (chargeur ou réserve de munitions) ? */
+function gunUsable(s: MatchState, i: number, slot: number): boolean {
+  const w = slot === 0 ? s.p.weapon0[i] : s.p.weapon1[i];
+  if (w < 0) return false;
+  const mag = slot === 0 ? s.p.mag0[i] : s.p.mag1[i];
+  return mag > 0 || s.rules.weapons[w].ammo === 0 || s.p.ammo[i] > 0;
+}
+
+/**
+ * Meilleur emplacement d'arme à feu utilisable (0 ou 1) pour une distance `d` (−1 : sans cible, choix par préférence) ;
+ * −1 si aucune arme à feu n'est utilisable (il ne reste que le couteau).
+ */
+function bestGunSlot(s: MatchState, i: number, d: number): number {
+  const pref = WEAPON_PREF[s.b.persona[i]];
+  let best = -1;
+  let bestSc = 0;
+  for (let slot = 0; slot < 2; slot++) {
+    if (!gunUsable(s, i, slot)) continue;
+    const w = slot === 0 ? s.p.weapon0[i] : s.p.weapon1[i];
+    const W = s.rules.weapons[w];
+    let sc = pref[w] + 1;
+    if (d >= 0) sc += W.range >= d ? 300 : -idiv((d - W.range) * 300, Math.max(1, W.range));
+    if (best < 0 || sc > bestSc) {
+      best = slot;
+      bestSc = sc;
+    }
+  }
+  return best;
+}
+
+/** Arme à feu utilisable (indice), ou le couteau (KNIFE) s'il n'en reste aucune ; `d` : distance de la cible (−1 : sans cible). */
+function usableWeapon(s: MatchState, i: number, d = -1): number {
+  const slot = bestGunSlot(s, i, d);
+  return slot < 0 ? KNIFE : slot === 0 ? s.p.weapon0[i] : s.p.weapon1[i];
 }
 
 /** Distance entre les centres à laquelle un coup de couteau de i atteint t. */
@@ -176,7 +211,7 @@ function knifeBeats(s: MatchState, w: number): boolean {
 }
 
 function magazineInHand(s: MatchState, i: number): number {
-  return s.p.active[i] === 1 && s.p.weapon1[i] >= 0 ? s.p.mag1[i] : s.p.mag0[i];
+  return s.p.active[i] === 1 ? s.p.mag1[i] : s.p.mag0[i];
 }
 
 function insideCircle(x: number, y: number, cx: number, cy: number, r: number): boolean {
@@ -331,7 +366,6 @@ function decide(s: MatchState, i: number): void {
   perceive(s, i);
   const P = s.p;
   const B = s.b;
-  const R = s.rules;
   const st = STREAM.bot0 + i;
   const hp1000 = idiv(P.hp[i] * 1000, s.fighters[i].maxHp);
   const use = usableWeapon(s, i);
@@ -368,12 +402,12 @@ function decide(s: MatchState, i: number): void {
   }
 
   scores.fill(0);
-  // Explorer (pour trouver du butin) vaut plus tant qu'on n'a que l'arme de départ.
-  scores[ACTION.roam] = use === R.startWeapon ? 350 : 150;
+  // Explorer (pour trouver du butin) vaut plus tant qu'on n'a que le couteau.
+  scores[ACTION.roam] = use === KNIFE ? 350 : 150;
   scores[ACTION.zone] = zoneScore(s, i);
   const item = bestItem(s, i);
-  // S'équiper d'abord : le butin compte davantage tant qu'on n'a que l'arme de départ.
-  if (item >= 0) scores[ACTION.loot] = (nearest >= 0 && nearestD < 300 * SUB ? idiv(itemScore, 2) : itemScore) + (use === R.startWeapon ? 150 : 0);
+  // S'équiper d'abord : le butin compte davantage tant qu'on n'a que le couteau.
+  if (item >= 0) scores[ACTION.loot] = (nearest >= 0 && nearestD < 300 * SUB ? idiv(itemScore, 2) : itemScore) + (use === KNIFE ? 150 : 0);
   // Ouvrir une caisse : seulement sans ennemi en vue.
   const crate = seenCount === 0 ? bestCrate(s, i, use) : -1;
   if (crate >= 0) scores[ACTION.crate] = crateScore;
@@ -383,7 +417,7 @@ function decide(s: MatchState, i: number): void {
   // Chasse : bien armé et en forme, ou pour achever un ennemi enfui nettement plus faible.
   if (seenCount === 0 && huntGoal(s, i)) {
     const weakPrey = huntHp >= 0 && 2 * huntHp < P.hp[i] + P.shield[i];
-    if (weakPrey || (use !== R.startWeapon && hp1000 >= 700)) scores[ACTION.hunt] = 50 + idiv(B.aggro[i], 2) + (weakPrey ? 250 : 0);
+    if (weakPrey || (use !== KNIFE && hp1000 >= 700)) scores[ACTION.hunt] = 50 + idiv(B.aggro[i], 2) + (weakPrey ? 250 : 0);
   }
 
   // Bruit (moins bon choix aux bas niveaux) et constance (+100 pour la décision en cours).
@@ -487,9 +521,9 @@ function fightScore(s: MatchState, i: number, j: number, d: number, use: number,
   let edge = clamp((P.hp[i] + P.shield[i] - P.hp[j] - P.shield[j]) * 2, -300, 300) + idiv(pref[use] - pref[weaponInHand(s, j)], 4);
   if (P.lastHitBy[j] >= 0 && P.lastHitBy[j] !== i && s.tick - P.lastHit[j] <= 2 * s.rules.tickRate) edge += 150;
   sc += edge;
-  // Avec la seule arme de départ, on évite un combat qu'on n'a pas cherché (mieux vaut s'équiper d'abord),
+  // Avec le seul couteau, on évite un combat qu'on n'a pas cherché (mieux vaut s'équiper d'abord),
   // sauf pour achever un ennemi nettement affaibli.
-  if (use === s.rules.startWeapon && !forced && edge < 150) sc -= 450;
+  if (use === KNIFE && !forced && edge < 150) sc -= 450;
   // Un bon joueur choisit ses combats : sans avantage net et sans y être forcé, il passe son chemin (plus le niveau est haut).
   if (!forced && edge < 100) sc -= idiv(B.level[i] * 300, s.rules.bots.maxLevel);
   if (hp1000 < B.caution[i]) sc -= 250;
@@ -546,24 +580,24 @@ function itemValue(s: MatchState, i: number, k: number): number {
   const items = s.rules.items;
   switch (I.kind[k]) {
     case ITEM.weapon: {
-      // Une arme vide, sans munitions pour elle, ne sert à rien ; on n'échange son arme que contre mieux.
+      // Une arme vide, sans munitions, ne sert à rien. Un emplacement libre : toujours bon à prendre ; sinon, seulement mieux armé.
       const w = I.sub[k];
       const ammo = s.rules.weapons[w].ammo;
-      if (I.qty[k] === 0 && ammo > 0 && s.m.ammo[4 * i + ammo] === 0) return 0;
+      if (I.qty[k] === 0 && ammo > 0 && s.p.ammo[i] === 0) return 0;
       const pref = WEAPON_PREF[s.b.persona[i]];
-      const held = P.weapon1[i];
+      if (P.weapon0[i] === w || P.weapon1[i] === w) return 0;
+      if (P.weapon0[i] < 0 || P.weapon1[i] < 0) return pref[w] + 100;
       const usable = usableWeapon(s, i);
-      if (held === w) return usable !== held && I.qty[k] > 0 ? 300 : 0;
       const v = pref[w] - pref[usable];
       return v > 80 ? v + 150 : 0;
     }
     case ITEM.ammo: {
-      const a = I.sub[k];
-      const have = s.m.ammo[4 * i + a];
-      const max = items.ammoMax[a];
+      const have = s.p.ammo[i];
+      const max = items.ammoMax[I.sub[k]];
       if (have >= max) return 0;
-      const w = P.weapon1[i];
-      if (w >= 0 && s.rules.weapons[w].ammo === a) return 150 + idiv((max - have) * 500, max);
+      // Des munitions valent beaucoup si on a une arme à feu, un peu sinon (on en trouvera une).
+      const armed = (P.weapon0[i] >= 0 && s.rules.weapons[P.weapon0[i]].ammo > 0) || (P.weapon1[i] >= 0 && s.rules.weapons[P.weapon1[i]].ammo > 0);
+      if (armed) return 150 + idiv((max - have) * 500, max);
       return 2 * have < max ? 60 : 0;
     }
     case ITEM.heal: {
@@ -638,7 +672,7 @@ function bestCrate(s: MatchState, i: number, use: number): number {
   const n = s.map.size;
   const ts = s.map.tileSub;
   const hw = s.rules.view.halfWidth;
-  const value = use === s.rules.startWeapon ? CRATE_VALUE_UNARMED : CRATE_VALUE;
+  const value = use === KNIFE ? CRATE_VALUE_UNARMED : CRATE_VALUE;
   let best = -1;
   crateScore = 0;
   for (let k = 0; k < s.crateTiles.length; k++) {
@@ -682,7 +716,7 @@ function fleeScore(s: MatchState, i: number, hp1000: number, threats: number, ne
   if (hp1000 < B.caution[i]) sc += 200 + idiv((B.caution[i] - hp1000) * 1500, 1000);
   if (threats >= 2) sc += 150 * (threats - 1);
   const theirs = weaponInHand(s, nearest);
-  if (usableWeapon(s, i) === s.rules.startWeapon && theirs !== s.rules.startWeapon && nearestD <= s.rules.weapons[theirs].range) sc += 150;
+  if (usableWeapon(s, i) === KNIFE && theirs !== KNIFE && nearestD <= s.rules.weapons[theirs].range) sc += 150;
   sc -= idiv(B.aggro[i] - 500, 2);
   return clamp(sc, 0, 1000);
 }
@@ -981,12 +1015,17 @@ function control(s: MatchState, i: number): number {
   else if (tick - B.heardTick[i] <= R.tickRate) aim = iatan2(B.heardY[i] - P.y[i], B.heardX[i] - P.x[i]);
   else if (move !== 0) aim = directionAngle(move);
 
-  // Arme : le couteau au contact, l'arme ramassée si elle a des balles (le pistolet si la cible est trop loin pour le fusil à pompe).
+  // Arme : le couteau au contact s'il frappe plus fort, sinon la meilleure arme à feu pour la distance.
   const gun = wantedSlot(s, i, visible ? d : -1, t);
-  const want = crateAim >= 0 && !willing && knifeBeats(s, gun === 1 ? P.weapon1[i] : R.startWeapon) ? 2 : gun;
+  let want = gun;
+  if (crateAim >= 0 && !willing) {
+    const gs = bestGunSlot(s, i, -1);
+    const gunW = gs < 0 ? R.startWeapon : gs === 0 ? P.weapon0[i] : P.weapon1[i];
+    want = gs < 0 || knifeBeats(s, gunW) ? 2 : gs;
+  }
   if (want !== P.active[i] && P.reload[i] === 0) buttons |= press(prev, BTN.nextWeapon);
   // Rechargement hors de vue d'un ennemi, chargeur à moins de moitié.
-  else if (!visible && P.reload[i] === 0 && 2 * magazineInHand(s, i) < W.magazine && (W.ammo === 0 || s.m.ammo[4 * i + W.ammo] > 0)) {
+  else if (!visible && P.reload[i] === 0 && 2 * magazineInHand(s, i) < W.magazine && (W.ammo === 0 || s.p.ammo[i] > 0)) {
     buttons |= press(prev, BTN.reload);
   }
 
@@ -1097,17 +1136,14 @@ function antiStuck(s: MatchState, i: number, move: number): number {
 
 /**
  * Emplacement d'arme voulu (`d` : distance de la cible visible `t`, −1 sans cible) : 2 (couteau) au contact s'il frappe
- * plus fort que l'arme à feu, 1 (arme ramassée) si elle a des balles et convient à la distance, sinon 0 (arme de départ).
+ * plus fort que l'arme à feu, sinon le meilleur emplacement d'arme à feu pour la distance (0 ou 1), ou 2 si aucune.
  */
 function wantedSlot(s: MatchState, i: number, d: number, t: number): number {
-  const w = s.p.weapon1[i];
-  const gun = w >= 0 && usableWeapon(s, i) === w;
+  const slot = bestGunSlot(s, i, d);
+  const gunW = slot < 0 ? s.rules.startWeapon : slot === 0 ? s.p.weapon0[i] : s.p.weapon1[i];
   // Le couteau est gardé un peu au-delà de sa portée : sinon le bot changerait d'arme à chaque pas (sans jamais frapper).
-  if (d >= 0 && knifeBeats(s, gun ? w : s.rules.startWeapon) && d <= knifeReach(s, i, t) + (s.p.active[i] === 2 ? KNIFE_KEEP * SUB : 0)) return 2;
-  if (!gun) return 0;
-  const W = s.rules.weapons[w];
-  if (d >= 0 && W.range < s.rules.weapons[s.rules.startWeapon].range && d > idiv(W.range * 12, 10)) return 0;
-  return 1;
+  if (d >= 0 && knifeBeats(s, gunW) && d <= knifeReach(s, i, t) + (s.p.active[i] === 2 ? KNIFE_KEEP * SUB : 0)) return 2;
+  return slot < 0 ? 2 : slot;
 }
 
 /** Capacité au bon moment, selon son type (`target` : une cible visible que le bot veut bien combattre). */

@@ -31,9 +31,13 @@ const boosterSchema = z.object({
 });
 
 const range = (min: number, max: number) => z.tuple([z.number().int().min(min).max(max), z.number().int().min(min).max(max)]).refine(([a, b]) => a <= b, "Intervalle [min, max] attendu.");
-const ammoKind = z.enum(["none", "light", "shell", "heavy"]);
-/** Les 4 armes du battle royale, dans cet ordre (l'ordre sert d'identifiant dans le moteur). */
-export const BR_WEAPONS = ["pop", "petard", "rafaleuse", "lunette"] as const;
+/** Munitions universelles depuis 3A (2026-10-27) : un seul stock pour toutes les armes à feu. */
+const ammoKind = z.enum(["none", "ammo"]);
+/**
+ * Les armes à feu du battle royale, dans cet ordre (l'ordre sert d'identifiant dans le moteur). Les 4 premières
+ * (de base) puis leurs versions supérieures (loot plus rare), ajoutées en 3A (2026-10-27). Le couteau est à part (KNIFE).
+ */
+export const BR_WEAPONS = ["pop", "petard", "rafaleuse", "lunette", "pop2", "petard2", "rafaleuse2", "lunette2"] as const;
 export type BrWeaponId = (typeof BR_WEAPONS)[number];
 
 const brWeaponSchema = z.object({
@@ -159,20 +163,24 @@ const battleRoyaleSchema = z.object({
   /** Caisses destructibles : résistance, et l'objet qu'elles lâchent une fois brisées. */
   CRATE: z.object({
     HP: positiveInt,
-    LOOT_WEIGHTS: z.object({ heal: nonNegativeInt, ammo: nonNegativeInt, vest: nonNegativeInt, weapon: nonNegativeInt, speed: nonNegativeInt, scope: nonNegativeInt }),
+    LOOT_WEIGHTS: z.object({ heal: nonNegativeInt, ammo: nonNegativeInt, vest: nonNegativeInt, weapon: nonNegativeInt, speed: nonNegativeInt, scope: nonNegativeInt, range: nonNegativeInt }),
     /** Lunettes : grossissement du champ de vision et poids de chacune. */
     SCOPES: z.array(z.object({ zoom: z.number().int().min(2).max(32), weight: positiveInt })).min(1),
     /** Boisson énergisante : vitesse en plus (%) et durée. */
     SPEED_BOOST_PERCENT: z.number().int().min(1).max(100),
     SPEED_BOOST_MS: positiveInt,
+    /** Booster de portée (3A) : portée de tir en plus (%) et durée. */
+    RANGE_BOOST_PERCENT: z.number().int().min(1).max(100),
+    RANGE_BOOST_MS: positiveInt,
   }),
   ITEMS: z.object({
     /** Trousse de soins : PV rendus aussitôt au ramassage. */
     HEAL_HP: positiveInt,
     /** Gilet pare-balles : points de protection, consommés avant les PV. */
     VEST_SHIELD: positiveInt,
-    AMMO_MAX: z.object({ light: positiveInt, shell: positiveInt, heavy: positiveInt }),
-    AMMO_BOX: z.object({ light: positiveInt, shell: positiveInt, heavy: positiveInt }),
+    /** Munitions universelles (3A) : réserve maximale et contenu d'une boîte, partagés par toutes les armes à feu. */
+    AMMO_MAX: positiveInt,
+    AMMO_BOX: positiveInt,
     /** Distance de ramassage, en unités. */
     PICKUP_RANGE: positiveInt,
   }),
@@ -181,7 +189,8 @@ const battleRoyaleSchema = z.object({
     PER_PARTICIPANT: z.number().int().min(0).max(10),
     IN_BUILDINGS_PERCENT: z.number().int().min(0).max(100),
     WEIGHTS: z.object({ weapon: nonNegativeInt, ammo: nonNegativeInt, heal: nonNegativeInt, vest: nonNegativeInt }),
-    WEAPON_WEIGHTS: z.object({ petard: nonNegativeInt, rafaleuse: nonNegativeInt, lunette: nonNegativeInt }),
+    /** Poids de chaque arme ramassable (toutes depuis 3A : plus de gun de départ). 0 = jamais trouvée au sol. */
+    WEAPON_WEIGHTS: z.object(Object.fromEntries(BR_WEAPONS.map((w) => [w, nonNegativeInt])) as Record<BrWeaponId, typeof nonNegativeInt>),
   }),
   /** Récompenses d'une partie classée selon la place finale (tranches en % si le nombre de participants change). */
   ECONOMY: z.object({
@@ -357,9 +366,6 @@ const gameConfigSchema = z
   .superRefine((cfg, ctx) => {
     const br = cfg.BATTLE_ROYALE;
     const tickMs = 1000 / br.TICK_RATE;
-    if (br.WEAPONS[br.STARTING_WEAPON].ammo !== "none") {
-      ctx.addIssue({ code: "custom", path: ["BATTLE_ROYALE", "STARTING_WEAPON"], message: "L'arme de départ a une réserve illimitée (munitions « none »)." });
-    }
     for (const id of BR_WEAPONS) {
       const w = br.WEAPONS[id];
       if (w.fireIntervalMs < tickMs || w.reloadMs < tickMs) {
@@ -515,7 +521,7 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
   // Battle royale : valeurs de la conception validée (2026-10-24), équilibrées par les tournois de bots (phase 2, 2026-10-25 :
   // les 8 seuils de la conception tenus, voir DECISIONS.md). Toute modification : relancer npm run bots:tournament.
   BATTLE_ROYALE: {
-    CONFIG_VERSION: 4,
+    CONFIG_VERSION: 5,
     // 50 participants (décision du propriétaire, 2026-10-26) : plus de calcul et de mémoire pour les graphismes.
     PARTICIPANTS: 50,
     TICK_RATE: 20,
@@ -552,7 +558,7 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
       REFERENCE: { hp: 92, atk: 39, def: 36, spd: 77, power: 55, heal: 11, dodge: 17, reflect: 17 },
       // Compression κ (statistiques, puissance de la capacité, intensité du passif) et part du bonus d'évolution comptée en
       // bataille : au-delà, une godlevel ou une ★★★ gagnait trop souvent (seuils ×1,3 et ×1,15 de la conception).
-      COMPRESSION_PERCENT: 10,
+      COMPRESSION_PERCENT: 12,
       EVOLUTION_FACTOR_PERCENT: 15,
     },
     ABILITY: {
@@ -578,38 +584,49 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
     // Régénération : un filet de sécurité (jusqu'à 8 % des PV max, après 12 s sans être touché). Plus forte, elle écrasait
     // les autres passifs (tournois de bots : 3 % de Top 1 contre 0,3 %), car on enchaîne les combats sans se soigner.
     PASSIVE: { REGEN_DELAY_MS: 12000, REGEN_CAP_PERCENT: 8, DODGE_DIVISOR: 3, REFLECT_DIVISOR: 1, CLEANSE_PERCENT: 50, RECHARGE_PERCENT: 55 },
-    // Pistolet (arme de départ), fusil à pompe, mitraillette, fusil de précision ; le couteau de combat est à part (KNIFE).
+    // 3A : plus d'arme à feu de départ (le couteau, KNIFE, est en main au début). Toutes les armes se ramassent et
+    // partagent les mêmes munitions. Les 4 de base, puis leurs versions supérieures (loot plus rare, dégâts validés par
+    // le propriétaire le 2026-10-27). Portées étendues et chargeurs élargis en 3A.
     WEAPONS: {
-      pop: { damage: 8, pellets: 1, fireIntervalMs: 400, magazine: 12, reloadMs: 1500, spreadSteps: 2, speed: 1600, range: 700, ammo: "none" },
-      petard: { damage: 6, pellets: 6, fireIntervalMs: 900, magazine: 5, reloadMs: 2500, spreadSteps: 10, speed: 1300, range: 350, ammo: "shell" },
-      rafaleuse: { damage: 5, pellets: 1, fireIntervalMs: 100, magazine: 30, reloadMs: 2000, spreadSteps: 5, speed: 1700, range: 600, ammo: "light" },
-      lunette: { damage: 42, pellets: 1, fireIntervalMs: 1500, magazine: 4, reloadMs: 3000, spreadSteps: 0, speed: 2800, range: 1400, ammo: "heavy" },
+      pop: { damage: 8, pellets: 1, fireIntervalMs: 400, magazine: 15, reloadMs: 1500, spreadSteps: 2, speed: 1600, range: 850, ammo: "ammo" },
+      petard: { damage: 6, pellets: 6, fireIntervalMs: 900, magazine: 7, reloadMs: 2500, spreadSteps: 10, speed: 1300, range: 450, ammo: "ammo" },
+      rafaleuse: { damage: 5, pellets: 1, fireIntervalMs: 100, magazine: 40, reloadMs: 2000, spreadSteps: 5, speed: 1700, range: 750, ammo: "ammo" },
+      lunette: { damage: 42, pellets: 1, fireIntervalMs: 1500, magazine: 5, reloadMs: 3000, spreadSteps: 0, speed: 2800, range: 1600, ammo: "ammo" },
+      // Pistolet avancé, super fusil à pompe, méga-mitraillette, fusil de précision lourd.
+      pop2: { damage: 12, pellets: 1, fireIntervalMs: 320, magazine: 18, reloadMs: 1300, spreadSteps: 1, speed: 1800, range: 950, ammo: "ammo" },
+      petard2: { damage: 10, pellets: 8, fireIntervalMs: 800, magazine: 7, reloadMs: 2200, spreadSteps: 8, speed: 1400, range: 520, ammo: "ammo" },
+      rafaleuse2: { damage: 10, pellets: 1, fireIntervalMs: 90, magazine: 38, reloadMs: 1800, spreadSteps: 4, speed: 1800, range: 700, ammo: "ammo" },
+      lunette2: { damage: 60, pellets: 1, fireIntervalMs: 1400, magazine: 6, reloadMs: 2800, spreadSteps: 0, speed: 3000, range: 1800, ammo: "ammo" },
     },
+    // Arme de repli des capacités (Rafale / projectile de brûlure tirés en tenant le couteau) : jamais équipée au départ.
     STARTING_WEAPON: "pop",
     KNIFE: { DAMAGE: 20, INTERVAL_MS: 500, RANGE: 50, ARC_STEPS: 32 },
     // Caisses : 40 de résistance ; butin validé par le propriétaire le 2026-10-26.
     CRATE: {
       HP: 40,
-      LOOT_WEIGHTS: { heal: 30, ammo: 25, vest: 15, weapon: 12, speed: 10, scope: 8 },
+      LOOT_WEIGHTS: { heal: 28, ammo: 24, vest: 14, weapon: 12, speed: 9, scope: 7, range: 6 },
       SCOPES: [
         { zoom: 2, weight: 60 },
         { zoom: 4, weight: 40 },
       ],
       SPEED_BOOST_PERCENT: 20,
       SPEED_BOOST_MS: 15000,
+      RANGE_BOOST_PERCENT: 35,
+      RANGE_BOOST_MS: 20000,
     },
     ITEMS: {
       HEAL_HP: 40,
       VEST_SHIELD: 50,
-      AMMO_MAX: { light: 120, shell: 30, heavy: 20 },
-      AMMO_BOX: { light: 30, shell: 10, heavy: 6 },
+      AMMO_MAX: 140,
+      AMMO_BOX: 40,
       PICKUP_RANGE: 48,
     },
     LOOT: {
       PER_PARTICIPANT: 3,
       IN_BUILDINGS_PERCENT: 60,
-      WEIGHTS: { weapon: 20, ammo: 35, heal: 25, vest: 20 },
-      WEAPON_WEIGHTS: { petard: 35, rafaleuse: 40, lunette: 25 },
+      WEIGHTS: { weapon: 26, ammo: 32, heal: 24, vest: 18 },
+      // Armes de base fréquentes, versions supérieures rares.
+      WEAPON_WEIGHTS: { pop: 36, petard: 32, rafaleuse: 34, lunette: 22, pop2: 10, petard2: 9, rafaleuse2: 9, lunette2: 7 },
     },
     ECONOMY: {
       // Pour 100 participants : Top 1 +40, 2–3 +30, 4–5 +24, 6–10 +18, 11–20 +12, 21–30 +6, 31–40 +2, 41–50 0, 51–70 −4, 71–90 −8, 91–100 −12.

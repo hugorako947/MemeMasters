@@ -10,9 +10,9 @@ import { idiv } from "./fixed";
 
 /** Sous-unités par unité de carte. */
 export const SUB = 16;
-/** Munitions : 0 = aucune (réserve illimitée), puis légères, cartouches, lourdes. */
-export const AMMO_KINDS = ["none", "light", "shell", "heavy"] as const;
-/** Arme spéciale « projectile de brûlure » (capacité), après les 4 armes. */
+/** Munitions : 0 = aucune (couteau, projectile de brûlure), 1 = stock universel partagé par toutes les armes à feu (3A). */
+export const AMMO_KINDS = ["none", "ammo"] as const;
+/** Arme spéciale « projectile de brûlure » (capacité), après les armes à feu. */
 export const BURN_SHOT = BR_WEAPONS.length;
 /** Couteau de combat : toujours porté, troisième arme en main (après le projectile de brûlure dans rules.weapons). */
 export const KNIFE = BR_WEAPONS.length + 1;
@@ -66,8 +66,8 @@ export interface Rules {
   startWeapon: number;
   /** Couteau : demi-ouverture de l'arc frappé, en pas d'angle. */
   knifeArc: number;
-  /** Caisses : résistance ; poids du butin (soin, munitions, gilet, arme, boisson, lunette) ; lunettes ; boisson énergisante. */
-  crate: { hp: number; lootWeights: number[]; scopes: Array<{ zoom: number; weight: number }>; boostPermille: number; boostTicks: number };
+  /** Caisses : résistance ; poids du butin (soin, munitions, gilet, arme, boisson, lunette, booster de portée) ; lunettes ; boisson énergisante ; booster de portée. */
+  crate: { hp: number; lootWeights: number[]; scopes: Array<{ zoom: number; weight: number }>; boostPermille: number; boostTicks: number; rangePermille: number; rangeTicks: number };
   multiSpread: number;
   regenDelayTicks: number;
   /** La régénération s'arrête à ce pourcentage des PV max. */
@@ -179,10 +179,12 @@ export function resolveRules(br: BrConfig): Rules {
     knifeArc: br.KNIFE.ARC_STEPS,
     crate: {
       hp: br.CRATE.HP,
-      lootWeights: [br.CRATE.LOOT_WEIGHTS.heal, br.CRATE.LOOT_WEIGHTS.ammo, br.CRATE.LOOT_WEIGHTS.vest, br.CRATE.LOOT_WEIGHTS.weapon, br.CRATE.LOOT_WEIGHTS.speed, br.CRATE.LOOT_WEIGHTS.scope],
+      lootWeights: [br.CRATE.LOOT_WEIGHTS.heal, br.CRATE.LOOT_WEIGHTS.ammo, br.CRATE.LOOT_WEIGHTS.vest, br.CRATE.LOOT_WEIGHTS.weapon, br.CRATE.LOOT_WEIGHTS.speed, br.CRATE.LOOT_WEIGHTS.scope, br.CRATE.LOOT_WEIGHTS.range],
       scopes: br.CRATE.SCOPES.map((c) => ({ zoom: c.zoom, weight: c.weight })),
       boostPermille: br.CRATE.SPEED_BOOST_PERCENT * 10,
       boostTicks: ticks(br.CRATE.SPEED_BOOST_MS),
+      rangePermille: br.CRATE.RANGE_BOOST_PERCENT * 10,
+      rangeTicks: ticks(br.CRATE.RANGE_BOOST_MS),
     },
     multiSpread: A.MULTI_SPREAD_STEPS,
     regenDelayTicks: ticks(br.PASSIVE.REGEN_DELAY_MS),
@@ -190,15 +192,17 @@ export function resolveRules(br: BrConfig): Rules {
     items: {
       healHp: I.HEAL_HP,
       vestShield: I.VEST_SHIELD,
-      ammoMax: [0, I.AMMO_MAX.light, I.AMMO_MAX.shell, I.AMMO_MAX.heavy],
-      ammoBox: [0, I.AMMO_BOX.light, I.AMMO_BOX.shell, I.AMMO_BOX.heavy],
+      // Indexé comme AMMO_KINDS : case 0 inutilisée (« none »), case 1 = stock universel.
+      ammoMax: [0, I.AMMO_MAX],
+      ammoBox: [0, I.AMMO_BOX],
       pickupRange: I.PICKUP_RANGE * SUB,
     },
     loot: {
       perParticipant: br.LOOT.PER_PARTICIPANT,
       inBuildingsPercent: br.LOOT.IN_BUILDINGS_PERCENT,
       weights: [br.LOOT.WEIGHTS.weapon, br.LOOT.WEIGHTS.ammo, br.LOOT.WEIGHTS.heal, br.LOOT.WEIGHTS.vest],
-      weaponWeights: BR_WEAPONS.map((id) => (id === br.STARTING_WEAPON ? 0 : (br.LOOT.WEAPON_WEIGHTS as Record<string, number>)[id] ?? 0)),
+      // Toutes les armes se ramassent (plus de gun de départ depuis 3A).
+      weaponWeights: BR_WEAPONS.map((id) => (br.LOOT.WEAPON_WEIGHTS as Record<string, number>)[id] ?? 0),
     },
     bots: {
       thinkTicks: Math.max(1, idiv(rate, B.THINK_PER_SECOND)),

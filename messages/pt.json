@@ -1064,13 +1064,19 @@
       "petard": "Espingarda",
       "rafaleuse": "Submetralhadora",
       "lunette": "Rifle de precisão",
+      "pop2": "Pistola avançada",
+      "petard2": "Super espingarda",
+      "rafaleuse2": "Megametralhadora",
+      "lunette2": "Rifle de precisão pesado",
       "knife": "Faca de combate"
     },
     "items": {
       "heal": "Kit de primeiros socorros",
       "vest": "Colete à prova de balas",
       "speed": "Bebida energética",
-      "scope": "Luneta ×{zoom}"
+      "scope": "Luneta ×{zoom}",
+      "ammo": "Munição",
+      "range": "Reforço de alcance"
     },
     "ability": {
       "sprint": "Sprint: +{percent} % de velocidade por {seconds} s",
@@ -1119,11 +1125,6 @@
       "abilityReady": "Pronta",
       "stunned": "Atordoado!",
       "pickup": "Pegar: {item}",
-      "ammo": {
-        "light": "Munição leve",
-        "shell": "Cartuchos",
-        "heavy": "Munição pesada"
-      },
       "seconds": "{count} s",
       "melee": "Corpo a corpo"
     },

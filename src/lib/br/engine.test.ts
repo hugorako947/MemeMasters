@@ -58,6 +58,19 @@ function run(s: MatchState, ticks: number, commands: (i: number, t: number) => n
   for (let t = 0; t < ticks; t++) advance(s, Array.from({ length: s.n }, (_, i) => commands(i, s.tick)));
 }
 
+/** Équipe un participant d'une arme à feu (emplacement A par défaut, en main), chargeur plein et réserve abondante. */
+function arm(s: MatchState, i: number, w: number, slot: 0 | 1 = 0): void {
+  if (slot === 0) {
+    s.p.weapon0[i] = w;
+    s.p.mag0[i] = s.rules.weapons[w].magazine;
+  } else {
+    s.p.weapon1[i] = w;
+    s.p.mag1[i] = s.rules.weapons[w].magazine;
+  }
+  s.p.active[i] = slot;
+  s.p.ammo[i] = 999;
+}
+
 /** Règle du couteau. */
 const s0Knife = () => BASE.weapons[KNIFE];
 
@@ -110,27 +123,35 @@ describe("moteur : déplacement et visée", () => {
 });
 
 describe("moteur : armes et dégâts", () => {
-  it("tir, cadence, chargeur et rechargement automatique (arme de départ : réserve illimitée)", () => {
+  it("tir, cadence, chargeur et rechargement depuis la réserve universelle, puis réserve épuisée", () => {
     const s = match({ spawns: [tile(5), tile(5), tile(25), tile(25)] });
-    const pop = s.rules.weapons[s.rules.startWeapon];
+    const w = s.rules.startWeapon;
+    const W = s.rules.weapons[w];
+    arm(s, 0, w);
+    s.p.ammo[0] = W.magazine; // juste de quoi un rechargement
     advance(s, [cmd(0, 0, BTN.fire), 0]);
     expect(s.shotCount).toBe(1);
-    expect(s.p.mag0[0]).toBe(pop.magazine - 1);
-    run(s, pop.fireTicks - 1, (i) => (i === 0 ? cmd(0, 0, BTN.fire) : 0));
-    expect(s.p.mag0[0]).toBe(pop.magazine - 1);
+    expect(s.p.mag0[0]).toBe(W.magazine - 1);
+    // Cadence : pas de nouveau tir tant que le délai n'est pas écoulé.
+    run(s, W.fireTicks - 1, (i) => (i === 0 ? cmd(0, 0, BTN.fire) : 0));
+    expect(s.p.mag0[0]).toBe(W.magazine - 1);
     run(s, 1, (i) => (i === 0 ? cmd(0, 0, BTN.fire) : 0));
-    expect(s.p.mag0[0]).toBe(pop.magazine - 2);
-    run(s, pop.fireTicks * pop.magazine, (i) => (i === 0 ? cmd(0, 0, BTN.fire) : 0));
+    expect(s.p.mag0[0]).toBe(W.magazine - 2);
+    // Vider le chargeur, puis laisser le rechargement se terminer (depuis la réserve).
+    run(s, W.fireTicks * W.magazine, (i) => (i === 0 ? cmd(0, 0, BTN.fire) : 0));
+    run(s, W.reloadTicks + 1, () => 0);
+    expect(s.p.mag0[0]).toBeGreaterThan(0);
+    expect(s.p.ammo[0]).toBe(0); // réserve consommée par le rechargement
+    // Sans réserve, le chargeur une fois vide ne se recharge plus.
+    run(s, W.fireTicks * W.magazine + W.reloadTicks + 2, (i) => (i === 0 ? cmd(0, 0, BTN.fire) : 0));
     expect(s.p.mag0[0]).toBe(0);
-    expect(s.p.reload[0]).toBeGreaterThan(0);
-    run(s, pop.reloadTicks, () => 0);
-    expect(s.p.mag0[0]).toBe(pop.magazine);
   });
 
   it("dégâts : arme × ATQ, armure, gilet consommé avant les PV, crédit au tireur", () => {
     const shooter = character({ weaponPercent: 106 });
     const target = character({ stats: { hp: 92, atk: 39, def: 50, spd: 77 } });
     const s = match({ chars: [shooter, target] });
+    arm(s, 0, s.rules.startWeapon);
     const per = expectedHit(START_DAMAGE, 106, 50);
     advance(s, [cmd(0, 0, BTN.fire), 0]);
     run(s, 10, () => 0);
@@ -152,6 +173,7 @@ describe("moteur : armes et dégâts", () => {
       const map = openMap();
       map.tiles[16 * 32 + 7] = obstacle;
       const s = match({ map });
+      arm(s, 0, s.rules.startWeapon);
       advance(s, [cmd(0, 0, BTN.fire), 0]);
       run(s, 15, () => 0);
       expect(s.p.hp[1] < 140).toBe(!blocked);
@@ -160,10 +182,12 @@ describe("moteur : armes et dégâts", () => {
 
   it("élimination : place, journal, arme et objets lâchés ; le dernier en vie gagne", () => {
     const s = match({ chars: [character(), character(), character()], spawns: [tile(5), tile(16), tile(10), tile(16), tile(25), tile(25)] });
+    arm(s, 0, s.rules.startWeapon);
     s.p.hp[1] = 1;
-    s.p.weapon1[1] = 2;
-    s.p.mag1[1] = 7;
-    s.m.ammo[4 * 1 + 1] = 30;
+    // La victime porte une arme à feu et des munitions : elle les lâche en mourant.
+    s.p.weapon0[1] = 2;
+    s.p.mag0[1] = 7;
+    s.p.ammo[1] = 30;
     advance(s, [cmd(0, 0, BTN.fire), 0, 0]);
     run(s, 10, () => 0);
     expect(s.p.alive[1]).toBe(0);
@@ -186,37 +210,40 @@ describe("moteur : armes et dégâts", () => {
 });
 
 describe("moteur : objets", () => {
-  it("ramasser : arme (échange sur place), munitions (plafond), soins, gilet", () => {
+  it("ramasser : deux armes (emplacements A et B, puis échange), munitions universelles (plafond), soins, gilet", () => {
     const at = { x: tile(5), y: tile(16) };
     const loot: LootItem[] = [
-      { kind: ITEM.weapon, sub: 2, qty: 30, ...at },
-      { kind: ITEM.ammo, sub: 1, qty: 200, x: at.x + 100, y: at.y },
-      { kind: ITEM.heal, sub: 0, qty: 1, x: at.x + 200, y: at.y },
-      { kind: ITEM.vest, sub: 0, qty: 1, x: at.x + 300, y: at.y },
-      { kind: ITEM.weapon, sub: 3, qty: 4, x: at.x, y: at.y + 50 },
+      { kind: ITEM.weapon, sub: 2, qty: 30, ...at }, // 0 : au pied du joueur
+      { kind: ITEM.weapon, sub: 3, qty: 4, x: at.x + 40, y: at.y }, // 1
+      { kind: ITEM.weapon, sub: 1, qty: 5, x: at.x + 60, y: at.y }, // 2 : 3e arme → échange
+      { kind: ITEM.ammo, sub: 1, qty: 250, x: at.x + 100, y: at.y }, // 3
+      { kind: ITEM.heal, sub: 0, qty: 1, x: at.x + 200, y: at.y }, // 4
+      { kind: ITEM.vest, sub: 0, qty: 1, x: at.x + 300, y: at.y }, // 5
     ];
     const s = match({ loot });
     const press = () => {
       advance(s, [cmd(0, 0, BTN.pickup), 0]);
       advance(s, [0, 0]);
     };
-    press(); // la plus proche : la Rafaleuse
-    expect([s.p.weapon1[0], s.p.mag1[0], s.p.active[0], s.it.kind[0]]).toEqual([2, 30, 1, ITEM.none]);
-    press(); // la Lunette, à 50 : échange, la Rafaleuse est posée au sol
-    expect([s.p.weapon1[0], s.p.mag1[0]]).toEqual([3, 4]);
-    expect([s.it.kind[4], s.it.sub[4], s.it.qty[4]]).toEqual([ITEM.weapon, 2, 30]);
-    s.it.kind[4] = ITEM.none;
-    press(); // munitions légères : plafonnées, le reste reste au sol
-    expect(s.m.ammo[1]).toBe(s.rules.items.ammoMax[1]);
-    expect(s.it.qty[1]).toBe(200 - s.rules.items.ammoMax[1]);
-    s.it.kind[1] = ITEM.none;
+    press(); // la plus proche (sub 2) → emplacement A
+    expect([s.p.weapon0[0], s.p.mag0[0], s.p.active[0], s.it.kind[0]]).toEqual([2, 30, 0, ITEM.none]);
+    press(); // sub 3 → emplacement B (libre), pas d'échange
+    expect([s.p.weapon1[0], s.p.mag1[0], s.p.active[0], s.it.kind[1]]).toEqual([3, 4, 1, ITEM.none]);
+    press(); // sub 1 : les deux emplacements pleins → échange de l'arme en main (B), l'ancienne est posée au sol
+    expect([s.p.weapon1[0], s.p.mag1[0]]).toEqual([1, 5]);
+    expect([s.it.kind[2], s.it.sub[2], s.it.qty[2]]).toEqual([ITEM.weapon, 3, 4]);
+    s.it.kind[2] = ITEM.none;
+    press(); // munitions : plafonnées à la réserve universelle, le reste reste au sol
+    expect(s.p.ammo[0]).toBe(s.rules.items.ammoMax[1]);
+    expect(s.it.qty[3]).toBe(250 - s.rules.items.ammoMax[1]);
+    s.it.kind[3] = ITEM.none;
     press(); // PV pleins : le soin, inutile, reste au sol ; le gilet (plus loin) est ramassé
     expect(s.p.shield[0]).toBe(s.rules.items.vestShield);
-    expect(s.it.kind[2]).toBe(ITEM.heal);
+    expect(s.it.kind[4]).toBe(ITEM.heal);
     s.p.hp[0] = 50;
     press(); // soin immédiat
     expect(s.p.hp[0]).toBe(50 + s.rules.items.healHp);
-    expect(s.it.kind[2]).toBe(ITEM.none);
+    expect(s.it.kind[4]).toBe(ITEM.none);
   });
 
   it("soin : immédiat au ramassage, surplus perdu au-delà des PV max, jamais ramassé avec tous ses PV", () => {
@@ -273,6 +300,7 @@ describe("moteur : capacités et passifs", () => {
 
   it("étourdissement : la prochaine balle immobilise la cible", () => {
     const s = match({ chars: [withAbility({ kind: "stun", durationMs: 3000, effectMs: 600 }), character()] });
+    arm(s, 0, s.rules.startWeapon);
     advance(s, [cmd(0, 0, BTN.ability), 0]);
     advance(s, [cmd(0, 0, BTN.fire), 0]);
     run(s, 8, () => 0);
@@ -285,14 +313,16 @@ describe("moteur : capacités et passifs", () => {
   it("vol de vie, rafale, brûlure, perce-armure, boost et affaiblissement", () => {
     // Vol de vie : 50 % des dégâts rendus en PV.
     const d = match({ chars: [withAbility({ kind: "drain", durationMs: 4000, permille: 500 }), character()] });
+    arm(d, 0, d.rules.startWeapon);
     d.p.hp[0] = 100;
     advance(d, [cmd(0, 0, BTN.ability), 0]);
     advance(d, [cmd(0, 0, BTN.fire), 0]);
     run(d, 8, () => 0);
     const dealt = 140 - d.p.hp[1];
     expect(d.p.hp[0]).toBe(100 + idiv(dealt * 500, 1000));
-    // Rafale : 3 balles à 40 % des dégâts, sans munitions.
+    // Rafale : 3 balles à 40 % des dégâts, sans puiser dans le chargeur de l'arme en main.
     const m = match({ chars: [withAbility({ kind: "multi", hits: 3, permille: 400 }), character()] });
+    arm(m, 0, m.rules.startWeapon);
     advance(m, [cmd(0, 0, BTN.ability), 0]);
     expect(m.shotCount).toBe(3);
     expect(m.p.mag0[0]).toBe(m.rules.weapons[m.rules.startWeapon].magazine);
@@ -306,16 +336,19 @@ describe("moteur : capacités et passifs", () => {
     expect(afterImpact - b.p.hp[1]).toBe(2 * 14);
     // Perce-armure : 100 % de l'armure ignorée ; boost d'ATQ ; affaiblissement de la cible.
     const p = match({ chars: [withAbility({ kind: "pierce", durationMs: 4000, permille: 1000 }), character({ stats: { hp: 92, atk: 39, def: 60, spd: 77 } })] });
+    arm(p, 0, p.rules.startWeapon);
     advance(p, [cmd(0, 0, BTN.ability), 0]);
     advance(p, [cmd(0, 0, BTN.fire), 0]);
     run(p, 8, () => 0);
     expect(140 - p.p.hp[1]).toBe(START_DAMAGE);
     const f = match({ chars: [withAbility({ kind: "buff", stat: "atk", durationMs: 5000, permille: 250 }), character()] });
+    arm(f, 0, f.rules.startWeapon);
     advance(f, [cmd(0, 0, BTN.ability), 0]);
     advance(f, [cmd(0, 0, BTN.fire), 0]);
     run(f, 8, () => 0);
     expect(140 - f.p.hp[1]).toBe(expectedHit(START_DAMAGE, 125, 36));
     const w = match({ chars: [withAbility({ kind: "debuff", stat: "spd", durationMs: 3000, effectMs: 4000, permille: 200 }), character()] });
+    arm(w, 0, w.rules.startWeapon);
     advance(w, [cmd(0, 0, BTN.ability), 0]);
     advance(w, [cmd(0, 0, BTN.fire), 0]);
     run(w, 8, () => 0);
@@ -333,11 +366,13 @@ describe("moteur : capacités et passifs", () => {
     expect(r.p.hp[1]).toBe(cap);
     // Esquive certaine (1000 ‰) : aucune balle ne touche.
     const d = match({ chars: [character(), character({ passive: { kind: "dodge", permille: 1000 } })] });
+    arm(d, 0, d.rules.startWeapon);
     advance(d, [cmd(0, 0, BTN.fire), 0]);
     run(d, 10, () => 0);
     expect(d.p.hp[1]).toBe(140);
     // Renvoi : 50 % des dégâts reçus reviennent au tireur.
     const f = match({ chars: [character(), character({ passive: { kind: "reflect", permille: 500 } })] });
+    arm(f, 0, f.rules.startWeapon);
     advance(f, [cmd(0, 0, BTN.fire), 0]);
     run(f, 10, () => 0);
     expect(140 - f.p.hp[0]).toBe(idiv((140 - f.p.hp[1]) * 500, 1000));
@@ -346,6 +381,7 @@ describe("moteur : capacités et passifs", () => {
     const a = match({ chars: [stunner, character()] });
     const c = match({ chars: [stunner, character({ passive: { kind: "cleanse", permille: 500 } })] });
     for (const s of [a, c]) {
+      arm(s, 0, s.rules.startWeapon);
       advance(s, [cmd(0, 0, BTN.ability), 0]);
       advance(s, [cmd(0, 0, BTN.fire), 0]);
       run(s, 8, () => 0);
@@ -382,30 +418,29 @@ describe("moteur : zone et fin de partie", () => {
 describe("moteur : couteau, caisses, lunettes et boisson énergisante", () => {
   const settle = (s: MatchState) => run(s, BASE.switchTicks + 1, () => 0);
 
-  it("trois armes : arme de départ → arme ramassée → couteau → arme de départ (sans arme ramassée : directement le couteau)", () => {
+  it("emplacements : couteau par défaut ; sans arme à feu « arme suivante » reste le couteau ; sinon couteau → arme A → arme B → couteau", () => {
     const s = match({});
+    expect(weaponInHand(s, 0)).toBe(KNIFE); // couteau en main au départ
     advance(s, [cmd(0, 0, BTN.nextWeapon), 0]);
-    expect(weaponInHand(s, 0)).toBe(KNIFE);
     advance(s, [0, 0]);
-    advance(s, [cmd(0, 0, BTN.nextWeapon), 0]);
-    expect(weaponInHand(s, 0)).toBe(s.rules.startWeapon);
-    advance(s, [0, 0]);
+    expect(weaponInHand(s, 0)).toBe(KNIFE); // aucune arme à feu : on garde le couteau
+    s.p.weapon0[0] = 1;
+    s.p.mag0[0] = 5;
     s.p.weapon1[0] = 2;
     s.p.mag1[0] = 10;
+    s.p.active[0] = 2;
     const order: number[] = [];
     for (let k = 0; k < 3; k++) {
       advance(s, [cmd(0, 0, BTN.nextWeapon), 0]);
       advance(s, [0, 0]);
       order.push(weaponInHand(s, 0));
     }
-    expect(order).toEqual([2, KNIFE, s.rules.startWeapon]);
+    expect(order).toEqual([1, 2, KNIFE]);
   });
 
-  it("couteau : frappe ce qui est devant, à courte portée (armure comprise), sans munitions ; élimination au couteau", () => {
+  it("couteau (arme par défaut) : frappe ce qui est devant, à courte portée (armure comprise), sans munitions ; élimination au couteau", () => {
     const knife = s0Knife();
     const s = match({ chars: [character(), character(), character()], spawns: [tile(10), tile(16), tile(12), tile(16), tile(10), tile(22)] });
-    advance(s, [cmd(0, 0, BTN.nextWeapon), 0, 0]);
-    settle(s);
     advance(s, [cmd(0, 0, BTN.fire), 0, 0]);
     expect(s.p.hp[1]).toBe(140 - expectedHit(knife.damage, 100, 36));
     expect(s.p.hp[2]).toBe(140);
@@ -425,16 +460,14 @@ describe("moteur : couteau, caisses, lunettes et boisson énergisante", () => {
     map.tiles[16 * 32 + 6] = TILE.crate;
     const s = match({ map, spawns: [tile(4), tile(16), tile(16), tile(16)] });
     expect(s.crates[16 * 32 + 6]).toBe(s.rules.crate.hp);
-    // La caisse d'à côté, au couteau.
-    advance(s, [cmd(0, 0, BTN.nextWeapon), 0]);
-    settle(s);
+    // La caisse d'à côté, au couteau (arme par défaut).
     const before = s.itemCount;
     run(s, 10 * RATE, (i) => (i === 0 ? cmd(0, 0, BTN.fire) : 0));
     expect(s.map.tiles[16 * 32 + 6]).toBe(TILE.floor);
     expect(s.itemCount).toBe(before + 1);
     expect(s.counters[C.cratesBroken]).toBe(1);
-    // La suivante, à l'arme de départ : les balles s'arrêtent sur la caisse tant qu'elle tient.
-    advance(s, [cmd(0, 0, BTN.nextWeapon), 0]);
+    // La suivante, à l'arme à feu : on s'équipe d'un pistolet ; les balles s'arrêtent sur la caisse tant qu'elle tient.
+    arm(s, 0, s.rules.startWeapon);
     settle(s);
     run(s, 15 * RATE, (i) => (i === 0 ? cmd(0, 0, BTN.fire) : 0));
     expect(s.map.tiles[16 * 32 + 8]).toBe(TILE.floor);
@@ -452,8 +485,7 @@ describe("moteur : couteau, caisses, lunettes et boisson énergisante", () => {
     map.tiles[20 * 32 + 8] = TILE.wall;
     map.tiles[20 * 32 + 9] = TILE.crate;
     const s = match({ map, spawns: [8 * TS - 300, tile(16), 8 * TS - 300, tile(20)] });
-    run(s, 1, () => cmd(0, 0, BTN.nextWeapon));
-    settle(s);
+    // Le couteau est l'arme par défaut : on frappe directement.
     run(s, 1, () => cmd(0, 0, BTN.fire));
     expect(s.crates[16 * 32 + 8]).toBeLessThan(s.rules.crate.hp);
     expect(s.crates[20 * 32 + 9]).toBe(s.rules.crate.hp);

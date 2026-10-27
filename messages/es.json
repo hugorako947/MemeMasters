@@ -1064,13 +1064,19 @@
       "petard": "Escopeta",
       "rafaleuse": "Subfusil",
       "lunette": "Rifle de francotirador",
+      "pop2": "Pistola avanzada",
+      "petard2": "Súper escopeta",
+      "rafaleuse2": "Mega subfusil",
+      "lunette2": "Rifle de precisión pesado",
       "knife": "Cuchillo de combate"
     },
     "items": {
       "heal": "Botiquín",
       "vest": "Chaleco antibalas",
       "speed": "Bebida energética",
-      "scope": "Mira ×{zoom}"
+      "scope": "Mira ×{zoom}",
+      "ammo": "Munición",
+      "range": "Potenciador de alcance"
     },
     "ability": {
       "sprint": "Sprint: +{percent} % de velocidad durante {seconds} s",
@@ -1119,11 +1125,6 @@
       "abilityReady": "Lista",
       "stunned": "¡Aturdido!",
       "pickup": "Recoger: {item}",
-      "ammo": {
-        "light": "Munición ligera",
-        "shell": "Cartuchos",
-        "heavy": "Munición pesada"
-      },
       "seconds": "{count} s",
       "melee": "Cuerpo a cuerpo"
     },

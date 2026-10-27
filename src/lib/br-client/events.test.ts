@@ -38,6 +38,11 @@ function setup() {
   map.tiles[16 * N + 9] = TILE.crate;
   for (let x = 0; x < N; x++) map.tiles[10 * N + x] = TILE.wall;
   const s = createMatch({ seed: 1, rules: rules(2), characters: [character(), character()], map, spawns: [tile(4), tile(16), tile(26), tile(26)], loot: [] });
+  // Le joueur démarre au couteau : on l'équipe d'une arme à feu (emplacement A) pour les tirs.
+  s.p.weapon0[0] = s.rules.startWeapon;
+  s.p.mag0[0] = s.rules.weapons[s.rules.startWeapon].magazine;
+  s.p.ammo[0] = 99;
+  s.p.active[0] = 0;
   return { s, tracker: createEventTracker(s) };
 }
 

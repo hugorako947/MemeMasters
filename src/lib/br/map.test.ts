@@ -104,7 +104,8 @@ describe("carte générée par la graine", () => {
         const ty = Math.floor(item.y / map.tileSub);
         if (tx > map.buildings[b] && tx < map.buildings[b] + map.buildings[b + 2] - 1 && ty > map.buildings[b + 1] && ty < map.buildings[b + 1] + map.buildings[b + 3] - 1) inside++;
       }
-      if (item.kind === ITEM.weapon) expect(item.sub).not.toBe(RULES.startWeapon);
+      // Toutes les armes se ramassent depuis 3A (plus de gun de départ exclu du butin).
+      if (item.kind === ITEM.weapon) expect(item.sub).toBeGreaterThanOrEqual(0);
     }
     expect(inside).toBeGreaterThan(120);
   });

@@ -54,11 +54,16 @@ describe("ce que voit le joueur (mêmes règles que les bots)", () => {
     expect(Array.from(seen)).toEqual([1, 0, 0, 1]);
   });
 
-  it("interface : PV, gilet, arme, chargeur (réserve illimitée pour l'arme de départ), survivants, zone", () => {
+  it("interface : PV, gilet, arme (munitions universelles), chargeur, survivants, zone", () => {
     const s = match({ spawns: [tile(5), tile(16), tile(25), tile(16)] });
     s.p.shield[0] = 20;
+    // Équipe le joueur d'une arme à feu (emplacement A), avec une réserve de munitions.
+    s.p.weapon0[0] = s.rules.startWeapon;
+    s.p.mag0[0] = s.rules.weapons[s.rules.startWeapon].magazine;
+    s.p.ammo[0] = 40;
+    s.p.active[0] = 0;
     const hud = hudState(s, 0);
-    expect(hud).toMatchObject({ alive: true, hp: 140, maxHp: 140, shield: 20, weapon: s.rules.startWeapon, slots: [s.rules.startWeapon, -1, KNIFE], slot: 0, reserve: null, scope: 1, boostSeconds: 0, survivors: 2, kills: 0 });
+    expect(hud).toMatchObject({ alive: true, hp: 140, maxHp: 140, shield: 20, weapon: s.rules.startWeapon, slots: [KNIFE, s.rules.startWeapon, -1], slot: 1, reserve: 40, scope: 1, boostSeconds: 0, rangeSeconds: 0, survivors: 2, kills: 0 });
     expect(hud.magazine).toBe(s.rules.weapons[s.rules.startWeapon].magazine);
     expect(hud.zone).toMatchObject({ stage: 0, phase: 0 });
     expect(hud.zone.secondsLeft).toBe(Math.ceil(s.rules.zone[0].waitTicks / RATE));
@@ -66,11 +71,12 @@ describe("ce que voit le joueur (mêmes règles que les bots)", () => {
     advance(s, [cmd(0, 0, BTN.ability), 0]);
     expect(hudState(s, 0).abilityReady).toBe(false);
     expect(hudState(s, 0).abilityCooldown).toBeGreaterThan(0.9);
-    // Couteau en main (sans munitions), lunette ×4, boisson énergisante.
+    // Couteau en main (sans munitions), lunette ×4, boisson énergisante, booster de portée.
     s.p.active[0] = 2;
     s.p.scope[0] = 4;
     s.p.boostLeft[0] = 2 * RATE + 1;
-    expect(hudState(s, 0)).toMatchObject({ weapon: KNIFE, slot: 2, magazine: 0, magazineSize: 0, reserve: null, scope: 4, boostSeconds: 3 });
+    s.p.rangeLeft[0] = 3 * RATE + 1;
+    expect(hudState(s, 0)).toMatchObject({ weapon: KNIFE, slot: 0, magazine: 0, magazineSize: 0, reserve: null, scope: 4, boostSeconds: 3, rangeSeconds: 4 });
   });
 
   it("objet à ramasser : le plus proche des objets utiles à portée (un soin inutile avec tous ses PV est ignoré)", () => {
@@ -91,6 +97,11 @@ describe("ce que voit le joueur (mêmes règles que les bots)", () => {
 
   it("dégâts affichés (ceux du joueur marqués) et fil des éliminations", () => {
     const s = match({ spawns: [tile(5), tile(16), tile(10), tile(16), tile(25), tile(25)] });
+    // Le joueur est armé d'une arme à feu (emplacement A) pour toucher à distance.
+    s.p.weapon0[0] = s.rules.startWeapon;
+    s.p.mag0[0] = s.rules.weapons[s.rules.startWeapon].magazine;
+    s.p.ammo[0] = 99;
+    s.p.active[0] = 0;
     s.p.hp[1] = 5;
     const seen = visibleParticipants(s, 0, new Uint8Array(s.n));
     let before = hpTotals(s);

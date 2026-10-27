@@ -240,11 +240,13 @@ export function MatchScreen({ setup, roster, onQuit, onReplay }: { setup: MatchS
         return;
       }
       if (!down || e.repeat) return;
-      const slot = { Digit1: 0, Digit2: 1, Digit3: 2 }[e.code];
+      // 3A : 1 = couteau (toujours), 2 = arme A, 3 = arme B.
+      const slot = { Digit1: 2, Digit2: 0, Digit3: 1 }[e.code];
       if (slot !== undefined) {
-        // L'arme voulue (1 : arme de départ, 2 : arme ramassée, 3 : couteau) : les armes défilent jusqu'à elle.
+        // L'arme voulue : les armes défilent jusqu'à elle (seulement si elle est présente).
         const st = match.current;
-        if (st && (slot !== 1 || st.p.weapon1[ME] >= 0) && st.p.active[ME] !== slot) wantSlot.current = slot;
+        const present = slot === 2 || (st ? (slot === 0 ? st.p.weapon0[ME] >= 0 : st.p.weapon1[ME] >= 0) : false);
+        if (st && present && st.p.active[ME] !== slot) wantSlot.current = slot;
       } else return;
       e.preventDefault();
     };

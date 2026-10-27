@@ -3,6 +3,7 @@
  * disponibles hors ligne. Chaque son prend un volume (0 à 1, déjà atténué par la distance) et une position
  * gauche-droite (−1 à 1). Le contexte audio ne démarre qu'après un geste du joueur (règle des navigateurs).
  */
+import { BURN_SHOT } from "@/lib/br/rules";
 
 let ctx: AudioContext | null = null;
 let master: GainNode | null = null;
@@ -116,20 +117,23 @@ function tone(v: Voice, opts: { type: OscillatorType; from: number; to: number; 
 export function playShot(weapon: number, gain = 1, pan = 0): void {
   const v = voice(gain, pan);
   if (!v) return;
-  if (weapon === 1) {
+  // Famille d'arme : 0 pistolet, 1 fusil à pompe, 2 mitraillette, 3 fusil de précision (les versions supérieures 4 à 7
+  // partagent le son de leur base), 8 = projectile de brûlure (BURN_SHOT).
+  const family = weapon === BURN_SHOT ? 4 : weapon % 4;
+  if (family === 1) {
     burst(v, { type: "lowpass", freq: 1400, to: 300, gain: 0.9, decay: 0.32 });
     tone(v, { type: "sine", from: 110, to: 40, gain: 0.8, decay: 0.22 });
     v.end(0.35);
-  } else if (weapon === 2) {
+  } else if (family === 2) {
     burst(v, { type: "bandpass", freq: 2200, to: 900, q: 1.2, gain: 0.55, decay: 0.07 });
     tone(v, { type: "square", from: 180, to: 80, gain: 0.12, decay: 0.05 });
     v.end(0.1);
-  } else if (weapon === 3) {
+  } else if (family === 3) {
     burst(v, { type: "highpass", freq: 3000, gain: 0.7, decay: 0.05 });
     burst(v, { type: "lowpass", freq: 900, to: 120, gain: 0.8, decay: 0.55 });
     tone(v, { type: "sine", from: 90, to: 30, gain: 0.9, decay: 0.4 });
     v.end(0.6);
-  } else if (weapon === 4) {
+  } else if (weapon === BURN_SHOT) {
     tone(v, { type: "sawtooth", from: 220, to: 900, gain: 0.25, decay: 0.25 });
     burst(v, { type: "bandpass", freq: 800, to: 2400, gain: 0.35, decay: 0.25 });
     v.end(0.3);

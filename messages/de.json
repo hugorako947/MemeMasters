@@ -1064,13 +1064,19 @@
       "petard": "Schrotflinte",
       "rafaleuse": "Maschinenpistole",
       "lunette": "Scharfschützengewehr",
+      "pop2": "Fortgeschrittene Pistole",
+      "petard2": "Super-Schrotflinte",
+      "rafaleuse2": "Mega-MP",
+      "lunette2": "Schweres Scharfschützengewehr",
       "knife": "Kampfmesser"
     },
     "items": {
       "heal": "Verbandskasten",
       "vest": "Schutzweste",
       "speed": "Energydrink",
-      "scope": "{zoom}×-Zielfernrohr"
+      "scope": "{zoom}×-Zielfernrohr",
+      "ammo": "Munition",
+      "range": "Reichweiten-Boost"
     },
     "ability": {
       "sprint": "Sprint: +{percent} % Tempo für {seconds} s",
@@ -1119,11 +1125,6 @@
       "abilityReady": "Bereit",
       "stunned": "Betäubt!",
       "pickup": "Aufheben: {item}",
-      "ammo": {
-        "light": "Leichte Munition",
-        "shell": "Schrot",
-        "heavy": "Schwere Munition"
-      },
       "seconds": "{count} s",
       "melee": "Nahkampf"
     },

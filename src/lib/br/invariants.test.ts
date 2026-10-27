@@ -13,35 +13,41 @@ import { botSetup, playWithDriver } from "./test-driver";
 function lootTotals(s: MatchState): number[] {
   const P = s.p;
   const I = s.it;
-  const totals = [0, 0, 0, 0, 0, 0, 0, 0];
-  const ammoOf = (weapon: number) => s.rules.weapons[weapon].ammo;
+  // [0] armes, [1] soins, [2] gilets, [3] munitions (chargeurs compris), [4] boissons, [5] lunettes, [6] boosters de portée.
+  const totals = [0, 0, 0, 0, 0, 0, 0];
+  const isAmmoWeapon = (weapon: number) => s.rules.weapons[weapon].ammo > 0;
   for (let k = 0; k < s.itemCount; k++) {
     if (I.kind[k] === ITEM.weapon) {
       totals[0]++;
-      totals[2 + ammoOf(I.sub[k])] += I.qty[k];
+      if (isAmmoWeapon(I.sub[k])) totals[3] += I.qty[k]; // le chargeur compte comme des munitions
     } else if (I.kind[k] === ITEM.heal) totals[1] += I.qty[k];
     else if (I.kind[k] === ITEM.vest) totals[2]++;
-    else if (I.kind[k] === ITEM.ammo) totals[2 + I.sub[k]] += I.qty[k];
-    else if (I.kind[k] === ITEM.speed) totals[6]++;
-    else if (I.kind[k] === ITEM.scope) totals[7]++;
+    else if (I.kind[k] === ITEM.ammo) totals[3] += I.qty[k];
+    else if (I.kind[k] === ITEM.speed) totals[4]++;
+    else if (I.kind[k] === ITEM.scope) totals[5]++;
+    else if (I.kind[k] === ITEM.range) totals[6]++;
   }
   for (let i = 0; i < s.n; i++) {
+    if (P.weapon0[i] >= 0) {
+      totals[0]++;
+      if (isAmmoWeapon(P.weapon0[i])) totals[3] += P.mag0[i];
+    }
     if (P.weapon1[i] >= 0) {
       totals[0]++;
-      totals[2 + ammoOf(P.weapon1[i])] += P.mag1[i];
+      if (isAmmoWeapon(P.weapon1[i])) totals[3] += P.mag1[i];
     }
-    for (let a = 1; a < 4; a++) totals[2 + a] += s.m.ammo[4 * i + a];
+    totals[3] += P.ammo[i];
   }
   totals[1] += s.counters[C.usedHeals];
   totals[2] += s.counters[C.usedVests];
-  for (let a = 1; a < 4; a++) totals[2 + a] += s.counters[a];
-  totals[6] += s.counters[C.usedBoosts] - s.counters[C.crateBoosts];
-  totals[7] += s.counters[C.usedScopes] - s.counters[C.crateScopes];
+  totals[3] += s.counters[C.firedAmmo];
+  totals[4] += s.counters[C.usedBoosts] - s.counters[C.crateBoosts];
+  totals[5] += s.counters[C.usedScopes] - s.counters[C.crateScopes];
+  totals[6] += s.counters[C.usedRanges] - s.counters[C.crateRanges];
   totals[0] -= s.counters[C.crateWeapons];
   totals[1] -= s.counters[C.crateHeals];
   totals[2] -= s.counters[C.crateVests];
-  for (let a = 1; a < 4; a++) totals[2 + a] -= s.counters[C.crateLight + a - 1];
-  // La case 2 mélange gilets et balles « sans munition » (aucune arme ramassable n'en a) : on la garde telle quelle.
+  totals[3] -= s.counters[C.crateAmmo];
   return totals;
 }
 

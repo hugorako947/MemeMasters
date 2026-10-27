@@ -66,6 +66,14 @@ function run(s: MatchState, ticks: number, each?: (s: MatchState) => void) {
 
 const dist = (s: MatchState, i: number, x: number, y: number) => Math.hypot(s.p.x[i] - x, s.p.y[i] - y);
 
+/** Équipe un bot d'une arme à feu (emplacement A, en main), chargeur plein et réserve : sinon il démarre au couteau. */
+function arm(s: MatchState, i: number, w = RAFALEUSE): void {
+  s.p.weapon0[i] = w;
+  s.p.mag0[i] = s.rules.weapons[w].magazine;
+  s.p.ammo[i] = 999;
+  s.p.active[i] = 0;
+}
+
 describe("vision : la même règle pour le joueur, l'aide à la visée et les bots", () => {
   it("rectangle de vision, murs, buissons (visible seulement de tout près)", () => {
     const map = openMap();
@@ -119,6 +127,7 @@ describe("bots : réglages", () => {
 describe("bots : comportement", () => {
   it("tire sur un ennemi visible et lui fait perdre des PV", () => {
     const s = match({ botLevels: [100, null], spawns: [tile(10), tile(20), tile(18), tile(20)] });
+    arm(s, 0);
     run(s, 5 * RATE);
     expect(s.p.hp[1]).toBeLessThan(s.fighters[1].maxHp);
     expect(s.p.damage[0]).toBeGreaterThan(0);
@@ -128,6 +137,7 @@ describe("bots : comportement", () => {
     const map = openMap();
     for (let y = 1; y < 39; y++) map.tiles[y * 40 + 20] = TILE.wall;
     const s = match({ map, botLevels: [100, null], spawns: [tile(16), tile(20), tile(24), tile(20)] });
+    arm(s, 0);
     run(s, 10 * RATE);
     expect(s.p.lastShot[0]).toBeLessThan(0);
     expect(s.p.hp[1]).toBe(s.fighters[1].maxHp);
@@ -137,7 +147,7 @@ describe("bots : comportement", () => {
     const loot = [{ kind: ITEM.weapon, sub: RAFALEUSE, qty: 30, x: tile(14), y: tile(20) }];
     const s = match({ botLevels: [50, null], spawns: [tile(10), tile(20), tile(36), tile(36)], loot });
     run(s, 5 * RATE);
-    expect(s.p.weapon1[0]).toBe(RAFALEUSE);
+    expect(s.p.weapon0[0]).toBe(RAFALEUSE); // première arme ramassée → emplacement A
   });
 
   it("blessé, va ramasser un soin qu'il voit (soin immédiat) ; en pleine forme, le laisse au sol", () => {
@@ -178,7 +188,7 @@ describe("bots : comportement", () => {
     const loot = [{ kind: ITEM.weapon, sub: RAFALEUSE, qty: 30, x: tile(22), y: tile(20) }];
     const s = match({ map, botLevels: [60, null], spawns: [tile(12), tile(20), tile(3), tile(36)], loot });
     run(s, 15 * RATE);
-    expect(s.p.weapon1[0]).toBe(RAFALEUSE);
+    expect(s.p.weapon0[0]).toBe(RAFALEUSE);
   });
 
   it("fuit un ennemi quand il lui reste peu de PV", () => {
@@ -194,6 +204,7 @@ describe("bots : comportement", () => {
   it("utilise sa capacité en combat", () => {
     const stunner = character({ ability: { kind: "stun", cooldownMs: 15000, durationMs: 3000, permille: 0, effectMs: 600, hits: 0, stat: null } });
     const s = match({ botLevels: [100, null], chars: [stunner, character()], spawns: [tile(10), tile(20), tile(17), tile(20)] });
+    arm(s, 0);
     let used = false;
     run(s, 8 * RATE, (st) => (used ||= st.p.abilityCd[0] > 0));
     expect(used).toBe(true);
@@ -220,6 +231,7 @@ describe("bots : comportement", () => {
   it("temps de réaction : le premier tir d'un bot de niveau 10 part bien avant celui d'un bot de niveau 0", () => {
     const firstShot = (level: number) => {
       const s = match({ botLevels: [level, null], spawns: [tile(10), tile(20), tile(16), tile(20)] });
+      arm(s, 0);
       let t = -1;
       run(s, 3 * RATE, (st) => {
         if (t < 0 && st.p.lastShot[0] >= 0) t = st.tick;
@@ -233,11 +245,13 @@ describe("bots : comportement", () => {
   });
 
   it("en duel, le niveau 10 bat le niveau 0 presque toujours", () => {
-    // Avec la seule arme de départ, aucun des deux ne cherche le combat : le duel peut prendre jusqu'à trois minutes.
+    // Les deux sont armés d'une arme à feu : le combat tranche nettement selon le niveau.
     let wins = 0;
     for (let seed = 1; seed <= 12; seed++) {
       const [a, b] = seed % 2 ? [tile(10), tile(22)] : [tile(22), tile(10)];
       const s = match({ seed, botLevels: [100, 0], spawns: [a, tile(20), b, tile(20)] });
+      arm(s, 0);
+      arm(s, 1);
       run(s, 180 * RATE);
       if (s.finished && s.p.place[0] === 1) wins++;
     }

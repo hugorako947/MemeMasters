@@ -29,7 +29,7 @@ import { BURN_SHOT, KNIFE, SUB, type Rules } from "./rules";
 import { allocateState, C, canTake, cloneState, KILL_BURN, KILL_KNIFE, KILL_REFLECT, KILL_ZONE, SHOT_CAPACITY, SHOT_FIELDS, weaponInHand, Z, type MatchState } from "./state";
 import { canSee } from "./vision";
 
-export const ENGINE_VERSION = 4;
+export const ENGINE_VERSION = 5;
 
 const kindIndex = <K extends string>(list: readonly K[]) => Object.fromEntries(list.map((k, i) => [k, i])) as Record<K, number>;
 const AB = kindIndex(ABILITY_KINDS);
@@ -78,8 +78,10 @@ export function createMatch(setup: MatchSetup): MatchState {
     P.y[i] = spawns[2 * i + 1];
     P.aim[i] = iatan2(middle - P.y[i], middle - P.x[i]);
     P.hp[i] = s.fighters[i].maxHp;
+    // 3A : couteau en main, aucune arme à feu ni munition au départ (à ramasser).
+    P.weapon0[i] = -1;
     P.weapon1[i] = -1;
-    P.mag0[i] = rules.weapons[rules.startWeapon].magazine;
+    P.active[i] = 2;
     P.killedBy[i] = -2;
     P.burnFrom[i] = -1;
     P.lastHitBy[i] = -1;
@@ -218,20 +220,29 @@ function currentSpeed(s: MatchState, i: number): number {
 
 // ---------------------------------------------------------------- armes, soins, objets
 
+/** Arme suivante (molette / Tab) : couteau → arme A → arme B → couteau, en sautant les emplacements d'armes vides. */
 function switchWeapon(s: MatchState, i: number): void {
   const P = s.p;
-  const active = P.active[i];
-  P.active[i] = active === 0 ? (P.weapon1[i] >= 0 ? 1 : 2) : active === 1 ? 2 : 0;
+  const order = [2, 0, 1] as const;
+  const has = (slot: number) => (slot === 0 ? P.weapon0[i] >= 0 : slot === 1 ? P.weapon1[i] >= 0 : true);
+  const cur = Math.max(0, order.indexOf(P.active[i] as 0 | 1 | 2));
+  for (let k = 1; k <= order.length; k++) {
+    const slot = order[(cur + k) % order.length];
+    if (has(slot)) {
+      P.active[i] = slot;
+      break;
+    }
+  }
   P.reload[i] = 0;
   P.fireCd[i] = Math.max(P.fireCd[i], s.rules.switchTicks);
 }
 
 function magazineOf(s: MatchState, i: number): number {
-  return s.p.active[i] === 1 && s.p.weapon1[i] >= 0 ? s.p.mag1[i] : s.p.mag0[i];
+  return s.p.active[i] === 1 ? s.p.mag1[i] : s.p.mag0[i];
 }
 
 function setMagazine(s: MatchState, i: number, value: number): void {
-  if (s.p.active[i] === 1 && s.p.weapon1[i] >= 0) s.p.mag1[i] = value;
+  if (s.p.active[i] === 1) s.p.mag1[i] = value;
   else s.p.mag0[i] = value;
 }
 
@@ -239,17 +250,18 @@ function startReload(s: MatchState, i: number): void {
   const P = s.p;
   const W = s.rules.weapons[weaponInHand(s, i)];
   if (P.reload[i] > 0 || magazineOf(s, i) >= W.magazine) return;
-  if (W.ammo > 0 && s.m.ammo[4 * i + W.ammo] <= 0) return;
+  if (W.ammo > 0 && P.ammo[i] <= 0) return;
   P.reload[i] = W.reloadTicks;
 }
 
 function finishReload(s: MatchState, i: number): void {
+  const P = s.p;
   const W = s.rules.weapons[weaponInHand(s, i)];
   const mag = magazineOf(s, i);
   const need = W.magazine - mag;
-  const take = W.ammo === 0 ? need : Math.min(need, s.m.ammo[4 * i + W.ammo]);
+  const take = W.ammo === 0 ? need : Math.min(need, P.ammo[i]);
   setMagazine(s, i, mag + take);
-  if (W.ammo > 0) s.m.ammo[4 * i + W.ammo] -= take;
+  if (W.ammo > 0) P.ammo[i] -= take;
 }
 
 function pushItem(s: MatchState, kind: number, sub: number, qty: number, x: number, y: number): void {
@@ -286,25 +298,32 @@ function pickup(s: MatchState, i: number): void {
   switch (I.kind[k]) {
     case ITEM.weapon: {
       const [w, mag] = [I.sub[k], I.qty[k]];
-      if (P.weapon1[i] >= 0) {
+      // Un emplacement d'arme à feu libre (A puis B) ; les deux pleins : on échange celle en main (ou A si couteau en main).
+      const slot = P.weapon0[i] < 0 ? 0 : P.weapon1[i] < 0 ? 1 : P.active[i] === 1 ? 1 : 0;
+      const cur = slot === 0 ? P.weapon0[i] : P.weapon1[i];
+      if (cur >= 0) {
         // Échange : l'arme tenue est posée à la place de la nouvelle.
-        I.sub[k] = P.weapon1[i];
-        I.qty[k] = P.mag1[i];
+        I.sub[k] = cur;
+        I.qty[k] = slot === 0 ? P.mag0[i] : P.mag1[i];
         I.x[k] = P.x[i];
         I.y[k] = P.y[i];
       } else I.kind[k] = ITEM.none;
-      P.weapon1[i] = w;
-      P.mag1[i] = mag;
-      P.active[i] = 1;
+      if (slot === 0) {
+        P.weapon0[i] = w;
+        P.mag0[i] = mag;
+      } else {
+        P.weapon1[i] = w;
+        P.mag1[i] = mag;
+      }
+      P.active[i] = slot;
       P.reload[i] = 0;
       P.fireCd[i] = Math.max(P.fireCd[i], s.rules.switchTicks);
       break;
     }
     case ITEM.ammo: {
-      const slot = 4 * i + I.sub[k];
-      const take = Math.min(items.ammoMax[I.sub[k]] - s.m.ammo[slot], I.qty[k]);
+      const take = Math.min(items.ammoMax[I.sub[k]] - P.ammo[i], I.qty[k]);
       if (take <= 0) return;
-      s.m.ammo[slot] += take;
+      P.ammo[i] += take;
       I.qty[k] -= take;
       if (I.qty[k] === 0) I.kind[k] = ITEM.none;
       break;
@@ -333,6 +352,12 @@ function pickup(s: MatchState, i: number): void {
       P.scope[i] = Math.max(P.scope[i], I.sub[k]);
       I.kind[k] = ITEM.none;
       s.counters[C.usedScopes]++;
+      break;
+    }
+    case ITEM.range: {
+      P.rangeLeft[i] = s.rules.crate.rangeTicks;
+      I.kind[k] = ITEM.none;
+      s.counters[C.usedRanges]++;
       break;
     }
   }
@@ -394,7 +419,8 @@ function spawnShot(s: MatchState, owner: number, weapon: number, angle: number, 
   S.vx[k] = idiv(W.speed * icos(angle), Q14);
   S.vy[k] = idiv(W.speed * isin(angle), Q14);
   S.speed[k] = W.speed;
-  S.left[k] = W.range;
+  // Portée en plus tant que le booster de portée est actif (3A).
+  S.left[k] = s.p.rangeLeft[owner] > 0 ? idiv(W.range * (1000 + s.rules.crate.rangePermille), 1000) : W.range;
   S.damage[k] = damage;
   S.owner[k] = owner;
   S.weapon[k] = weapon;
@@ -431,7 +457,7 @@ function tryFire(s: MatchState, i: number): void {
   setMagazine(s, i, mag - 1);
   P.fireCd[i] = W.fireTicks;
   P.lastShot[i] = s.tick;
-  if (W.ammo > 0) s.counters[W.ammo]++;
+  if (W.ammo > 0) s.counters[C.firedAmmo]++;
   const fx: ShotEffects = { ...NO_EFFECT };
   if (abilityActive(s, i, AB.drain)) fx.drain = f.abilityPermille;
   if (abilityActive(s, i, AB.pierce)) fx.pierce = f.abilityPermille;
@@ -542,14 +568,13 @@ function damageCrate(s: MatchState, tile: number, amount: number): void {
   let roll = nextBelow(s.rng, STREAM.loot, weights.reduce((a, b) => a + b, 0));
   let kind = 0;
   while (kind < weights.length - 1 && roll >= weights[kind]) roll -= weights[kind++];
-  // Soin, munitions, gilet, arme, boisson, lunette.
+  // Soin, munitions, gilet, arme, boisson, lunette, booster de portée.
   if (kind === 0) {
     pushItem(s, ITEM.heal, 0, 1, x, y);
     s.counters[C.crateHeals]++;
   } else if (kind === 1) {
-    const ammo = 1 + nextBelow(s.rng, STREAM.loot, 3);
-    pushItem(s, ITEM.ammo, ammo, R.items.ammoBox[ammo], x, y);
-    s.counters[C.crateLight + ammo - 1] += R.items.ammoBox[ammo];
+    pushItem(s, ITEM.ammo, 1, R.items.ammoBox[1], x, y);
+    s.counters[C.crateAmmo] += R.items.ammoBox[1];
   } else if (kind === 2) {
     pushItem(s, ITEM.vest, 0, 1, x, y);
     s.counters[C.crateVests]++;
@@ -561,17 +586,20 @@ function damageCrate(s: MatchState, tile: number, amount: number): void {
     const W = R.weapons[w];
     pushItem(s, ITEM.weapon, w, W.magazine, x, y);
     s.counters[C.crateWeapons]++;
-    if (W.ammo > 0) s.counters[C.crateLight + W.ammo - 1] += W.magazine;
+    if (W.ammo > 0) s.counters[C.crateAmmo] += W.magazine;
   } else if (kind === 4) {
     pushItem(s, ITEM.speed, 0, 1, x, y);
     s.counters[C.crateBoosts]++;
-  } else {
+  } else if (kind === 5) {
     const scopes = R.crate.scopes;
     let sr = nextBelow(s.rng, STREAM.loot, scopes.reduce((a, c) => a + c.weight, 0));
     let k = 0;
     while (k < scopes.length - 1 && sr >= scopes[k].weight) sr -= scopes[k++].weight;
     pushItem(s, ITEM.scope, scopes[k].zoom, 1, x, y);
     s.counters[C.crateScopes]++;
+  } else {
+    pushItem(s, ITEM.range, 0, 1, x, y);
+    s.counters[C.crateRanges]++;
   }
 }
 
@@ -730,20 +758,21 @@ function kill(s: MatchState, v: number, killer: number, cause: number): void {
   s.log[e + 1] = killer;
   s.log[e + 2] = v;
   s.log[e + 3] = cause;
-  // Butin lâché sur place : arme ramassée (avec son chargeur), munitions.
+  // Butin lâché sur place : les armes à feu ramassées (avec leur chargeur), les munitions.
   let d = 0;
   const drop = (kind: number, sub: number, qty: number) => {
     if (qty <= 0 && kind !== ITEM.weapon) return;
     const [ox, oy] = DROP_OFFSETS[d++ % DROP_OFFSETS.length];
     pushItem(s, kind, sub, qty, P.x[v] + ox * SUB, P.y[v] + oy * SUB);
   };
+  if (P.weapon0[v] >= 0) drop(ITEM.weapon, P.weapon0[v], P.mag0[v]);
   if (P.weapon1[v] >= 0) drop(ITEM.weapon, P.weapon1[v], P.mag1[v]);
-  for (let a = 1; a < 4; a++) drop(ITEM.ammo, a, s.m.ammo[4 * v + a]);
-  if (P.weapon1[v] >= 0) {
-    P.weapon1[v] = -1;
-    P.mag1[v] = 0;
-  }
-  for (let a = 1; a < 4; a++) s.m.ammo[4 * v + a] = 0;
+  drop(ITEM.ammo, 1, P.ammo[v]);
+  P.weapon0[v] = -1;
+  P.mag0[v] = 0;
+  P.weapon1[v] = -1;
+  P.mag1[v] = 0;
+  P.ammo[v] = 0;
   P.shield[v] = 0;
   P.reload[v] = 0;
   P.stun[v] = 0;
@@ -760,6 +789,7 @@ function updateTimers(s: MatchState): void {
     if (!P.alive[i]) continue;
     if (P.fireCd[i] > 0) P.fireCd[i]--;
     if (P.boostLeft[i] > 0) P.boostLeft[i]--;
+    if (P.rangeLeft[i] > 0) P.rangeLeft[i]--;
     if (P.abilityCd[i] > 0) P.abilityCd[i]--;
     if (P.abilityLeft[i] > 0) P.abilityLeft[i]--;
     if (P.stun[i] > 0) P.stun[i]--;

@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { useSyncExternalStore } from "react";
 import { BR_WEAPONS } from "@/config/game.config";
 import { ITEM } from "@/lib/br/map";
-import { AMMO_KINDS, KNIFE } from "@/lib/br/rules";
+import { KNIFE } from "@/lib/br/rules";
 import type { RosterEntry } from "@/lib/br-client/training";
 import type { MatchSnapshot, Store } from "./match-store";
 import { useBrSettings } from "@/lib/client/br-settings";
@@ -26,12 +26,12 @@ export function useWeaponName() {
 export function useItemName() {
   const weaponName = useWeaponName();
   const ti = useTranslations("battleRoyale.items");
-  const ta = useTranslations("match.hud.ammo");
   return (kind: number, sub: number): string => {
     if (kind === ITEM.weapon) return weaponName(sub);
-    if (kind === ITEM.ammo) return ta((AMMO_KINDS[sub] ?? "light") as "light");
+    if (kind === ITEM.ammo) return ti("ammo");
     if (kind === ITEM.speed) return ti("speed");
     if (kind === ITEM.scope) return ti("scope", { zoom: sub });
+    if (kind === ITEM.range) return ti("range");
     return kind === ITEM.heal ? ti("heal") : ti("vest");
   };
 }
@@ -58,6 +58,15 @@ export function Hud({ store, roster, me, touch }: { store: Store<MatchSnapshot |
     return tf("kill", { killer: name(e.killer), victim: name(e.victim) });
   };
   const zoneText = hud.zone.stage === 2 ? t("zoneClosed") : hud.zone.stage === 0 ? t("zoneWait", { time: clock(hud.zone.secondsLeft) }) : t("zoneShrink", { time: clock(hud.zone.secondsLeft) });
+  // Arme suivante (bouton ⇄) : le prochain emplacement présent dans la boucle couteau → arme A → arme B.
+  let nextSlot = hud.slot;
+  for (let step = 1; step <= 3; step++) {
+    const k = (hud.slot + step) % 3;
+    if (k === 0 || hud.slots[k] >= 0) {
+      nextSlot = k;
+      break;
+    }
+  }
 
   return (
     <div className="pointer-events-none absolute inset-0 select-none text-ink">
@@ -111,12 +120,17 @@ export function Hud({ store, roster, me, touch }: { store: Store<MatchSnapshot |
             {t("pickup", { item: itemName(pickup.kind, pickup.sub) })} · {label(keys.pickup)}
           </p>
         ) : null}
-        {hud.scope > 1 || hud.boostSeconds > 0 ? (
+        {hud.scope > 1 || hud.boostSeconds > 0 || hud.rangeSeconds > 0 ? (
           <p className="flex flex-wrap justify-center gap-1 text-[0.7rem] font-extrabold">
             {hud.scope > 1 ? <span className="rounded-full border-2 border-ink bg-surface/90 px-2">{ti("scope", { zoom: hud.scope })}</span> : null}
             {hud.boostSeconds > 0 ? (
               <span className="rounded-full border-2 border-ink bg-sticker px-2">
                 {ti("speed")} · <bdi dir="ltr">{t("seconds", { count: hud.boostSeconds })}</bdi>
+              </span>
+            ) : null}
+            {hud.rangeSeconds > 0 ? (
+              <span className="rounded-full border-2 border-ink bg-sticker px-2">
+                {ti("range")} · <bdi dir="ltr">{t("seconds", { count: hud.rangeSeconds })}</bdi>
               </span>
             ) : null}
           </p>
@@ -128,9 +142,9 @@ export function Hud({ store, roster, me, touch }: { store: Store<MatchSnapshot |
           </bdi>
           {touch ? (
             // Sur écran tactile, le bouton ⇄ passe à l'arme suivante : on l'annonce.
-            <span className="truncate font-semibold text-ink-soft">⇄ {weaponName(hud.slots[hud.slot === 0 ? (hud.slots[1] >= 0 ? 1 : 2) : hud.slot === 1 ? 2 : 0])}</span>
+            <span className="truncate font-semibold text-ink-soft">⇄ {weaponName(hud.slots[nextSlot] < 0 ? KNIFE : hud.slots[nextSlot])}</span>
           ) : (
-            // Les trois emplacements (touches 1, 2, 3) : arme de départ, arme ramassée, couteau ; celui en main est surligné.
+            // Les trois emplacements (touches 1, 2, 3) : couteau, arme à feu A, arme à feu B ; celui en main est surligné.
             <span className="flex min-w-0 gap-1">
               {hud.slots.map((w, k) =>
                 w < 0 ? null : (

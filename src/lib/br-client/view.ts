@@ -39,17 +39,18 @@ export interface HudState {
   shield: number;
   /** Arme en main (indice des armes du moteur : BR_WEAPONS, puis le couteau KNIFE). */
   weapon: number;
-  /** Les trois emplacements (arme de départ, arme ramassée ou −1, couteau) et celui en main (0 à 2). */
+  /** Les trois emplacements affichés (couteau, arme à feu A ou −1, arme à feu B ou −1) et celui en main (0 = couteau, 1, 2). */
   slots: [number, number, number];
   slot: number;
   magazine: number;
   /** Taille du chargeur (0 : couteau, sans munitions). */
   magazineSize: number;
-  /** Munitions en réserve pour l'arme en main ; null : illimitées (arme de départ) ou sans objet (couteau). */
+  /** Munitions universelles en réserve ; null quand le couteau est en main. */
   reserve: number | null;
-  /** Lunette portée (1 : aucune, 2 ou 4) ; secondes restantes de boisson énergisante (0 : aucune). */
+  /** Lunette portée (1 : aucune, 2 ou 4) ; secondes restantes de boisson énergisante et de booster de portée (0 : aucun). */
   scope: number;
   boostSeconds: number;
+  rangeSeconds: number;
   /** Rechargement en cours : part restante (1 → 0), 0 si aucun. */
   reloading: number;
   abilityReady: boolean;
@@ -69,7 +70,7 @@ export function hudState(s: MatchState, me: number): HudState {
   const f = s.fighters[me];
   const w = weaponInHand(s, me);
   const W = s.rules.weapons[w];
-  const held = P.active[me] === 1 && P.weapon1[me] >= 0;
+  const active = P.active[me];
   const Zs = s.zone;
   const phase = s.rules.zone[Math.min(Zs[Z.phase], s.rules.zone.length - 1)];
   const stageTicks = Zs[Z.stage] === 0 ? phase.waitTicks : Zs[Z.stage] === 1 ? phase.shrinkTicks : 0;
@@ -81,13 +82,15 @@ export function hudState(s: MatchState, me: number): HudState {
     maxHp: f.maxHp,
     shield: P.shield[me],
     weapon: w,
-    slots: [s.rules.startWeapon, P.weapon1[me], KNIFE],
-    slot: w === KNIFE ? 2 : held ? 1 : 0,
-    magazine: w === KNIFE ? 0 : held ? P.mag1[me] : P.mag0[me],
+    // Affichage : 1 = couteau, 2 = arme à feu A, 3 = arme à feu B.
+    slots: [KNIFE, P.weapon0[me], P.weapon1[me]],
+    slot: active === 2 ? 0 : active === 0 ? 1 : 2,
+    magazine: w === KNIFE ? 0 : active === 1 ? P.mag1[me] : P.mag0[me],
     magazineSize: W.magazine,
-    reserve: W.ammo === 0 ? null : s.m.ammo[4 * me + W.ammo],
+    reserve: w === KNIFE ? null : P.ammo[me],
     scope: Math.max(1, P.scope[me]),
     boostSeconds: Math.ceil(P.boostLeft[me] / s.rules.tickRate),
+    rangeSeconds: Math.ceil(P.rangeLeft[me] / s.rules.tickRate),
     reloading: P.reload[me] > 0 ? P.reload[me] / W.reloadTicks : 0,
     abilityReady: P.abilityCd[me] === 0,
     abilityCooldown: f.abilityCooldown > 0 ? P.abilityCd[me] / f.abilityCooldown : 0,

@@ -18,12 +18,16 @@ export const PARTICIPANT_FIELDS = [
   "hp",
   /** Protection du gilet, consommée avant les PV. */
   "shield",
-  /** Arme ramassée (indice), −1 si aucune ; l'arme de départ est toujours là. */
+  /** Deux emplacements d'armes à feu ramassées (indice, −1 si vide) ; au départ les deux sont vides (couteau en main). */
+  "weapon0",
   "weapon1",
-  /** Arme en main : 0 = arme de départ, 1 = arme ramassée, 2 = couteau. */
+  /** Arme en main : 0 = arme à feu A, 1 = arme à feu B, 2 = couteau (par défaut). */
   "active",
+  /** Chargeurs des deux armes à feu. */
   "mag0",
   "mag1",
+  /** Munitions universelles en réserve (3A : un seul stock pour toutes les armes à feu). */
+  "ammo",
   "fireCd",
   /** Ticks restants avant la fin du rechargement (0 = aucun). */
   "reload",
@@ -45,6 +49,8 @@ export const PARTICIPANT_FIELDS = [
   "scope",
   /** Ticks restants de la boisson énergisante (vitesse en plus). */
   "boostLeft",
+  /** Ticks restants du booster de portée (portée de tir en plus). */
+  "rangeLeft",
   /** Résultats : place (0 = encore en vie), éliminations, dégâts infligés, éliminé par (−1 zone, −2 personne), tick. */
   "place",
   "kills",
@@ -54,8 +60,8 @@ export const PARTICIPANT_FIELDS = [
 ] as const;
 export type ParticipantField = (typeof PARTICIPANT_FIELDS)[number];
 
-/** Champs à plusieurs valeurs par participant : munitions (4 types), affaiblissements (ATQ, DÉF, VIT). */
-export const MULTI_FIELDS = { ammo: 4, debuffLeft: 3, debuffPermille: 3 } as const;
+/** Champs à plusieurs valeurs par participant : affaiblissements (ATQ, DÉF, VIT). */
+export const MULTI_FIELDS = { debuffLeft: 3, debuffPermille: 3 } as const;
 export type MultiField = keyof typeof MULTI_FIELDS;
 
 /** Projectiles, dans l'ordre de création. */
@@ -153,36 +159,37 @@ export const BOT_PATH = 32;
 export const Z = { phase: 0, stage: 1, t: 2, cx: 3, cy: 4, r: 5, fx: 6, fy: 7, fr: 8, tx: 9, ty: 10, tr: 11 } as const;
 
 /**
- * Compteurs : prochain numéro de projectile, munitions tirées par type (1…3), soins et gilets utilisés ; ce que les
- * caisses brisées ont fait apparaître (armes, soins, gilets, munitions par type — chargeurs compris —, boissons,
- * lunettes) ; boissons et lunettes utilisées ; caisses brisées.
+ * Compteurs : prochain numéro de projectile, munitions tirées, soins et gilets utilisés ; ce que les caisses brisées
+ * ont fait apparaître (armes, soins, gilets, munitions — chargeurs compris —, boissons, lunettes, boosters de portée) ;
+ * boissons, lunettes et boosters de portée utilisés ; caisses brisées.
  */
 export const C = {
   nextShot: 0,
-  firedLight: 1,
-  firedShell: 2,
-  firedHeavy: 3,
-  usedHeals: 4,
-  usedVests: 5,
-  crateWeapons: 6,
-  crateHeals: 7,
-  crateVests: 8,
-  crateLight: 9,
-  crateShell: 10,
-  crateHeavy: 11,
-  crateBoosts: 12,
-  crateScopes: 13,
-  usedBoosts: 14,
-  usedScopes: 15,
-  cratesBroken: 16,
+  firedAmmo: 1,
+  usedHeals: 2,
+  usedVests: 3,
+  crateWeapons: 4,
+  crateHeals: 5,
+  crateVests: 6,
+  crateAmmo: 7,
+  crateBoosts: 8,
+  crateScopes: 9,
+  crateRanges: 10,
+  usedBoosts: 11,
+  usedScopes: 12,
+  usedRanges: 13,
+  cratesBroken: 14,
 } as const;
-const COUNTERS = 17;
+const COUNTERS = 15;
 
-/** Raisons d'élimination du journal (après les indices d'armes 0…4). */
-export const KILL_BURN = 5;
-export const KILL_ZONE = 6;
-export const KILL_REFLECT = 7;
-export const KILL_KNIFE = 8;
+/**
+ * Raisons d'élimination du journal, après les indices des armes (armes à feu 0…, projectile de brûlure BURN_SHOT,
+ * couteau KNIFE) : placées au-delà pour ne jamais entrer en collision avec un indice d'arme.
+ */
+export const KILL_BURN = KNIFE + 1;
+export const KILL_ZONE = KNIFE + 2;
+export const KILL_REFLECT = KNIFE + 3;
+export const KILL_KNIFE = KNIFE + 4;
 
 export interface MatchState {
   readonly rules: Rules;
@@ -219,11 +226,12 @@ export interface MatchState {
   bmisc: Int32Array;
 }
 
-/** Arme en main (indice dans rules.weapons : arme à feu, ou KNIFE). */
+/** Arme en main (indice dans rules.weapons : arme à feu, ou KNIFE). Un emplacement d'arme à feu vide renvoie le couteau. */
 export function weaponInHand(s: MatchState, i: number): number {
   const active = s.p.active[i];
-  if (active === 2) return KNIFE;
-  return active === 1 && s.p.weapon1[i] >= 0 ? s.p.weapon1[i] : s.rules.startWeapon;
+  if (active === 0) return s.p.weapon0[i] >= 0 ? s.p.weapon0[i] : KNIFE;
+  if (active === 1) return s.p.weapon1[i] >= 0 ? s.p.weapon1[i] : KNIFE;
+  return KNIFE;
 }
 
 /**
@@ -237,7 +245,7 @@ export function canTake(s: MatchState, i: number, k: number): boolean {
     case ITEM.weapon:
       return true;
     case ITEM.ammo:
-      return s.m.ammo[4 * i + I.sub[k]] < items.ammoMax[I.sub[k]];
+      return s.p.ammo[i] < items.ammoMax[I.sub[k]];
     case ITEM.heal:
       return s.p.hp[i] < s.fighters[i].maxHp;
     case ITEM.vest:
@@ -246,6 +254,8 @@ export function canTake(s: MatchState, i: number, k: number): boolean {
       return true;
     case ITEM.scope:
       return I.sub[k] > s.p.scope[i];
+    case ITEM.range:
+      return true;
   }
   return false;
 }
@@ -292,7 +302,7 @@ export function allocateState(rules: Rules, map: GameMap, characters: readonly B
     finished: false,
     rng,
     p: table(PARTICIPANT_FIELDS, n),
-    m: { ammo: new Int32Array(4 * n), debuffLeft: new Int32Array(3 * n), debuffPermille: new Int32Array(3 * n) },
+    m: { debuffLeft: new Int32Array(3 * n), debuffPermille: new Int32Array(3 * n) },
     shotCount: 0,
     s: table(SHOT_FIELDS, SHOT_CAPACITY),
     itemCount: loot.length,

@@ -146,7 +146,8 @@ export function driverCommands(s: MatchState, d: Driver, out: Uint32Array): void
     if (inRange) buttons |= BTN.fire;
     if (inRange && P.abilityCd[i] === 0 && (s.tick + i) % 15 === 0) buttons |= BTN.ability;
     if ((s.tick + i) % 25 === 0) buttons |= BTN.pickup;
-    if (P.active[i] === 0 && P.weapon1[i] >= 0 && (s.tick + i) % 30 === 0) buttons |= BTN.nextWeapon;
+    // S'il tient le couteau mais a ramassé une arme à feu, il passe dessus pour tirer.
+    if (P.active[i] === 2 && (P.weapon0[i] >= 0 || P.weapon1[i] >= 0) && (s.tick + i) % 30 === 0) buttons |= BTN.nextWeapon;
     out[i] = packCommand({ move, aim, buttons });
   }
 }

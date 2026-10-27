@@ -6,7 +6,7 @@
 import type { TickEvents } from "@/lib/br-client/events";
 import type { DamageEvent } from "@/lib/br-client/view";
 import type { KillEntry } from "@/lib/br/engine";
-import { C, Z, type MatchState } from "@/lib/br/state";
+import { C, weaponInHand, Z, type MatchState } from "@/lib/br/state";
 import { playAbility, playAbilityReady, playCrate, playElimination, playHeal, playHit, playHurt, playKnife, playPickup, playReload, playShot, playZoneWarning } from "@/lib/client/sfx";
 
 export interface AudioDirector {
@@ -23,8 +23,9 @@ export function createAudioDirector(s: MatchState, me: number): AudioDirector {
   let prevVests = s.counters[C.usedVests];
   let prevBoost = P.boostLeft[me];
   let prevScope = P.scope[me];
-  let prevWeapon = P.weapon1[me];
-  let prevAmmo = s.m.ammo[4 * me + 1] + s.m.ammo[4 * me + 2] + s.m.ammo[4 * me + 3];
+  let prevWeapon = weaponInHand(s, me);
+  let prevAmmo = P.ammo[me];
+  let prevRanges = s.counters[C.usedRanges];
   let prevHp = P.hp[me];
   let prevStage = s.zone[Z.stage];
   let wasOutside = false;
@@ -79,18 +80,20 @@ export function createAudioDirector(s: MatchState, me: number): AudioDirector {
       }
 
       if (!P.alive[me]) return;
-      // Le joueur : rechargement, soin, gilet, arme ou munitions ramassés.
-      const ammo = st.m.ammo[4 * me + 1] + st.m.ammo[4 * me + 2] + st.m.ammo[4 * me + 3];
+      // Le joueur : rechargement, soin, gilet, arme, munitions, boisson, lunette ou booster de portée ramassés.
+      const ammo = P.ammo[me];
+      const weapon = weaponInHand(st, me);
       const healed = st.counters[C.usedHeals] > prevHeals && P.hp[me] > prevHp;
       if (loud) {
         if (P.reload[me] > 0 && prevReload === 0) playReload(0.8);
         if (healed) playHeal(0.9);
         else if (
           (st.counters[C.usedVests] > prevVests && P.shield[me] > 0) ||
-          P.weapon1[me] !== prevWeapon ||
+          weapon !== prevWeapon ||
           ammo > prevAmmo ||
           P.boostLeft[me] > prevBoost + 1 ||
-          P.scope[me] > prevScope
+          P.scope[me] > prevScope ||
+          st.counters[C.usedRanges] > prevRanges
         )
           playPickup(0.8);
       }
@@ -99,8 +102,9 @@ export function createAudioDirector(s: MatchState, me: number): AudioDirector {
       prevReload = P.reload[me];
       prevHeals = st.counters[C.usedHeals];
       prevVests = st.counters[C.usedVests];
-      prevWeapon = P.weapon1[me];
+      prevWeapon = weapon;
       prevAmmo = ammo;
+      prevRanges = st.counters[C.usedRanges];
       prevHp = P.hp[me];
 
       // La Zone se met à avancer, ou le joueur se retrouve dehors.

@@ -1064,13 +1064,19 @@
       "petard": "Shotgun",
       "rafaleuse": "Submachine gun",
       "lunette": "Sniper rifle",
+      "pop2": "Advanced pistol",
+      "petard2": "Super shotgun",
+      "rafaleuse2": "Mega SMG",
+      "lunette2": "Heavy sniper rifle",
       "knife": "Combat knife"
     },
     "items": {
       "heal": "First aid kit",
       "vest": "Bulletproof vest",
       "speed": "Energy drink",
-      "scope": "{zoom}× scope"
+      "scope": "{zoom}× scope",
+      "ammo": "Ammo",
+      "range": "Range booster"
     },
     "ability": {
       "sprint": "Sprint: +{percent}% speed for {seconds} s",
@@ -1119,11 +1125,6 @@
       "abilityReady": "Ready",
       "stunned": "Stunned!",
       "pickup": "Pick up: {item}",
-      "ammo": {
-        "light": "Light ammo",
-        "shell": "Shells",
-        "heavy": "Heavy ammo"
-      },
       "seconds": "{count}s",
       "melee": "Melee"
     },

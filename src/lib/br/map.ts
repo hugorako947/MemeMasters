@@ -12,8 +12,8 @@ import { nextBelow, nextRange, STREAM } from "./rng";
 import { AMMO_KINDS, type Rules } from "./rules";
 
 export const TILE = { floor: 0, water: 1, wall: 2, bush: 3, crate: 4 } as const;
-/** Objets au sol ; boisson énergisante (speed) et lunette (scope, sub = grossissement) ne sortent que des caisses. */
-export const ITEM = { none: 0, weapon: 1, ammo: 2, heal: 3, vest: 4, speed: 5, scope: 6 } as const;
+/** Objets au sol ; boisson (speed), lunette (scope, sub = grossissement) et booster de portée (range) ne sortent que des caisses. */
+export const ITEM = { none: 0, weapon: 1, ammo: 2, heal: 3, vest: 4, speed: 5, scope: 6, range: 7 } as const;
 
 export interface GameMap {
   /** Côté de la carte, en tuiles. */

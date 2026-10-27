@@ -35,7 +35,8 @@ export async function CardGuidePanel() {
     { title: t("spdTitle", { spd: card.spd }), text: t("spd", { speed: c.speed }) },
     {
       title: t("attackTitle", { name: card.normalAttack.name, power: card.normalAttack.power }),
-      text: t("attack", { weapons: format.list(BR_WEAPONS.filter((w) => w !== BR.STARTING_WEAPON).map((w) => tw(w)), { type: "conjunction" }) }),
+      // Les 4 armes de base ramassées sur la carte (les versions supérieures en sont des variantes).
+      text: t("attack", { weapons: format.list(BR_WEAPONS.slice(0, 4).map((w) => tw(w)), { type: "conjunction" }) }),
     },
     {
       title: t("exampleTitle"),

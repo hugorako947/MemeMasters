@@ -83,7 +83,8 @@ const GOLD = { body: 0xc9971f, accent: 0xffe7a0 };
 type Finish = { body: number; accent: number };
 
 /** Bout du canon (en rayons du personnage) de chaque arme : armes à feu, projectile de brûlure, couteau. */
-const MUZZLE = [1.5, 1.9, 1.65, 2.25, 1.5, 1.95];
+// Taille de l'éclair au bout du canon, par arme : les 4 de base, leurs versions supérieures, la brûlure, le couteau.
+const MUZZLE = [1.5, 1.9, 1.65, 2.25, 1.6, 2.0, 1.7, 2.4, 1.5, 1.95];
 
 const CHUNK = 16;
 const FONT = "'Bricolage Grotesque Variable', 'Bricolage Grotesque', system-ui, sans-serif";
@@ -184,7 +185,8 @@ function drawWeapon(g: Graphics, weapon: number, r: number, f: Finish): void {
     g.moveTo(r * 1.25, 0).lineTo(r * 1.75, 0).stroke({ width: r * 0.04, color: 0xa9b2c6 });
     return;
   }
-  switch (weapon) {
+  // Les versions supérieures (indices 4 à 7) partagent la forme de leur arme de base (0 à 3).
+  switch (weapon < 4 ? weapon : weapon - 4) {
     case 1: // Fusil à pompe : canon épais, pompe, crosse.
       g.roundRect(r * 0.55, -r * 0.2, r * 0.45, r * 0.4, r * 0.1).fill(f.accent).stroke(line);
       g.roundRect(r * 0.95, -r * 0.17, r * 0.95, r * 0.34, r * 0.08).fill(f.body).stroke(line);
@@ -880,5 +882,10 @@ function drawItem(g: Graphics, kind: number, sub: number, x: number, y: number, 
     if (sub >= 4) g.circle(x, y, u * 0.95).stroke({ width: u * 0.16, color: 0xffc83d });
     g.circle(x, y, u * 0.62).fill(0x7cc4ff).stroke({ width: u * 0.1, color: COLORS.white });
     g.moveTo(x - u * 0.5, y).lineTo(x + u * 0.5, y).moveTo(x, y - u * 0.5).lineTo(x, y + u * 0.5).stroke({ width: u * 0.08, color: COLORS.ink });
+  } else if (kind === ITEM.range) {
+    // Booster de portée : une cible avec des flèches qui s'écartent.
+    g.circle(x, y, u * 0.9).fill(COLORS.white).stroke({ width: u * 0.16, color: COLORS.ink });
+    g.circle(x, y, u * 0.34).fill(COLORS.hpLow);
+    for (const s of [-1, 1]) g.poly([x + s * u * 1.5, y, x + s * u * 0.95, y - u * 0.4, x + s * u * 0.95, y + u * 0.4]).fill(COLORS.ink);
   }
 }
