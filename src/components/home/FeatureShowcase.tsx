@@ -126,7 +126,7 @@ async function CollectionScene() {
   );
 }
 
-/** Une partie de Battle Royale vue de dessus : un bâtiment, des caisses, le Scroll qui avance, trois personnages qui se tirent dessus. */
+/** Une partie de Battle Royale vue de dessus : un bâtiment, des caisses, la Zone qui avance, trois personnages qui se tirent dessus. */
 async function BattleScene() {
   const t = await getTranslations("features.battle");
   const count = GAME_CONFIG.BATTLE_ROYALE.PARTICIPANTS;
@@ -162,7 +162,7 @@ async function BattleScene() {
             <path d="M4 4 L22 22 M4 13 H22" stroke="#6e4220" strokeWidth="2.5" />
           </g>
         ))}
-        {/* Le Scroll : l'extérieur de la zone, en violet, avec son bord. */}
+        {/* Hors de la Zone : en violet, avec son bord. */}
         <path d="M360 0 V240 H316 A260 260 0 0 0 340 0 Z" fill="#6b2fd6" opacity="0.35" />
         <path d="M316 240 A260 260 0 0 0 340 0" stroke="#ff3d7f" strokeWidth="4" fill="none" />
         {/* Tirs. */}

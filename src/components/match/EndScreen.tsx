@@ -12,7 +12,7 @@ export interface MatchResult {
   kills: number;
   damage: number;
   seconds: number;
-  /** Éliminé par (emplacement), −1 : le Scroll, −2 : personne (victoire). */
+  /** Éliminé par (emplacement), −1 : la Zone, −2 : personne (victoire). */
   killedBy: number;
 }
 

@@ -24,7 +24,7 @@ export function sampleCharacters(count: number, seed: number, br: BrConfig = GAM
   const rng = createStreams(seed, 1);
   return Array.from({ length: count }, () => {
     const card = STARTER_SET[nextBelow(rng, 0, STARTER_SET.length)];
-    return battleCharacter(card, nextBelow(rng, 0, 4) as EvolutionLevel, br, GAME_CONFIG.DUPLICATES.STAT_BONUS_PERCENT);
+    return battleCharacter(card, nextBelow(rng, 0, 5) as EvolutionLevel, br, GAME_CONFIG.DUPLICATES.STAT_BONUS_PERCENT);
   });
 }
 

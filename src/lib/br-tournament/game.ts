@@ -6,13 +6,14 @@
  * Trois séries :
  * - « standard » : cartes du jeu de départ et niveaux d'évolution tirés au hasard ;
  * - « rarity » : une moitié de godlevel (premiers emplacements) contre une moitié de communes, sans évolution ;
- * - « evolution » : une moitié de cartes ★★★ (premiers emplacements) contre les mêmes cartes sans évolution.
+ * - « evolution » : une moitié de cartes Divines (premiers emplacements) contre les mêmes cartes sans évolution.
  * Tous les bots d'une partie ont le même niveau (tiré au hasard pour chaque partie), à leur variation personnelle près.
  */
 import { GAME_CONFIG } from "@/config/game.config";
 import { STARTER_SET } from "@/content/cards/starter-set";
 import { ACTION } from "@/lib/br/bot";
 import { battleCharacter, type EvolutionLevel } from "@/lib/br/character";
+import { MAX_LEVEL } from "@/lib/economy/duplicates";
 import { unpackMove } from "@/lib/br/commands";
 import { advance, createMatch, type MatchSetup } from "@/lib/br/engine";
 import { createStreams, nextBelow } from "@/lib/br/rng";
@@ -63,12 +64,12 @@ export function composeGame(series: Series, index: number, rules: Rules): { seed
   for (let i = 0; i < n; i++) {
     if (series === "standard") {
       cards[i] = nextBelow(rng, 0, STARTER_SET.length);
-      evolutions[i] = nextBelow(rng, 0, 4);
+      evolutions[i] = nextBelow(rng, 0, MAX_LEVEL + 1);
     } else if (series === "rarity") {
       cards[i] = i < half ? GODLEVEL : COMMUNES[nextBelow(rng, 0, COMMUNES.length)];
     } else if (i < half) {
       cards[i] = nextBelow(rng, 0, STARTER_SET.length);
-      evolutions[i] = 3;
+      evolutions[i] = MAX_LEVEL;
       if (i + half < n) cards[i + half] = cards[i];
     } else if (cards[i] === undefined) cards[i] = nextBelow(rng, 0, STARTER_SET.length);
   }

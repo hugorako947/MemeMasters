@@ -92,7 +92,7 @@ const battleRoyaleSchema = z.object({
     /** Délai avant de pouvoir tirer après un changement d'arme, en millisecondes. */
     WEAPON_SWITCH_MS: nonNegativeInt,
   }),
-  /** La zone (« le Scroll ») : attente, rétrécissement vers un rayon en % du précédent, dégâts par seconde hors zone. */
+  /** La Zone : attente, rétrécissement vers un rayon en % du précédent, dégâts par seconde hors zone. */
   ZONE: z.object({
     PHASES: z
       .array(z.object({ waitS: nonNegativeInt, shrinkS: positiveInt, radiusPercent: z.number().int().min(0).max(95), dps: positiveInt }))
@@ -253,10 +253,10 @@ const gameConfigSchema = z
      * conservées d'une vente à l'autre.
      */
     DUPLICATES: z.object({
-      /** Exemplaires à revendre pour chaque niveau (★, ★★, ★★★), selon la rareté. */
-      UPGRADES: z.record(z.enum(RARITIES), z.tuple([positiveInt, positiveInt, positiveInt])),
-      /** Bonus de statistiques (PV, attaque, défense, vitesse), en %, aux niveaux 0, 1, 2 et 3. */
-      STAT_BONUS_PERCENT: z.tuple([z.literal(0), nonNegativeInt, nonNegativeInt, nonNegativeInt]),
+      /** Exemplaires à utiliser pour chaque évolution (★, ★★, ★★★, Divine), selon la rareté. */
+      UPGRADES: z.record(z.enum(RARITIES), z.tuple([positiveInt, positiveInt, positiveInt, positiveInt])),
+      /** Bonus de statistiques (PV, attaque, défense, vitesse), en %, aux niveaux 0 (normale), ★, ★★, ★★★ et Divine. */
+      STAT_BONUS_PERCENT: z.tuple([z.literal(0), nonNegativeInt, nonNegativeInt, nonNegativeInt, nonNegativeInt]),
       SELL_CENTS: z.record(z.enum(RARITIES), positiveInt),
       /** À partir de cette rareté, la revente n'entre pas dans le plafond quotidien. */
       CAP_EXEMPT_FROM: z.enum(RARITIES),
@@ -408,20 +408,21 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
   GAME_TAGLINE: "Ouvre des boosters, complète ta collection et affronte des joueurs du monde entier.",
 
   DUPLICATES: {
-    // Dorée ★ puis Dorée ★★ puis Divine ★★★ : exemplaires à utiliser pour chaque niveau.
-    // Plus la carte est rare, moins il en faut (on en obtient beaucoup moins).
+    // ★, puis ★★, ★★★ et enfin Divine (MAX) : exemplaires à utiliser pour chaque évolution (choix du propriétaire,
+    // 2026-10-26). Plus la carte est rare, moins il en faut (on en obtient beaucoup moins).
     UPGRADES: {
-      commune: [5, 10, 15],
-      rare: [4, 8, 12],
-      epique: [3, 6, 9],
-      legendaire: [2, 4, 6],
-      godlevel: [1, 2, 3],
+      commune: [5, 10, 15, 20],
+      rare: [4, 8, 12, 16],
+      epique: [3, 6, 9, 12],
+      legendaire: [2, 4, 6, 8],
+      godlevel: [1, 2, 3, 4],
     },
-    // Volontairement modeste : une carte améliorée reste battable par la même carte non améliorée.
-    STAT_BONUS_PERCENT: [0, 3, 6, 10],
+    // Volontairement modeste : une carte évoluée reste battable par la même carte sans évolution. Divine : +10 %, comme
+    // l'ancienne dernière évolution (l'équilibre du Battle Royale ne change pas).
+    STAT_BONUS_PERCENT: [0, 3, 6, 8, 10],
     // 0,1 MemeMoney par commune, 0,25 par rare, 0,5 par épique, 3 par légendaire, 60 par godlevel.
     SELL_CENTS: { commune: 10, rare: 25, epique: 50, legendaire: 300, godlevel: 6000 },
-    // Toutes les raretés se revendent jusqu'au dernier exemplaire (sauf une carte Dorée ou Divine).
+    // Toutes les raretés se revendent jusqu'au dernier exemplaire en trop (le premier reste toujours).
     CAP_EXEMPT_FROM: "legendaire",
     // MemeMoney maximum gagnée chaque jour (fuseau du joueur) en revendant des communes,
     // rares et épiques. Les doublons de Légendaire et au-dessus, rares par nature, n'y sont pas soumis.

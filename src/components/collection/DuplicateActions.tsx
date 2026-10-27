@@ -71,13 +71,13 @@ export function DuplicateActions({
             <span className="text-ink-soft">{t("upgradeCost", { have: Math.min(dups, upgrade.cost), cost: upgrade.cost })}</span>
           </div>
           <div className="mm-stat-bar" aria-hidden="true">
-            <span style={{ width: `${Math.min(100, (dups / upgrade.cost) * 100)}%`, ["--bar" as string]: lookOf(upgrade.to) === "gold" ? "#f5b400" : "#9aa7c7" }} />
+            <span style={{ width: `${Math.min(100, (dups / upgrade.cost) * 100)}%`, ["--bar" as string]: lookOf(upgrade.to) !== "divine" ? "#f5b400" : "#9aa7c7" }} />
           </div>
           <button
             type="button"
             disabled={pending || dups < upgrade.cost}
             onClick={() => run("/api/collection/upgrade", { cardId: card.id }, (d) => t("upgraded", { level: t(`level.${d.level ?? upgrade.to}`) }))}
-            className={`mm-btn ${lookOf(upgrade.to) === "gold" ? "mm-btn--gold" : "mm-btn--divine"} min-h-11 text-sm`}
+            className={`mm-btn ${lookOf(upgrade.to) !== "divine" ? "mm-btn--gold" : "mm-btn--divine"} min-h-11 text-sm`}
           >
             {t("upgradeButton", { level: t(`level.${upgrade.to}`) })}
           </button>

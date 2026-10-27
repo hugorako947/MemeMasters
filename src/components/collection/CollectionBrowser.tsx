@@ -1,11 +1,18 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useFormatter, useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { InteractiveCard } from "@/components/card/InteractiveCard";
+import { toast } from "@/components/ui/Toast";
 import { RARITIES, type Rarity } from "@/config/rarities";
 import { boostedStats, type Level } from "@/lib/economy/duplicates";
 import type { Card } from "@/lib/validation/card";
+import { postJson } from "@/lib/client/api";
+import { characterPicker, useCharacterPicker } from "@/lib/client/character-picker";
+import { useErrorText } from "@/lib/client/errors";
+import { showSlide } from "@/lib/client/slides";
+import { BulkEvolve } from "./BulkEvolve";
 import { BulkSell } from "./BulkSell";
 import { CardActions } from "./CardActions";
 
@@ -32,6 +39,8 @@ function statValue(item: CollectionItem, sort: StatSort): number {
 /**
  * La collection : progression, filtres simples et grille de cartes.
  * Les cartes manquantes restent floutées ; un clic ouvre la fiche de la carte.
+ * Mode « choisir son personnage » (bouton « Changer » de la page Battle Royale) : un toucher sur une carte possédée
+ * en fait le personnage du Battle Royale, puis on revient à cette page.
  */
 export function CollectionBrowser({ items, resaleLeftCents, battleCardId = null }: { items: CollectionItem[]; resaleLeftCents: number; battleCardId?: string | null }) {
   const t = useTranslations("collection");
@@ -44,6 +53,21 @@ export function CollectionBrowser({ items, resaleLeftCents, battleCardId = null 
   const [ascending, setAscending] = useState(false);
   const statSort = (STAT_SORTS as readonly string[]).includes(sort) ? (sort as StatSort) : null;
   const [query, setQuery] = useState("");
+  const picking = useCharacterPicker();
+  const router = useRouter();
+  const errorText = useErrorText();
+
+  async function pick(card: Card) {
+    const res = await postJson("/api/battle/character", { cardId: card.id });
+    if (!res.ok) {
+      toast.error(errorText(res.code));
+      return;
+    }
+    toast.success(t("battle.done", { name: card.name }));
+    characterPicker.set(false);
+    router.refresh();
+    showSlide("batailles");
+  }
 
   const owned = items.filter((i) => i.quantity > 0).length;
   const percent = items.length ? Math.round((owned / items.length) * 100) : 0;
@@ -72,6 +96,15 @@ export function CollectionBrowser({ items, resaleLeftCents, battleCardId = null 
 
   return (
     <div className="grid gap-5">
+      {picking ? (
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border-2 border-ink bg-sticker px-4 py-3 text-[#1a1238]" role="status">
+          <p className="font-extrabold">{t("battle.pickLead")}</p>
+          <button type="button" onClick={() => characterPicker.set(false)} className="mm-btn mm-btn--secondary min-h-10 px-4 text-sm">
+            {t("battle.pickCancel")}
+          </button>
+        </div>
+      ) : null}
+
       <div className="rounded-2xl border-2 border-ink bg-surface p-4">
         <p className="flex items-baseline justify-between font-extrabold">
           <span>{t("progress", { owned, total: items.length })}</span>
@@ -145,10 +178,13 @@ export function CollectionBrowser({ items, resaleLeftCents, battleCardId = null 
       </div>
 
       {owned > 0 ? (
-        <BulkSell
-          items={items.map((i) => ({ cardId: i.card.id, rarity: i.card.rarity, quantity: i.quantity }))}
-          resaleLeftCents={resaleLeftCents}
-        />
+        <div className="flex flex-wrap items-start gap-2">
+          <BulkSell
+            items={items.map((i) => ({ cardId: i.card.id, rarity: i.card.rarity, quantity: i.quantity }))}
+            resaleLeftCents={resaleLeftCents}
+          />
+          <BulkEvolve items={items.map((i) => ({ cardId: i.card.id, rarity: i.card.rarity, quantity: i.quantity, level: i.level }))} />
+        </div>
       ) : null}
 
       {owned === 0 ? <p className="rounded-2xl bg-sticker px-4 py-3 text-center font-bold text-[#1a1238]">{t("firstBooster")}</p> : null}
@@ -164,8 +200,16 @@ export function CollectionBrowser({ items, resaleLeftCents, battleCardId = null 
                 owned={quantity > 0}
                 level={level}
                 quantity={quantity}
-                actions={<CardActions card={card} quantity={quantity} level={level} resaleLeftCents={resaleLeftCents} battleCharacter={card.id === battleCardId} />}
+                actions={<CardActions card={card} quantity={quantity} level={level} resaleLeftCents={resaleLeftCents} />}
               />
+              {picking && quantity > 0 ? (
+                <button
+                  type="button"
+                  onClick={() => pick(card)}
+                  aria-label={t("battle.pickCard", { name: card.name })}
+                  className="absolute inset-0 z-10 rounded-xl outline-dashed outline-2 outline-offset-2 outline-ink hover:bg-ink/10 focus-visible:bg-ink/10"
+                />
+              ) : null}
               {card.id === battleCardId ? (
                 <p className="justify-self-center rounded-full border-2 border-ink bg-candy px-2.5 py-0.5 text-[0.65rem] font-extrabold text-[var(--mm-accent-ink)]">{t("battle.badge")}</p>
               ) : null}

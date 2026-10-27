@@ -31,7 +31,8 @@
     "ariaLabel": "{name}, {rarity} card, {hp} HP",
     "tiltHint": "Move your finger or mouse over the card to make it shine.",
     "open": "Open the card sheet of {name}",
-    "copies": "{count, plural, one {# copy} other {# copies}}"
+    "copies": "{count, plural, one {# copy} other {# copies}}",
+    "max": "MAX"
   },
   "effect": {
     "none": "No effect",
@@ -261,7 +262,7 @@
     "not_enough_meme_money": "Not enough MemeMoney.",
     "no_cards": "No card is available yet.",
     "card_not_owned": "You don't own this card.",
-    "already_max_variant": "This card already has its final evolution (Divine ★★★).",
+    "already_max_variant": "This card has already reached its last evolution (Divine).",
     "not_enough_duplicates": "Not enough copies for this evolution.",
     "cannot_sell": "This copy can't be sold.",
     "daily_sell_cap": "Daily selling limit reached.",
@@ -286,7 +287,8 @@
     "community_limit": "You already have 2 pending submissions: wait for them to be reviewed or withdraw one.",
     "community_image": "The image couldn't be saved. Try another photo (JPEG or PNG).",
     "community_not_found": "This card is no longer available.",
-    "community_own_vote": "You can't vote for your own card."
+    "community_own_vote": "You can't vote for your own card.",
+    "nothing_to_evolve": "No card has enough extra copies to evolve."
   },
   "statName": {
     "hp": "Hit points",
@@ -323,7 +325,7 @@
     },
     "collection": {
       "title": "Complete your collection",
-      "text": "Filter by rarity, sort by evolution or stats, search and track your progress. Missing cards stay blurred until you find them. This is also where you pick your character for the Battle Royale.",
+      "text": "Filter by rarity, sort by evolution or stats, search and track your progress. Evolve your cards with your extra copies: one star per evolution, up to the all-silver Divine. Missing cards stay blurred until you find them. This is also where you pick your character for the Battle Royale.",
       "progress": "87 / 240 cards",
       "chipRarity": "Rarity",
       "chipOwned": "Owned",
@@ -333,9 +335,9 @@
     },
     "battle": {
       "title": "The Battle Royale",
-      "text": "Every card becomes a playable character, with its HP, speed, special ability and passive. Up to {count} players on a top-down map: grab weapons, break crates, escape the Scroll and be the last one standing. Train against bots right now; ranked and friends matches are coming soon.",
+      "text": "Every card becomes a playable character, with its HP, speed, special ability and passive. Up to {count} players on a top-down map: grab weapons, break crates, stay inside the Zone and be the last one standing. Train against bots right now; ranked and friends matches are coming soon.",
       "alive": "{count} alive",
-      "scroll": "The Scroll is moving",
+      "scroll": "The Zone is closing",
       "sceneLabel": "A Battle Royale match seen from above"
     }
   },
@@ -418,9 +420,9 @@
       "modeFriends": "With friends",
       "soon": "Soon",
       "character": "Your character",
-      "changeCharacter": "Change it in your Collection",
-      "noCharacter": "Pick your character in your Collection: open a card and tap “Pick for the Battle Royale”.",
-      "goCollection": "Go to my Collection"
+      "changeCharacter": "Change",
+      "noCharacter": "You don't have a character yet: pick one from the cards in your Collection.",
+      "goCollection": "Pick my character"
     },
     "collection": {
       "title": "Collection",
@@ -548,16 +550,16 @@
       "obtained": "Reward claimed"
     },
     "upgrades": {
-      "levelsTitle": "The 3 evolutions",
-      "lead": "Your extra copies make a card evolve: it changes look and its stats go up a little.",
+      "levelsTitle": "The {count} evolutions",
+      "lead": "Your extra copies evolve a card: it gains a star and its stats go up a little. It keeps its rarity colour until the last evolution, Divine, where it turns silver.",
       "base": "Base card",
       "bonus": "Stats +{percent}%",
       "howTitle": "How it works",
       "how1": "One copy of each card always stays in your collection: only extra copies are used.",
-      "how2": "Evolutions unlock in order: Golden ★, then Golden ★★, then Divine ★★★.",
+      "how2": "Evolutions unlock in order: 1 star, 2 stars, 3 stars, then Divine (MAX).",
       "how3": "The rarer the card, the fewer copies you need (table below).",
       "how4": "Each evolution raises HP, attack, defense and speed, up to +{max}% at Divine. In the Battle Royale, this bonus counts at {factor}% (up to +{battleMax}%), so your skill stays decisive.",
-      "how5": "A star appears on the artwork with each evolution: gold for Golden, white and silver for Divine.",
+      "how5": "The stars at the top left of the artwork show the evolution; the card keeps its rarity colour. At Divine, it turns silver (its rarity banner keeps its colour) and shows “MAX”.",
       "costTitle": "Copies needed",
       "rarity": "Rarity",
       "copies": "{count, plural, one {# copy} other {# copies}}",
@@ -567,7 +569,8 @@
       "sell2": "“Sell my extra copies” does the same for your whole collection.",
       "sell3": "Commons, rares and epics earn at most {cap} MemeMoney per day; rarer cards have no limit.",
       "sell4": "Small amounts (0.1, 0.25…) add up and are never lost.",
-      "how6": "Not to be confused with Mastery, planned with the Battle Royale: by playing a character, you'll unlock purely cosmetic rewards for it (frame, trail, title)."
+      "how6": "Not to be confused with Mastery, planned with the Battle Royale: by playing a character, you'll unlock purely cosmetic rewards for it (frame, trail, title).",
+      "howAll": "In your Collection, “Evolve everything” evolves every card with enough extra copies in one go."
     },
     "memeMoney": {
       "whatTitle": "What is it?",
@@ -636,7 +639,7 @@
       "defenseTitle": "Defense: {name}",
       "defense": "Becomes your passive, always on: {passive}.",
       "extrasTitle": "Stars and copies",
-      "extras": "The stars at the top left of the artwork show the card's evolution: its stats go up a little (in battle, this counts at {factor}%). The ×n badge at the top right shows how many copies you own.",
+      "extras": "The stars at the top left of the artwork show the card's evolution (“MAX” for an all-silver Divine): its stats go up a little (in battle, this counts at {factor}%). The ×n badge at the top right shows how many copies you own.",
       "soon": "The Battle Royale is coming soon. These values may still be adjusted to keep the game balanced.",
       "exampleTitle": "Damage example",
       "example": "A {weapon} bullet ({damage} damage) fired by this card leaves with {shot} damage. Against an average character (armor −{reduction}%), it deals {hit}."
@@ -683,10 +686,11 @@
       "special": "SPE"
     },
     "battle": {
-      "choose": "Pick for the Battle Royale",
-      "chosen": "Your Battle Royale character",
       "done": "{name} is now your Battle Royale character!",
-      "badge": "Character"
+      "badge": "Character",
+      "pickLead": "Tap one of your cards to make it your Battle Royale character.",
+      "pickCancel": "Cancel",
+      "pickCard": "Pick {name} as your character"
     }
   },
   "boostersPanel": {
@@ -766,7 +770,7 @@
   },
   "dup": {
     "owned": "{count, plural, one {# copy} other {# copies}} · {dups, plural, =0 {no extra copies} one {# extra} other {# extra}}",
-    "maxed": "Divine ★★★: final evolution",
+    "maxed": "Divine (MAX): fully evolved",
     "upgraded": "Your card evolved: {level}!",
     "sold": "+{amount} MemeMoney added to your balance.",
     "bulk": {
@@ -782,13 +786,23 @@
     "capPartial": "Daily limit: {count} of {total} can be sold today.",
     "level": {
       "0": "Standard",
-      "1": "Golden ★",
-      "2": "Golden ★★",
-      "3": "Divine ★★★"
+      "1": "1 star",
+      "2": "2 stars",
+      "3": "3 stars",
+      "4": "Divine"
     },
     "evolveTo": "Evolve to {level}",
     "evolveCost": "{have}/{cost}",
-    "nothingToSellShort": "No copies to sell"
+    "nothingToSellShort": "No copies to sell",
+    "evolveAll": {
+      "button": "Evolve everything",
+      "none": "No card to evolve",
+      "summary": "{cards, plural, one {# card will evolve} other {# cards will evolve}}: {evolutions, plural, one {# evolution} other {# evolutions}}, {copies, plural, one {# copy used} other {# copies used}}.",
+      "note": "Each card climbs as high as its extra copies allow (★, ★★, ★★★, then Divine). Your first copy always stays in your collection.",
+      "confirm": "Confirm evolutions",
+      "cancel": "Cancel",
+      "done": "{count, plural, one {# evolution done!} other {# evolutions done!}}"
+    }
   },
   "notifications": {
     "new": "New",
@@ -1077,7 +1091,7 @@
   },
   "match": {
     "title": "Training",
-    "lead": "A match against {bots} bots to practise: no trophies or MemeMoney at stake, and it even works offline.",
+    "lead": "A {total}-player match, {bots} of them bots. No trophies or MemeMoney to win. This mode works offline.",
     "botsNotice": "All your opponents are bots (BOT badge) using cards from the game.",
     "difficulty": "Difficulty",
     "easy": "Easy",
@@ -1093,10 +1107,10 @@
     "hud": {
       "survivors": "{count, plural, one {# alive} other {# alive}}",
       "kills": "{count, plural, one {# elimination} other {# eliminations}}",
-      "zoneWait": "The Scroll moves in {time}",
-      "zoneShrink": "The Scroll is moving! {time} left",
-      "zoneClosed": "The Scroll has covered everything",
-      "outside": "You're in the Scroll: get back to the zone!",
+      "zoneWait": "The Zone closes in {time}",
+      "zoneShrink": "The Zone is closing! {time} left",
+      "zoneClosed": "The Zone has closed",
+      "outside": "You're outside the Zone: get back in!",
       "hp": "HP",
       "shield": "Vest",
       "reloading": "Reloading…",
@@ -1145,10 +1159,10 @@
     },
     "feed": {
       "kill": "{killer} eliminated {victim}",
-      "zone": "{victim} was swallowed by the Scroll",
+      "zone": "{victim} was eliminated by the Zone",
       "killedYou": "{killer} eliminated you",
       "youKilled": "You eliminated {victim}",
-      "zoneYou": "The Scroll swallowed you"
+      "zoneYou": "The Zone eliminated you"
     },
     "end": {
       "victory": "Top 1!",
@@ -1158,7 +1172,7 @@
       "damage": "Damage dealt",
       "survived": "Time survived",
       "eliminatedBy": "Eliminated by {name}",
-      "eliminatedByZone": "Eliminated by the Scroll",
+      "eliminatedByZone": "Eliminated by the Zone",
       "rewards": "Rewards",
       "noRewards": "Training: no trophies or MemeMoney.",
       "again": "Play again",

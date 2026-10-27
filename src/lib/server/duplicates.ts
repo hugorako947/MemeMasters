@@ -1,7 +1,7 @@
 import "server-only";
 import { GAME_CONFIG } from "@/config/game.config";
 import type { Rarity } from "@/config/rarities";
-import { countsTowardCap, creditCents, maxSellable, nextUpgrade, sellValueCents, type Level } from "@/lib/economy/duplicates";
+import { countsTowardCap, creditCents, maxSellable, nextUpgrade, planBulkUpgrade, sellValueCents, type Level } from "@/lib/economy/duplicates";
 import { gameDate } from "@/lib/time/game-day";
 import { sql } from "./db";
 import { ApiError } from "./http";
@@ -15,7 +15,7 @@ export async function resaleLeftCents(player: Player): Promise<number> {
   return Math.max(0, GAME_CONFIG.DUPLICATES.DAILY_SELL_CAP * 100 - (rows[0]?.resale_cents ?? 0));
 }
 
-/** Améliore une carte d'un niveau (Dorée ★, Dorée ★★, Divine ★★★) en utilisant des exemplaires en trop. */
+/** Fait évoluer une carte d'un niveau (★, ★★, ★★★, puis Divine) en utilisant des exemplaires en trop. */
 export async function upgradeCard(player: Player, cardId: string): Promise<{ level: Level }> {
   return sql().begin(async (tx) => {
     const [row] = await tx<{ quantity: number; upgrade_level: Level; rarity: Rarity }[]>`
@@ -37,6 +37,38 @@ export async function upgradeCard(player: Player, cardId: string): Promise<{ lev
       values (${player.id}, 'card_upgrade', ${-next.cost}, ${`${cardId}:niveau ${next.to}`})
     `;
     return { level: next.to };
+  });
+}
+
+/**
+ * « Tout faire évoluer » : chaque carte du joueur monte d'autant d'évolutions que ses exemplaires en trop le permettent
+ * (calcul de planBulkUpgrade, sur les quantités lues et verrouillées dans la transaction). Rien à faire évoluer : 409.
+ */
+export async function upgradeAllCards(player: Player): Promise<{ cards: number; evolutions: number; used: number }> {
+  return sql().begin(async (tx) => {
+    const rows = await tx<{ card_id: string; quantity: number; upgrade_level: Level; rarity: Rarity }[]>`
+      select uc.card_id, uc.quantity, uc.upgrade_level, c.rarity
+      from public.user_cards uc join public.cards c on c.id = uc.card_id
+      where uc.player_id = ${player.id} and uc.quantity > 1
+      order by uc.card_id
+      for update of uc
+    `;
+    const plan = planBulkUpgrade(rows.map((r) => ({ cardId: r.card_id, rarity: r.rarity, quantity: r.quantity, level: r.upgrade_level })));
+    if (plan.lines.length === 0) throw new ApiError(409, "nothing_to_evolve");
+    const ids = plan.lines.map((l) => l.cardId);
+    const used = plan.lines.map((l) => l.used);
+    const levels = plan.lines.map((l) => l.to);
+    await tx`
+      update public.user_cards uc set quantity = uc.quantity - v.used, upgrade_level = v.level
+      from unnest(${ids}::uuid[], ${used}::int[], ${levels}::int[]) as v(card_id, used, level)
+      where uc.player_id = ${player.id} and uc.card_id = v.card_id
+    `;
+    await tx`
+      insert into public.economy_ledger (player_id, kind, cards_delta, note)
+      select ${player.id}, 'card_upgrade', -v.used, v.card_id::text || ':niveau ' || v.level
+      from unnest(${ids}::uuid[], ${used}::int[], ${levels}::int[]) as v(card_id, used, level)
+    `;
+    return { cards: plan.lines.length, evolutions: plan.evolutions, used: plan.used };
   });
 }
 

@@ -739,14 +739,14 @@ function Config() {
           <Stat label="Plafond de revente" value={`${DUPLICATES.DAILY_SELL_CAP} MM / jour`} />
         </div>
       </Box>
-      <Box title="Évolutions (exemplaires ★ / ★★ / ★★★) et revente">
-        <Table head={["Rareté", "★", "★★", "★★★", "Revente (MM)"]}>
+      <Box title="Évolutions (exemplaires ★ / ★★ / ★★★ / Divine) et revente">
+        <Table head={["Rareté", "★", "★★", "★★★", "Divine", "Revente (MM)"]}>
           {RARITIES.map((r) => (
             <tr key={r}>
               <td>{r}</td>
-              <td>{DUPLICATES.UPGRADES[r][0]}</td>
-              <td>{DUPLICATES.UPGRADES[r][1]}</td>
-              <td>{DUPLICATES.UPGRADES[r][2]}</td>
+              {DUPLICATES.UPGRADES[r].map((n, k) => (
+                <td key={k}>{n}</td>
+              ))}
               <td>{DUPLICATES.SELL_CENTS[r] / 100}</td>
             </tr>
           ))}

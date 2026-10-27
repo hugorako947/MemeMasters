@@ -31,7 +31,8 @@
     "ariaLabel": "{name}, carte {rarity}, {hp} PV",
     "tiltHint": "Bouge le doigt ou la souris sur la carte pour la faire briller.",
     "open": "Voir la fiche de {name}",
-    "copies": "{count, plural, one {# exemplaire} other {# exemplaires}}"
+    "copies": "{count, plural, one {# exemplaire} other {# exemplaires}}",
+    "max": "MAX"
   },
   "effect": {
     "none": "Aucun effet",
@@ -261,7 +262,7 @@
     "not_enough_meme_money": "Pas assez de MemeMoney.",
     "no_cards": "Aucune carte n'est disponible pour l'instant.",
     "card_not_owned": "Tu ne possèdes pas cette carte.",
-    "already_max_variant": "Cette carte a déjà sa dernière évolution (Divine ★★★).",
+    "already_max_variant": "Cette carte a déjà sa dernière évolution (Divine).",
     "not_enough_duplicates": "Pas assez d'exemplaires pour cette évolution.",
     "cannot_sell": "Cet exemplaire ne peut pas être revendu.",
     "daily_sell_cap": "Limite de revente du jour atteinte.",
@@ -286,7 +287,8 @@
     "community_limit": "Tu as déjà 2 propositions en cours : attends qu'elles soient vérifiées ou retire-en une.",
     "community_image": "L'image n'a pas pu être enregistrée. Essaie une autre photo (JPEG ou PNG).",
     "community_not_found": "Cette carte n'est plus disponible.",
-    "community_own_vote": "Tu ne peux pas voter pour ta propre carte."
+    "community_own_vote": "Tu ne peux pas voter pour ta propre carte.",
+    "nothing_to_evolve": "Aucune carte n'a assez d'exemplaires en trop pour évoluer."
   },
   "statName": {
     "hp": "Points de vie",
@@ -323,7 +325,7 @@
     },
     "collection": {
       "title": "Complète ta collection",
-      "text": "Filtre par rareté, trie par évolution ou par statistiques, cherche et suis ta progression. Les cartes qui te manquent restent floutées jusqu'à ce que tu les trouves. C'est aussi ici que tu choisis ton personnage pour le Battle Royale.",
+      "text": "Filtre par rareté, trie par évolution ou par statistiques, cherche et suis ta progression. Fais évoluer tes cartes avec tes exemplaires en trop : une étoile à chaque évolution, jusqu'à la Divine, toute argentée. Les cartes qui te manquent restent floutées jusqu'à ce que tu les trouves. C'est aussi ici que tu choisis ton personnage pour le Battle Royale.",
       "progress": "87 / 240 cartes",
       "chipRarity": "Rareté",
       "chipOwned": "Possédées",
@@ -333,9 +335,9 @@
     },
     "battle": {
       "title": "Le Battle Royale",
-      "text": "Chaque carte devient un personnage jouable, avec ses PV, sa vitesse, sa capacité spéciale et son passif. Jusqu'à {count} participants sur une carte vue de dessus : ramasse des armes, casse des caisses, échappe au Scroll et reste le dernier debout. Entraîne-toi dès maintenant contre des bots ; les parties classées et entre amis arrivent bientôt.",
+      "text": "Chaque carte devient un personnage jouable, avec ses PV, sa vitesse, sa capacité spéciale et son passif. Jusqu'à {count} participants sur une carte vue de dessus : ramasse des armes, casse des caisses, reste dans la Zone et sois le dernier debout. Entraîne-toi dès maintenant contre des bots ; les parties classées et entre amis arrivent bientôt.",
       "alive": "{count} en vie",
-      "scroll": "Le Scroll avance",
+      "scroll": "La Zone avance",
       "sceneLabel": "Une partie de Battle Royale vue de dessus"
     }
   },
@@ -418,9 +420,9 @@
       "modeFriends": "Entre amis",
       "soon": "Bientôt",
       "character": "Ton personnage",
-      "changeCharacter": "Changer dans la Collection",
-      "noCharacter": "Choisis ton personnage dans ta Collection : ouvre une carte et touche « Choisir pour le Battle Royale ».",
-      "goCollection": "Aller à ma Collection"
+      "changeCharacter": "Changer",
+      "noCharacter": "Tu n'as pas encore de personnage : choisis-le parmi les cartes de ta Collection.",
+      "goCollection": "Choisir mon personnage"
     },
     "collection": {
       "title": "Collection",
@@ -548,16 +550,16 @@
       "obtained": "Récompense obtenue"
     },
     "upgrades": {
-      "levelsTitle": "Les 3 évolutions",
-      "lead": "Tes exemplaires en trop font évoluer une carte : elle change d'apparence et ses statistiques augmentent un peu.",
+      "levelsTitle": "Les {count} évolutions",
+      "lead": "Tes exemplaires en trop font évoluer une carte : elle gagne une étoile et ses statistiques augmentent un peu. Elle garde la couleur de sa rareté jusqu'à la dernière évolution, Divine, où elle devient argentée.",
       "base": "Carte de base",
       "bonus": "Statistiques +{percent} %",
       "howTitle": "Comment ça marche",
       "how1": "Un exemplaire de chaque carte reste toujours dans ta collection : seuls les exemplaires en trop servent.",
-      "how2": "Les évolutions se débloquent dans l'ordre : Dorée ★, puis Dorée ★★, puis Divine ★★★.",
+      "how2": "Les évolutions se débloquent dans l'ordre : 1 étoile, 2 étoiles, 3 étoiles, puis Divine (MAX).",
       "how3": "Plus la carte est rare, moins il faut d'exemplaires (tableau ci-dessous).",
       "how4": "Chaque évolution augmente les points de vie, l'attaque, la défense et la vitesse, jusqu'à +{max} % en Divine. En Battle Royale, ce bonus compte à {factor} % (jusqu'à +{battleMax} %), pour que ton adresse reste décisive.",
-      "how5": "Une étoile apparaît sur l'illustration à chaque évolution : dorées pour Dorée, blanches et argentées pour Divine.",
+      "how5": "Les étoiles, en haut à gauche de l'illustration, montrent l'évolution ; la carte garde la couleur de sa rareté. En Divine, elle devient argentée (son bandeau de rareté garde sa couleur) et affiche « MAX ».",
       "costTitle": "Exemplaires nécessaires",
       "rarity": "Rareté",
       "copies": "{count, plural, one {# exemplaire} other {# exemplaires}}",
@@ -567,7 +569,8 @@
       "sell2": "« Revendre mes exemplaires en trop » fait la même chose pour toute ta collection.",
       "sell3": "Les communes, rares et épiques rapportent au plus {cap} MemeMoney par jour ; les cartes plus rares n'ont pas de limite.",
       "sell4": "Les petites sommes (0,1 ; 0,25…) s'additionnent et ne sont jamais perdues.",
-      "how6": "À ne pas confondre avec la Maîtrise, prévue avec le Battle Royale : en jouant un personnage, tu débloqueras pour lui des récompenses uniquement cosmétiques (cadre, traînée, titre)."
+      "how6": "À ne pas confondre avec la Maîtrise, prévue avec le Battle Royale : en jouant un personnage, tu débloqueras pour lui des récompenses uniquement cosmétiques (cadre, traînée, titre).",
+      "howAll": "Dans ta Collection, « Tout faire évoluer » fait évoluer d'un coup toutes les cartes qui ont assez d'exemplaires en trop."
     },
     "memeMoney": {
       "whatTitle": "C'est quoi ?",
@@ -636,7 +639,7 @@
       "defenseTitle": "Défense : {name}",
       "defense": "Devient ton passif, toujours actif : {passive}.",
       "extrasTitle": "Étoiles et exemplaires",
-      "extras": "Les étoiles, en haut à gauche de l'illustration, montrent l'évolution de la carte : ses statistiques augmentent un peu (en bataille, cet effet compte à {factor} %). Le badge ×n, en haut à droite, indique combien d'exemplaires tu possèdes.",
+      "extras": "Les étoiles, en haut à gauche de l'illustration, montrent l'évolution de la carte (« MAX » pour une Divine, toute argentée) : ses statistiques augmentent un peu (en bataille, cet effet compte à {factor} %). Le badge ×n, en haut à droite, indique combien d'exemplaires tu possèdes.",
       "soon": "Le Battle Royale arrive bientôt. Ces valeurs pourront encore être ajustées pour garder le jeu équilibré.",
       "exampleTitle": "Exemple de dégâts",
       "example": "Une balle de {weapon} ({damage} dégâts) tirée par cette carte part avec {shot} dégâts. Contre un personnage moyen (armure −{reduction} %), elle en inflige {hit}."
@@ -683,10 +686,11 @@
       "special": "SPÉ"
     },
     "battle": {
-      "choose": "Choisir pour le Battle Royale",
-      "chosen": "Ton personnage du Battle Royale",
       "done": "{name} est ton personnage du Battle Royale !",
-      "badge": "Personnage"
+      "badge": "Personnage",
+      "pickLead": "Touche une de tes cartes pour en faire ton personnage du Battle Royale.",
+      "pickCancel": "Annuler",
+      "pickCard": "Choisir {name} comme personnage"
     }
   },
   "boostersPanel": {
@@ -766,7 +770,7 @@
   },
   "dup": {
     "owned": "{count, plural, one {# exemplaire} other {# exemplaires}} · {dups, plural, =0 {aucun en trop} other {# en trop}}",
-    "maxed": "Divine ★★★ : évolution maximale",
+    "maxed": "Divine (MAX) : évolution maximale",
     "upgraded": "Ta carte a évolué : {level} !",
     "sold": "+{amount} MemeMoney ajoutés à ton solde.",
     "bulk": {
@@ -782,13 +786,23 @@
     "capPartial": "Limite du jour : {count} sur {total} peuvent être revendus aujourd'hui.",
     "level": {
       "0": "Normale",
-      "1": "Dorée ★",
-      "2": "Dorée ★★",
-      "3": "Divine ★★★"
+      "1": "1 étoile",
+      "2": "2 étoiles",
+      "3": "3 étoiles",
+      "4": "Divine"
     },
     "evolveTo": "Évoluer en {level}",
     "evolveCost": "{have}/{cost} ex.",
-    "nothingToSellShort": "Aucun exemplaire à vendre"
+    "nothingToSellShort": "Aucun exemplaire à vendre",
+    "evolveAll": {
+      "button": "Tout faire évoluer",
+      "none": "Aucune carte à faire évoluer",
+      "summary": "{cards, plural, one {# carte va évoluer} other {# cartes vont évoluer}} : {evolutions, plural, one {# évolution} other {# évolutions}}, {copies, plural, one {# exemplaire utilisé} other {# exemplaires utilisés}}.",
+      "note": "Chaque carte monte aussi haut que ses exemplaires en trop le permettent (★, ★★, ★★★, puis Divine). Le premier exemplaire reste toujours dans ta collection.",
+      "confirm": "Confirmer les évolutions",
+      "cancel": "Annuler",
+      "done": "{count, plural, one {# évolution faite !} other {# évolutions faites !}}"
+    }
   },
   "notifications": {
     "new": "Nouveau",
@@ -1077,7 +1091,7 @@
   },
   "match": {
     "title": "Entraînement",
-    "lead": "Une partie contre {bots} bots pour t'entraîner : ni trophées ni MemeMoney en jeu, et elle marche même hors ligne.",
+    "lead": "Partie de {total} joueurs dont {bots} bots. Pas de trophées ni de MemeMoney à gagner. Mode de jeu qui fonctionne hors ligne.",
     "botsNotice": "Tes adversaires sont tous des bots (badge BOT) qui portent des cartes du jeu.",
     "difficulty": "Difficulté",
     "easy": "Facile",
@@ -1093,10 +1107,10 @@
     "hud": {
       "survivors": "{count, plural, one {# en vie} other {# en vie}}",
       "kills": "{count, plural, one {# élimination} other {# éliminations}}",
-      "zoneWait": "Le Scroll avance dans {time}",
-      "zoneShrink": "Le Scroll avance ! Encore {time}",
-      "zoneClosed": "Le Scroll a tout recouvert",
-      "outside": "Tu es dans le Scroll : rejoins la zone !",
+      "zoneWait": "La Zone avance dans {time}",
+      "zoneShrink": "La Zone avance ! Encore {time}",
+      "zoneClosed": "La Zone s'est refermée",
+      "outside": "Tu es hors de la Zone : rejoins-la !",
       "hp": "PV",
       "shield": "Gilet",
       "reloading": "Rechargement…",
@@ -1145,10 +1159,10 @@
     },
     "feed": {
       "kill": "{killer} a éliminé {victim}",
-      "zone": "{victim} a été avalé par le Scroll",
+      "zone": "{victim} a été éliminé par la Zone",
       "killedYou": "{killer} t'a éliminé",
       "youKilled": "Tu as éliminé {victim}",
-      "zoneYou": "Le Scroll t'a avalé"
+      "zoneYou": "La Zone t'a éliminé"
     },
     "end": {
       "victory": "Top 1 !",
@@ -1158,7 +1172,7 @@
       "damage": "Dégâts infligés",
       "survived": "Temps de survie",
       "eliminatedBy": "Éliminé par {name}",
-      "eliminatedByZone": "Éliminé par le Scroll",
+      "eliminatedByZone": "Éliminé par la Zone",
       "rewards": "Récompenses",
       "noRewards": "Entraînement : aucun trophée ni MemeMoney.",
       "again": "Rejouer",

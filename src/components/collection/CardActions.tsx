@@ -11,8 +11,8 @@ import { useErrorText } from "@/lib/client/errors";
 import type { Card } from "@/lib/validation/card";
 
 /**
- * Les boutons posés sur la carte agrandie :
- * - Choisir pour le Battle Royale (ou « Ton personnage » si c'est déjà elle) ;
+ * Les boutons posés sur la carte agrandie (le personnage du Battle Royale se choisit depuis la page Battle Royale,
+ * bouton « Changer », pour ne pas encombrer la carte) :
  * - Évoluer : niveau suivant et exemplaires nécessaires (« 3 / 5 ») ;
  * - Vendre : tous les exemplaires en trop d'un coup, avec le prix total.
  */
@@ -21,17 +21,13 @@ export function CardActions({
   quantity,
   level,
   resaleLeftCents,
-  battleCharacter = false,
 }: {
   card: Card;
   quantity: number;
   level: Level;
   resaleLeftCents: number;
-  /** Cette carte est le personnage du Battle Royale du joueur. */
-  battleCharacter?: boolean;
 }) {
   const t = useTranslations("dup");
-  const tb = useTranslations("collection.battle");
   const errorText = useErrorText();
   const format = useFormatter();
   const router = useRouter();
@@ -59,24 +55,12 @@ export function CardActions({
 
   return (
     <div className="mm-online-only contents">
-      {battleCharacter ? (
-        <p className="rounded-full border-2 border-ink bg-candy px-3 py-2 text-center text-sm font-extrabold text-[var(--mm-accent-ink)]">{tb("chosen")}</p>
-      ) : (
-        <button
-          type="button"
-          disabled={pending}
-          onClick={() => run("/api/battle/character", { cardId: card.id }, () => tb("done", { name: card.name }))}
-          className="mm-btn mm-btn--primary min-h-10 w-full px-3 text-sm"
-        >
-          {tb("choose")}
-        </button>
-      )}
       {next ? (
         <button
           type="button"
           disabled={pending || extra < next.cost}
           onClick={() => run("/api/collection/upgrade", { cardId: card.id }, (d) => t("upgraded", { level: t(`level.${d.level ?? next.to}`) }))}
-          className={`mm-btn ${lookOf(next.to) === "gold" ? "mm-btn--gold" : "mm-btn--divine"} min-h-10 w-full justify-between px-3 text-sm`}
+          className={`mm-btn ${lookOf(next.to) === "divine" ? "mm-btn--divine" : "mm-btn--primary"} min-h-10 w-full justify-between px-3 text-sm`}
         >
           <span>{t("evolveTo", { level: t(`level.${next.to}`) })}</span>
           <span className="font-display text-base">{t("evolveCost", { have: Math.min(extra, next.cost), cost: next.cost })}</span>

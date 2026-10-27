@@ -1,18 +1,20 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { CharacterBubble } from "@/components/home/CharacterBubble";
 import { buttonClass } from "@/components/ui/Button";
 import { GAME_CONFIG } from "@/config/game.config";
+import { RARITY_GLYPH } from "@/config/rarities";
 import type { Level } from "@/lib/economy/duplicates";
 import { DIFFICULTIES, trainingMatch, type Difficulty, type RosterEntry } from "@/lib/br-client/training";
 import type { MatchSetup } from "@/lib/br/engine";
 import type { Card } from "@/lib/validation/card";
+import { characterPicker } from "@/lib/client/character-picker";
 import { unlockAudio } from "@/lib/client/sfx";
+import { showSlide } from "@/lib/client/slides";
 import { ControlsHelp } from "./MatchMenu";
 
 // L'écran de jeu (moteur, PixiJS) n'est chargé qu'au lancement d'une partie.
@@ -41,6 +43,7 @@ export function TrainingPanel({ player, character, cards }: { player: { name: st
   const t = useTranslations("match");
   const tb = useTranslations("playerHome.battles");
   const tc = useTranslations("match.controls");
+  const tr = useTranslations("rarity");
   const [difficulty, setDifficulty] = useState<Difficulty>("normal");
   const [match, setMatch] = useState<{ seed: number; setup: MatchSetup; roster: RosterEntry[] } | null>(null);
 
@@ -72,6 +75,12 @@ export function TrainingPanel({ player, character, cards }: { player: { name: st
     setMatch({ seed, setup, roster });
   }
 
+  /** « Changer » : la Collection s'ouvre en mode sélection ; un toucher sur une carte la choisit, puis retour ici. */
+  function pickCharacter() {
+    characterPicker.set(true);
+    showSlide("collection");
+  }
+
   const modes = [
     { key: "training", label: t("title"), soon: false },
     { key: "ranked", label: tb("modeRanked"), soon: true },
@@ -101,7 +110,7 @@ export function TrainingPanel({ player, character, cards }: { player: { name: st
           <h3 id="mm-training" className="font-display text-3xl leading-none">
             {t("title")}
           </h3>
-          <p className="text-sm text-ink-soft">{t("lead", { bots: GAME_CONFIG.BATTLE_ROYALE.PARTICIPANTS - 1 })}</p>
+          <p className="text-sm text-ink-soft">{t("lead", { total: GAME_CONFIG.BATTLE_ROYALE.PARTICIPANTS, bots: GAME_CONFIG.BATTLE_ROYALE.PARTICIPANTS - 1 })}</p>
           <p className="text-sm font-semibold">{t("botsNotice")}</p>
         </div>
 
@@ -111,20 +120,27 @@ export function TrainingPanel({ player, character, cards }: { player: { name: st
               <svg viewBox="0 0 120 84" className="w-24 shrink-0" aria-hidden="true">
                 <CharacterBubble card={character.card} x={40} y={40} r={28} angle={-8} id="mm-training-character" />
               </svg>
-              <div className="grid gap-1">
+              <div className="grid min-w-0 gap-1.5">
                 <p className="text-xs font-bold text-ink-soft">{tb("character")}</p>
-                <p className="font-extrabold">{character.card.name}</p>
-                <Link href="/?vue=collection" className="text-sm font-bold underline">
+                <p className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                  <span className="font-extrabold">{character.card.name}</span>
+                  {/* Rareté : symbole, nom et couleur (jamais la couleur seule). */}
+                  <span className="inline-flex items-center gap-1 rounded-full border-2 border-ink bg-surface px-2 text-xs font-extrabold" style={{ color: `var(--color-r-${character.card.rarity})` }}>
+                    <span aria-hidden="true">{RARITY_GLYPH[character.card.rarity]}</span>
+                    <span className="text-ink">{tr(character.card.rarity)}</span>
+                  </span>
+                </p>
+                <button type="button" onClick={pickCharacter} className={buttonClass("secondary", "min-h-11 justify-self-start px-5 text-sm")}>
                   {tb("changeCharacter")}
-                </Link>
+                </button>
               </div>
             </>
           ) : (
             <div className="grid gap-2">
               <p className="font-semibold">{tb("noCharacter")}</p>
-              <Link href="/?vue=collection" className={buttonClass("secondary", "min-h-11 justify-self-start px-5 text-sm")}>
+              <button type="button" onClick={pickCharacter} className={buttonClass("secondary", "min-h-11 justify-self-start px-5 text-sm")}>
                 {tb("goCollection")}
-              </Link>
+              </button>
             </div>
           )}
         </div>

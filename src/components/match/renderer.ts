@@ -24,6 +24,7 @@ import { ITEM, TILE, tileAt } from "@/lib/br/map";
 import { BURN_SHOT, KNIFE } from "@/lib/br/rules";
 import { weaponInHand, Z, type MatchState } from "@/lib/br/state";
 import { inView } from "@/lib/br/vision";
+import { MAX_LEVEL } from "@/lib/economy/duplicates";
 import type { Card } from "@/lib/validation/card";
 import { buildPortraitAtlas, PORTRAIT } from "./atlas";
 
@@ -53,6 +54,7 @@ const COLORS = {
   ink: 0x1a1238,
   white: 0xffffff,
   steel: 0xe4e9f3,
+  silver: 0xcfd8ea,
   scroll: 0x6b2fd6,
   scrollEdge: 0xff3d7f,
   hp: 0x2fbf71,
@@ -458,10 +460,13 @@ export async function createRenderer(host: HTMLElement, s: MatchState, roster: r
     ring.circle(0, 0, r).stroke({ width: r * 0.22, color: colors[entry.card.rarity] });
     ring.circle(0, 0, r * 1.11).stroke({ width: r * 0.08, color: i === me ? COLORS.white : COLORS.ink });
     if (entry.level > 0) {
-      // Étoiles d'évolution : petits losanges dorés au-dessus du portrait.
-      for (let k = 0; k < entry.level; k++) {
-        const sx = (k - (entry.level - 1) / 2) * r * 0.5;
-        ring.poly([sx, -r * 1.42, sx + r * 0.16, -r * 1.24, sx, -r * 1.06, sx - r * 0.16, -r * 1.24]).fill(entry.level === 3 ? COLORS.white : 0xffc83d).stroke({ width: r * 0.05, color: COLORS.ink });
+      // Évolution : un à trois losanges jaunes au-dessus du portrait (★ à ★★★) ; Divine : anneau argenté et losange blanc.
+      const divine = entry.level === MAX_LEVEL;
+      if (divine) ring.circle(0, 0, r * 1.22).stroke({ width: r * 0.12, color: COLORS.silver });
+      const marks = divine ? 1 : entry.level;
+      for (let k = 0; k < marks; k++) {
+        const sx = (k - (marks - 1) / 2) * r * 0.5;
+        ring.poly([sx, -r * 1.42, sx + r * 0.16, -r * 1.24, sx, -r * 1.06, sx - r * 0.16, -r * 1.24]).fill(divine ? COLORS.white : 0xffd23f).stroke({ width: r * 0.05, color: COLORS.ink });
       }
     }
     const flash = new Graphics().circle(0, 0, r).fill(COLORS.white);
@@ -690,7 +695,7 @@ export async function createRenderer(host: HTMLElement, s: MatchState, roster: r
         }
       }
 
-      // Zone (« le Scroll ») : tout l'extérieur du cercle actuel est recouvert ; le prochain cercle en pointillés.
+      // Zone : tout l'extérieur du cercle actuel est recouvert ; le prochain cercle en pointillés.
       zone.clear();
       const Zs = st.zone;
       const reach = 4 * (halfW + halfH);

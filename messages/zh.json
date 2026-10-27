@@ -31,7 +31,8 @@
     "ariaLabel": "{name}，{rarity}卡牌，{hp} 生命",
     "tiltHint": "在卡牌上移动手指或鼠标，让它闪闪发光。",
     "open": "查看 {name} 的详情",
-    "copies": "{count, plural, other {# 张}}"
+    "copies": "{count, plural, other {# 张}}",
+    "max": "满级"
   },
   "effect": {
     "none": "无效果",
@@ -261,7 +262,7 @@
     "not_enough_meme_money": "MemeMoney 不足。",
     "no_cards": "暂时还没有可用的卡牌。",
     "card_not_owned": "你没有这张卡牌。",
-    "already_max_variant": "这张卡牌已完成最终进化（神圣 ★★★）。",
+    "already_max_variant": "这张卡牌已达到最终进化（神圣）。",
     "not_enough_duplicates": "卡牌张数不足，无法进化。",
     "cannot_sell": "这张卡牌无法出售。",
     "daily_sell_cap": "今日出售额度已用完。",
@@ -286,7 +287,8 @@
     "community_limit": "你已有 2 个待处理的投稿：请等待审核，或撤回其中一个。",
     "community_image": "图片保存失败。请换一张照片试试（JPEG 或 PNG）。",
     "community_not_found": "这张卡牌已不再可用。",
-    "community_own_vote": "你不能给自己的卡牌投票。"
+    "community_own_vote": "你不能给自己的卡牌投票。",
+    "nothing_to_evolve": "没有卡牌拥有足够的多余张数来进化。"
   },
   "statName": {
     "hp": "生命值",
@@ -323,7 +325,7 @@
     },
     "collection": {
       "title": "完成你的收藏",
-      "text": "按稀有度筛选，按进化或属性排序，搜索并追踪你的进度。缺少的卡牌会保持模糊，直到你找到它们。你也在这里选择大逃杀中使用的角色。",
+      "text": "按稀有度筛选，按进化或属性排序，搜索并追踪你的进度。用多余的卡牌让卡牌进化：每次进化获得一颗星，直到全银色的神圣。缺少的卡牌会保持模糊，直到你找到它们。你也在这里选择大逃杀中使用的角色。",
       "progress": "87 / 240 张卡牌",
       "chipRarity": "稀有度",
       "chipOwned": "已拥有",
@@ -333,9 +335,9 @@
     },
     "battle": {
       "title": "大逃杀",
-      "text": "每张卡牌都会成为可操控的角色，拥有自己的生命、速度、特技和被动。最多 {count} 名参与者在俯视地图上对战：捡起武器、打碎箱子、躲开 Scroll，成为最后的幸存者。现在就可以与机器人训练；排位赛和好友对战即将推出。",
+      "text": "每张卡牌都会成为可操控的角色，拥有自己的生命、速度、特技和被动。最多 {count} 名参与者在俯视地图上对战：捡起武器、打碎箱子、待在安全区内，成为最后的幸存者。现在就可以与机器人训练；排位赛和好友对战即将推出。",
       "alive": "{count} 人存活",
-      "scroll": "Scroll 正在推进",
+      "scroll": "安全区正在缩小",
       "sceneLabel": "俯视视角的大逃杀对局"
     }
   },
@@ -418,9 +420,9 @@
       "modeFriends": "好友对战",
       "soon": "即将推出",
       "character": "你的角色",
-      "changeCharacter": "在收藏中更换",
-      "noCharacter": "在收藏中选择你的角色：打开一张卡牌，点击“选为大逃杀角色”。",
-      "goCollection": "前往我的收藏"
+      "changeCharacter": "更换",
+      "noCharacter": "你还没有角色：从你收藏中的卡牌里选一个吧。",
+      "goCollection": "选择我的角色"
     },
     "collection": {
       "title": "收藏",
@@ -548,16 +550,16 @@
       "obtained": "奖励已领取"
     },
     "upgrades": {
-      "levelsTitle": "3 次进化",
-      "lead": "多余的卡牌可以让一张卡牌进化：外观改变，属性也会小幅提升。",
+      "levelsTitle": "{count} 次进化",
+      "lead": "多余的卡牌可以让一张卡牌进化：它会获得一颗星，属性略有提升。在最终进化“神圣”之前，它会保持稀有度的颜色；进化为神圣后会变成银色。",
       "base": "基础卡牌",
       "bonus": "属性 +{percent}%",
       "howTitle": "规则说明",
       "how1": "每张卡牌都会在收藏中保留一张：只使用多余的卡牌。",
-      "how2": "进化按顺序解锁：金色 ★，然后金色 ★★，最后神圣 ★★★。",
+      "how2": "进化按顺序解锁：1 星、2 星、3 星，然后神圣（满级）。",
       "how3": "卡牌越稀有，所需张数越少（见下表）。",
       "how4": "每次进化都会提升生命、攻击、防御和速度，神圣最高 +{max}%。在大逃杀中，此加成按 {factor}% 计算（最高 +{battleMax}%），让技术始终起决定作用。",
-      "how5": "每次进化，插图上就会多一颗星：金色为金星，神圣为银白色星星。",
+      "how5": "插图左上角的星星表示进化；卡牌保持其稀有度的颜色。进化为神圣后，卡牌变成银色（稀有度标签保持原色），并显示“满级”。",
       "costTitle": "所需张数",
       "rarity": "稀有度",
       "copies": "{count, plural, other {# 张}}",
@@ -567,7 +569,8 @@
       "sell2": "“出售多余的卡牌”会对整个收藏执行同样的操作。",
       "sell3": "普通、稀有和史诗卡每天最多带来 {cap} MemeMoney；更稀有的卡牌没有上限。",
       "sell4": "零碎金额（0.1、0.25……）会累积，永远不会丢失。",
-      "how6": "不要与随大逃杀推出的「精通」混淆：使用某个角色进行游戏，可为其解锁纯装饰性的奖励（头像框、拖尾、称号）。"
+      "how6": "不要与随大逃杀推出的「精通」混淆：使用某个角色进行游戏，可为其解锁纯装饰性的奖励（头像框、拖尾、称号）。",
+      "howAll": "在你的收藏中，“全部进化”会一次性进化所有拥有足够多余张数的卡牌。"
     },
     "memeMoney": {
       "whatTitle": "这是什么？",
@@ -636,7 +639,7 @@
       "defenseTitle": "防御：{name}",
       "defense": "变成你的被动效果，始终生效：{passive}。",
       "extrasTitle": "星星与张数",
-      "extras": "插图左上角的星星表示卡牌的进化：属性会略有提升（对战中按 {factor}% 计算）。右上角的 ×n 徽章表示你拥有的张数。",
+      "extras": "插图左上角的星星表示卡牌的进化（全银色的神圣卡牌显示“满级”）：属性会略有提升（对战中按 {factor}% 计算）。右上角的 ×n 徽章表示你拥有的张数。",
       "soon": "大逃杀即将上线。为保持游戏平衡，这些数值仍可能调整。",
       "exampleTitle": "伤害示例",
       "example": "这张卡用 {weapon}（{damage} 点伤害）射出的一发子弹，出膛伤害为 {shot}。面对普通角色（护甲 −{reduction}%），实际造成 {hit} 点伤害。"
@@ -683,10 +686,11 @@
       "special": "特技"
     },
     "battle": {
-      "choose": "选为大逃杀角色",
-      "chosen": "你的大逃杀角色",
       "done": "{name} 现在是你的大逃杀角色！",
-      "badge": "角色"
+      "badge": "角色",
+      "pickLead": "点击你的一张卡牌，让它成为你的大逃杀角色。",
+      "pickCancel": "取消",
+      "pickCard": "选择 {name} 作为角色"
     }
   },
   "boostersPanel": {
@@ -766,7 +770,7 @@
   },
   "dup": {
     "owned": "{count, plural, other {# 张}} · {dups, plural, =0 {没有多余} other {多余 # 张}}",
-    "maxed": "神圣 ★★★：最终进化",
+    "maxed": "神圣（满级）：最终进化",
     "upgraded": "你的卡牌已进化：{level}！",
     "sold": "已获得 +{amount} MemeMoney。",
     "bulk": {
@@ -782,13 +786,23 @@
     "capPartial": "今日额度：{total} 张中今天可出售 {count} 张。",
     "level": {
       "0": "普通",
-      "1": "金色 ★",
-      "2": "金色 ★★",
-      "3": "神圣 ★★★"
+      "1": "1 星",
+      "2": "2 星",
+      "3": "3 星",
+      "4": "神圣"
     },
     "evolveTo": "进化为{level}",
     "evolveCost": "{have}/{cost} 张",
-    "nothingToSellShort": "没有可出售的"
+    "nothingToSellShort": "没有可出售的",
+    "evolveAll": {
+      "button": "全部进化",
+      "none": "没有可进化的卡牌",
+      "summary": "{cards} 张卡牌将进化：共 {evolutions} 次进化，使用 {copies} 张多余的卡牌。",
+      "note": "每张卡牌会用多余的张数尽量升级（★、★★、★★★，然后神圣）。每张卡牌的第一张始终保留在你的收藏中。",
+      "confirm": "确认进化",
+      "cancel": "取消",
+      "done": "已完成 {count} 次进化！"
+    }
   },
   "notifications": {
     "new": "新",
@@ -1077,7 +1091,7 @@
   },
   "match": {
     "title": "训练",
-    "lead": "与 {bots} 个机器人对战来练习：不涉及奖杯和 MemeMoney，离线也能玩。",
+    "lead": "{total} 人对战，其中 {bots} 个机器人。没有奖杯和 MemeMoney 可赢取。此模式可离线游玩。",
     "botsNotice": "你的对手全是机器人（BOT 标记），使用游戏中的卡牌。",
     "difficulty": "难度",
     "easy": "简单",
@@ -1093,10 +1107,10 @@
     "hud": {
       "survivors": "{count, plural, other {# 人存活}}",
       "kills": "{count, plural, other {# 次淘汰}}",
-      "zoneWait": "{time} 后 Scroll 推进",
-      "zoneShrink": "Scroll 正在推进！剩余 {time}",
-      "zoneClosed": "Scroll 已覆盖一切",
-      "outside": "你在 Scroll 里：快回到安全区！",
+      "zoneWait": "{time} 后安全区缩小",
+      "zoneShrink": "安全区正在缩小！剩余 {time}",
+      "zoneClosed": "安全区已完全关闭",
+      "outside": "你在安全区外：快回到安全区！",
       "hp": "生命",
       "shield": "背心",
       "reloading": "换弹中…",
@@ -1145,10 +1159,10 @@
     },
     "feed": {
       "kill": "{killer} 淘汰了 {victim}",
-      "zone": "{victim} 被 Scroll 吞没",
+      "zone": "{victim} 被安全区淘汰",
       "killedYou": "{killer} 淘汰了你",
       "youKilled": "你淘汰了 {victim}",
-      "zoneYou": "你被 Scroll 吞没了"
+      "zoneYou": "你被安全区淘汰了"
     },
     "end": {
       "victory": "第 1 名！",
@@ -1158,7 +1172,7 @@
       "damage": "造成伤害",
       "survived": "存活时间",
       "eliminatedBy": "被 {name} 淘汰",
-      "eliminatedByZone": "被 Scroll 淘汰",
+      "eliminatedByZone": "被安全区淘汰",
       "rewards": "奖励",
       "noRewards": "训练：没有奖杯和 MemeMoney。",
       "again": "再来一局",

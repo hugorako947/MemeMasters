@@ -6,7 +6,7 @@ import { upgradeCard } from "@/lib/server/duplicates";
 import { ApiError, assertSameOrigin, readJson, withErrors } from "@/lib/server/http";
 import { consumeRateLimit, RATE_LIMITS } from "@/lib/server/rate-limit";
 
-/** Améliore une carte : Dorée (5 doublons), puis Divine (10 doublons). */
+/** Fait évoluer une carte d'un niveau : ★, ★★, ★★★, puis Divine (exemplaires selon la rareté). */
 export const POST = withErrors(async (request: Request) => {
   assertSameOrigin(request);
   const { player } = await apiPlayer();

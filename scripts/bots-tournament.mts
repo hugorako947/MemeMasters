@@ -111,7 +111,7 @@ function print(a: Analysis) {
     );
   }
   console.log("\nPar niveau d'évolution (série normale) :");
-  for (const e of a.byEvolution) console.log(`  ${"★".repeat(e.evolution) || "sans"} : place moyenne ${fmt(e.meanPlace, 1)} · Top 10 ${fmt(100 * e.top10Rate, 1)} % (${e.plays} parties)`);
+  for (const e of a.byEvolution) console.log(`  ${e.evolution === 4 ? "Divine" : "★".repeat(e.evolution) || "sans"} : place moyenne ${fmt(e.meanPlace, 1)} · Top 10 ${fmt(100 * e.top10Rate, 1)} % (${e.plays} parties)`);
   console.log("\nPar niveau des bots :");
   for (const l of a.byLevel) console.log(`  niveaux ${l.band} : ${l.games} parties · durée ${fmt(l.minutes)} min · zone ${fmt(l.zonePercent, 1)} %`);
 }

@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { postJson } from "@/lib/client/api";
+import { SHOW_SLIDE_EVENT } from "@/lib/client/slides";
 import { NotificationDot } from "./NotificationDot";
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, useTransition, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
 
@@ -21,7 +22,8 @@ export interface Slide {
  * - au doigt : glisser à gauche / à droite ;
  * - au clavier : flèches gauche / droite sur les onglets.
  * La hauteur suit la page affichée. L'onglet actif est reflété dans l'adresse
- * (?vue=…) pour pouvoir partager ou recharger sans perdre sa place.
+ * (?vue=…) pour pouvoir partager ou recharger sans perdre sa place. Une page peut en ouvrir une autre avec
+ * showSlide() (src/lib/client/slides.ts) : le bandeau d'onglets revient alors en haut de l'écran.
  */
 export function SlideDeck({
   slides,
@@ -49,6 +51,7 @@ export function SlideDeck({
   const [height, setHeight] = useState<number | null>(null);
   const refs = useRef<Array<HTMLDivElement | null>>([]);
   const tabs = useRef<Array<HTMLButtonElement | null>>([]);
+  const root = useRef<HTMLDivElement>(null);
   const start = useRef<{ x: number; y: number } | null>(null);
   const baseId = useId();
 
@@ -62,6 +65,19 @@ export function SlideDeck({
     },
     [param, slides],
   );
+
+  // Une page en ouvre une autre (showSlide) : on y va, et le bandeau d'onglets revient en haut de l'écran.
+  useEffect(() => {
+    const onShowSlide = (e: Event) => {
+      const i = slides.findIndex((slide) => slide.key === (e as CustomEvent<string>).detail);
+      if (i < 0) return;
+      go(i);
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      root.current?.scrollIntoView({ block: "start", behavior: reduce ? "auto" : "smooth" });
+    };
+    window.addEventListener(SHOW_SLIDE_EVENT, onShowSlide);
+    return () => window.removeEventListener(SHOW_SLIDE_EVENT, onShowSlide);
+  }, [slides, go]);
 
   // La hauteur du cadre suit la page affichée (pas de grand vide sous une page courte).
   useLayoutEffect(() => {
@@ -116,7 +132,7 @@ export function SlideDeck({
   }
 
   return (
-    <div className="grid min-w-0 gap-4">
+    <div ref={root} className="grid min-w-0 scroll-mt-4 gap-4">
       <div
         role="tablist"
         aria-label={t("label")}

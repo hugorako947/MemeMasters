@@ -1,13 +1,16 @@
 import { describe, expect, it } from "vitest";
 import { GAME_CONFIG, gameConfigSchema } from "@/config/game.config";
-import { boostedStats, canUpgrade, countsTowardCap, creditCents, lookOf, maxSellable, nextUpgrade, planBulkSale, sellAllDuplicates, sellValueCents } from "./duplicates";
+import { boostedStats, canUpgrade, countsTowardCap, creditCents, lookOf, MAX_LEVEL, maxSellable, nextUpgrade, planBulkSale, planBulkUpgrade, sellAllDuplicates, sellValueCents } from "./duplicates";
 
-describe("améliorations", () => {
-  it("passe de Dorée ★ à Dorée ★★ puis Divine ★★★ (5, 10, 15 exemplaires pour une commune)", () => {
+describe("évolutions", () => {
+  it("passe de 1 à 2 puis 3 étoiles, puis Divine (5, 10, 15, 20 exemplaires pour une commune)", () => {
+    expect(MAX_LEVEL).toBe(4);
     expect(nextUpgrade("commune", 0)).toEqual({ to: 1, cost: 5 });
     expect(nextUpgrade("commune", 1)).toEqual({ to: 2, cost: 10 });
     expect(nextUpgrade("commune", 2)).toEqual({ to: 3, cost: 15 });
-    expect(nextUpgrade("commune", 3)).toBeNull();
+    expect(nextUpgrade("commune", 3)).toEqual({ to: 4, cost: 20 });
+    expect(nextUpgrade("commune", 4)).toBeNull();
+    expect(nextUpgrade("godlevel", 3)).toEqual({ to: 4, cost: 4 });
   });
 
   it("demande moins d'exemplaires pour les cartes plus rares", () => {
@@ -20,18 +23,44 @@ describe("améliorations", () => {
     expect(canUpgrade("commune", 5, 0)).toBe(false); // 4 en trop
     expect(canUpgrade("commune", 6, 0)).toBe(true); // 5 en trop
     expect(canUpgrade("legendaire", 3, 0)).toBe(true); // 2 en trop
-    expect(canUpgrade("commune", 99, 3)).toBe(false);
+    expect(canUpgrade("commune", 21, 3)).toBe(true); // 20 en trop : Divine
+    expect(canUpgrade("commune", 99, 4)).toBe(false);
   });
 
-  it("augmente un peu les statistiques à chaque niveau", () => {
+  it("augmente un peu les statistiques à chaque niveau, jusqu'à +10 % en Divine", () => {
     const card = { hp: 100, atk: 40, def: 35, spd: 80 };
     expect(boostedStats(card, 0)).toEqual(card);
     expect(boostedStats(card, 1)).toEqual({ hp: 103, atk: 41, def: 36, spd: 82 });
-    expect(boostedStats(card, 3)).toEqual({ hp: 110, atk: 44, def: 39, spd: 88 });
+    expect(boostedStats(card, 3)).toEqual({ hp: 108, atk: 43, def: 38, spd: 86 });
+    expect(boostedStats(card, 4)).toEqual({ hp: 110, atk: 44, def: 39, spd: 88 });
   });
 
-  it("donne l'apparence dorée aux niveaux 1 et 2, divine au niveau 3", () => {
-    expect([0, 1, 2, 3].map((l) => lookOf(l as 0 | 1 | 2 | 3))).toEqual(["normal", "gold", "gold", "divine"]);
+  it("garde la couleur de la rareté jusqu'à 3 étoiles : seule la Divine change d'apparence", () => {
+    expect([0, 1, 2, 3, 4].map((l) => lookOf(l as 0 | 1 | 2 | 3 | 4))).toEqual(["normal", "normal", "normal", "normal", "divine"]);
+  });
+});
+
+describe("tout faire évoluer", () => {
+  it("monte chaque carte aussi haut que ses exemplaires en trop le permettent, en gardant toujours le premier", () => {
+    const plan = planBulkUpgrade([
+      { cardId: "a", rarity: "commune", quantity: 16, level: 0 }, // 15 en trop : 5 (★) + 10 (★★)
+      { cardId: "b", rarity: "commune", quantity: 5, level: 0 }, // 4 en trop : rien
+      { cardId: "c", rarity: "godlevel", quantity: 11, level: 0 }, // 10 en trop : 1 + 2 + 3 + 4, Divine
+      { cardId: "d", rarity: "legendaire", quantity: 50, level: 4 }, // déjà Divine
+      { cardId: "e", rarity: "rare", quantity: 0, level: 0 }, // pas possédée
+    ]);
+    expect(plan.lines).toEqual([
+      { cardId: "a", from: 0, to: 2, used: 15 },
+      { cardId: "c", from: 0, to: 4, used: 10 },
+    ]);
+    expect(plan.evolutions).toBe(6);
+    expect(plan.used).toBe(25);
+  });
+
+  it("repart du niveau actuel de chaque carte et s'arrête dès qu'il manque des exemplaires", () => {
+    // Rare ★ avec 12 en trop : ★★ coûte 8 ; il en reste 4, ★★★ en demande 12.
+    expect(planBulkUpgrade([{ cardId: "r", rarity: "rare", quantity: 13, level: 1 }]).lines).toEqual([{ cardId: "r", from: 1, to: 2, used: 8 }]);
+    expect(planBulkUpgrade([{ cardId: "r", rarity: "rare", quantity: 8, level: 1 }])).toEqual({ lines: [], evolutions: 0, used: 0 });
   });
 });
 

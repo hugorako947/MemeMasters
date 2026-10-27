@@ -3,10 +3,10 @@ import { InteractiveCard } from "@/components/card/InteractiveCard";
 import { sampleOf } from "@/components/card/sample-cards";
 import { GAME_CONFIG } from "@/config/game.config";
 import { RARITIES } from "@/config/rarities";
-import { LEVELS } from "@/lib/economy/duplicates";
+import { LEVELS, MAX_LEVEL } from "@/lib/economy/duplicates";
 import { InfoList, InfoSection, InfoTable } from "./InfoBlocks";
 
-/** Page « Évolutions » d'Infos : niveaux étoilés, coûts, bonus (réduit en Battle Royale) et revente des exemplaires en trop. */
+/** Page « Évolutions » d'Infos : ★ à ★★★ puis Divine, coûts, bonus (réduit en Battle Royale) et revente des exemplaires en trop. */
 export async function UpgradesPanel() {
   const t = await getTranslations("infos.upgrades");
   const tr = await getTranslations("rarity");
@@ -18,9 +18,9 @@ export async function UpgradesPanel() {
   const money = (cents: number) => format.number(cents / 100, { maximumFractionDigits: 2 });
   return (
     <div className="grid gap-5">
-      <InfoSection title={t("levelsTitle")}>
+      <InfoSection title={t("levelsTitle", { count: MAX_LEVEL })}>
         <p className="text-ink-soft">{t("lead")}</p>
-        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           {LEVELS.map((level) => (
             <li key={level} className="grid gap-2 text-center">
               <InteractiveCard card={demo} size="compact" level={level} />
@@ -37,8 +37,9 @@ export async function UpgradesPanel() {
             t("how1"),
             t("how2"),
             t("how3"),
-            t("how4", { max: STAT_BONUS_PERCENT[3], factor, battleMax: format.number((STAT_BONUS_PERCENT[3] * factor) / 100, { maximumFractionDigits: 1 }) }),
+            t("how4", { max: STAT_BONUS_PERCENT[MAX_LEVEL], factor, battleMax: format.number((STAT_BONUS_PERCENT[MAX_LEVEL] * factor) / 100, { maximumFractionDigits: 1 }) }),
             t("how5"),
+            t("howAll"),
             t("how6"),
           ]}
         />
@@ -46,7 +47,7 @@ export async function UpgradesPanel() {
 
       <InfoSection title={t("costTitle")}>
         <InfoTable
-          head={[t("rarity"), tl("1"), tl("2"), tl("3")]}
+          head={[t("rarity"), ...LEVELS.slice(1).map((level) => tl(String(level) as "1"))]}
           rows={RARITIES.map((r) => [tr(r), ...UPGRADES[r].map((n) => t("copies", { count: n }))])}
         />
       </InfoSection>

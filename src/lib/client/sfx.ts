@@ -235,7 +235,7 @@ export function playElimination(mine: boolean, gain = 1): void {
   }
 }
 
-/** Le Scroll commence à avancer, ou le joueur est dehors : une alerte grave. */
+/** La Zone commence à avancer, ou le joueur est dehors : une alerte grave. */
 export function playZoneWarning(gain = 1): void {
   const v = voice(gain, 0);
   if (!v) return;

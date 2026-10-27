@@ -1,5 +1,5 @@
 /**
- * Exemplaires en trop : améliorations (Dorée ★, Dorée ★★, Divine ★★★) et
+ * Exemplaires en trop : évolutions (★, ★★, ★★★, puis Divine) et
  * revente contre de la MemeMoney.
  * Fonctions pures, utilisées par le serveur (qui décide) et par l'interface
  * (qui affiche un aperçu). Les montants sont en centièmes de MemeMoney.
@@ -7,20 +7,23 @@
 import { GAME_CONFIG } from "@/config/game.config";
 import { isAtLeast, RARITIES, type Rarity } from "@/config/rarities";
 
-/** Niveau d'amélioration : 0 normale, 1 Dorée ★, 2 Dorée ★★, 3 Divine ★★★. */
-export const LEVELS = [0, 1, 2, 3] as const;
+/** Niveau d'évolution : 0 normale, 1 à 3 étoiles, 4 Divine (le maximum, « MAX »). */
+export const LEVELS = [0, 1, 2, 3, 4] as const;
 export type Level = (typeof LEVELS)[number];
-export const MAX_LEVEL: Level = 3;
+export const MAX_LEVEL: Level = 4;
 
-/** Apparence correspondant au niveau : dorée (★, ★★) ou divine (★★★). */
-export function lookOf(level: Level): "normal" | "gold" | "divine" {
-  return level === 0 ? "normal" : level === MAX_LEVEL ? "divine" : "gold";
+/**
+ * Apparence correspondant au niveau : la carte garde la couleur de sa rareté (seules ses étoiles montrent l'évolution),
+ * sauf en Divine, où elle devient argentée (son bandeau de rareté garde sa couleur).
+ */
+export function lookOf(level: Level): "normal" | "divine" {
+  return level === MAX_LEVEL ? "divine" : "normal";
 }
 
-/** Prochain niveau et son coût en exemplaires, ou null si la carte est déjà Divine ★★★. */
+/** Prochain niveau et son coût en exemplaires, ou null si la carte est déjà Divine. */
 export function nextUpgrade(rarity: Rarity, level: Level, config = GAME_CONFIG.DUPLICATES): { to: Level; cost: number } | null {
   if (level >= MAX_LEVEL) return null;
-  return { to: (level + 1) as Level, cost: config.UPGRADES[rarity][level as 0 | 1 | 2] };
+  return { to: (level + 1) as Level, cost: config.UPGRADES[rarity][level as 0 | 1 | 2 | 3] };
 }
 
 /** Statistiques augmentées par l'amélioration (arrondies, jamais en dessous de la carte de base). */
@@ -74,6 +77,41 @@ export function countsTowardCap(rarity: Rarity, config = GAME_CONFIG.DUPLICATES)
 export function creditCents(carryCents: number, gainedCents: number): { memeMoney: number; carryCents: number } {
   const total = carryCents + gainedCents;
   return { memeMoney: Math.floor(total / 100), carryCents: total % 100 };
+}
+
+export interface UpgradeItem {
+  cardId: string;
+  rarity: Rarity;
+  quantity: number;
+  level: Level;
+}
+
+/**
+ * « Tout faire évoluer » : chaque carte monte, dans l'ordre, d'autant d'évolutions que ses exemplaires en trop le
+ * permettent (le premier exemplaire reste toujours). `used` : exemplaires utilisés ; `evolutions` : évolutions faites.
+ */
+export function planBulkUpgrade(
+  items: UpgradeItem[],
+  config = GAME_CONFIG.DUPLICATES,
+): { lines: Array<{ cardId: string; from: Level; to: Level; used: number }>; evolutions: number; used: number } {
+  const lines: Array<{ cardId: string; from: Level; to: Level; used: number }> = [];
+  let evolutions = 0;
+  let used = 0;
+  for (const item of items) {
+    let level = item.level;
+    let left = duplicatesOf(item.quantity);
+    let spent = 0;
+    for (let next = nextUpgrade(item.rarity, level, config); next && left >= next.cost; next = nextUpgrade(item.rarity, level, config)) {
+      left -= next.cost;
+      spent += next.cost;
+      level = next.to;
+    }
+    if (level === item.level) continue;
+    lines.push({ cardId: item.cardId, from: item.level, to: level, used: spent });
+    evolutions += level - item.level;
+    used += spent;
+  }
+  return { lines, evolutions, used };
 }
 
 export interface BulkItem {

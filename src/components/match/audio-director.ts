@@ -1,6 +1,6 @@
 /**
  * Sons d'une partie : après chaque tick, compare l'état du moteur au précédent et déclenche les bruitages
- * (tirs, impacts, éliminations, ramassages, soins, rechargement, capacités, Scroll). Le volume baisse avec la
+ * (tirs, impacts, éliminations, ramassages, soins, rechargement, capacités, Zone). Le volume baisse avec la
  * distance au joueur et le son se place à gauche ou à droite. Ne lit que l'état ; ne le modifie jamais.
  */
 import type { TickEvents } from "@/lib/br-client/events";
@@ -103,7 +103,7 @@ export function createAudioDirector(s: MatchState, me: number): AudioDirector {
       prevAmmo = ammo;
       prevHp = P.hp[me];
 
-      // Le Scroll se met à avancer, ou le joueur se retrouve dehors.
+      // La Zone se met à avancer, ou le joueur se retrouve dehors.
       const Zs = st.zone;
       const dx = P.x[me] - Zs[Z.cx];
       const dy = P.y[me] - Zs[Z.cy];

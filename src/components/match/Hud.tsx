@@ -84,7 +84,7 @@ export function Hud({ store, roster, me, touch }: { store: Store<MatchSnapshot |
         {hud.stunned ? <p className="text-danger">{t("stunned")}</p> : null}
       </div>
 
-      {/* En haut au centre : survivants, éliminations, minuterie du Scroll. */}
+      {/* En haut au centre : survivants, éliminations, minuterie de la Zone. */}
       <div className="absolute left-1/2 top-3 grid -translate-x-1/2 justify-items-center gap-1 text-center">
         <p className="flex gap-2 rounded-full border-2 border-ink bg-surface/90 px-3 py-1 text-sm font-extrabold">
           <span>{t("survivors", { count: hud.survivors })}</span>

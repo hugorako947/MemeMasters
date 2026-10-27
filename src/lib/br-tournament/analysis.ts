@@ -24,7 +24,7 @@ export const THRESHOLDS = {
   cardMinPlays: 2000,
   /** Godlevel / commune (Top 1, à évolution égale). */
   rarityMaxRatio: 1.3,
-  /** ★★★ / sans évolution (même carte). */
+  /** Divine (dernière évolution) / sans évolution (même carte). */
   evolutionMaxRatio: 1.15,
   /** Temps moyen d'un tick (Node), en ms. */
   tickMeanMs: 2,
@@ -200,7 +200,7 @@ export function analyse(reports: readonly GameReport[], options: { quick: boolea
     });
   };
   compare("rarity", "rarity", "Top 1 godlevel / commune (évolution égale)", T.rarityMaxRatio);
-  compare("evolution", "evolution", "Top 1 ★★★ / sans évolution (même carte)", T.evolutionMaxRatio);
+  compare("evolution", "evolution", "Top 1 Divine / sans évolution (même carte)", T.evolutionMaxRatio);
 
   indicators.push({
     key: "tick",
@@ -211,7 +211,7 @@ export function analyse(reports: readonly GameReport[], options: { quick: boolea
     blocking: true,
   });
 
-  const byEvolution = [0, 1, 2, 3].map((evolution) => {
+  const byEvolution = [0, 1, 2, 3, 4].map((evolution) => {
     let plays = 0;
     let placeSum = 0;
     let top10 = 0;

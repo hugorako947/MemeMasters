@@ -31,7 +31,8 @@
     "ariaLabel": "{name}, Seltenheit {rarity}, {hp} KP",
     "tiltHint": "Bewege Finger oder Maus über die Karte, damit sie glänzt.",
     "open": "Karte {name} ansehen",
-    "copies": "{count, plural, one {# Exemplar} other {# Exemplare}}"
+    "copies": "{count, plural, one {# Exemplar} other {# Exemplare}}",
+    "max": "MAX"
   },
   "effect": {
     "none": "Kein Effekt",
@@ -261,7 +262,7 @@
     "not_enough_meme_money": "Nicht genug MemeMoney.",
     "no_cards": "Noch keine Karten verfügbar.",
     "card_not_owned": "Du besitzt diese Karte nicht.",
-    "already_max_variant": "Diese Karte hat bereits ihre letzte Entwicklung (Göttlich ★★★).",
+    "already_max_variant": "Diese Karte hat ihre letzte Entwicklung schon erreicht (Göttlich).",
     "not_enough_duplicates": "Nicht genug Exemplare für diese Entwicklung.",
     "cannot_sell": "Dieses Exemplar kann nicht verkauft werden.",
     "daily_sell_cap": "Tageslimit für Verkäufe erreicht.",
@@ -286,7 +287,8 @@
     "community_limit": "Du hast schon 2 offene Vorschläge: Warte, bis sie geprüft sind, oder zieh einen zurück.",
     "community_image": "Das Bild konnte nicht gespeichert werden. Probier ein anderes Foto (JPEG oder PNG).",
     "community_not_found": "Diese Karte ist nicht mehr verfügbar.",
-    "community_own_vote": "Du kannst nicht für deine eigene Karte stimmen."
+    "community_own_vote": "Du kannst nicht für deine eigene Karte stimmen.",
+    "nothing_to_evolve": "Keine Karte hat genug überzählige Exemplare für eine Entwicklung."
   },
   "statName": {
     "hp": "Kraftpunkte",
@@ -323,7 +325,7 @@
     },
     "collection": {
       "title": "Vervollständige deine Sammlung",
-      "text": "Filtere nach Seltenheit, sortiere nach Entwicklung oder Werten, suche und verfolge deinen Fortschritt. Fehlende Karten bleiben verschwommen, bis du sie findest. Hier wählst du auch deine Figur für das Battle Royale.",
+      "text": "Filtere nach Seltenheit, sortiere nach Entwicklung oder Werten, suche und verfolge deinen Fortschritt. Entwickle deine Karten mit überzähligen Exemplaren: ein Stern pro Entwicklung, bis zur ganz silbernen göttlichen Karte. Fehlende Karten bleiben verschwommen, bis du sie findest. Hier wählst du auch deine Figur für das Battle Royale.",
       "progress": "87 / 240 Karten",
       "chipRarity": "Seltenheit",
       "chipOwned": "Im Besitz",
@@ -333,9 +335,9 @@
     },
     "battle": {
       "title": "Das Battle Royale",
-      "text": "Jede Karte wird zur spielbaren Figur, mit ihren KP, ihrem Tempo, ihrer Spezialfähigkeit und ihrem Passiv. Bis zu {count} Teilnehmende auf einer Karte von oben: Schnapp dir Waffen, zerschlag Kisten, entkomm dem Scroll und bleib als Letzter stehen. Trainiere schon jetzt gegen Bots; Ranglisten- und Freundesmatches kommen bald.",
+      "text": "Jede Karte wird zur spielbaren Figur, mit ihren KP, ihrem Tempo, ihrer Spezialfähigkeit und ihrem Passiv. Bis zu {count} Teilnehmende auf einer Karte von oben: Schnapp dir Waffen, zerschlag Kisten, bleib in der Zone und sei der Letzte, der noch steht. Trainiere schon jetzt gegen Bots; Ranglisten- und Freundesmatches kommen bald.",
       "alive": "{count} am Leben",
-      "scroll": "Der Scroll rückt vor",
+      "scroll": "Die Zone rückt vor",
       "sceneLabel": "Ein Battle-Royale-Match von oben"
     }
   },
@@ -418,9 +420,9 @@
       "modeFriends": "Mit Freunden",
       "soon": "Bald",
       "character": "Deine Figur",
-      "changeCharacter": "In der Sammlung ändern",
-      "noCharacter": "Wähle deine Figur in deiner Sammlung: Öffne eine Karte und tippe auf „Fürs Battle Royale wählen“.",
-      "goCollection": "Zu meiner Sammlung"
+      "changeCharacter": "Ändern",
+      "noCharacter": "Du hast noch keine Figur: Wähle sie aus den Karten deiner Sammlung.",
+      "goCollection": "Meine Figur wählen"
     },
     "collection": {
       "title": "Sammlung",
@@ -548,16 +550,16 @@
       "obtained": "Belohnung erhalten"
     },
     "upgrades": {
-      "levelsTitle": "Die 3 Entwicklungen",
-      "lead": "Deine überzähligen Exemplare lassen eine Karte sich entwickeln: Sie sieht anders aus und ihre Werte steigen etwas.",
+      "levelsTitle": "Die {count} Entwicklungen",
+      "lead": "Deine überzähligen Exemplare entwickeln eine Karte: Sie bekommt einen Stern und ihre Werte steigen ein wenig. Sie behält die Farbe ihrer Seltenheit bis zur letzten Entwicklung, Göttlich, in der sie silbern wird.",
       "base": "Grundkarte",
       "bonus": "Werte +{percent} %",
       "howTitle": "So funktioniert's",
       "how1": "Ein Exemplar jeder Karte bleibt immer in deiner Sammlung: Nur überzählige Exemplare werden verwendet.",
-      "how2": "Die Entwicklungen werden der Reihe nach freigeschaltet: Golden ★, dann Golden ★★, dann Göttlich ★★★.",
+      "how2": "Die Entwicklungen werden der Reihe nach freigeschaltet: 1 Stern, 2 Sterne, 3 Sterne, dann Göttlich (MAX).",
       "how3": "Je seltener die Karte, desto weniger Exemplare brauchst du (Tabelle unten).",
       "how4": "Jede Entwicklung erhöht KP, Angriff, Verteidigung und Tempo, bis zu +{max} % bei Göttlich. Im Battle Royale zählt dieser Bonus zu {factor} % (bis zu +{battleMax} %), damit dein Können entscheidend bleibt.",
-      "how5": "Mit jeder Entwicklung erscheint ein Stern auf dem Bild: golden bei Golden, weiß und silbern bei Göttlich.",
+      "how5": "Die Sterne oben links auf dem Bild zeigen die Entwicklung; die Karte behält die Farbe ihrer Seltenheit. Bei Göttlich wird sie silbern (ihr Seltenheitsband behält seine Farbe) und zeigt „MAX“.",
       "costTitle": "Benötigte Exemplare",
       "rarity": "Seltenheit",
       "copies": "{count, plural, one {# Exemplar} other {# Exemplare}}",
@@ -567,7 +569,8 @@
       "sell2": "„Überzählige Exemplare verkaufen“ macht dasselbe für deine ganze Sammlung.",
       "sell3": "Gewöhnliche, seltene und epische Karten bringen höchstens {cap} MemeMoney pro Tag; seltenere Karten haben kein Limit.",
       "sell4": "Kleine Beträge (0,1; 0,25 …) summieren sich und gehen nie verloren.",
-      "how6": "Nicht zu verwechseln mit der Meisterschaft, die mit dem Battle Royale kommt: Wenn du eine Figur spielst, schaltest du für sie rein kosmetische Belohnungen frei (Rahmen, Spur, Titel)."
+      "how6": "Nicht zu verwechseln mit der Meisterschaft, die mit dem Battle Royale kommt: Wenn du eine Figur spielst, schaltest du für sie rein kosmetische Belohnungen frei (Rahmen, Spur, Titel).",
+      "howAll": "In deiner Sammlung entwickelt „Alles entwickeln“ auf einen Schlag alle Karten mit genug überzähligen Exemplaren."
     },
     "memeMoney": {
       "whatTitle": "Was ist das?",
@@ -636,7 +639,7 @@
       "defenseTitle": "Verteidigung: {name}",
       "defense": "Wird zu deiner passiven Fähigkeit, immer aktiv: {passive}.",
       "extrasTitle": "Sterne und Exemplare",
-      "extras": "Die Sterne oben links auf dem Bild zeigen die Entwicklung der Karte: Ihre Werte steigen ein wenig (im Kampf zählt das zu {factor} %). Das Abzeichen ×n oben rechts zeigt, wie viele Exemplare du besitzt.",
+      "extras": "Die Sterne oben links auf dem Bild zeigen die Entwicklung der Karte („MAX“ bei einer ganz silbernen göttlichen Karte): Ihre Werte steigen ein wenig (im Kampf zählt das zu {factor} %). Das Abzeichen ×n oben rechts zeigt, wie viele Exemplare du besitzt.",
       "soon": "Das Battle Royale kommt bald. Diese Werte können noch angepasst werden, damit das Spiel ausgeglichen bleibt.",
       "exampleTitle": "Schadensbeispiel",
       "example": "Ein Schuss mit {weapon} ({damage} Schaden) dieser Karte startet mit {shot} Schaden. Gegen eine durchschnittliche Figur (Rüstung −{reduction} %) richtet er {hit} an."
@@ -683,10 +686,11 @@
       "special": "SPZ"
     },
     "battle": {
-      "choose": "Fürs Battle Royale wählen",
-      "chosen": "Deine Figur im Battle Royale",
       "done": "{name} ist jetzt deine Figur im Battle Royale!",
-      "badge": "Figur"
+      "badge": "Figur",
+      "pickLead": "Tippe auf eine deiner Karten, um sie zu deiner Figur im Battle Royale zu machen.",
+      "pickCancel": "Abbrechen",
+      "pickCard": "{name} als Figur wählen"
     }
   },
   "boostersPanel": {
@@ -766,7 +770,7 @@
   },
   "dup": {
     "owned": "{count, plural, one {# Exemplar} other {# Exemplare}} · {dups, plural, =0 {keine übrig} other {# übrig}}",
-    "maxed": "Göttlich ★★★: letzte Entwicklung",
+    "maxed": "Göttlich (MAX): letzte Entwicklung",
     "upgraded": "Deine Karte hat sich entwickelt: {level}!",
     "sold": "+{amount} MemeMoney deinem Guthaben hinzugefügt.",
     "bulk": {
@@ -782,13 +786,23 @@
     "capPartial": "Tageslimit: Heute können {count} von {total} verkauft werden.",
     "level": {
       "0": "Normal",
-      "1": "Golden ★",
-      "2": "Golden ★★",
-      "3": "Göttlich ★★★"
+      "1": "1 Stern",
+      "2": "2 Sterne",
+      "3": "3 Sterne",
+      "4": "Göttlich"
     },
     "evolveTo": "Entwickeln zu {level}",
     "evolveCost": "{have}/{cost}",
-    "nothingToSellShort": "Nichts zu verkaufen"
+    "nothingToSellShort": "Nichts zu verkaufen",
+    "evolveAll": {
+      "button": "Alles entwickeln",
+      "none": "Keine Karte zu entwickeln",
+      "summary": "{cards, plural, one {# Karte wird entwickelt} other {# Karten werden entwickelt}}: {evolutions, plural, one {# Entwicklung} other {# Entwicklungen}}, {copies, plural, one {# Exemplar verbraucht} other {# Exemplare verbraucht}}.",
+      "note": "Jede Karte steigt so hoch, wie ihre überzähligen Exemplare es erlauben (★, ★★, ★★★, dann Göttlich). Das erste Exemplar bleibt immer in deiner Sammlung.",
+      "confirm": "Entwicklungen bestätigen",
+      "cancel": "Abbrechen",
+      "done": "{count, plural, one {# Entwicklung erledigt!} other {# Entwicklungen erledigt!}}"
+    }
   },
   "notifications": {
     "new": "Neu",
@@ -1077,7 +1091,7 @@
   },
   "match": {
     "title": "Training",
-    "lead": "Ein Match gegen {bots} Bots zum Üben: keine Trophäen und kein MemeMoney im Spiel, und es klappt sogar offline.",
+    "lead": "Match mit {total} Spielenden, davon {bots} Bots. Keine Trophäen und keine MemeMoney zu gewinnen. Dieser Modus funktioniert offline.",
     "botsNotice": "Alle deine Gegner sind Bots (Abzeichen BOT) mit Karten aus dem Spiel.",
     "difficulty": "Schwierigkeit",
     "easy": "Leicht",
@@ -1093,10 +1107,10 @@
     "hud": {
       "survivors": "{count, plural, one {# lebt noch} other {# leben noch}}",
       "kills": "{count, plural, one {# Ausschaltung} other {# Ausschaltungen}}",
-      "zoneWait": "Der Scroll rückt vor in {time}",
-      "zoneShrink": "Der Scroll rückt vor! Noch {time}",
-      "zoneClosed": "Der Scroll hat alles bedeckt",
-      "outside": "Du bist im Scroll: Zurück in die Zone!",
+      "zoneWait": "Die Zone rückt vor in {time}",
+      "zoneShrink": "Die Zone rückt vor! Noch {time}",
+      "zoneClosed": "Die Zone hat sich geschlossen",
+      "outside": "Du bist außerhalb der Zone: Zurück hinein!",
       "hp": "KP",
       "shield": "Weste",
       "reloading": "Lädt nach …",
@@ -1145,10 +1159,10 @@
     },
     "feed": {
       "kill": "{killer} hat {victim} ausgeschaltet",
-      "zone": "{victim} wurde vom Scroll verschluckt",
+      "zone": "{victim} wurde von der Zone ausgeschaltet",
       "killedYou": "{killer} hat dich ausgeschaltet",
       "youKilled": "Du hast {victim} ausgeschaltet",
-      "zoneYou": "Der Scroll hat dich verschluckt"
+      "zoneYou": "Die Zone hat dich ausgeschaltet"
     },
     "end": {
       "victory": "Top 1!",
@@ -1158,7 +1172,7 @@
       "damage": "Verursachter Schaden",
       "survived": "Überlebenszeit",
       "eliminatedBy": "Ausgeschaltet von {name}",
-      "eliminatedByZone": "Vom Scroll ausgeschaltet",
+      "eliminatedByZone": "Von der Zone ausgeschaltet",
       "rewards": "Belohnungen",
       "noRewards": "Training: keine Trophäen und kein MemeMoney.",
       "again": "Nochmal spielen",

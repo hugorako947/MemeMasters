@@ -31,7 +31,8 @@
     "ariaLabel": "{name}, carta {rarity}, {hp} PS",
     "tiltHint": "Mueve el dedo o el ratón sobre la carta para hacerla brillar.",
     "open": "Ver la ficha de {name}",
-    "copies": "{count, plural, one {# ejemplar} other {# ejemplares}}"
+    "copies": "{count, plural, one {# ejemplar} other {# ejemplares}}",
+    "max": "MAX"
   },
   "effect": {
     "none": "Sin efecto",
@@ -261,7 +262,7 @@
     "not_enough_meme_money": "No tienes suficiente MemeMoney.",
     "no_cards": "Todavía no hay cartas disponibles.",
     "card_not_owned": "No tienes esta carta.",
-    "already_max_variant": "Esta carta ya tiene su última evolución (Divina ★★★).",
+    "already_max_variant": "Esta carta ya tiene su última evolución (Divina).",
     "not_enough_duplicates": "No tienes suficientes ejemplares para esta evolución.",
     "cannot_sell": "Este ejemplar no se puede vender.",
     "daily_sell_cap": "Límite de ventas del día alcanzado.",
@@ -286,7 +287,8 @@
     "community_limit": "Ya tienes 2 propuestas en curso: espera a que las revisen o retira una.",
     "community_image": "No se ha podido guardar la imagen. Prueba con otra foto (JPEG o PNG).",
     "community_not_found": "Esta carta ya no está disponible.",
-    "community_own_vote": "No puedes votar por tu propia carta."
+    "community_own_vote": "No puedes votar por tu propia carta.",
+    "nothing_to_evolve": "Ninguna carta tiene suficientes ejemplares de sobra para evolucionar."
   },
   "statName": {
     "hp": "Puntos de salud",
@@ -323,7 +325,7 @@
     },
     "collection": {
       "title": "Completa tu colección",
-      "text": "Filtra por rareza, ordena por evolución o por estadísticas, busca y sigue tu progreso. Las cartas que te faltan siguen borrosas hasta que las encuentres. Aquí también eliges tu personaje para el Battle Royale.",
+      "text": "Filtra por rareza, ordena por evolución o por estadísticas, busca y sigue tu progreso. Haz evolucionar tus cartas con tus ejemplares de sobra: una estrella por evolución, hasta la Divina, toda plateada. Las cartas que te faltan siguen borrosas hasta que las encuentres. Aquí también eliges tu personaje para el Battle Royale.",
       "progress": "87 / 240 cartas",
       "chipRarity": "Rareza",
       "chipOwned": "Obtenidas",
@@ -333,9 +335,9 @@
     },
     "battle": {
       "title": "El Battle Royale",
-      "text": "Cada carta se convierte en un personaje jugable, con sus PS, su velocidad, su habilidad especial y su pasiva. Hasta {count} participantes en un mapa visto desde arriba: recoge armas, rompe cajas, escapa del Scroll y sé el último en pie. Entrena ya contra bots; las partidas clasificatorias y con amigos llegan pronto.",
+      "text": "Cada carta se convierte en un personaje jugable, con sus PS, su velocidad, su habilidad especial y su pasiva. Hasta {count} participantes en un mapa visto desde arriba: recoge armas, rompe cajas, quédate dentro de la Zona y sé el último en pie. Entrena ya contra bots; las partidas clasificatorias y con amigos llegan pronto.",
       "alive": "{count} con vida",
-      "scroll": "El Scroll avanza",
+      "scroll": "La Zona avanza",
       "sceneLabel": "Una partida de Battle Royale vista desde arriba"
     }
   },
@@ -418,9 +420,9 @@
       "modeFriends": "Con amigos",
       "soon": "Pronto",
       "character": "Tu personaje",
-      "changeCharacter": "Cambiarlo en la Colección",
-      "noCharacter": "Elige tu personaje en tu Colección: abre una carta y toca «Elegir para el Battle Royale».",
-      "goCollection": "Ir a mi Colección"
+      "changeCharacter": "Cambiar",
+      "noCharacter": "Aún no tienes personaje: elígelo entre las cartas de tu Colección.",
+      "goCollection": "Elegir mi personaje"
     },
     "collection": {
       "title": "Colección",
@@ -548,16 +550,16 @@
       "obtained": "Recompensa obtenida"
     },
     "upgrades": {
-      "levelsTitle": "Las 3 evoluciones",
-      "lead": "Tus ejemplares de sobra hacen evolucionar una carta: cambia de aspecto y sus estadísticas suben un poco.",
+      "levelsTitle": "Las {count} evoluciones",
+      "lead": "Tus ejemplares de sobra hacen evolucionar una carta: gana una estrella y sus estadísticas suben un poco. Conserva el color de su rareza hasta la última evolución, Divina, en la que se vuelve plateada.",
       "base": "Carta base",
       "bonus": "Estadísticas +{percent} %",
       "howTitle": "Cómo funciona",
       "how1": "Siempre se queda un ejemplar de cada carta en tu colección: solo se usan los ejemplares de sobra.",
-      "how2": "Las evoluciones se desbloquean en orden: Dorada ★, luego Dorada ★★ y luego Divina ★★★.",
+      "how2": "Las evoluciones se desbloquean en orden: 1 estrella, 2 estrellas, 3 estrellas y luego Divina (MAX).",
       "how3": "Cuanto más rara es la carta, menos ejemplares necesitas (tabla de abajo).",
       "how4": "Cada evolución aumenta PS, ataque, defensa y velocidad, hasta +{max} % en Divina. En el Battle Royale, este bonus cuenta al {factor} % (hasta +{battleMax} %), para que tu habilidad siga siendo decisiva.",
-      "how5": "Aparece una estrella en la ilustración con cada evolución: doradas para Dorada, blancas y plateadas para Divina.",
+      "how5": "Las estrellas, arriba a la izquierda de la ilustración, muestran la evolución; la carta conserva el color de su rareza. En Divina, se vuelve plateada (su banda de rareza conserva su color) y muestra «MAX».",
       "costTitle": "Ejemplares necesarios",
       "rarity": "Rareza",
       "copies": "{count, plural, one {# ejemplar} other {# ejemplares}}",
@@ -567,7 +569,8 @@
       "sell2": "«Vender mis ejemplares de sobra» hace lo mismo con toda tu colección.",
       "sell3": "Las comunes, raras y épicas dan como máximo {cap} MemeMoney al día; las cartas más raras no tienen límite.",
       "sell4": "Las cantidades pequeñas (0,1; 0,25…) se suman y nunca se pierden.",
-      "how6": "No hay que confundirlo con la Maestría, prevista con el Battle Royale: al jugar con un personaje, desbloquearás para él recompensas solo cosméticas (marco, estela, título)."
+      "how6": "No hay que confundirlo con la Maestría, prevista con el Battle Royale: al jugar con un personaje, desbloquearás para él recompensas solo cosméticas (marco, estela, título).",
+      "howAll": "En tu Colección, «Evolucionar todo» hace evolucionar de una vez todas las cartas que tienen suficientes ejemplares de sobra."
     },
     "memeMoney": {
       "whatTitle": "¿Qué es?",
@@ -636,7 +639,7 @@
       "defenseTitle": "Defensa: {name}",
       "defense": "Se convierte en tu pasiva, siempre activa: {passive}.",
       "extrasTitle": "Estrellas y ejemplares",
-      "extras": "Las estrellas, arriba a la izquierda de la ilustración, muestran la evolución de la carta: sus estadísticas suben un poco (en batalla cuenta al {factor} %). La insignia ×n, arriba a la derecha, indica cuántos ejemplares tienes.",
+      "extras": "Las estrellas, arriba a la izquierda de la ilustración, muestran la evolución de la carta («MAX» para una Divina, toda plateada): sus estadísticas suben un poco (en batalla cuenta al {factor} %). La insignia ×n, arriba a la derecha, indica cuántos ejemplares tienes.",
       "soon": "El Battle Royale llega pronto. Estos valores aún pueden ajustarse para mantener el juego equilibrado.",
       "exampleTitle": "Ejemplo de daño",
       "example": "Una bala de {weapon} ({damage} de daño) disparada por esta carta sale con {shot} de daño. Contra un personaje medio (armadura −{reduction} %), inflige {hit}."
@@ -683,10 +686,11 @@
       "special": "ESP"
     },
     "battle": {
-      "choose": "Elegir para el Battle Royale",
-      "chosen": "Tu personaje del Battle Royale",
       "done": "¡{name} es tu personaje del Battle Royale!",
-      "badge": "Personaje"
+      "badge": "Personaje",
+      "pickLead": "Toca una de tus cartas para convertirla en tu personaje del Battle Royale.",
+      "pickCancel": "Cancelar",
+      "pickCard": "Elegir {name} como personaje"
     }
   },
   "boostersPanel": {
@@ -766,7 +770,7 @@
   },
   "dup": {
     "owned": "{count, plural, one {# ejemplar} other {# ejemplares}} · {dups, plural, =0 {ninguno de sobra} one {# de sobra} other {# de sobra}}",
-    "maxed": "Divina ★★★: evolución máxima",
+    "maxed": "Divina (MAX): evolución máxima",
     "upgraded": "Tu carta ha evolucionado: {level}!",
     "sold": "+{amount} MemeMoney añadidos a tu saldo.",
     "bulk": {
@@ -782,13 +786,23 @@
     "capPartial": "Límite del día: hoy se pueden vender {count} de {total}.",
     "level": {
       "0": "Normal",
-      "1": "Dorada ★",
-      "2": "Dorada ★★",
-      "3": "Divina ★★★"
+      "1": "1 estrella",
+      "2": "2 estrellas",
+      "3": "3 estrellas",
+      "4": "Divina"
     },
     "evolveTo": "Evolucionar a {level}",
     "evolveCost": "{have}/{cost} ej.",
-    "nothingToSellShort": "Ningún ejemplar para vender"
+    "nothingToSellShort": "Ningún ejemplar para vender",
+    "evolveAll": {
+      "button": "Evolucionar todo",
+      "none": "Ninguna carta para evolucionar",
+      "summary": "{cards, plural, one {# carta va a evolucionar} other {# cartas van a evolucionar}}: {evolutions, plural, one {# evolución} other {# evoluciones}}, {copies, plural, one {# ejemplar usado} other {# ejemplares usados}}.",
+      "note": "Cada carta sube tan alto como le permiten sus ejemplares de sobra (★, ★★, ★★★ y luego Divina). El primer ejemplar siempre se queda en tu colección.",
+      "confirm": "Confirmar las evoluciones",
+      "cancel": "Cancelar",
+      "done": "{count, plural, one {¡# evolución hecha!} other {¡# evoluciones hechas!}}"
+    }
   },
   "notifications": {
     "new": "Nuevo",
@@ -1077,7 +1091,7 @@
   },
   "match": {
     "title": "Entrenamiento",
-    "lead": "Una partida contra {bots} bots para entrenar: no hay trofeos ni MemeMoney en juego, y funciona incluso sin conexión.",
+    "lead": "Partida de {total} jugadores, {bots} de ellos bots. Sin trofeos ni MemeMoney que ganar. Modo de juego que funciona sin conexión.",
     "botsNotice": "Todos tus rivales son bots (insignia BOT) que llevan cartas del juego.",
     "difficulty": "Dificultad",
     "easy": "Fácil",
@@ -1093,10 +1107,10 @@
     "hud": {
       "survivors": "{count, plural, one {# con vida} other {# con vida}}",
       "kills": "{count, plural, one {# eliminación} other {# eliminaciones}}",
-      "zoneWait": "El Scroll avanza en {time}",
-      "zoneShrink": "¡El Scroll avanza! Quedan {time}",
-      "zoneClosed": "El Scroll lo ha cubierto todo",
-      "outside": "Estás en el Scroll: ¡vuelve a la zona!",
+      "zoneWait": "La Zona avanza en {time}",
+      "zoneShrink": "¡La Zona avanza! Quedan {time}",
+      "zoneClosed": "La Zona se ha cerrado",
+      "outside": "Estás fuera de la Zona: ¡vuelve a entrar!",
       "hp": "PS",
       "shield": "Chaleco",
       "reloading": "Recargando…",
@@ -1145,10 +1159,10 @@
     },
     "feed": {
       "kill": "{killer} eliminó a {victim}",
-      "zone": "El Scroll se tragó a {victim}",
+      "zone": "La Zona eliminó a {victim}",
       "killedYou": "{killer} te eliminó",
       "youKilled": "Eliminaste a {victim}",
-      "zoneYou": "El Scroll te tragó"
+      "zoneYou": "La Zona te eliminó"
     },
     "end": {
       "victory": "¡Top 1!",
@@ -1158,7 +1172,7 @@
       "damage": "Daño infligido",
       "survived": "Tiempo de supervivencia",
       "eliminatedBy": "Eliminado por {name}",
-      "eliminatedByZone": "Eliminado por el Scroll",
+      "eliminatedByZone": "Eliminado por la Zona",
       "rewards": "Recompensas",
       "noRewards": "Entrenamiento: sin trofeos ni MemeMoney.",
       "again": "Volver a jugar",

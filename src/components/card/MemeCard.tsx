@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { useCallback, useMemo, useRef, type PointerEvent, type ReactNode } from "react";
 import { RARITY_GLYPH, rarityTier } from "@/config/rarities";
 import { cardArtDataUri } from "@/lib/art/generate";
-import { boostedStats, lookOf, type Level } from "@/lib/economy/duplicates";
+import { boostedStats, lookOf, MAX_LEVEL, type Level } from "@/lib/economy/duplicates";
 import type { Card } from "@/lib/validation/card";
 
 export type MemeCardSize = "full" | "compact";
@@ -16,7 +16,7 @@ export interface MemeCardProps {
   static?: boolean;
   /** false : carte non possédée, en niveaux de gris et floutée (seul le nom reste lisible). */
   owned?: boolean;
-  /** Niveau d'amélioration : 0 normale, 1 Dorée ★, 2 Dorée ★★, 3 Divine ★★★. */
+  /** Niveau d'évolution : 0 normale, 1 à 3 étoiles, 4 Divine (« MAX »). */
   level?: Level;
   /** Nombre d'exemplaires possédés : badge « ×n » sur l'illustration quand il y en a plus d'un. */
   quantity?: number;
@@ -137,7 +137,7 @@ export function MemeCard({
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={art} alt="" draggable={false} decoding="async" />
               <div className="mm-card__fx" aria-hidden="true" />
-              {level > 0 ? <LevelBadge level={level} /> : null}
+              {level > 0 ? <LevelBadge level={level} maxLabel={t("card.max")} /> : null}
               {quantity > 1 ? (
                 <span className="mm-card__qty" aria-label={t("card.copies", { count: quantity })}>
                   ×{quantity}
@@ -215,26 +215,23 @@ export function MemeCard({
   );
 }
 
+const STAR = "M12 2.8l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.6l-5.4 2.9 1.1-6.1-4.5-4.2 6.1-.8z";
+
 /**
- * Insigne des cartes améliorées : une ou deux étoiles dorées (Dorée ★, ★★),
- * trois étoiles blanches et argentées qui brillent (Divine ★★★). Il distingue
- * une carte Dorée d'une carte de rareté Légendaire, elle aussi dorée.
+ * Insigne d'évolution : une à trois étoiles jaunes sur une pastille claire (★, ★★, ★★★), puis une étoile blanche et
+ * « MAX » sur une pastille argentée qui brille (Divine). La carte garde la couleur de sa rareté : seul cet insigne
+ * montre l'évolution, jusqu'à la Divine, où toute la carte devient argentée.
  */
-function LevelBadge({ level }: { level: Level }) {
-  const look = lookOf(level);
+function LevelBadge({ level, maxLabel }: { level: Level; maxLabel: string }) {
+  const divine = level === MAX_LEVEL;
   return (
-    <span className="mm-card__variant" data-variant={look} aria-hidden="true">
-      {Array.from({ length: level }, (_, i) => (
+    <span className="mm-card__variant" data-variant={divine ? "divine" : "stars"} aria-hidden="true">
+      {Array.from({ length: divine ? 1 : level }, (_, i) => (
         <svg key={i} viewBox="0 0 24 24" className="mm-card__star">
-          <path
-            d="M12 2.8l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.6l-5.4 2.9 1.1-6.1-4.5-4.2 6.1-.8z"
-            fill={look === "divine" ? "#ffffff" : "#ffd23f"}
-            stroke={look === "divine" ? "#7d89a6" : "#4a3200"}
-            strokeWidth="1.8"
-            strokeLinejoin="round"
-          />
+          <path d={STAR} fill={divine ? "#ffffff" : "#ffd23f"} stroke={divine ? "#7d89a6" : "#1a1238"} strokeWidth="1.8" strokeLinejoin="round" />
         </svg>
       ))}
+      {divine ? <span className="mm-card__max">{maxLabel}</span> : null}
     </span>
   );
 }

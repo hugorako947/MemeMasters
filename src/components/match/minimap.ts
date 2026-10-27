@@ -46,7 +46,7 @@ export function drawMinimap(canvas: HTMLCanvasElement, base: HTMLCanvasElement, 
   ctx.imageSmoothingEnabled = false;
   ctx.drawImage(base, 0, 0, width, height);
   const Zs = s.zone;
-  // Extérieur de la zone assombri (le « Scroll »).
+  // Extérieur de la Zone assombri.
   ctx.save();
   ctx.beginPath();
   ctx.rect(0, 0, width, height);

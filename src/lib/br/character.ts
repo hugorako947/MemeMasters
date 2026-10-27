@@ -17,7 +17,7 @@ import { clamp, idiv } from "./fixed";
 
 export type BrConfig = GameConfig["BATTLE_ROYALE"];
 export type CharacterCard = Pick<Card, "hp" | "atk" | "def" | "spd" | "specialAttack" | "defenseAbility">;
-export type EvolutionLevel = 0 | 1 | 2 | 3;
+export type EvolutionLevel = 0 | 1 | 2 | 3 | 4;
 
 export const ABILITY_KINDS = ["sprint", "stun", "drain", "multi", "burn", "pierce", "buff", "debuff"] as const;
 export type AbilityKind = (typeof ABILITY_KINDS)[number];
@@ -107,7 +107,7 @@ function evolve(stat: number, bonusPercent: number, factorPercent: number): numb
 
 /**
  * Personnage de bataille d'une carte, à un niveau d'évolution donné.
- * `statBonus` : GAME_CONFIG.DUPLICATES.STAT_BONUS_PERCENT (0, +3, +6, +10 %).
+ * `statBonus` : GAME_CONFIG.DUPLICATES.STAT_BONUS_PERCENT (normale 0, ★ +3, ★★ +6, ★★★ +8, Divine +10 %).
  */
 export function battleCharacter(card: CharacterCard, level: EvolutionLevel, br: BrConfig, statBonus: readonly number[]): BattleCharacter {
   const { REFERENCE, COMPRESSION_PERCENT: kappa, EVOLUTION_FACTOR_PERCENT: factor } = br.CHARACTER;
