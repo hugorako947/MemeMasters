@@ -14,7 +14,7 @@ function build(seed: number) {
 }
 
 function emptyMap(size: number): GameMap {
-  return { size, tileSub: RULES.map.tileSub, tiles: new Uint8Array(size * size), buildings: new Int32Array(0) };
+  return { size, tileSub: RULES.map.tileSub, tiles: new Uint8Array(size * size), buildings: new Int32Array(0), buildingTypes: new Int32Array(0) };
 }
 
 describe("carte générée par la graine", () => {
@@ -167,10 +167,10 @@ describe("carte générée par la graine", () => {
     const hit = segmentWallHit(map, c(1), c(5), c(9), c(5))!;
     // Entrée dans la case du mur à x = 5 × ts : fraction (5 ts − c(1)) / (c(9) − c(1)).
     expect(hit.num * (c(9) - c(1))).toBe((5 * ts - c(1)) * hit.den);
-    // Le mur repousse un cercle qui le chevauche ; l'eau aussi (infranchissable), pas le buisson.
+    // Le mur repousse un cercle qui le chevauche ; l'eau (franchissable, 3B) et le buisson, non.
     expect(circleHitsSolid(map, 5 * ts - 10, c(5), 20)).toBe(true);
     expect(circleHitsSolid(map, 5 * ts - 30, c(5), 20)).toBe(false);
-    expect(circleHitsSolid(map, c(5), c(2), 20)).toBe(true);
+    expect(circleHitsSolid(map, c(5), c(2), 20)).toBe(false);
     expect(circleHitsSolid(map, c(5), c(8), 20)).toBe(false);
     // En dehors de la carte : infranchissable.
     expect(circleHitsSolid(map, 5, c(4), 20)).toBe(true);

@@ -411,6 +411,7 @@
       "verySpecial": "Ultra Booster"
     },
     "battles": {
+      "ability": "Ability",
       "title": "Battle Royale",
       "lead": "Battles are coming soon: get your collection ready.",
       "nextReward": "Next rank reached → {boosters} boosters and {money} MemeMoney as a gift",
@@ -1072,7 +1073,7 @@
     },
     "items": {
       "heal": "First aid kit",
-      "vest": "Bulletproof vest",
+      "vest": "Armor",
       "speed": "Energy drink",
       "scope": "{zoom}× scope",
       "ammo": "Ammo",

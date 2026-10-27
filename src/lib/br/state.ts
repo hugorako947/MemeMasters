@@ -249,7 +249,7 @@ export function canTake(s: MatchState, i: number, k: number): boolean {
     case ITEM.heal:
       return s.p.hp[i] < s.fighters[i].maxHp;
     case ITEM.vest:
-      return s.p.shield[i] < items.vestShield;
+      return s.p.shield[i] < items.armorShield[items.armorShield.length - 1];
     case ITEM.speed:
       return true;
     case ITEM.scope:
@@ -258,6 +258,13 @@ export function canTake(s: MatchState, i: number, k: number): boolean {
       return true;
   }
   return false;
+}
+
+/** Niveau de protection (0 = aucune, jusqu'à armorShield.length − 1) d'après le bouclier restant et les paliers. */
+export function armorLevel(armorShield: number[], shield: number): number {
+  let level = 0;
+  while (level < armorShield.length - 1 && shield >= armorShield[level + 1]) level++;
+  return level;
 }
 
 export const SHOT_CAPACITY = 4096;

@@ -12,7 +12,7 @@ const BIG = 22 * SUB;
 function openMap(size = 32): GameMap {
   const tiles = new Uint8Array(size * size);
   for (let i = 0; i < size; i++) for (const [x, y] of [[i, 0], [i, size - 1], [0, i], [size - 1, i]]) tiles[y * size + x] = TILE.water;
-  return { size, tileSub: TS, tiles, buildings: new Int32Array(0) };
+  return { size, tileSub: TS, tiles, buildings: new Int32Array(0), buildingTypes: new Int32Array(0) };
 }
 
 /** Mur vertical en x = 16, percé d'une ouverture de 2 cases en y = 20 et 21. */

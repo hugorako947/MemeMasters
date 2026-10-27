@@ -1033,7 +1033,9 @@ body:has(> dialog.mm-detail[open]) #mm-app {
    ========================================================================== */
 .mm-logo {
   position: relative;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
   transition: transform 0.2s cubic-bezier(0.3, 1.8, 0.5, 1);
 }
 .mm-logo:hover {
@@ -1041,6 +1043,16 @@ body:has(> dialog.mm-detail[open]) #mm-app {
 }
 .mm-logo:hover .mm-logo__text {
   animation: mm-logo-wiggle 0.6s ease-in-out;
+}
+/* La marque (personnage) : ne rétrécit pas, se penche un peu au survol. */
+.mm-logo__mark {
+  flex: none;
+  display: block;
+  transform-origin: 60% 60%;
+  transition: transform 0.2s cubic-bezier(0.3, 1.8, 0.5, 1);
+}
+.mm-logo:hover .mm-logo__mark {
+  transform: rotate(8deg);
 }
 .mm-logo__text {
   display: inline-block;
@@ -1121,6 +1133,7 @@ body:has(> dialog.mm-detail[open]) #mm-app {
     animation: none;
   }
   .mm-logo:hover,
+  .mm-logo:hover .mm-logo__mark,
   .mm-nav-home:hover {
     transform: none;
   }

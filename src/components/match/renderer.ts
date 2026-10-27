@@ -14,15 +14,15 @@
  * - Couleurs du monde : identité visuelle de la partie (comme les cartes, elles ne suivent pas le thème) ;
  *   les couleurs des raretés viennent des variables CSS du jeu.
  */
-import { Application, Container, Graphics, Rectangle, Sprite, Text, Texture } from "pixi.js";
+import { Application, Container, FillGradient, Graphics, Rectangle, Sprite, Text, Texture } from "pixi.js";
 import { RARITIES, type Rarity } from "@/config/rarities";
 import type { TickEvents } from "@/lib/br-client/events";
 import type { RosterEntry } from "@/lib/br-client/training";
 import { itemVisible, shotVisible, type DamageEvent } from "@/lib/br-client/view";
 import type { KillEntry } from "@/lib/br/engine";
-import { ITEM, TILE, tileAt } from "@/lib/br/map";
+import { BUILDING_KINDS, buildingRoofed, ITEM, roofedInteriorAt, TILE, tileAt } from "@/lib/br/map";
 import { BURN_SHOT, KNIFE } from "@/lib/br/rules";
-import { weaponInHand, Z, type MatchState } from "@/lib/br/state";
+import { armorLevel, weaponInHand, Z, type MatchState } from "@/lib/br/state";
 import { inView } from "@/lib/br/vision";
 import { MAX_LEVEL } from "@/lib/economy/duplicates";
 import type { Card } from "@/lib/validation/card";
@@ -86,6 +86,20 @@ type Finish = { body: number; accent: number };
 // Taille de l'éclair au bout du canon, par arme : les 4 de base, leurs versions supérieures, la brûlure, le couteau.
 const MUZZLE = [1.5, 1.9, 1.65, 2.25, 1.6, 2.0, 1.7, 2.4, 1.5, 1.95];
 
+/** Apparence des bâtiments par type (3D), indexée comme BUILDING_KINDS : toit (bâtiments couverts) et sol intérieur. */
+const BUILDING_STYLE = [
+  { roof: 0xb4553a, floor: 0xd8b07a }, // petite maison (tuiles rouges)
+  { roof: 0x6f7c92, floor: 0xd2ac78 }, // grande maison (ardoise)
+  { roof: 0x9a6a3a, floor: 0xb78a52 }, // cabane (bois)
+  { roof: 0x5a3b26, floor: 0x8a6640 }, // châlet (bois foncé)
+  { roof: 0x463a5c, floor: 0x6a5a7a }, // manoir (chic sombre)
+  { roof: 0xccd4e0, floor: 0xe2e8f0 }, // laboratoire (blanc clinique)
+  { roof: 0x3b4350, floor: 0x5a626e }, // bunker (béton)
+  { roof: 0x000000, floor: 0x6f7f57 }, // cimetière (à ciel ouvert)
+  { roof: 0x000000, floor: 0xe3cf94 }, // dunes (sable)
+  { roof: 0x000000, floor: 0x9a9aa0 }, // plateforme BTP (béton)
+];
+
 const CHUNK = 16;
 const FONT = "'Bricolage Grotesque Variable', 'Bricolage Grotesque', system-ui, sans-serif";
 const MAX_PARTICLES = 500;
@@ -121,6 +135,11 @@ function rarityColors(): Record<Rarity, number> {
   return Object.fromEntries(RARITIES.map((r) => [r, cssColor(`--color-r-${r}`, 0x8c93a8)])) as Record<Rarity, number>;
 }
 
+/** Les trois couleurs du dégradé du thème du joueur (`--mm-theme-gradient`), pour l'aura de capacité. */
+function themeColors(): [number, number, number] {
+  return [cssColor("--color-candy", 0xff3d7f), cssColor("--color-sticker", 0xffd23f), cssColor("--color-link", 0x2d5bff)];
+}
+
 /** Nombre pseudo-aléatoire stable (0 à 2³² − 1) : détails du décor, finition des armes. */
 function hash(n: number): number {
   let h = Math.imul(n ^ 0x9e3779b9, 0x85ebca6b);
@@ -141,11 +160,29 @@ interface Bubble {
   weaponIndex: number;
   aura: Graphics;
   active: Graphics;
+  /** Plaques de protection (3C) et niveau dessiné (pour ne redessiner qu'au changement). */
+  armor: Graphics;
+  armorLevel: number;
   flash: Graphics;
   flashAt: number;
   finish: Finish;
   label: Text;
   bar: Graphics;
+}
+
+/** Plaques de protection autour du personnage : `level` segments d'anneau bleu (plus le niveau est haut, plus il est couvert). */
+function drawArmor(g: Graphics, level: number, r: number): void {
+  g.clear();
+  if (level <= 0) return;
+  const R = r * 1.26;
+  const total = 5;
+  for (let k = 0; k < level && k < total; k++) {
+    const a0 = ((-90 + (k * 360) / total + 7) * Math.PI) / 180;
+    const a1 = ((-90 + ((k + 1) * 360) / total - 7) * Math.PI) / 180;
+    // moveTo avant arc (sinon un trait part du centre).
+    g.moveTo(Math.cos(a0) * R, Math.sin(a0) * R).arc(0, 0, R, a0, a1).stroke({ width: r * 0.2, color: COLORS.ink, cap: "round" });
+    g.moveTo(Math.cos(a0) * R, Math.sin(a0) * R).arc(0, 0, R, a0, a1).stroke({ width: r * 0.12, color: COLORS.shield, cap: "round" });
+  }
 }
 
 interface FloatingNumber {
@@ -185,29 +222,110 @@ function drawWeapon(g: Graphics, weapon: number, r: number, f: Finish): void {
     g.moveTo(r * 1.25, 0).lineTo(r * 1.75, 0).stroke({ width: r * 0.04, color: 0xa9b2c6 });
     return;
   }
-  // Les versions supérieures (indices 4 à 7) partagent la forme de leur arme de base (0 à 3).
-  switch (weapon < 4 ? weapon : weapon - 4) {
-    case 1: // Fusil à pompe : canon épais, pompe, crosse.
-      g.roundRect(r * 0.55, -r * 0.2, r * 0.45, r * 0.4, r * 0.1).fill(f.accent).stroke(line);
-      g.roundRect(r * 0.95, -r * 0.17, r * 0.95, r * 0.34, r * 0.08).fill(f.body).stroke(line);
-      g.roundRect(r * 1.2, -r * 0.24, r * 0.35, r * 0.48, r * 0.1).fill(f.accent).stroke(line);
+  // Les versions supérieures (4 à 7) reprennent la forme de leur base (0 à 3), avec une finition dorée « premium ».
+  const base = weapon < 4 ? weapon : weapon - 4;
+  const premium = weapon >= 4 && weapon < 8;
+  const steel = COLORS.silver;
+  switch (base) {
+    case 1: // Fusil à pompe : corps, canon + tube de pompe, pompe coulissante, crosse, poignée.
+      g.roundRect(r * 1.18, -r * 0.26, r * 0.4, r * 0.52, r * 0.1).fill(f.accent).stroke(line);
+      g.roundRect(r * 0.5, -r * 0.22, r * 1.0, r * 0.44, r * 0.1).fill(f.body).stroke(line);
+      g.roundRect(r * 1.48, -r * 0.14, r * 0.78, r * 0.2, r * 0.06).fill(steel).stroke(line);
+      g.roundRect(r * 1.48, r * 0.03, r * 0.6, r * 0.13, r * 0.05).fill(f.body).stroke(line);
+      g.roundRect(r * 1.02, r * 0.12, r * 0.26, r * 0.3, r * 0.06).fill(f.accent).stroke(line);
+      g.roundRect(r * 0.76, r * 0.18, r * 0.16, r * 0.34, r * 0.05).fill(f.accent).stroke(line);
       break;
-    case 2: // Mitraillette : corps, chargeur, canon fin.
-      g.roundRect(r * 0.6, -r * 0.19, r * 0.85, r * 0.38, r * 0.1).fill(f.body).stroke(line);
-      g.roundRect(r * 0.95, r * 0.12, r * 0.18, r * 0.42, r * 0.05).fill(f.accent).stroke(line);
-      g.rect(r * 1.42, -r * 0.08, r * 0.23, r * 0.16).fill(f.body).stroke(line);
+    case 2: // Mitraillette : corps compact, canon court + bouche, chargeur courbe, poignée, crosse.
+      g.rect(r * 0.3, -r * 0.07, r * 0.32, r * 0.12).fill(f.accent).stroke(line);
+      g.roundRect(r * 0.55, -r * 0.22, r * 0.95, r * 0.4, r * 0.1).fill(f.body).stroke(line);
+      g.roundRect(r * 1.42, -r * 0.1, r * 0.72, r * 0.16, r * 0.05).fill(steel).stroke(line);
+      g.circle(r * 2.16, 0, r * 0.1).fill(steel).stroke(line);
+      g.roundRect(r * 0.9, r * 0.1, r * 0.22, r * 0.5, r * 0.07).fill(f.accent).stroke(line);
+      g.roundRect(r * 0.62, r * 0.14, r * 0.16, r * 0.34, r * 0.05).fill(f.accent).stroke(line);
       break;
-    case 3: // Fusil de précision : long canon, lunette.
-      g.roundRect(r * 0.55, -r * 0.14, r * 0.7, r * 0.28, r * 0.08).fill(f.accent).stroke(line);
-      g.roundRect(r * 1.2, -r * 0.09, r * 1.05, r * 0.18, r * 0.05).fill(f.body).stroke(line);
-      g.roundRect(r * 0.85, -r * 0.42, r * 0.55, r * 0.2, r * 0.08).fill(f.body).stroke(line);
-      g.circle(r * 1.4, -r * 0.32, r * 0.07).fill(f.accent);
+    case 3: // Fusil de précision : corps, long canon + bouche, grosse lunette, crosse, bipied.
+      g.roundRect(r * 0.2, r * 0.0, r * 0.32, r * 0.22, r * 0.06).fill(f.accent).stroke(line);
+      g.roundRect(r * 0.45, -r * 0.15, r * 0.85, r * 0.3, r * 0.08).fill(f.body).stroke(line);
+      g.roundRect(r * 1.25, -r * 0.08, r * 1.15, r * 0.16, r * 0.05).fill(steel).stroke(line);
+      g.circle(r * 2.46, 0, r * 0.09).fill(steel).stroke(line);
+      g.roundRect(r * 0.82, -r * 0.46, r * 0.62, r * 0.2, r * 0.08).fill(0x2b2a36).stroke(line);
+      g.circle(r * 0.92, -r * 0.36, r * 0.08).fill(0x7cc4ff);
+      g.circle(r * 1.34, -r * 0.36, r * 0.08).fill(0x7cc4ff);
+      g.moveTo(r * 1.62, r * 0.13).lineTo(r * 1.5, r * 0.5).moveTo(r * 1.62, r * 0.13).lineTo(r * 1.78, r * 0.5).stroke({ width: r * 0.06, color: COLORS.ink, cap: "round" });
       break;
-    default: // Pistolet : culasse, poignée.
-      g.roundRect(r * 0.75, r * 0.0, r * 0.22, r * 0.42, r * 0.06).fill(f.accent).stroke(line);
-      g.roundRect(r * 0.62, -r * 0.17, r * 0.88, r * 0.34, r * 0.09).fill(f.body).stroke(line);
-      g.rect(r * 0.75, -r * 0.17, r * 0.6, r * 0.08).fill(f.accent);
+    default: // Pistolet : culasse, canon + bouche, poignée, glissière, détente.
+      g.roundRect(r * 0.5, -r * 0.2, r * 1.0, r * 0.3, r * 0.07).fill(f.body).stroke(line);
+      g.roundRect(r * 1.36, -r * 0.12, r * 0.3, r * 0.14, r * 0.04).fill(steel).stroke(line);
+      g.roundRect(r * 0.6, r * 0.06, r * 0.26, r * 0.5, r * 0.07).fill(f.accent).stroke(line);
+      g.rect(r * 0.62, -r * 0.2, r * 0.74, r * 0.06).fill(f.accent);
+      g.rect(r * 0.82, r * 0.1, r * 0.1, r * 0.18).fill(COLORS.ink);
   }
+  // Reflet métallique le long du corps, et liseré doré des armes supérieures.
+  g.rect(r * 0.55, -r * 0.2, r * 0.85, r * 0.04).fill({ color: COLORS.white, alpha: 0.4 });
+  if (premium) g.rect(r * 0.55, r * 0.14, r * 0.85, r * 0.05).fill(0xffd23f);
+}
+
+/** Mobilier et décor de l'intérieur d'un bâtiment, selon son type (3D). Positions en fractions de l'emprise intérieure. */
+function drawFurniture(g: Graphics, type: number, bxT: number, byT: number, bwT: number, bhT: number, ts: number): void {
+  const x0 = (bxT + 1) * ts;
+  const y0 = (byT + 1) * ts;
+  const w = (bwT - 2) * ts;
+  const h = (bhT - 2) * ts;
+  if (w <= ts || h <= ts) return;
+  const ink = COLORS.ink;
+  const piece = (fx: number, fy: number, fw: number, fh: number, color: number) =>
+    g.roundRect(x0 + fx * w, y0 + fy * h, fw * w, fh * h, ts * 0.08).fill(color).stroke({ width: ts / 26, color: ink, alpha: 0.6 });
+  switch (BUILDING_KINDS[type]?.key) {
+    case "cimetiere":
+      for (const [fx, fy] of [[0.18, 0.28], [0.52, 0.18], [0.8, 0.46], [0.28, 0.68], [0.62, 0.74]] as const) {
+        const cx = x0 + fx * w;
+        const cy = y0 + fy * h;
+        g.roundRect(cx - ts * 0.12, cy - ts * 0.32, ts * 0.24, ts * 0.64, ts * 0.06).fill(0x9aa0a6).stroke({ width: ts / 26, color: ink });
+        g.rect(cx - ts * 0.22, cy - ts * 0.14, ts * 0.44, ts * 0.16).fill(0x9aa0a6).stroke({ width: ts / 26, color: ink });
+      }
+      break;
+    case "dunes":
+      for (const [fx, fy, rr] of [[0.3, 0.4, 0.22], [0.66, 0.6, 0.26], [0.52, 0.24, 0.16]] as const) g.ellipse(x0 + fx * w, y0 + fy * h, rr * w * 0.5, rr * h * 0.4).fill({ color: 0xd9c17e, alpha: 0.7 });
+      for (const [fx, fy] of [[0.2, 0.7], [0.8, 0.3]] as const) g.circle(x0 + fx * w, y0 + fy * h, ts * 0.14).fill(0x9a8a6a).stroke({ width: ts / 26, color: ink });
+      break;
+    case "btp":
+      piece(0.08, 0.14, 0.34, 0.08, 0xffb703);
+      piece(0.55, 0.72, 0.36, 0.08, 0xffb703);
+      piece(0.18, 0.46, 0.1, 0.36, 0x8a8a90);
+      piece(0.62, 0.3, 0.22, 0.22, COLORS.crate);
+      break;
+    case "laboratoire":
+      piece(0.1, 0.14, 0.36, 0.12, 0xbfe6f8);
+      piece(0.56, 0.2, 0.3, 0.42, 0xcfd2e0);
+      piece(0.14, 0.64, 0.26, 0.22, 0x7cc4ff);
+      break;
+    case "bunker":
+      piece(0.12, 0.14, 0.2, 0.26, COLORS.crate);
+      piece(0.4, 0.2, 0.2, 0.2, COLORS.crate);
+      piece(0.6, 0.58, 0.3, 0.22, 0x4a5260);
+      break;
+    case "manoir":
+      piece(0.26, 0.4, 0.5, 0.2, 0x7a4a2a);
+      piece(0.1, 0.1, 0.14, 0.3, 0x5a3b26);
+      piece(0.78, 0.1, 0.14, 0.3, 0x5a3b26);
+      break;
+    default: // maisons, cabane, châlet : un lit et une table.
+      piece(0.12, 0.12, 0.3, 0.24, 0xbfc6d2);
+      piece(0.56, 0.52, 0.32, 0.26, 0x7a4a2a);
+  }
+}
+
+/** Toit d'un bâtiment couvert (3D) : couvre l'emprise, caché quand le joueur est à l'intérieur. */
+function drawRoof(g: Graphics, type: number, bx: number, by: number, bw: number, bh: number): void {
+  const style = BUILDING_STYLE[type] ?? BUILDING_STYLE[0];
+  g.clear();
+  g.rect(bx, by, bw, bh).fill(style.roof).stroke({ width: Math.max(2, bw / 40), color: COLORS.ink, alpha: 0.5 });
+  // Faîtage et ombrage pour le relief.
+  g.rect(bx, by, bw, bh * 0.12).fill({ color: COLORS.white, alpha: 0.12 });
+  g.rect(bx, by + bh * 0.88, bw, bh * 0.12).fill({ color: COLORS.ink, alpha: 0.14 });
+  const step = Math.max(bw / 6, 24);
+  for (let x = bx + step; x < bx + bw; x += step) g.moveTo(x, by).lineTo(x, by + bh);
+  g.stroke({ width: Math.max(1, bw / 90), color: COLORS.ink, alpha: 0.18 });
 }
 
 export async function createRenderer(host: HTMLElement, s: MatchState, roster: readonly RosterEntry[], me: number, labels: RendererLabels, reducedMotion: boolean): Promise<MatchRenderer> {
@@ -243,8 +361,9 @@ export async function createRenderer(host: HTMLElement, s: MatchState, roster: r
   const people = new Container();
   const fx = new Graphics();
   const bushes = new Container();
+  const roofs = new Container();
   const zone = new Graphics();
-  world.addChild(grounds, interiors, solids, waves, cratesLayer, items, shots, people, fx, bushes, zone);
+  world.addChild(grounds, interiors, solids, waves, cratesLayer, items, shots, people, fx, bushes, roofs, zone);
 
   const tile = (x: number, y: number) => (x < 0 || y < 0 || x >= size || y >= size ? -1 : map.tiles[y * size + x]);
   const inside = new Uint8Array(size * size);
@@ -253,16 +372,29 @@ export async function createRenderer(host: HTMLElement, s: MatchState, roster: r
     for (let y = by; y < by + bh; y++) for (let x = bx; x < bx + bw; x++) if (x >= 0 && y >= 0 && x < size && y < size) inside[y * size + x] = 1;
   }
 
-  // ---- Intérieur des bâtiments : parquet.
+  // ---- Intérieur des bâtiments : sol au thème du type (3D) et mobilier.
   for (let b = 0; b < map.buildings.length; b += 4) {
+    const type = map.buildingTypes[b >> 2] ?? 0;
+    const style = BUILDING_STYLE[type] ?? BUILDING_STYLE[0];
     const [bx, by, bw, bh] = [map.buildings[b] * ts, map.buildings[b + 1] * ts, map.buildings[b + 2] * ts, map.buildings[b + 3] * ts];
-    interiors.rect(bx, by, bw, bh).fill(COLORS.wood);
-    const plank = ts / 3;
-    for (let y = by + plank; y < by + bh; y += plank) interiors.moveTo(bx, y).lineTo(bx + bw, y);
-    for (let row = 0, y = by; y < by + bh; y += plank, row++) {
-      for (let x = bx + ((row * 0.37) % 1) * ts; x < bx + bw; x += ts * 1.1) interiors.moveTo(x, y).lineTo(x, Math.min(by + bh, y + plank));
-    }
-    interiors.stroke({ width: ts / 28, color: COLORS.woodLine });
+    interiors.rect(bx, by, bw, bh).fill(style.floor);
+    // Dallage / planches (quadrillage léger).
+    const cell = ts;
+    for (let y = by + cell; y < by + bh; y += cell) interiors.moveTo(bx, y).lineTo(bx + bw, y);
+    for (let x = bx + cell; x < bx + bw; x += cell) interiors.moveTo(x, by).lineTo(x, by + bh);
+    interiors.stroke({ width: ts / 30, color: COLORS.ink, alpha: 0.18 });
+    drawFurniture(interiors, type, map.buildings[b], map.buildings[b + 1], map.buildings[b + 2], map.buildings[b + 3], ts);
+  }
+
+  // ---- Toits des bâtiments couverts : cachés dès que le joueur est à l'intérieur (occlusion, 3D).
+  const roofList: { index: number; g: Graphics }[] = [];
+  for (let b = 0; b < map.buildings.length; b += 4) {
+    const type = map.buildingTypes[b >> 2] ?? 0;
+    if (!buildingRoofed(type)) continue;
+    const rg = new Graphics();
+    drawRoof(rg, type, map.buildings[b] * ts, map.buildings[b + 1] * ts, map.buildings[b + 2] * ts, map.buildings[b + 3] * ts);
+    roofs.addChild(rg);
+    roofList.push({ index: b >> 2, g: rg });
   }
 
   // ---- Blocs de carte : herbe texturée, murs en briques (avec ombre), eau (écume, reflets), buissons feuillus.
@@ -446,13 +578,27 @@ export async function createRenderer(host: HTMLElement, s: MatchState, roster: r
   const atlas = await buildPortraitAtlas(roster.map((r) => r.card));
   const atlasTexture = Texture.from(atlas.canvas);
   const colors = rarityColors();
+  // Aura de capacité : dégradé des couleurs du thème du joueur (comme l'aura du personnage dans la Collection).
+  // textureSpace « local » : le même dégradé s'adapte à la taille de chaque personnage.
+  const theme = themeColors();
+  const themeGrad = new FillGradient({
+    type: "linear",
+    start: { x: 0, y: 0 },
+    end: { x: 1, y: 1 },
+    colorStops: [
+      { offset: 0, color: theme[0] },
+      { offset: 0.5, color: theme[1] },
+      { offset: 1, color: theme[2] },
+    ],
+    textureSpace: "local",
+  });
   const bubbles: Bubble[] = roster.map((entry, i) => {
     const r = s.fighters[i].radius;
     const root = new Container();
     const shadow = new Graphics().ellipse(0, r * 0.35, r * 1.05, r * 0.75).fill({ color: COLORS.shadow, alpha: 0.22 });
     const aura = new Graphics().circle(0, 0, r * 1.38).stroke({ width: r * 0.16, color: COLORS.ready, alpha: 0.95 });
     aura.circle(0, 0, r * 1.62).stroke({ width: r * 0.08, color: COLORS.ready, alpha: 0.45 });
-    const active = new Graphics().circle(0, 0, r * 1.5).fill({ color: colors[entry.card.rarity], alpha: 0.28 }).stroke({ width: r * 0.08, color: COLORS.white, alpha: 0.8 });
+    const active = new Graphics().circle(0, 0, r * 1.5).fill(themeGrad).stroke({ width: r * 0.08, color: COLORS.white, alpha: 0.8 });
     const weapon = new Graphics();
     const frame = atlas.frames.get(entry.card.id) ?? { x: 0, y: 0 };
     const portrait = new Sprite(new Texture({ source: atlasTexture.source, frame: new Rectangle(frame.x, frame.y, PORTRAIT, PORTRAIT) }));
@@ -471,11 +617,12 @@ export async function createRenderer(host: HTMLElement, s: MatchState, roster: r
         ring.poly([sx, -r * 1.42, sx + r * 0.16, -r * 1.24, sx, -r * 1.06, sx - r * 0.16, -r * 1.24]).fill(divine ? COLORS.white : 0xffd23f).stroke({ width: r * 0.05, color: COLORS.ink });
       }
     }
+    const armor = new Graphics();
     const flash = new Graphics().circle(0, 0, r).fill(COLORS.white);
     flash.alpha = 0;
     aura.visible = false;
     active.visible = false;
-    root.addChild(shadow, active, aura, weapon, portrait, flash, ring);
+    root.addChild(shadow, active, aura, weapon, portrait, flash, ring, armor);
     people.addChild(root);
     const label = new Text({
       text: entry.bot ? `${labels.bot} · ${entry.name}` : entry.name,
@@ -485,7 +632,7 @@ export async function createRenderer(host: HTMLElement, s: MatchState, roster: r
     label.anchor.set(0.5, 0);
     const bar = new Graphics();
     overlay.addChild(bar, label);
-    return { root, weapon, weaponIndex: -2, aura, active, flash, flashAt: -1e9, finish: finishFor(entry.card), label, bar };
+    return { root, weapon, weaponIndex: -2, aura, active, armor, armorLevel: 0, flash, flashAt: -1e9, finish: finishFor(entry.card), label, bar };
   });
 
   // ---- Chiffres de dégâts, particules, secousse.
@@ -553,6 +700,11 @@ export async function createRenderer(host: HTMLElement, s: MatchState, roster: r
       world.scale.set(scale);
       world.position.set(width / 2 - camX * scale + ox, height / 2 - camY * scale + oy);
       overlay.position.set(ox, oy);
+      // Toits (3D) : visibles, sauf celui du bâtiment où se trouve le joueur (il en voit alors l'intérieur).
+      if (roofList.length) {
+        const myRoof = roofedInteriorAt(st.map, P.x[me], P.y[me]);
+        for (const roof of roofList) roof.g.visible = roof.index !== myRoof;
+      }
       const left = camX - halfW - ts;
       const right = camX + halfW + ts;
       const top = camY - halfH - ts;
@@ -612,6 +764,12 @@ export async function createRenderer(host: HTMLElement, s: MatchState, roster: r
           b.weaponIndex = w;
         }
         b.weapon.rotation = (P.aim[i] / 256) * Math.PI * 2;
+        // Plaques de protection : redessinées seulement quand le niveau change (le bouclier baisse sous les tirs).
+        const al = armorLevel(st.rules.items.armorShield, P.shield[i]);
+        if (al !== b.armorLevel) {
+          drawArmor(b.armor, al, r);
+          b.armorLevel = al;
+        }
         // Capacité prête : un halo doré, visible de tous ; capacité en cours : un disque pulsant et tournant à la couleur
         // de la rareté, avec une onde bien visible au démarrage, pour qu'on voie clairement qui utilise sa capacité.
         b.aura.visible = P.abilityCd[i] === 0;
@@ -619,13 +777,14 @@ export async function createRenderer(host: HTMLElement, s: MatchState, roster: r
         const abilityOn = P.abilityLeft[i] > 0;
         b.active.visible = abilityOn;
         if (abilityOn) {
-          b.active.alpha = reducedMotion ? 0.95 : 0.6 + 0.4 * (0.5 + 0.5 * Math.sin(now / 90));
+          // Le dégradé est opaque : l'alpha du conteneur donne une aura douce et pulsante.
+          b.active.alpha = reducedMotion ? 0.32 : 0.22 + 0.14 * (0.5 + 0.5 * Math.sin(now / 90));
           b.active.scale.set(reducedMotion ? 1 : 1 + 0.1 * Math.sin(now / 110));
           b.active.rotation = reducedMotion ? 0 : now / 360;
           if (!abilityWas[i] && shown) {
-            const aColor = colors[roster[i].card.rarity];
-            emit({ kind: FX.ring, x, y, vx: 0, vy: 0, life: 520, color: aColor, size: r * 1.3 }, now);
-            burst(FX.chip, x, y, 12, aColor, 0.55, 560, r * 0.22, now);
+            // Onde et étincelles aux couleurs du thème (comme l'aura).
+            emit({ kind: FX.ring, x, y, vx: 0, vy: 0, life: 520, color: theme[0], size: r * 1.3 }, now);
+            burst(FX.chip, x, y, 12, theme[2], 0.55, 560, r * 0.22, now);
             burst(FX.spark, x, y, 8, COLORS.white, 0.6, 220, ts * 0.05, now);
           }
         } else b.active.scale.set(1);

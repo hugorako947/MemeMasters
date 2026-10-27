@@ -8,8 +8,17 @@
  * - Ligne de vue : un mur ou une caisse entre les deux cache ce qui est derrière (l'eau et les buissons non).
  * - Buissons : un participant dans un buisson n'est visible que de tout près.
  */
-import { lineOfSight, TILE, tileAt } from "./map";
+import { lineOfSight, roofedInteriorAt, TILE, tileAt } from "./map";
 import type { MatchState } from "./state";
+
+/**
+ * Occlusion des bâtiments à toit (3D) : un point intérieur d'un bâtiment couvert n'est visible du participant i que si
+ * i est dans le **même** bâtiment. Les lieux à ciel ouvert (cimetière, dunes, plateforme BTP) ne sont pas occultés.
+ */
+function occluded(s: MatchState, i: number, x: number, y: number): boolean {
+  const b = roofedInteriorAt(s.map, x, y);
+  return b >= 0 && roofedInteriorAt(s.map, s.p.x[i], s.p.y[i]) !== b;
+}
 
 /** Le point est dans le champ de vision du participant i (lunette comprise). */
 export function inView(s: MatchState, i: number, x: number, y: number): boolean {
@@ -18,15 +27,15 @@ export function inView(s: MatchState, i: number, x: number, y: number): boolean 
   return Math.abs(x - s.p.x[i]) <= halfWidth * zoom && Math.abs(y - s.p.y[i]) <= halfHeight * zoom;
 }
 
-/** Le point (un objet au sol) est visible du participant i : dans son champ de vision, sans mur entre les deux. */
+/** Le point (un objet au sol) est visible du participant i : dans son champ de vision, sans mur ni toit entre les deux. */
 export function canSeePoint(s: MatchState, i: number, x: number, y: number): boolean {
-  return inView(s, i, x, y) && lineOfSight(s.map, s.p.x[i], s.p.y[i], x, y);
+  return inView(s, i, x, y) && !occluded(s, i, x, y) && lineOfSight(s.map, s.p.x[i], s.p.y[i], x, y);
 }
 
 /** Le participant j (en vie) est visible du participant i. */
 export function canSee(s: MatchState, i: number, j: number): boolean {
   const P = s.p;
-  if (!P.alive[j] || !inView(s, i, P.x[j], P.y[j])) return false;
+  if (!P.alive[j] || !inView(s, i, P.x[j], P.y[j]) || occluded(s, i, P.x[j], P.y[j])) return false;
   const dx = P.x[j] - P.x[i];
   const dy = P.y[j] - P.y[i];
   const reveal = s.rules.view.bushReveal;

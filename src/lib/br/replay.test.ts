@@ -63,7 +63,7 @@ describe("déterminisme et rejeu", () => {
     expect({ engine: ENGINE_VERSION, hash: stateHash(played.state) }).toMatchInlineSnapshot(`
       {
         "engine": 5,
-        "hash": "164c149f9dd43997",
+        "hash": "9b97fe94909b37e8",
       }
     `);
   });

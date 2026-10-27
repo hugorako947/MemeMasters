@@ -411,6 +411,7 @@
       "verySpecial": "Ultra Sobre"
     },
     "battles": {
+      "ability": "Habilidad",
       "title": "Battle Royale",
       "lead": "Las batallas llegan pronto: prepara tu colección.",
       "nextReward": "Próximo rango alcanzado → {boosters} sobres y {money} MemeMoney de regalo",
@@ -1072,7 +1073,7 @@
     },
     "items": {
       "heal": "Botiquín",
-      "vest": "Chaleco antibalas",
+      "vest": "Armadura",
       "speed": "Bebida energética",
       "scope": "Mira ×{zoom}",
       "ammo": "Munición",

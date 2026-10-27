@@ -26,7 +26,7 @@ import { circleHitsSolid, generateMap, ITEM, isPassable, lineOfSight, placeLoot,
 import { navFor } from "./nav";
 import { chance, createStreams, nextBelow, nextRange, STREAM } from "./rng";
 import { BURN_SHOT, KNIFE, SUB, type Rules } from "./rules";
-import { allocateState, C, canTake, cloneState, KILL_BURN, KILL_KNIFE, KILL_REFLECT, KILL_ZONE, SHOT_CAPACITY, SHOT_FIELDS, weaponInHand, Z, type MatchState } from "./state";
+import { allocateState, armorLevel, C, canTake, cloneState, KILL_BURN, KILL_KNIFE, KILL_REFLECT, KILL_ZONE, SHOT_CAPACITY, SHOT_FIELDS, weaponInHand, Z, type MatchState } from "./state";
 import { canSee } from "./vision";
 
 export const ENGINE_VERSION = 5;
@@ -215,7 +215,10 @@ function currentSpeed(s: MatchState, i: number): number {
   let mod = 1000 + statModifier(s, i, ST.spd);
   if (abilityActive(s, i, AB.sprint)) mod += f.abilityPermille;
   if (s.p.boostLeft[i] > 0) mod += s.rules.crate.boostPermille;
-  return idiv(f.speed * Math.max(100, mod), 1000);
+  let speed = idiv(f.speed * Math.max(100, mod), 1000);
+  // Dans l'eau : fortement ralenti (3B), d'après la case sous le centre du personnage.
+  if (tileAt(s.map, s.p.x[i], s.p.y[i]) === TILE.water) speed = idiv(speed * s.rules.waterSlowPermille, 1000);
+  return speed;
 }
 
 // ---------------------------------------------------------------- armes, soins, objets
@@ -336,8 +339,11 @@ function pickup(s: MatchState, i: number): void {
       break;
     }
     case ITEM.vest: {
-      if (P.shield[i] >= items.vestShield) return;
-      P.shield[i] = items.vestShield;
+      // Protection : on monte d'un palier (accumulation gilet → casque → jambières → bottes → armure).
+      const A = items.armorShield;
+      const level = armorLevel(A, P.shield[i]);
+      if (level >= A.length - 1) return; // déjà au maximum
+      P.shield[i] = A[level + 1];
       I.kind[k] = ITEM.none;
       s.counters[C.usedVests]++;
       break;

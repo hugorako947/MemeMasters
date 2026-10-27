@@ -21,7 +21,7 @@ function rules(over: Partial<Rules> = {}): Rules {
 }
 
 function openMap(size = 32): GameMap {
-  return { size, tileSub: TS, tiles: new Uint8Array(size * size), buildings: new Int32Array(0) };
+  return { size, tileSub: TS, tiles: new Uint8Array(size * size), buildings: new Int32Array(0), buildingTypes: new Int32Array(0) };
 }
 
 function character(over: Partial<BattleCharacter> = {}): BattleCharacter {
@@ -97,16 +97,25 @@ describe("moteur : déplacement et visée", () => {
     expect([d.p.x[1], d.p.y[1]]).toEqual([tile(10), tile(16)]);
   });
 
-  it("les murs et l'eau arrêtent le déplacement ; on glisse le long d'un mur", () => {
+  it("les murs arrêtent le déplacement ; on glisse le long d'un mur", () => {
     const map = openMap();
     for (let y = 0; y < 32; y++) map.tiles[y * 32 + 8] = TILE.wall;
-    map.tiles[20 * 32 + 3] = TILE.water;
-    const s = match({ map, spawns: [tile(6), tile(10), tile(3), tile(18)] });
-    run(s, 40, (i) => (i === 0 ? cmd(2, 0) : cmd(5, 0))); // 0 : droite-bas (22,5°) ; 1 : vers le bas
+    const s = match({ map, spawns: [tile(6), tile(10), tile(25), tile(25)] });
+    run(s, 40, (i) => (i === 0 ? cmd(2, 0) : 0)); // 0 : droite-bas (22,5°)
     const r = 18 * SUB;
     expect(s.p.x[0]).toBe(8 * TS - r); // collé au mur, sans le chevaucher
     expect(s.p.y[0]).toBeGreaterThan(tile(10)); // a glissé vers le bas
-    expect(s.p.y[1] + r).toBeLessThanOrEqual(20 * TS); // arrêté par l'eau
+  });
+
+  it("l'eau est franchissable mais ralentit le déplacement (3B)", () => {
+    const withWater = openMap(40);
+    for (let y = 20; y <= 26; y++) for (let x = 0; x < 40; x++) withWater.tiles[y * 40 + x] = TILE.water;
+    const s = match({ map: withWater, spawns: [tile(5), tile(18), tile(35), tile(35)] });
+    const c = match({ map: openMap(40), spawns: [tile(5), tile(18), tile(35), tile(35)] });
+    run(s, 40, (i) => (i === 0 ? cmd(5, 0) : 0)); // vers le bas, dans l'eau
+    run(c, 40, (i) => (i === 0 ? cmd(5, 0) : 0)); // même chose, sans eau
+    expect(s.p.y[0]).toBeGreaterThan(tile(18)); // entré dans l'eau, pas bloqué
+    expect(s.p.y[0]).toBeLessThan(c.p.y[0] - TS); // nettement ralenti par rapport au sol
   });
 
   it("la visée tourne d'au plus 32 pas par tick (même règle pour tous)", () => {
@@ -237,13 +246,37 @@ describe("moteur : objets", () => {
     expect(s.p.ammo[0]).toBe(s.rules.items.ammoMax[1]);
     expect(s.it.qty[3]).toBe(250 - s.rules.items.ammoMax[1]);
     s.it.kind[3] = ITEM.none;
-    press(); // PV pleins : le soin, inutile, reste au sol ; le gilet (plus loin) est ramassé
-    expect(s.p.shield[0]).toBe(s.rules.items.vestShield);
+    press(); // PV pleins : le soin, inutile, reste au sol ; la protection (plus loin) est ramassée → 1er palier
+    expect(s.p.shield[0]).toBe(s.rules.items.armorShield[1]);
     expect(s.it.kind[4]).toBe(ITEM.heal);
     s.p.hp[0] = 50;
     press(); // soin immédiat
     expect(s.p.hp[0]).toBe(50 + s.rules.items.healHp);
     expect(s.it.kind[4]).toBe(ITEM.none);
+  });
+
+  it("protections cumulables : chaque ramassage monte d'un palier de bouclier, jusqu'au maximum", () => {
+    const A = BASE.items.armorShield;
+    const at = { x: tile(5), y: tile(16) };
+    const loot: LootItem[] = A.slice(1).map((_, k) => ({ kind: ITEM.vest, sub: 0, qty: 1, x: at.x + k * 40, y: at.y }));
+    const s = match({ loot });
+    const press = () => {
+      advance(s, [cmd(0, 0, BTN.pickup), 0]);
+      advance(s, [0, 0]);
+    };
+    for (let level = 1; level < A.length; level++) {
+      press();
+      expect(s.p.shield[0]).toBe(A[level]);
+    }
+    // Au maximum : une protection de plus reste au sol (inutile).
+    s.it.kind[0] = ITEM.vest;
+    s.it.sub[0] = 0;
+    s.it.qty[0] = 1;
+    s.it.x[0] = at.x;
+    s.it.y[0] = at.y;
+    press();
+    expect(s.p.shield[0]).toBe(A[A.length - 1]);
+    expect(s.it.kind[0]).toBe(ITEM.vest);
   });
 
   it("soin : immédiat au ramassage, surplus perdu au-delà des PV max, jamais ramassé avec tous ses PV", () => {

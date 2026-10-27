@@ -34,7 +34,7 @@ const N = 64;
 
 /** Deux participants immobiles ; une caisse à droite du premier, un mur au-dessus de lui. */
 function setup() {
-  const map: GameMap = { size: N, tileSub: TS, tiles: new Uint8Array(N * N), buildings: new Int32Array(0) };
+  const map: GameMap = { size: N, tileSub: TS, tiles: new Uint8Array(N * N), buildings: new Int32Array(0), buildingTypes: new Int32Array(0) };
   map.tiles[16 * N + 9] = TILE.crate;
   for (let x = 0; x < N; x++) map.tiles[10 * N + x] = TILE.wall;
   const s = createMatch({ seed: 1, rules: rules(2), characters: [character(), character()], map, spawns: [tile(4), tile(16), tile(26), tile(26)], loot: [] });

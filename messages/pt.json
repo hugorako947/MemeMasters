@@ -411,6 +411,7 @@
       "verySpecial": "Ultra Pacote"
     },
     "battles": {
+      "ability": "Habilidade",
       "title": "Battle Royale",
       "lead": "As batalhas chegam em breve: prepare sua coleção.",
       "nextReward": "Próximo ranque alcançado → {boosters} pacotes e {money} MemeMoney de presente",
@@ -1072,7 +1073,7 @@
     },
     "items": {
       "heal": "Kit de primeiros socorros",
-      "vest": "Colete à prova de balas",
+      "vest": "Armadura",
       "speed": "Bebida energética",
       "scope": "Luneta ×{zoom}",
       "ammo": "Munição",

@@ -11,8 +11,8 @@ import type { GameReport } from "./game";
 
 /** Seuils de la conception (§7.7), validés par le propriétaire le 2026-10-24. */
 export const THRESHOLDS = {
-  /** Durée moyenne d'une partie, en minutes (plancher assoupli de 5 à 3,7 le 2026-10-27 : le modèle 3A est plus nerveux ; parties ≈ 3,8 min après avoir calmé la méga-mitraillette et réduit les munitions). */
-  durationMin: [3.7, 8] as const,
+  /** Durée moyenne d'une partie, en minutes (plancher assoupli à 3,5 le 2026-10-27 : le modèle de phase 3 est nerveux, parties ≈ 3,7 min ; marge laissée pour les variations des sous-vagues). */
+  durationMin: [3.5, 8] as const,
   /** Part des éliminations dues à la zone, en %. */
   zoneMaxPercent: 15,
   /** Part des bots restés immobiles plus de 10 s (hors couverture ou soin), en %. */

@@ -411,6 +411,7 @@
       "verySpecial": "Ultra-Booster"
     },
     "battles": {
+      "ability": "Fähigkeit",
       "title": "Battle Royale",
       "lead": "Kämpfe kommen bald: Bereite deine Sammlung vor.",
       "nextReward": "Nächster Rang erreicht → {boosters} Booster und {money} MemeMoney geschenkt",
@@ -1072,7 +1073,7 @@
     },
     "items": {
       "heal": "Verbandskasten",
-      "vest": "Schutzweste",
+      "vest": "Rüstung",
       "speed": "Energydrink",
       "scope": "{zoom}×-Zielfernrohr",
       "ammo": "Munition",

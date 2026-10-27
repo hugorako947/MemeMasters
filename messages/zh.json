@@ -411,6 +411,7 @@
       "verySpecial": "究极卡包"
     },
     "battles": {
+      "ability": "技能",
       "title": "大逃杀",
       "lead": "对战即将上线：先准备好你的收藏吧。",
       "nextReward": "达到下一段位 → 赠送 {boosters} 个卡包和 {money} MemeMoney",
@@ -1072,7 +1073,7 @@
     },
     "items": {
       "heal": "急救包",
-      "vest": "防弹背心",
+      "vest": "护甲",
       "speed": "能量饮料",
       "scope": "{zoom} 倍镜",
       "ammo": "弹药",

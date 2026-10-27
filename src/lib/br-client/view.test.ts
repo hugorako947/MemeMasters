@@ -35,7 +35,7 @@ function match(opts: { spawns: number[]; map?: GameMap; loot?: LootItem[] }) {
     seed: 1,
     rules: rules(n),
     characters: Array.from({ length: n }, character),
-    map: opts.map ?? { size: 32, tileSub: TS, tiles: new Uint8Array(32 * 32), buildings: new Int32Array(0) },
+    map: opts.map ?? { size: 32, tileSub: TS, tiles: new Uint8Array(32 * 32), buildings: new Int32Array(0), buildingTypes: new Int32Array(0) },
     spawns: opts.spawns,
     loot: opts.loot ?? [],
   });
@@ -45,7 +45,7 @@ const cmd = (move: number, aim: number, buttons = 0) => packCommand({ move, aim,
 
 describe("ce que voit le joueur (mêmes règles que les bots)", () => {
   it("un ennemi derrière un mur ou au fond d'un buisson n'est pas montré ; le joueur se voit toujours", () => {
-    const map: GameMap = { size: 32, tileSub: TS, tiles: new Uint8Array(32 * 32), buildings: new Int32Array(0) };
+    const map: GameMap = { size: 32, tileSub: TS, tiles: new Uint8Array(32 * 32), buildings: new Int32Array(0), buildingTypes: new Int32Array(0) };
     for (let y = 0; y < 32; y++) map.tiles[y * 32 + 12] = TILE.wall;
     map.tiles[16 * 32 + 8] = TILE.bush;
     const s = match({ map, spawns: [tile(5), tile(16), tile(15), tile(16), tile(8), tile(16), tile(7), tile(16)] });

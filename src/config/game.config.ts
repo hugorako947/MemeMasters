@@ -88,6 +88,8 @@ const battleRoyaleSchema = z.object({
   }),
   /** Champ de vision, le même pour tous (fixé par le moteur, pas par la taille de l'écran), en unités. */
   VIEW: z.object({ HALF_WIDTH: positiveInt, HALF_HEIGHT: positiveInt, BUSH_REVEAL: nonNegativeInt }),
+  /** Vitesse de déplacement dans l'eau, en % de la normale (l'eau est franchissable mais ralentit, 3B). */
+  WATER_SLOW_PERCENT: z.number().int().min(10).max(100),
   CONTROLS: z.object({
     /** Rotation maximale de la visée par calcul (pas d'angle), la même pour tous, bots compris. */
     AIM_TURN_PER_TICK: z.number().int().min(1).max(128),
@@ -176,8 +178,11 @@ const battleRoyaleSchema = z.object({
   ITEMS: z.object({
     /** Trousse de soins : PV rendus aussitôt au ramassage. */
     HEAL_HP: positiveInt,
-    /** Gilet pare-balles : points de protection, consommés avant les PV. */
-    VEST_SHIELD: positiveInt,
+    /**
+     * Protections cumulables (3C) : bouclier total (consommé avant les PV) à chaque palier. Un objet « Protection »
+     * ramassé fait monter d'un palier (gilet → +casque → +jambières → +bottes → armure). Valeurs croissantes.
+     */
+    ARMOR_SHIELD: z.array(positiveInt).min(1),
     /** Munitions universelles (3A) : réserve maximale et contenu d'une boîte, partagés par toutes les armes à feu. */
     AMMO_MAX: positiveInt,
     AMMO_BOX: positiveInt,
@@ -521,7 +526,7 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
   // Battle royale : valeurs de la conception validée (2026-10-24), équilibrées par les tournois de bots (phase 2, 2026-10-25 :
   // les 8 seuils de la conception tenus, voir DECISIONS.md). Toute modification : relancer npm run bots:tournament.
   BATTLE_ROYALE: {
-    CONFIG_VERSION: 5,
+    CONFIG_VERSION: 6,
     // 50 participants (décision du propriétaire, 2026-10-26) : plus de calcul et de mémoire pour les graphismes.
     PARTICIPANTS: 50,
     TICK_RATE: 20,
@@ -541,6 +546,7 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
       BUSH_CLUSTER_SIZE: [3, 8],
     },
     VIEW: { HALF_WIDTH: 450, HALF_HEIGHT: 250, BUSH_REVEAL: 64 },
+    WATER_SLOW_PERCENT: 45,
     CONTROLS: { AIM_TURN_PER_TICK: 32, AIM_ASSIST_STEPS: 8, WEAPON_SWITCH_MS: 250 },
     // 6 phases : 7 min de zone (conception : 6 min 30 à 7 min 30), puis la zone fermée achève la partie.
     ZONE: {
@@ -590,7 +596,7 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
     WEAPONS: {
       pop: { damage: 8, pellets: 1, fireIntervalMs: 400, magazine: 15, reloadMs: 1500, spreadSteps: 2, speed: 1600, range: 850, ammo: "ammo" },
       petard: { damage: 6, pellets: 6, fireIntervalMs: 900, magazine: 7, reloadMs: 2500, spreadSteps: 10, speed: 1300, range: 450, ammo: "ammo" },
-      rafaleuse: { damage: 5, pellets: 1, fireIntervalMs: 100, magazine: 40, reloadMs: 2000, spreadSteps: 5, speed: 1700, range: 750, ammo: "ammo" },
+      rafaleuse: { damage: 6, pellets: 1, fireIntervalMs: 100, magazine: 40, reloadMs: 2000, spreadSteps: 5, speed: 1700, range: 750, ammo: "ammo" },
       lunette: { damage: 42, pellets: 1, fireIntervalMs: 1500, magazine: 5, reloadMs: 3000, spreadSteps: 0, speed: 2800, range: 1600, ammo: "ammo" },
       // Pistolet avancé, super fusil à pompe, méga-mitraillette, fusil de précision lourd.
       pop2: { damage: 12, pellets: 1, fireIntervalMs: 320, magazine: 18, reloadMs: 1300, spreadSteps: 1, speed: 1800, range: 950, ammo: "ammo" },
@@ -616,7 +622,8 @@ export const GAME_CONFIG: GameConfig = gameConfigSchema.parse({
     },
     ITEMS: {
       HEAL_HP: 40,
-      VEST_SHIELD: 50,
+      // Protections cumulables : gilet 35, +casque → 55, +jambières → 75, +bottes → 90, +armure → 120 (max).
+      ARMOR_SHIELD: [35, 55, 75, 90, 120],
       AMMO_MAX: 140,
       AMMO_BOX: 40,
       PICKUP_RANGE: 48,

@@ -607,8 +607,10 @@ function itemValue(s: MatchState, i: number, k: number): number {
       if (useful <= 0) return 0;
       return 100 + idiv(useful * 500, items.healHp) + (idiv(P.hp[i] * 1000, max) < s.b.caution[i] ? 250 : 0);
     }
-    case ITEM.vest:
-      return P.shield[i] >= items.vestShield ? 0 : 100 + idiv((items.vestShield - P.shield[i]) * 450, items.vestShield);
+    case ITEM.vest: {
+      const max = items.armorShield[items.armorShield.length - 1];
+      return P.shield[i] >= max ? 0 : 100 + idiv((max - P.shield[i]) * 450, max);
+    }
     case ITEM.speed:
       return P.boostLeft[i] > 0 ? 80 : 260;
     case ITEM.scope:

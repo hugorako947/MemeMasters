@@ -38,7 +38,17 @@ async function landscape(): Promise<void> {
  * Page Battle Royale de l'Accueil : les modes de jeu, puis l'Entraînement (personnage choisi dans la Collection,
  * difficulté, commandes de jeu) et son lancement. Seule la partie s'ouvre dans un écran à part, en plein écran.
  */
-export function TrainingPanel({ player, character, cards }: { player: { name: string; trophies: number }; character: { card: Card; level: Level } | null; cards: Card[] }) {
+export function TrainingPanel({
+  player,
+  character,
+  ability,
+  cards,
+}: {
+  player: { name: string; trophies: number };
+  character: { card: Card; level: Level } | null;
+  ability: { name: string; text: string } | null;
+  cards: Card[];
+}) {
   const t = useTranslations("match");
   const tb = useTranslations("playerHome.battles");
   const tc = useTranslations("match.controls");
@@ -113,7 +123,7 @@ export function TrainingPanel({ player, character, cards }: { player: { name: st
           <p className="text-sm font-semibold">{t("botsNotice")}</p>
         </div>
 
-        <div className="flex items-center gap-3 rounded-xl bg-paper p-3">
+        <div className="flex flex-wrap items-center gap-3 rounded-xl bg-paper p-3">
           {character ? (
             <>
               <svg viewBox="0 0 120 84" className="w-24 shrink-0" aria-hidden="true">
@@ -132,6 +142,15 @@ export function TrainingPanel({ player, character, cards }: { player: { name: st
                   {tb("changeCharacter")}
                 </button>
               </div>
+              {/* À droite (ou dessous sur petit écran) : la capacité du personnage, nom et effet court. */}
+              {ability ? (
+                <div className="min-w-[11rem] flex-1 rounded-lg border-2 border-ink bg-surface p-2.5 text-xs">
+                  <p className="font-extrabold">
+                    {tb("ability")} · {ability.name}
+                  </p>
+                  <p className="mt-0.5 text-ink-soft">{ability.text}</p>
+                </div>
+              ) : null}
             </>
           ) : (
             <div className="grid gap-2">

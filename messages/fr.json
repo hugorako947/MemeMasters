@@ -411,6 +411,7 @@
       "verySpecial": "Ultra Booster"
     },
     "battles": {
+      "ability": "Capacité",
       "title": "Battle Royale",
       "lead": "Les batailles arrivent bientôt : prépare ta collection.",
       "nextReward": "Prochain rang atteint → {boosters} boosters et {money} MemeMoney offerts",
@@ -1072,7 +1073,7 @@
     },
     "items": {
       "heal": "Trousse de soins",
-      "vest": "Gilet pare-balles",
+      "vest": "Protection",
       "speed": "Boisson énergisante",
       "scope": "Lunette ×{zoom}",
       "ammo": "Munitions",

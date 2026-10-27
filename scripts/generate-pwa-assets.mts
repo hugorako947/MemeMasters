@@ -10,43 +10,73 @@ const OUT = join(process.cwd(), "public", "icons");
 mkdirSync(OUT, { recursive: true });
 
 /**
- * Logo du jeu : un personnage meme (le visage jaune de la marque) qui tire avec son pistolet
- * — éclair de tir et munitions qui filent, comme sur la page Battle Royale. `safe` réduit le
- * dessin pour la zone sûre des icônes maskable.
+ * Logo du jeu (référence du propriétaire) : un visage meme râleur en forme de cible — anneau sombre, couronne
+ * orange/rouge segmentée, visage cyan en colère — tenant une arme qui dépasse à droite, sur un fond d'herbe de
+ * battle royale. `safe` réduit le dessin pour la zone sûre des icônes maskable.
  */
 function iconSvg(safe: boolean): string {
-  const scale = safe ? 0.72 : 0.88;
+  const scale = safe ? 0.74 : 0.92;
   const offset = (512 * (1 - scale)) / 2;
+  const fcx = 224;
+  const fcy = 256;
+  const outerR = 150;
+  const innerR = 112;
+  const seg = 12;
+  const pt = (r: number, deg: number) => {
+    const a = (deg * Math.PI) / 180;
+    return `${(fcx + r * Math.cos(a)).toFixed(1)} ${(fcy + r * Math.sin(a)).toFixed(1)}`;
+  };
+  let ring = "";
+  for (let i = 0; i < seg; i++) {
+    const a0 = (i * 360) / seg;
+    const a1 = ((i + 1) * 360) / seg;
+    ring += `<path d="M ${pt(outerR, a0)} A ${outerR} ${outerR} 0 0 1 ${pt(outerR, a1)} L ${pt(innerR, a1)} A ${innerR} ${innerR} 0 0 0 ${pt(innerR, a0)} Z" fill="${i % 2 === 0 ? "#e0702e" : "#c23b2c"}"/>`;
+  }
+  // Touffes d'herbe réparties sur le fond.
+  const tuftSpots = [[70, 120], [150, 70], [430, 90], [472, 210], [58, 300], [92, 436], [210, 474], [360, 452], [460, 404], [300, 108], [416, 470], [40, 212]];
+  let tufts = "";
+  for (const [x, y] of tuftSpots) tufts += `<path d="M${x} ${y + 10} Q${x - 4} ${y} ${x - 2} ${y - 12} M${x} ${y + 10} Q${x} ${y - 2} ${x} ${y - 14} M${x} ${y + 10} Q${x + 4} ${y} ${x + 3} ${y - 11}"/>`;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="${safe ? 0 : 112}" fill="#FF3D7F"/>
+  <defs><clipPath id="sq"><rect width="512" height="512" rx="${safe ? 0 : 112}"/></clipPath></defs>
+  <g clip-path="url(#sq)">
+    <rect width="512" height="512" fill="#7dbb58"/>
+    <g opacity="0.55">
+      <ellipse cx="110" cy="80" rx="150" ry="90" fill="#6aa847"/>
+      <ellipse cx="440" cy="150" rx="150" ry="100" fill="#94cc6c"/>
+      <ellipse cx="70" cy="432" rx="160" ry="95" fill="#94cc6c"/>
+      <ellipse cx="432" cy="452" rx="150" ry="90" fill="#6aa847"/>
+    </g>
+    <g stroke="#548f38" stroke-width="7" stroke-linecap="round" fill="none" opacity="0.85">${tufts}</g>
+  </g>
   <g transform="translate(${offset} ${offset}) scale(${scale})">
-    <!-- Visage (autocollant jaune) -->
-    <circle cx="200" cy="252" r="170" fill="#fff"/>
-    <circle cx="200" cy="252" r="154" fill="#FFD23F" stroke="#1A1238" stroke-width="15"/>
-    <!-- Regard décidé, tourné vers le tir -->
-    <path d="M118 198 L182 216" stroke="#1A1238" stroke-width="15" stroke-linecap="round"/>
-    <path d="M214 210 L272 190" stroke="#1A1238" stroke-width="15" stroke-linecap="round"/>
-    <ellipse cx="156" cy="244" rx="30" ry="35" fill="#fff" stroke="#1A1238" stroke-width="10"/>
-    <circle cx="169" cy="249" r="14" fill="#1A1238"/>
-    <ellipse cx="240" cy="238" rx="30" ry="35" fill="#fff" stroke="#1A1238" stroke-width="10"/>
-    <circle cx="253" cy="243" r="14" fill="#1A1238"/>
-    <path d="M150 304 q52 40 108 8 q-18 44 -66 38 q-40 -6 -42 -46z" fill="#1A1238"/>
-    <!-- Bras qui tend l'arme -->
-    <path d="M236 330 Q296 364 332 318" fill="none" stroke="#1A1238" stroke-width="52" stroke-linecap="round"/>
-    <path d="M236 330 Q296 364 332 318" fill="none" stroke="#FFD23F" stroke-width="36" stroke-linecap="round"/>
-    <!-- Pistolet -->
-    <path d="M300 286 L340 286 L360 346 L322 354 Z" fill="#2B2340" stroke="#1A1238" stroke-width="10" stroke-linejoin="round"/>
-    <rect x="296" y="250" width="92" height="36" rx="8" fill="#2B2340" stroke="#1A1238" stroke-width="10"/>
-    <rect x="308" y="259" width="64" height="8" rx="4" fill="#4A4270"/>
-    <!-- Main qui tient la crosse -->
-    <circle cx="322" cy="314" r="30" fill="#FFD23F" stroke="#1A1238" stroke-width="12"/>
-    <!-- Éclair de tir au bout du canon -->
-    <path d="M400 221 L417 250 L446 267 L417 284 L400 313 L383 284 L354 267 L383 250 Z" fill="#fff" stroke="#1A1238" stroke-width="10" stroke-linejoin="round"/>
-    <path d="M400 239 L410 257 L428 267 L410 277 L400 295 L390 277 L372 267 L390 257 Z" fill="#FFD23F"/>
-    <!-- Munitions qui filent -->
-    <rect x="452" y="212" width="40" height="18" rx="9" fill="#FFD23F" stroke="#1A1238" stroke-width="9"/>
-    <rect x="452" y="306" width="40" height="18" rx="9" fill="#FFD23F" stroke="#1A1238" stroke-width="9"/>
-    <rect x="456" y="259" width="44" height="18" rx="9" fill="#fff" stroke="#1A1238" stroke-width="9"/>
+    <!-- Arme : corps, canon qui dépasse à droite, poignée -->
+    <g stroke="#120c24" stroke-width="11" stroke-linejoin="round">
+      <rect x="330" y="232" width="150" height="48" rx="10" fill="#2b2340"/>
+      <rect x="352" y="276" width="40" height="42" rx="8" fill="#2b2340"/>
+    </g>
+    <rect x="440" y="243" width="60" height="26" rx="6" fill="#4a4270"/>
+    <!-- Ombre portée douce -->
+    <ellipse cx="${fcx}" cy="434" rx="150" ry="22" fill="#1a1238" opacity="0.16"/>
+    <!-- Bulle-cible : anneau sombre, couronne orange/rouge, visage cyan -->
+    <circle cx="${fcx}" cy="${fcy}" r="${outerR + 14}" fill="#241a4a"/>
+    ${ring}
+    <circle cx="${fcx}" cy="${fcy}" r="${innerR}" fill="#241a4a"/>
+    <circle cx="${fcx}" cy="${fcy}" r="${innerR - 8}" fill="#aadcf7" stroke="#1a1238" stroke-width="8"/>
+    <!-- Sourcils froncés (colère) -->
+    <path d="M${fcx - 92} ${fcy - 42} L${fcx - 26} ${fcy - 14}" stroke="#1a1238" stroke-width="18" stroke-linecap="round"/>
+    <path d="M${fcx + 92} ${fcy - 42} L${fcx + 26} ${fcy - 14}" stroke="#1a1238" stroke-width="18" stroke-linecap="round"/>
+    <!-- Marques de colère -->
+    <g stroke="#e5484d" stroke-width="7" stroke-linecap="round" fill="none">
+      <path d="M${fcx - 72} ${fcy - 76} l16 9 M${fcx - 78} ${fcy - 60} l18 5"/>
+    </g>
+    <!-- Yeux -->
+    <ellipse cx="${fcx - 40}" cy="${fcy + 2}" rx="26" ry="33" fill="#fff" stroke="#1a1238" stroke-width="8"/>
+    <circle cx="${fcx - 33}" cy="${fcy + 8}" r="13" fill="#1a1238"/>
+    <ellipse cx="${fcx + 40}" cy="${fcy + 2}" rx="26" ry="33" fill="#fff" stroke="#1a1238" stroke-width="8"/>
+    <circle cx="${fcx + 33}" cy="${fcy + 8}" r="13" fill="#1a1238"/>
+    <!-- Bouche grande ouverte (cri) + langue -->
+    <path d="M${fcx - 52} ${fcy + 58} q52 56 104 4 q-12 48 -58 48 q-44 0 -46 -52z" fill="#1a1238"/>
+    <path d="M${fcx - 6} ${fcy + 96} q22 -2 30 16 q-28 16 -40 0z" fill="#ff6a8e"/>
   </g>
 </svg>`;
 }

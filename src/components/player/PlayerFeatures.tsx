@@ -13,6 +13,9 @@ import type { Player } from "@/lib/server/players";
 import { BoostersPanel, type BoosterStateView } from "@/components/booster/BoostersPanel";
 import { CollectionBrowser, type CollectionItem } from "@/components/collection/CollectionBrowser";
 import { RankShield, TrophyIcon } from "./RankBadge";
+import { GAME_CONFIG } from "@/config/game.config";
+import { battleCharacter } from "@/lib/br/character";
+import { battleTexts } from "@/components/infos/battle-texts";
 
 export const HOME_SLIDES = ["collection", "boosters", "batailles"] as const;
 
@@ -104,6 +107,14 @@ async function BattlesSlide({
   const t = await getTranslations("playerHome.battles");
   const tr = await getTranslations("rank");
   const chosen = collection.find((e) => e.card.id === battleCardId && e.quantity > 0);
+  // Texte court de la capacité du personnage choisi (nom + effet), calculé côté serveur pour « Ton personnage ».
+  let abilityInfo: { name: string; text: string } | null = null;
+  if (chosen) {
+    const BR = GAME_CONFIG.BATTLE_ROYALE;
+    const bc = battleCharacter(chosen.card, chosen.level, BR, GAME_CONFIG.DUPLICATES.STAT_BONUS_PERCENT);
+    const { ability } = await battleTexts(bc, BR.PASSIVE.REGEN_DELAY_MS, BR.PASSIVE.REGEN_CAP_PERCENT);
+    abilityInfo = { name: chosen.card.specialAttack.name, text: ability };
+  }
   const format = await getFormatter();
   const rank = rankFor(player.trophies);
   const next = RANKS[rankIndex(player.trophies) + 1];
@@ -130,6 +141,7 @@ async function BattlesSlide({
         <TrainingPanel
           player={{ name: player.username, trophies: player.trophies }}
           character={chosen ? { card: chosen.card, level: chosen.level } : null}
+          ability={abilityInfo}
           cards={collection.map((e) => e.card)}
         />
       </div>

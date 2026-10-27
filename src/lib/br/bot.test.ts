@@ -4,7 +4,7 @@ import { STARTER_SET } from "@/content/cards/starter-set";
 import { ACTION, basePersona, botLevelForTrophies, PERSONA } from "./bot";
 import { battleCharacter, type BattleCharacter } from "./character";
 import { advance, createMatch } from "./engine";
-import { ITEM, TILE, type GameMap, type LootItem } from "./map";
+import { BUILDING_KINDS, ITEM, TILE, type GameMap, type LootItem } from "./map";
 import { resolveRules, type Rules } from "./rules";
 import { Z, type MatchState } from "./state";
 import { canSee, canSeePoint } from "./vision";
@@ -23,7 +23,7 @@ function rules(participants: number, over: Partial<Rules> = {}): Rules {
 function openMap(size = 40): GameMap {
   const tiles = new Uint8Array(size * size);
   for (let i = 0; i < size; i++) for (const [x, y] of [[i, 0], [i, size - 1], [0, i], [size - 1, i]]) tiles[y * size + x] = TILE.water;
-  return { size, tileSub: TS, tiles, buildings: new Int32Array(0) };
+  return { size, tileSub: TS, tiles, buildings: new Int32Array(0), buildingTypes: new Int32Array(0) };
 }
 
 function character(over: Partial<BattleCharacter> = {}): BattleCharacter {
@@ -89,6 +89,32 @@ describe("vision : la même règle pour le joueur, l'aide à la visée et les bo
     expect(canSee(s, 0, 3)).toBe(true);
     expect(canSeePoint(s, 0, tile(25), tile(10))).toBe(false);
     expect(canSeePoint(s, 0, tile(12), tile(10))).toBe(true);
+  });
+
+  it("occlusion : l'intérieur d'un bâtiment à toit n'est visible (ni ennemi ni objet) que de l'intérieur (3D)", () => {
+    const map = openMap(40);
+    // Bâtiment à toit (manoir) de (10,10), 10×10, mur au pourtour, une porte en haut (col 14).
+    const manoir = BUILDING_KINDS.findIndex((b) => b.key === "manoir");
+    for (let x = 10; x <= 19; x++) {
+      map.tiles[10 * 40 + x] = TILE.wall;
+      map.tiles[19 * 40 + x] = TILE.wall;
+    }
+    for (let y = 10; y <= 19; y++) {
+      map.tiles[y * 40 + 10] = TILE.wall;
+      map.tiles[y * 40 + 19] = TILE.wall;
+    }
+    map.tiles[10 * 40 + 14] = TILE.floor; // porte
+    map.buildings = Int32Array.from([10, 10, 10, 10]);
+    map.buildingTypes = Int32Array.from([manoir]);
+    // Tireur dehors (au nord, ligne de vue par la porte), cible à l'intérieur sous la porte.
+    const s = match({ map, botLevels: [null, null], spawns: [tile(14), tile(7), tile(14), tile(13)] });
+    expect(canSee(s, 0, 1)).toBe(false); // dehors : l'intérieur est occulté
+    expect(canSeePoint(s, 0, tile(14), tile(13))).toBe(false); // un objet au même endroit non plus
+    // Le tireur entre dans le bâtiment : il voit l'intérieur.
+    s.p.x[0] = tile(12);
+    s.p.y[0] = tile(13);
+    expect(canSee(s, 0, 1)).toBe(true);
+    expect(canSeePoint(s, 0, tile(14), tile(13))).toBe(true);
   });
 });
 

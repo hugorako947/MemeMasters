@@ -8,12 +8,85 @@
  * tout), buisson (praticable, cache le joueur).
  */
 import { clamp, floorDiv } from "./fixed";
-import { nextBelow, nextRange, STREAM } from "./rng";
+import { chance, nextBelow, nextRange, STREAM } from "./rng";
 import { AMMO_KINDS, type Rules } from "./rules";
 
 export const TILE = { floor: 0, water: 1, wall: 2, bush: 3, crate: 4 } as const;
 /** Objets au sol ; boisson (speed), lunette (scope, sub = grossissement) et booster de portée (range) ne sortent que des caisses. */
 export const ITEM = { none: 0, weapon: 1, ammo: 2, heal: 3, vest: 4, speed: 5, scope: 6, range: 7 } as const;
+
+/**
+ * Types de bâtiments (3D). `roofed` : l'intérieur n'est visible (joueur et bots) qu'en y entrant (occlusion, vision.ts) ;
+ * `special` : compte pour le minimum de bâtiments spéciaux par partie. L'ordre sert d'identifiant (stocké dans la carte).
+ */
+export const BUILDING_KINDS = [
+  { key: "petiteMaison", roofed: true, special: false },
+  { key: "grandeMaison", roofed: true, special: false },
+  { key: "cabane", roofed: true, special: false },
+  { key: "chalet", roofed: true, special: true },
+  { key: "manoir", roofed: true, special: true },
+  { key: "laboratoire", roofed: true, special: true },
+  { key: "bunker", roofed: true, special: true },
+  { key: "cimetiere", roofed: false, special: true },
+  { key: "dunes", roofed: false, special: true },
+  { key: "btp", roofed: false, special: true },
+] as const;
+export type BuildingKind = (typeof BUILDING_KINDS)[number]["key"];
+const SPECIAL_TYPES = BUILDING_KINDS.map((_, i) => i).filter((i) => BUILDING_KINDS[i].special);
+const BASIC_TYPES = BUILDING_KINDS.map((_, i) => i).filter((i) => !BUILDING_KINDS[i].special);
+/** Au moins ce nombre de bâtiments spéciaux (distincts) par partie, quel que soit le mode. */
+const MIN_SPECIAL = 3;
+/** Vrai si le type de bâtiment a un toit (intérieur caché de l'extérieur). */
+export const buildingRoofed = (type: number) => BUILDING_KINDS[type]?.roofed ?? true;
+
+/** Mélange en place (Fisher-Yates) avec le flux « carte ». */
+function shuffle(a: number[], rng: Uint32Array): void {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = nextBelow(rng, STREAM.map, i + 1);
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+}
+
+/**
+ * Type de chaque bâtiment : au moins MIN_SPECIAL bâtiments spéciaux **distincts** (tirage sans remise, variés d'une
+ * partie à l'autre) ; les autres sont surtout des maisons, avec parfois un spécial de plus.
+ */
+function assignBuildingTypes(count: number, rng: Uint32Array): Int32Array {
+  const types = new Int32Array(count);
+  if (count === 0) return types;
+  const order = Array.from({ length: count }, (_, i) => i);
+  shuffle(order, rng);
+  const specials = [...SPECIAL_TYPES];
+  shuffle(specials, rng);
+  const guaranteed = Math.min(MIN_SPECIAL, count);
+  for (let k = 0; k < count; k++) {
+    const b = order[k];
+    if (k < guaranteed) types[b] = specials[k % specials.length];
+    else if (chance(rng, STREAM.map, 250)) types[b] = specials[nextBelow(rng, STREAM.map, specials.length)];
+    else types[b] = BASIC_TYPES[nextBelow(rng, STREAM.map, BASIC_TYPES.length)];
+  }
+  return types;
+}
+
+/**
+ * Bâtiment (indice) dont l'intérieur contient le point (x, y) et qui a un toit, sinon −1. L'intérieur est l'emprise
+ * sans l'anneau de murs. Sert à l'occlusion (on ne voit l'intérieur d'un bâtiment couvert qu'en y étant).
+ */
+export function roofedInteriorAt(map: GameMap, x: number, y: number): number {
+  const ts = map.tileSub;
+  const tx = floorDiv(x, ts);
+  const ty = floorDiv(y, ts);
+  const b = map.buildings;
+  for (let i = 0; 4 * i < b.length; i++) {
+    if (!buildingRoofed(map.buildingTypes[i])) continue;
+    const bx = b[4 * i];
+    const by = b[4 * i + 1];
+    const bw = b[4 * i + 2];
+    const bh = b[4 * i + 3];
+    if (tx > bx && tx < bx + bw - 1 && ty > by && ty < by + bh - 1) return i;
+  }
+  return -1;
+}
 
 export interface GameMap {
   /** Côté de la carte, en tuiles. */
@@ -23,6 +96,8 @@ export interface GameMap {
   tiles: Uint8Array;
   /** Bâtiments : x, y, largeur, hauteur (en tuiles), à la suite. */
   buildings: Int32Array;
+  /** Type de chaque bâtiment (indice dans BUILDING_KINDS), parallèle à `buildings` (un par bâtiment). */
+  buildingTypes: Int32Array;
 }
 
 export interface LootItem {
@@ -37,6 +112,8 @@ export interface LootItem {
 
 export const isPassable = (t: number) => t === TILE.floor || t === TILE.bush;
 export const blocksShots = (t: number) => t === TILE.wall || t === TILE.crate;
+/** Bloque le déplacement : murs et caisses. L'eau est franchissable (mais ralentit, 3B) ; les apparitions, le butin et la navigation des bots restent sur la terre ferme (isPassable). */
+export const blocksMovement = (t: number) => t === TILE.wall || t === TILE.crate;
 
 /** Tuile sous un point (en sous-unités) ; en dehors de la carte : mur. */
 export function tileAt(map: GameMap, x: number, y: number): number {
@@ -57,7 +134,8 @@ export function circleHitsSolid(map: GameMap, x: number, y: number, r: number): 
   for (let ty = ty0; ty <= ty1; ty++) {
     for (let tx = tx0; tx <= tx1; tx++) {
       const outside = tx < 0 || ty < 0 || tx >= map.size || ty >= map.size;
-      if (!outside && isPassable(map.tiles[ty * map.size + tx])) continue;
+      // Seuls les murs, les caisses et le bord de carte arrêtent le déplacement (l'eau est franchissable).
+      if (!outside && !blocksMovement(map.tiles[ty * map.size + tx])) continue;
       const nx = clamp(x, tx * ts, tx * ts + ts);
       const ny = clamp(y, ty * ts, ty * ts + ts);
       if ((x - nx) * (x - nx) + (y - ny) * (y - ny) < r2) return true;
@@ -387,7 +465,8 @@ function attempt(rules: Rules, rng: Uint32Array): GameMap {
     }
   }
 
-  return { size: n, tileSub: M.tileSub, tiles, buildings: Int32Array.from(buildings) };
+  const built = Int32Array.from(buildings);
+  return { size: n, tileSub: M.tileSub, tiles, buildings: built, buildingTypes: assignBuildingTypes(built.length >> 2, rng) };
 }
 
 /** Centre d'une tuile, en sous-unités. */

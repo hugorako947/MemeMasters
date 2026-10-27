@@ -57,6 +57,8 @@ export interface Rules {
     bushClusterSize: readonly [number, number];
   };
   view: { halfWidth: number; halfHeight: number; bushReveal: number };
+  /** Vitesse dans l'eau, en ‰ de la normale (3B). */
+  waterSlowPermille: number;
   aimTurn: number;
   aimAssist: number;
   switchTicks: number;
@@ -74,7 +76,8 @@ export interface Rules {
   regenCapPercent: number;
   items: {
     healHp: number;
-    vestShield: number;
+    /** Bouclier total par niveau de protection (index = niveau 0…N ; case 0 = 0). */
+    armorShield: number[];
     /** Indexés comme AMMO_KINDS (la case 0 est inutilisée). */
     ammoMax: number[];
     ammoBox: number[];
@@ -164,6 +167,7 @@ export function resolveRules(br: BrConfig): Rules {
       bushClusterSize: br.MAP.BUSH_CLUSTER_SIZE,
     },
     view: { halfWidth: br.VIEW.HALF_WIDTH * SUB, halfHeight: br.VIEW.HALF_HEIGHT * SUB, bushReveal: br.VIEW.BUSH_REVEAL * SUB },
+    waterSlowPermille: br.WATER_SLOW_PERCENT * 10,
     aimTurn: br.CONTROLS.AIM_TURN_PER_TICK,
     aimAssist: br.CONTROLS.AIM_ASSIST_STEPS,
     switchTicks: msToTicks(br.CONTROLS.WEAPON_SWITCH_MS, rate),
@@ -191,7 +195,8 @@ export function resolveRules(br: BrConfig): Rules {
     regenCapPercent: br.PASSIVE.REGEN_CAP_PERCENT,
     items: {
       healHp: I.HEAL_HP,
-      vestShield: I.VEST_SHIELD,
+      // Niveau 0 = 0 bouclier, puis chaque palier de protection.
+      armorShield: [0, ...I.ARMOR_SHIELD],
       // Indexé comme AMMO_KINDS : case 0 inutilisée (« none »), case 1 = stock universel.
       ammoMax: [0, I.AMMO_MAX],
       ammoBox: [0, I.AMMO_BOX],
