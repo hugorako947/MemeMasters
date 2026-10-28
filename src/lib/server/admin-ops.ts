@@ -265,7 +265,8 @@ export async function applyResources(playerId: string, before: Resources, after:
 }
 
 export async function applyDeletePlayer(playerId: string, actorId: string): Promise<string> {
-  if (isSuperAdminId(playerId)) throw new AdminError("Impossible de supprimer le Super Admin.");
+  // Seul le Super Admin peut supprimer le compte du Super Admin (y compris le sien).
+  if (isSuperAdminId(playerId) && !isSuperAdminId(actorId)) throw new AdminError("Seul le Super Admin peut supprimer le compte du Super Admin.");
   const [p] = await sql()<{ username: string; role: string }[]>`
     select pr.username::text as username, pp.role from public.profiles pr join public.player_private pp on pp.player_id = pr.id where pr.id = ${playerId}
   `;

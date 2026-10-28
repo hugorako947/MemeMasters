@@ -329,33 +329,33 @@ function drawRoof(g: Graphics, type: number, bx: number, by: number, bw: number,
 }
 
 /**
- * Portes bien visibles sur le toit d'un bâtiment couvert : à chaque trou dans le mur (case de sol au pourtour), une
- * ouverture sombre bordée d'un cadre doré et une flèche qui pointe vers l'intérieur, pour qu'on voie tout de suite par où entrer.
+ * Portes d'un bâtiment couvert : à chaque trou dans le mur (case de sol au pourtour), on laisse voir **une petite
+ * portion de l'intérieur** (le sol du bâtiment) à travers le toit — on comprend tout de suite qu'on entre par là.
  */
-function drawDoors(g: Graphics, map: { size: number; tiles: Uint8Array }, bxT: number, byT: number, bwT: number, bhT: number, ts: number): void {
+function drawDoors(g: Graphics, map: { size: number; tiles: Uint8Array }, type: number, bxT: number, byT: number, bwT: number, bhT: number, ts: number): void {
+  const style = BUILDING_STYLE[type] ?? BUILDING_STYLE[0];
   const isDoor = (x: number, y: number) => x >= 0 && y >= 0 && x < map.size && y < map.size && map.tiles[y * map.size + x] === TILE.floor;
-  const mark = (tx: number, ty: number, dx: number, dy: number) => {
+  const mark = (tx: number, ty: number) => {
     const px = tx * ts;
     const py = ty * ts;
-    const cx = px + ts / 2;
-    const cy = py + ts / 2;
-    // Ouverture sombre + cadre doré.
-    g.roundRect(px + ts * 0.14, py + ts * 0.14, ts * 0.72, ts * 0.72, ts * 0.16).fill(0x241a2e).stroke({ width: ts * 0.12, color: 0xffd23f });
-    // Flèche (chevron) qui pointe vers l'intérieur du bâtiment (direction dx, dy).
-    const a = ts * 0.16;
-    g.moveTo(cx - dx * a - dy * a, cy - dy * a - dx * a)
-      .lineTo(cx + dx * a, cy + dy * a)
-      .lineTo(cx - dx * a + dy * a, cy - dy * a + dx * a)
-      .stroke({ width: ts * 0.1, color: COLORS.white, cap: "round", join: "round" });
+    // Montants sombres (épaisseur du mur) autour de l'ouverture.
+    g.rect(px, py, ts, ts).fill(0x1c1626);
+    // Portion d'intérieur visible : le sol du bâtiment, avec un léger quadrillage.
+    const ix = px + ts * 0.15;
+    const iy = py + ts * 0.15;
+    const sz = ts * 0.7;
+    g.rect(ix, iy, sz, sz).fill(style.floor);
+    g.moveTo(ix + sz / 2, iy).lineTo(ix + sz / 2, iy + sz).moveTo(ix, iy + sz / 2).lineTo(ix + sz, iy + sz / 2).stroke({ width: ts / 36, color: COLORS.ink, alpha: 0.18 });
+    // Ombre de seuil en haut : donne une impression de profondeur (on « entre » dedans).
+    g.rect(ix, iy, sz, ts * 0.14).fill({ color: COLORS.ink, alpha: 0.28 });
   };
-  // Pourtour : haut (entrée vers le bas), bas (vers le haut), gauche (vers la droite), droite (vers la gauche).
   for (let x = bxT; x < bxT + bwT; x++) {
-    if (isDoor(x, byT)) mark(x, byT, 0, 1);
-    if (isDoor(x, byT + bhT - 1)) mark(x, byT + bhT - 1, 0, -1);
+    if (isDoor(x, byT)) mark(x, byT);
+    if (isDoor(x, byT + bhT - 1)) mark(x, byT + bhT - 1);
   }
   for (let y = byT; y < byT + bhT; y++) {
-    if (isDoor(bxT, y)) mark(bxT, y, 1, 0);
-    if (isDoor(bxT + bwT - 1, y)) mark(bxT + bwT - 1, y, -1, 0);
+    if (isDoor(bxT, y)) mark(bxT, y);
+    if (isDoor(bxT + bwT - 1, y)) mark(bxT + bwT - 1, y);
   }
 }
 
@@ -424,8 +424,8 @@ export async function createRenderer(host: HTMLElement, s: MatchState, roster: r
     if (!buildingRoofed(type)) continue;
     const rg = new Graphics();
     drawRoof(rg, type, map.buildings[b] * ts, map.buildings[b + 1] * ts, map.buildings[b + 2] * ts, map.buildings[b + 3] * ts);
-    // Portes bien visibles sur le toit : on sait tout de suite par où entrer.
-    drawDoors(rg, map, map.buildings[b], map.buildings[b + 1], map.buildings[b + 2], map.buildings[b + 3], ts);
+    // Portes : une petite portion d'intérieur visible à travers le toit, pour savoir par où entrer.
+    drawDoors(rg, map, type, map.buildings[b], map.buildings[b + 1], map.buildings[b + 2], map.buildings[b + 3], ts);
     roofs.addChild(rg);
     roofList.push({ index: b >> 2, g: rg });
   }

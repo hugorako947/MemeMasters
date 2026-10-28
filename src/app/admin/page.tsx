@@ -313,11 +313,11 @@ async function Players({ q, id, viewer }: { q: string; id: string; viewer: Playe
     if (!p) return <Box title="Joueur introuvable">{null}</Box>;
     const targetIsSuper = isSuperAdminId(p.id);
     const targetIsStaff = targetIsSuper || p.role === "admin";
-    // Le Super Admin n'est modifiable par personne ; un admin ne gère que les joueurs (pas lui-même).
-    const locked = targetIsSuper || (!isSuper && (targetIsStaff || p.id === viewer.id));
+    // Le Super Admin gère tous les comptes, y compris le sien ; un admin ne gère que les joueurs (ni lui-même, ni le staff).
+    const locked = !isSuper && (targetIsStaff || p.id === viewer.id);
     const lockReason = targetIsSuper
-      ? "Le compte du Super Admin ne peut être modifié par personne."
-      : p.id === viewer.id && !isSuper
+      ? "Seul le Super Admin peut agir sur le compte du Super Admin."
+      : p.id === viewer.id
         ? "Vous ne pouvez pas modifier votre propre compte : demandez au Super Admin."
         : "Seul le Super Admin peut agir sur un admin.";
     const hideEmail = !isSuper && targetIsStaff;
@@ -399,7 +399,7 @@ async function Players({ q, id, viewer }: { q: string; id: string; viewer: Playe
             </Box>
 
             <Box title="Compte">
-              {isSuper ? (
+              {isSuper && !targetIsSuper ? (
                 <form action={setRole} className="flex flex-wrap items-center gap-3">
                   <input type="hidden" name="id" value={p.id} />
                   <input type="hidden" name="role" value={p.role === "admin" ? "player" : "admin"} />

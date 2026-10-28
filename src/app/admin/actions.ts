@@ -47,10 +47,10 @@ const PENDING_MESSAGE = "Demande envoyée au Super Admin : elle s'appliquera dè
 
 const isSuper = (p: Player) => p.role === "superadmin";
 
-/** Garde-fous : personne ne touche au Super Admin ; un admin n'agit que sur les joueurs. */
+/** Garde-fous : seul le Super Admin touche au compte du Super Admin (y compris le sien) ; un admin n'agit que sur les joueurs. */
 async function assertCanManage(actor: Player, targetId: string, section: string): Promise<{ username: string; role: string }> {
   const extra = `&id=${targetId}`;
-  if (isSuperAdminId(targetId)) fail(section, "Le compte du Super Admin ne peut pas être modifié.", extra);
+  if (isSuperAdminId(targetId) && !isSuper(actor)) fail(section, "Seul le Super Admin peut agir sur le compte du Super Admin.", extra);
   const [t] = await sql()<{ role: string; username: string }[]>`
     select pp.role, pr.username::text as username
     from public.player_private pp join public.profiles pr on pr.id = pp.player_id
@@ -102,6 +102,8 @@ export async function banPlayer(form: FormData) {
   const d = z.object({ id: z.uuid(), reason: z.string().trim().max(300) }).safeParse(Object.fromEntries(form));
   if (!d.success) fail("joueurs", "Motif trop long (300 caractères au plus).");
   await assertCanManage(admin, d.data.id, "joueurs");
+  // Même le Super Admin ne peut pas se bannir lui-même : il se verrouillerait dehors sans retour possible.
+  if (d.data.id === admin.id) fail("joueurs", "Tu ne peux pas te bannir toi-même.", `&id=${d.data.id}`);
   await sql()`update public.player_private set banned_at = now(), ban_reason = ${d.data.reason || null} where player_id = ${d.data.id}`;
   await audit(admin.id, "joueur.bannir", d.data.id, { reason: d.data.reason });
   back("joueurs", "Joueur banni : il voit le motif à sa prochaine visite.", `&id=${d.data.id}`);
