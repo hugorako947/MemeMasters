@@ -1087,7 +1087,9 @@
       "burn": "Burn: a projectile that burns the target ({percent}% of its max HP per second for {seconds} s)",
       "pierce": "Armor piercing: for {seconds} s, your shots ignore {percent}% of enemy armor",
       "buff": "Boost: +{percent}% {stat} for {seconds} s",
-      "debuff": "Weaken: your next bullet (within {window} s) lowers the target's {stat} by {percent}% for {seconds} s"
+      "debuff": "Weaken: your next bullet (within {window} s) lowers the target's {stat} by {percent}% for {seconds} s",
+      "buffAll": "Boost: +{percent}% to all your stats for {seconds}s",
+      "debuffAll": "Weaken: your next shot (within {window}s) lowers all the target's stats by {percent}% for {seconds}s"
     },
     "passive": {
       "regen": "Regeneration: after {delay} s without being hit, you recover {percent}% of your max HP per second, up to {cap}% of your max HP",

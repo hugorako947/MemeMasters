@@ -115,6 +115,26 @@ describe("carte → personnage du battle royale", () => {
     expect(special({ kind: "none" }, 55, 2).cooldownMs).toBe(12000);
   });
 
+  it("effet réglé par l'admin (intensité %, durée s, toutes les stats), avec repli sur les valeurs par défaut", () => {
+    const special = (effect: Card["specialAttack"]["effect"], power = 70, energyCost = 3) =>
+      battleCharacter(make({ specialAttack: { name: "x", power, energyCost, effect }, defenseAbility: { name: "d", effect: { kind: "heal", percent: 10 } } }), 0, RAW, BONUS).ability;
+    const A = BR.ABILITY;
+    // Sprint réglé : 50 % pendant 6 s (au lieu des valeurs par défaut).
+    expect(special({ kind: "none", percent: 50, seconds: 6 })).toMatchObject({ kind: "sprint", durationMs: 6000, permille: 500 });
+    // Brûlure en secondes : la durée réglée remplace les « tours ».
+    expect(special({ kind: "dot", percent: 10, seconds: 8 })).toMatchObject({ kind: "burn", permille: 100, effectMs: 8000 });
+    // Étourdissement : durée réglée en secondes (brute, non comprimée par la puissance).
+    expect(special({ kind: "stun", chance: 20, seconds: 3 })).toMatchObject({ kind: "stun", durationMs: A.ARMED_MS, effectMs: 3000 });
+    expect(special({ kind: "drain", percent: 30, seconds: 5 })).toMatchObject({ kind: "drain", durationMs: 5000, permille: 300 });
+    expect(special({ kind: "pierce", percent: 70, seconds: 7 })).toMatchObject({ kind: "pierce", durationMs: 7000, permille: 700 });
+    // Boost sur toutes les stats.
+    expect(special({ kind: "buff", all: true, percent: 40, seconds: 7 })).toMatchObject({ kind: "buff", stat: "all", durationMs: 7000, permille: 400 });
+    // Affaiblissement −50 % sur toutes les stats pendant 5 s.
+    expect(special({ kind: "debuff", all: true, percent: 50, seconds: 5 })).toMatchObject({ kind: "debuff", stat: "all", durationMs: A.ARMED_MS, effectMs: 5000, permille: 500 });
+    // Affaiblissement d'une seule stat, réglé.
+    expect(special({ kind: "debuff", stat: "atk", percent: 30, seconds: 4 })).toMatchObject({ kind: "debuff", stat: "atk", effectMs: 4000, permille: 300 });
+  });
+
   it("passif (sans compression) : soin, esquive, renvoi, immunité, recharge", () => {
     const passive = (effect: Card["defenseAbility"]["effect"]) => battleCharacter(make({ defenseAbility: { name: "d", effect } }), 0, RAW, BONUS);
     expect(passive({ kind: "heal", percent: 10 }).passive).toEqual({ kind: "regen", permille: 10 });

@@ -16,7 +16,7 @@
  *   rechargement, changement d'arme, capacité, pas de côté, anti-blocage.
  * - Difficulté : réglages interpolés selon le niveau (trophées du joueur), personnalité ±1 niveau.
  */
-import { ABILITY_KINDS, BOOST_STATS, type BattleCharacter } from "./character";
+import { ABILITY_KINDS, ALL_STATS, BOOST_STATS, type BattleCharacter } from "./character";
 import { BTN, packCommand } from "./commands";
 import { angleDiff, clamp, iatan2, icos, idiv, isin, isqrt, Q14 } from "./fixed";
 import { forEachNear } from "./grid";
@@ -1171,7 +1171,8 @@ function wantsAbility(s: MatchState, i: number, action: number, target: boolean,
     case AB.burn:
       return target && ready && aligned && d <= s.rules.weapons[BURN_SHOT].range;
     case AB.buff:
-      if (f.abilityStat === ST.atk) return engaged;
+      // « toutes les stats » inclut l'ATQ : le bot s'en sert au combat, comme un boost d'ATQ.
+      if (f.abilityStat === ST.atk || f.abilityStat === ALL_STATS) return engaged;
       if (f.abilityStat === ST.def) return s.tick - s.b.threatTick[i] <= s.rules.tickRate;
       return run;
   }

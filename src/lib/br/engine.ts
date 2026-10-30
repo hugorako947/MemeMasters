@@ -18,7 +18,7 @@
  * (le test d'empreinte de replay.test.ts le rappelle).
  */
 import { initBots, runBots } from "./bot";
-import { ABILITY_KINDS, BOOST_STATS, PASSIVE_KINDS, type BattleCharacter } from "./character";
+import { ABILITY_KINDS, ALL_STATS, BOOST_STATS, PASSIVE_KINDS, type BattleCharacter } from "./character";
 import { BTN, isValidCommand, unpackAim, unpackButtons, unpackMove } from "./commands";
 import { angleDiff, clamp, iatan2, icos, idiv, isin, isqrt, Q14 } from "./fixed";
 import { buildGrid, forEachNear } from "./grid";
@@ -205,7 +205,7 @@ function abilityActive(s: MatchState, i: number, kind: number): boolean {
 function statModifier(s: MatchState, i: number, stat: number): number {
   const f = s.fighters[i];
   let mod = 0;
-  if (abilityActive(s, i, AB.buff) && f.abilityStat === stat) mod += f.abilityPermille;
+  if (abilityActive(s, i, AB.buff) && (f.abilityStat === stat || f.abilityStat === ALL_STATS)) mod += f.abilityPermille;
   if (s.m.debuffLeft[3 * i + stat] > 0) mod -= s.m.debuffPermille[3 * i + stat];
   return mod;
 }
@@ -712,9 +712,14 @@ function hitParticipant(s: MatchState, k: number, t: number): void {
     P.stun[t] = Math.max(P.stun[t], negativeDuration(s, t, S.stunTicks[k]));
   }
   if (S.debuffStat[k] >= 0) {
-    const slot = 3 * t + S.debuffStat[k];
-    s.m.debuffLeft[slot] = Math.max(s.m.debuffLeft[slot], negativeDuration(s, t, S.debuffTicks[k]));
-    s.m.debuffPermille[slot] = Math.max(s.m.debuffPermille[slot], S.debuffPermille[k]);
+    // « all » (ALL_STATS) : affaiblit les trois statistiques ; sinon une seule.
+    const first = S.debuffStat[k] === ALL_STATS ? 0 : S.debuffStat[k];
+    const last = S.debuffStat[k] === ALL_STATS ? 2 : S.debuffStat[k];
+    for (let st = first; st <= last; st++) {
+      const slot = 3 * t + st;
+      s.m.debuffLeft[slot] = Math.max(s.m.debuffLeft[slot], negativeDuration(s, t, S.debuffTicks[k]));
+      s.m.debuffPermille[slot] = Math.max(s.m.debuffPermille[slot], S.debuffPermille[k]);
+    }
   }
   if (S.burnPermille[k] > 0) {
     P.burnLeft[t] = negativeDuration(s, t, S.burnTicks[k]);

@@ -1087,7 +1087,9 @@
       "burn": "حرق: قذيفة تحرق الهدف ({percent}% من صحته القصوى في الثانية لمدة {seconds} ث)",
       "pierce": "خارق للدروع: لمدة {seconds} ث تتجاهل طلقاتك {percent}% من درع الخصم",
       "buff": "تعزيز: {stat} +{percent}% لمدة {seconds} ث",
-      "debuff": "إضعاف: رصاصتك التالية (خلال {window} ث) تخفض {stat} لدى الهدف بنسبة {percent}% لمدة {seconds} ث"
+      "debuff": "إضعاف: رصاصتك التالية (خلال {window} ث) تخفض {stat} لدى الهدف بنسبة {percent}% لمدة {seconds} ث",
+      "buffAll": "تعزيز: +{percent}٪ لكل خصائصك لمدة {seconds} ث",
+      "debuffAll": "إضعاف: طلقتك التالية (خلال {window} ث) تخفض كل خصائص الهدف بنسبة {percent}٪ لمدة {seconds} ث"
     },
     "passive": {
       "regen": "تجدد: بعد {delay} ث دون إصابة تستعيد {percent}% من صحتك القصوى في الثانية، حتى {cap}% من صحتك القصوى",

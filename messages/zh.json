@@ -1087,7 +1087,9 @@
       "burn": "灼烧：发射一枚灼烧目标的弹体（每秒损失最大生命的 {percent}%，持续 {seconds} 秒）",
       "pierce": "穿甲：{seconds} 秒内，你的射击无视敌方 {percent}% 的护甲",
       "buff": "强化：{seconds} 秒内{stat} +{percent}%",
-      "debuff": "削弱：你的下一发子弹（{window} 秒内）使目标的{stat}降低 {percent}%，持续 {seconds} 秒"
+      "debuff": "削弱：你的下一发子弹（{window} 秒内）使目标的{stat}降低 {percent}%，持续 {seconds} 秒",
+      "buffAll": "强化：{seconds} 秒内全属性 +{percent}%",
+      "debuffAll": "削弱：你的下一发子弹（{window} 秒内）使目标全属性降低 {percent}%，持续 {seconds} 秒"
     },
     "passive": {
       "regen": "再生：{delay} 秒未被击中后，每秒回复最大生命的 {percent}%，最多回复至最大生命的 {cap}%",

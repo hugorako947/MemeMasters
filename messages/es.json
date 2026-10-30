@@ -1087,7 +1087,9 @@
       "burn": "Quemadura: un proyectil que quema al objetivo ({percent} % de sus PS máx. por segundo durante {seconds} s)",
       "pierce": "Perforación: durante {seconds} s, tus disparos ignoran el {percent} % de la armadura enemiga",
       "buff": "Impulso: +{percent} % de {stat} durante {seconds} s",
-      "debuff": "Debilitamiento: tu próxima bala (en {window} s) reduce un {percent} % la estadística de {stat} del objetivo durante {seconds} s"
+      "debuff": "Debilitamiento: tu próxima bala (en {window} s) reduce un {percent} % la estadística de {stat} del objetivo durante {seconds} s",
+      "buffAll": "Mejora: +{percent} % a todas tus estadísticas durante {seconds} s",
+      "debuffAll": "Debilitar: tu próximo disparo (en {window} s) reduce todas las estadísticas del objetivo un {percent} % durante {seconds} s"
     },
     "passive": {
       "regen": "Regeneración: tras {delay} s sin recibir golpes, recuperas el {percent} % de tus PS máx. por segundo, hasta el {cap} % de tus PS máx.",

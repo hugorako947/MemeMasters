@@ -1087,7 +1087,9 @@
       "burn": "Verbrennung: Ein Geschoss, das das Ziel verbrennt ({percent} % seiner max. KP pro Sekunde für {seconds} s)",
       "pierce": "Panzerbrechend: {seconds} s lang ignorieren deine Schüsse {percent} % der gegnerischen Rüstung",
       "buff": "Boost: +{percent} % {stat} für {seconds} s",
-      "debuff": "Schwächung: Deine nächste Kugel (innerhalb von {window} s) senkt den Wert „{stat}“ des Ziels um {percent} % für {seconds} s"
+      "debuff": "Schwächung: Deine nächste Kugel (innerhalb von {window} s) senkt den Wert „{stat}“ des Ziels um {percent} % für {seconds} s",
+      "buffAll": "Boost: +{percent}% auf alle deine Werte für {seconds}s",
+      "debuffAll": "Schwächung: dein nächster Schuss (innerhalb von {window}s) senkt alle Werte des Ziels um {percent}% für {seconds}s"
     },
     "passive": {
       "regen": "Regeneration: Nach {delay} s ohne Treffer erhältst du {percent} % deiner max. KP pro Sekunde zurück, bis zu {cap} % deiner max. KP",

@@ -25,6 +25,8 @@ export const PASSIVE_KINDS = ["regen", "dodge", "reflect", "cleanse", "recharge"
 export type PassiveKind = (typeof PASSIVE_KINDS)[number];
 export const BOOST_STATS = ["atk", "def", "spd"] as const;
 export type BoostStat = (typeof BOOST_STATS)[number];
+/** Boost/affaiblissement visant toutes les statistiques à la fois (encodé après les stats dans le moteur). */
+export const ALL_STATS = BOOST_STATS.length;
 
 export interface BattleAbility {
   kind: AbilityKind;
@@ -40,8 +42,8 @@ export interface BattleAbility {
   effectMs: number;
   /** Rafale : nombre de balles. */
   hits: number;
-  /** Boost ou affaiblissement : statistique visée. */
-  stat: BoostStat | null;
+  /** Boost ou affaiblissement : statistique visée, « all » pour toutes les statistiques, ou aucune. */
+  stat: BoostStat | "all" | null;
 }
 
 export interface BattlePassive {
@@ -139,25 +141,32 @@ function abilityOf(special: CharacterCard["specialAttack"], passive: BattlePassi
   const scaled = (permille: number) => idiv(permille * intensity, 1000);
   let cooldownMs = A.COOLDOWN_BASE_MS + A.COOLDOWN_PER_ENERGY_MS * special.energyCost;
   if (passive.kind === "recharge") cooldownMs = idiv(cooldownMs * (1000 - passive.permille), 1000);
-  const base = { cooldownMs, durationMs: 0, permille: 0, effectMs: 0, hits: 0, stat: null };
+  const base: Omit<BattleAbility, "kind"> = { cooldownMs, durationMs: 0, permille: 0, effectMs: 0, hits: 0, stat: null };
   const e = special.effect;
+  // Durée réglée par l'admin (en secondes), sinon la valeur par défaut fournie (en ms). L'intensité (permille)
+  // reste comprimée par la puissance (κ) ; la durée est prise telle quelle (ce que l'admin a choisi).
+  const durMs = (fallback: number) => (e as { seconds?: number }).seconds != null ? (e as { seconds: number }).seconds * 1000 : fallback;
+  // Boost/affaiblissement : une stat précise, ou « toutes » (par défaut une stat si rien n'est précisé).
+  const boostStat = (x: { stat?: BoostStat; all?: boolean }): BoostStat | "all" => (x.all ? "all" : (x.stat ?? "atk"));
   switch (e.kind) {
     case "none":
-      return { ...base, kind: "sprint", durationMs: A.SPRINT_MS, permille: scaled(A.SPRINT_PERCENT * 10) };
+      return { ...base, kind: "sprint", durationMs: durMs(A.SPRINT_MS), permille: scaled((e.percent ?? A.SPRINT_PERCENT) * 10) };
     case "stun":
-      return { ...base, kind: "stun", durationMs: A.ARMED_MS, effectMs: scaled(A.STUN_BASE_MS + e.chance * A.STUN_MS_PER_CHANCE) };
+      // Durée de l'étourdissement : secondes réglées (brutes), sinon dérivée de la chance (comprimée, hérité).
+      return { ...base, kind: "stun", durationMs: A.ARMED_MS, effectMs: e.seconds != null ? e.seconds * 1000 : scaled(A.STUN_BASE_MS + e.chance * A.STUN_MS_PER_CHANCE) };
     case "drain":
-      return { ...base, kind: "drain", durationMs: A.DRAIN_MS, permille: scaled(e.percent * 10) };
+      return { ...base, kind: "drain", durationMs: durMs(A.DRAIN_MS), permille: scaled(e.percent * 10) };
     case "multi":
       return { ...base, kind: "multi", hits: e.hits, permille: scaled(e.percent * 10) };
     case "dot":
-      return { ...base, kind: "burn", permille: scaled(e.percent * 10), effectMs: e.turns * 1000 };
+      // Brûlure : durée en secondes réglées, sinon en tours (hérité, défaut 2 tours).
+      return { ...base, kind: "burn", permille: scaled(e.percent * 10), effectMs: e.seconds != null ? e.seconds * 1000 : (e.turns ?? 2) * 1000 };
     case "pierce":
-      return { ...base, kind: "pierce", durationMs: A.PIERCE_MS, permille: Math.min(1000, scaled(e.percent * 10)) };
+      return { ...base, kind: "pierce", durationMs: durMs(A.PIERCE_MS), permille: Math.min(1000, scaled(e.percent * 10)) };
     case "buff":
-      return { ...base, kind: "buff", stat: e.stat, durationMs: A.BUFF_MS, permille: scaled(A.BUFF_PERCENT * 10) };
+      return { ...base, kind: "buff", stat: boostStat(e), durationMs: durMs(A.BUFF_MS), permille: scaled((e.percent ?? A.BUFF_PERCENT) * 10) };
     case "debuff":
-      return { ...base, kind: "debuff", stat: e.stat, durationMs: A.ARMED_MS, effectMs: A.DEBUFF_MS, permille: Math.min(900, scaled(A.DEBUFF_PERCENT * 10)) };
+      return { ...base, kind: "debuff", stat: boostStat(e), durationMs: A.ARMED_MS, effectMs: durMs(A.DEBUFF_MS), permille: Math.min(900, scaled((e.percent ?? A.DEBUFF_PERCENT) * 10)) };
   }
 }
 

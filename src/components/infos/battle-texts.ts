@@ -12,7 +12,9 @@ export async function battleTexts(c: BattleCharacter, regenDelayMs: number, rege
   const percent = (permille: number) => format.number(permille / 10, { maximumFractionDigits: 1 });
   const seconds = (ms: number) => format.number(ms / 1000, { maximumFractionDigits: 1 });
   const a = c.ability;
-  const stat = a.stat ? ts(a.stat) : "";
+  // « all » : message dédié (buffAll/debuffAll) pour une grammaire correcte dans toutes les langues.
+  const all = a.stat === "all";
+  const stat = a.stat && a.stat !== "all" ? ts(a.stat) : "";
   const ability = {
     sprint: () => t("ability.sprint", { percent: percent(a.permille), seconds: seconds(a.durationMs) }),
     stun: () => t("ability.stun", { window: seconds(a.durationMs), seconds: seconds(a.effectMs) }),
@@ -20,8 +22,11 @@ export async function battleTexts(c: BattleCharacter, regenDelayMs: number, rege
     multi: () => t("ability.multi", { hits: a.hits, percent: percent(a.permille) }),
     burn: () => t("ability.burn", { percent: percent(a.permille), seconds: seconds(a.effectMs) }),
     pierce: () => t("ability.pierce", { percent: percent(a.permille), seconds: seconds(a.durationMs) }),
-    buff: () => t("ability.buff", { percent: percent(a.permille), stat, seconds: seconds(a.durationMs) }),
-    debuff: () => t("ability.debuff", { window: seconds(a.durationMs), percent: percent(a.permille), stat, seconds: seconds(a.effectMs) }),
+    buff: () => (all ? t("ability.buffAll", { percent: percent(a.permille), seconds: seconds(a.durationMs) }) : t("ability.buff", { percent: percent(a.permille), stat, seconds: seconds(a.durationMs) })),
+    debuff: () =>
+      all
+        ? t("ability.debuffAll", { window: seconds(a.durationMs), percent: percent(a.permille), seconds: seconds(a.effectMs) })
+        : t("ability.debuff", { window: seconds(a.durationMs), percent: percent(a.permille), stat, seconds: seconds(a.effectMs) }),
   }[a.kind]();
   const p = c.passive;
   const passive = {

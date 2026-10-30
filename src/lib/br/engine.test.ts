@@ -389,6 +389,30 @@ describe("moteur : capacités et passifs", () => {
     expect(w.m.debuffPermille[3 * 1 + 2]).toBe(200);
   });
 
+  it("boost et affaiblissement sur toutes les stats (« all ») touchent les trois statistiques", () => {
+    // Affaiblissement de toutes les stats : les trois créneaux de la cible sont posés.
+    const w = match({ chars: [withAbility({ kind: "debuff", stat: "all", durationMs: 3000, effectMs: 4000, permille: 200 }), character()] });
+    arm(w, 0, w.rules.startWeapon);
+    advance(w, [cmd(0, 0, BTN.ability), 0]);
+    advance(w, [cmd(0, 0, BTN.fire), 0]);
+    run(w, 8, () => 0);
+    for (let st = 0; st < 3; st++) {
+      expect(w.m.debuffLeft[3 * 1 + st]).toBeGreaterThan(0);
+      expect(w.m.debuffPermille[3 * 1 + st]).toBe(200);
+    }
+    // Boost de toutes les stats sur soi : l'ATQ renforcée fait plus de dégâts qu'un tir normal.
+    const f = match({ chars: [withAbility({ kind: "buff", stat: "all", durationMs: 5000, permille: 250 }), character()] });
+    arm(f, 0, f.rules.startWeapon);
+    advance(f, [cmd(0, 0, BTN.ability), 0]);
+    advance(f, [cmd(0, 0, BTN.fire), 0]);
+    run(f, 8, () => 0);
+    const b = match({ chars: [character(), character()] });
+    arm(b, 0, b.rules.startWeapon);
+    advance(b, [cmd(0, 0, BTN.fire), 0]);
+    run(b, 8, () => 0);
+    expect(140 - f.p.hp[1]).toBeGreaterThan(140 - b.p.hp[1]);
+  });
+
   it("passifs : régénération après quelques secondes sans dégâts (jusqu'au plafond), esquive, renvoi, immunité", () => {
     const r = match({ chars: [character(), character({ passive: { kind: "regen", permille: 20 } })] });
     const cap = Math.floor((140 * BASE.regenCapPercent) / 100);

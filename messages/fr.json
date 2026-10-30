@@ -1087,7 +1087,9 @@
       "burn": "Brûlure : un projectile qui brûle la cible ({percent} % de ses PV max par seconde pendant {seconds} s)",
       "pierce": "Perce-armure : pendant {seconds} s, tes tirs ignorent {percent} % de l'armure adverse",
       "buff": "Boost : +{percent} % de {stat} pendant {seconds} s",
-      "debuff": "Affaiblissement : ta prochaine balle (dans les {window} s) baisse la {stat} de la cible de {percent} % pendant {seconds} s"
+      "debuff": "Affaiblissement : ta prochaine balle (dans les {window} s) baisse la {stat} de la cible de {percent} % pendant {seconds} s",
+      "buffAll": "Boost : +{percent} % de toutes tes statistiques pendant {seconds} s",
+      "debuffAll": "Affaiblissement : ta prochaine balle (dans les {window} s) baisse toutes les statistiques de la cible de {percent} % pendant {seconds} s"
     },
     "passive": {
       "regen": "Régénération : après {delay} s sans être touché, tu récupères {percent} % de tes PV max par seconde, jusqu'à {cap} % de tes PV max",

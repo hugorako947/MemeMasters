@@ -40,6 +40,19 @@ const PICKER_LABELS: ImagePickerLabels = {
 const IDLE: CardFormState = { status: "idle", message: "" };
 const input = "min-h-10 rounded-xl border-2 border-ink bg-surface px-3 font-normal";
 
+/** Effets d'attaque spéciale proposés à l'admin : libellé, sens de l'intensité, bornes de l'intensité et de la durée. */
+const SPECIAL_ORDER = ["none", "dot", "stun", "debuff", "buff", "pierce", "drain", "multi"] as const;
+const SPECIAL_UI: Record<string, { label: string; pct: string; pctMin: number; pctMax: number; sec?: [number, number] }> = {
+  none: { label: "Sprint (vitesse en plus)", pct: "vitesse en plus", pctMin: 10, pctMax: 60, sec: [2, 8] },
+  dot: { label: "Brûlure (dégâts dans le temps)", pct: "brûlure (% des PV par seconde)", pctMin: 1, pctMax: 30, sec: [2, 10] },
+  stun: { label: "Étourdissement", pct: "chance (%)", pctMin: 1, pctMax: 60, sec: [1, 3] },
+  debuff: { label: "Affaiblissement (baisse de stat)", pct: "baisse (%)", pctMin: 10, pctMax: 50, sec: [2, 8] },
+  buff: { label: "Boost (hausse de stat)", pct: "hausse (%)", pctMin: 10, pctMax: 50, sec: [2, 8] },
+  pierce: { label: "Perce-défense", pct: "armure ignorée (%)", pctMin: 10, pctMax: 80, sec: [2, 8] },
+  drain: { label: "Vol de vie", pct: "vol de vie (%)", pctMin: 10, pctMax: 60, sec: [2, 6] },
+  multi: { label: "Multi-coup (rafale)", pct: "dégâts par coup (%)", pctMin: 25, pctMax: 60 },
+};
+
 /**
  * Formulaire de carte du tableau de bord, avec aperçu en direct de la carte.
  * Illustration : générée automatiquement, ou image / photo de l'appareil
@@ -77,6 +90,17 @@ export function CardEditor({ card, community, isSuper }: { card: EditorCard | nu
 
   const d = card?.defenseAbility?.effect;
   const defenseValue = d && "percent" in d ? d.percent : d && "chance" in d ? d.chance : 10;
+  // Effet spécial actuel, lu de façon tolérante (champs optionnels) pour pré-remplir le formulaire.
+  const sp = (card?.specialAttack.effect ?? { kind: "none" }) as {
+    kind: string;
+    percent?: number;
+    chance?: number;
+    seconds?: number;
+    turns?: number;
+    stat?: string;
+    all?: boolean;
+    hits?: number;
+  };
   const initial = {
     name: card?.name ?? community?.name ?? "",
     description: card?.description ?? community?.description ?? "",
@@ -90,6 +114,11 @@ export function CardEditor({ card, community, isSuper }: { card: EditorCard | nu
     specialName: card?.specialAttack.name ?? "",
     specialPower: String(card?.specialAttack.power ?? 60),
     specialCost: String(card?.specialAttack.energyCost ?? 3),
+    specialKind: sp.kind,
+    specialPercent: String(sp.percent ?? sp.chance ?? 40),
+    specialSeconds: String(sp.seconds ?? sp.turns ?? 4),
+    specialStat: sp.all ? "all" : (sp.stat ?? "atk"),
+    specialHits: String(sp.hits ?? 3),
     defenseName: card?.defenseAbility.name ?? "",
     defenseKind: d?.kind ?? "heal",
     defenseValue: String(defenseValue),
@@ -113,6 +142,24 @@ export function CardEditor({ card, community, isSuper }: { card: EditorCard | nu
             : v.defenseKind === "recharge"
               ? { kind: "recharge", amount: 1 }
               : { kind: "heal", percent: Math.max(5, Math.min(20, dv)) };
+    // Effet spécial (mêmes bornes que le serveur) pour l'aperçu de la carte.
+    const scope = v.specialStat === "all" ? { all: true as const } : { stat: (["atk", "def", "spd"].includes(v.specialStat) ? v.specialStat : "atk") as "atk" | "def" | "spd" };
+    const special: Card["specialAttack"]["effect"] =
+      v.specialKind === "dot"
+        ? { kind: "dot", percent: n(v.specialPercent, 1, 30, 10), seconds: n(v.specialSeconds, 2, 10, 4) }
+        : v.specialKind === "stun"
+          ? { kind: "stun", chance: n(v.specialPercent, 1, 60, 20), seconds: n(v.specialSeconds, 1, 3, 2) }
+          : v.specialKind === "debuff"
+            ? { kind: "debuff", ...scope, percent: n(v.specialPercent, 10, 50, 25), seconds: n(v.specialSeconds, 2, 8, 4) }
+            : v.specialKind === "buff"
+              ? { kind: "buff", ...scope, percent: n(v.specialPercent, 10, 50, 20), seconds: n(v.specialSeconds, 2, 8, 5) }
+              : v.specialKind === "pierce"
+                ? { kind: "pierce", percent: n(v.specialPercent, 10, 80, 40), seconds: n(v.specialSeconds, 2, 8, 4) }
+                : v.specialKind === "drain"
+                  ? { kind: "drain", percent: n(v.specialPercent, 10, 60, 30), seconds: n(v.specialSeconds, 2, 6, 3) }
+                  : v.specialKind === "multi"
+                    ? { kind: "multi", hits: n(v.specialHits, 2, 4, 3), percent: n(v.specialPercent, 25, 60, 40) }
+                    : { kind: "none", percent: n(v.specialPercent, 10, 60, 40), seconds: n(v.specialSeconds, 2, 8, 2) };
     return {
       id: card?.id ?? "00000000-0000-4000-8000-000000000000",
       slug: "apercu",
@@ -124,7 +171,7 @@ export function CardEditor({ card, community, isSuper }: { card: EditorCard | nu
       def: n(v.def, 20, 65, 35),
       spd: n(v.spd, 10, 100, 70),
       normalAttack: { name: v.attackName || "Attaque", power: n(v.attackPower, 25, 35, 30) },
-      specialAttack: { name: v.specialName || "Spéciale", power: n(v.specialPower, 50, 90, 60), energyCost: n(v.specialCost, 2, 4, 3), effect: card?.specialAttack.effect ?? { kind: "none" } },
+      specialAttack: { name: v.specialName || "Spéciale", power: n(v.specialPower, 50, 90, 60), energyCost: n(v.specialCost, 2, 4, 3), effect: special },
       defenseAbility: { name: v.defenseName || "Défense", effect },
       artSeed: card?.artSeed ?? community?.artSeed ?? 1,
       imageUrl: mode === "image" && preview ? preview : cardArtDataUri({ seed: card?.artSeed ?? community?.artSeed ?? 1, rarity: (v.rarity as Rarity) ?? "commune" }),
@@ -146,6 +193,7 @@ export function CardEditor({ card, community, isSuper }: { card: EditorCard | nu
   }
 
   const isNew = !card;
+  const spUi = SPECIAL_UI[v.specialKind] ?? SPECIAL_UI.none;
   const submitLabel = isSuper
     ? community
       ? "Faire sortir la carte dans le jeu"
@@ -192,6 +240,30 @@ export function CardEditor({ card, community, isSuper }: { card: EditorCard | nu
         <Text label="Spéciale : nom" name="specialName" value={initial.specialName} />
         <Num label="Spéciale : puissance (50–90)" name="specialPower" value={initial.specialPower} min={50} max={90} />
         <Num label="Spéciale : énergie (2–4)" name="specialCost" value={initial.specialCost} min={2} max={4} />
+        <label className="grid gap-1 text-sm font-bold">
+          Spéciale : effet
+          <select name="specialKind" defaultValue={initial.specialKind} className={input}>
+            {SPECIAL_ORDER.map((k) => (
+              <option key={k} value={k}>
+                {SPECIAL_UI[k].label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <Num label={`Spéciale : ${spUi.pct} (${spUi.pctMin}–${spUi.pctMax})`} name="specialPercent" value={initial.specialPercent} min={1} max={90} />
+        {spUi.sec ? <Num label={`Spéciale : durée en secondes (${spUi.sec[0]}–${spUi.sec[1]})`} name="specialSeconds" value={initial.specialSeconds} min={1} max={10} /> : null}
+        {v.specialKind === "multi" ? <Num label="Spéciale : nombre de coups (2–4)" name="specialHits" value={initial.specialHits} min={2} max={4} /> : null}
+        {v.specialKind === "debuff" || v.specialKind === "buff" ? (
+          <label className="grid gap-1 text-sm font-bold">
+            Spéciale : statistique visée
+            <select name="specialStat" defaultValue={initial.specialStat} className={input}>
+              <option value="atk">Attaque</option>
+              <option value="def">Défense</option>
+              <option value="spd">Vitesse</option>
+              <option value="all">Toutes les statistiques</option>
+            </select>
+          </label>
+        ) : null}
         <Text label="Défense : nom" name="defenseName" value={initial.defenseName} />
         <label className="grid gap-1 text-sm font-bold">
           Défense : effet

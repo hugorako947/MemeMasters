@@ -21,6 +21,10 @@ export class AdminError extends Error {}
 const int = (min: number, max: number) => z.coerce.number().int().min(min).max(max);
 
 export const DEFENSE_KINDS = ["heal", "reflect", "dodge", "cleanse", "recharge"] as const;
+/** Effets d'attaque spéciale proposés dans l'éditeur (sprint = « none »). */
+export const SPECIAL_KINDS = ["none", "dot", "stun", "debuff", "buff", "pierce", "drain", "multi"] as const;
+/** Boost/affaiblissement : une statistique précise ou toutes. */
+export const SPECIAL_STATS = ["atk", "def", "spd", "all"] as const;
 
 // ------------------------------------------------------------------ cartes
 
@@ -38,6 +42,16 @@ export const cardPayloadSchema = z.object({
   specialName: z.string().trim().min(1).max(32),
   specialPower: int(50, 90),
   specialCost: int(2, 4),
+  /** Effet de la capacité spéciale (voir specialEffect). Valeurs par défaut : sprint, pour rester rétrocompatible. */
+  specialKind: z.enum(SPECIAL_KINDS).default("none"),
+  /** Intensité générique de l'effet (% ; chance pour l'étourdissement ; % par coup pour le multi-coup) ; clampée par effet. */
+  specialPercent: int(1, 90).default(40),
+  /** Durée de l'effet, en secondes ; clampée par effet. */
+  specialSeconds: int(1, 10).default(4),
+  /** Boost/affaiblissement : statistique visée (ou toutes). */
+  specialStat: z.enum(SPECIAL_STATS).default("atk"),
+  /** Multi-coup : nombre de coups. */
+  specialHits: int(2, 4).default(3),
   defenseName: z.string().trim().min(1).max(32),
   defenseKind: z.enum(DEFENSE_KINDS),
   defenseValue: int(0, 60),
@@ -65,6 +79,34 @@ function slugify(name: string): string {
     .slice(0, 50);
 }
 
+/**
+ * Effet de l'attaque spéciale d'après le formulaire. L'intensité et la durée sont bornées par effet ;
+ * en bataille, l'intensité reste comprimée par κ (voir character.ts) et le tournoi vérifie l'équilibre.
+ */
+function specialEffect(p: CardPayload): Card["specialAttack"]["effect"] {
+  const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
+  const secs = (lo: number, hi: number) => clamp(p.specialSeconds, lo, hi);
+  const scope = p.specialStat === "all" ? { all: true as const } : { stat: p.specialStat };
+  switch (p.specialKind) {
+    case "dot":
+      return { kind: "dot", percent: clamp(p.specialPercent, 1, 30), seconds: secs(2, 10) };
+    case "stun":
+      return { kind: "stun", chance: clamp(p.specialPercent, 1, 60), seconds: secs(1, 3) };
+    case "debuff":
+      return { kind: "debuff", ...scope, percent: clamp(p.specialPercent, 10, 50), seconds: secs(2, 8) };
+    case "buff":
+      return { kind: "buff", ...scope, percent: clamp(p.specialPercent, 10, 50), seconds: secs(2, 8) };
+    case "pierce":
+      return { kind: "pierce", percent: clamp(p.specialPercent, 10, 80), seconds: secs(2, 8) };
+    case "drain":
+      return { kind: "drain", percent: clamp(p.specialPercent, 10, 60), seconds: secs(2, 6) };
+    case "multi":
+      return { kind: "multi", hits: clamp(p.specialHits, 2, 4), percent: clamp(p.specialPercent, 25, 60) };
+    default:
+      return { kind: "none", percent: clamp(p.specialPercent, 10, 60), seconds: secs(2, 8) };
+  }
+}
+
 function defenseEffect(p: CardPayload): Card["defenseAbility"]["effect"] {
   const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
   switch (p.defenseKind) {
@@ -82,7 +124,6 @@ function defenseEffect(p: CardPayload): Card["defenseAbility"]["effect"] {
 }
 
 interface ExistingCard {
-  special_attack: { effect?: unknown } | null;
   slug: string;
   art_seed: number;
   image_path: string | null;
@@ -94,11 +135,9 @@ interface ExistingCard {
  */
 export async function buildCard(p: CardPayload): Promise<{ card: Card; existing: ExistingCard | null; budgetNote: string }> {
   const existing = p.id
-    ? ((await sql()<ExistingCard[]>`select special_attack, slug, art_seed, image_path from public.cards where id = ${p.id}`)[0] ?? null)
+    ? ((await sql()<ExistingCard[]>`select slug, art_seed, image_path from public.cards where id = ${p.id}`)[0] ?? null)
     : null;
   if (p.id && !existing) throw new AdminError("Cette carte n'existe plus.");
-  const specialEffect =
-    existing?.special_attack && typeof existing.special_attack === "object" && existing.special_attack.effect ? existing.special_attack.effect : { kind: "none" };
   const card = {
     id: p.id ?? "00000000-0000-4000-8000-000000000000",
     slug: existing?.slug ?? (slugify(p.name) || "carte"),
@@ -110,7 +149,7 @@ export async function buildCard(p: CardPayload): Promise<{ card: Card; existing:
     def: p.def,
     spd: p.spd,
     normalAttack: { name: p.attackName, power: p.attackPower },
-    specialAttack: { name: p.specialName, power: p.specialPower, energyCost: p.specialCost, effect: specialEffect as never },
+    specialAttack: { name: p.specialName, power: p.specialPower, energyCost: p.specialCost, effect: specialEffect(p) },
     defenseAbility: { name: p.defenseName, effect: defenseEffect(p) },
     artSeed: existing?.art_seed ?? 1,
     imageUrl: null,

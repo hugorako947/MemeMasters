@@ -1087,7 +1087,9 @@
       "burn": "Queimadura: um projétil que queima o alvo ({percent} % dos PV máx. por segundo durante {seconds} s)",
       "pierce": "Perfuração: por {seconds} s, seus tiros ignoram {percent} % da armadura inimiga",
       "buff": "Reforço: +{percent} % de {stat} por {seconds} s",
-      "debuff": "Enfraquecimento: sua próxima bala (em até {window} s) reduz em {percent} % o atributo de {stat} do alvo por {seconds} s"
+      "debuff": "Enfraquecimento: sua próxima bala (em até {window} s) reduz em {percent} % o atributo de {stat} do alvo por {seconds} s",
+      "buffAll": "Reforço: +{percent}% em todos os teus atributos por {seconds} s",
+      "debuffAll": "Enfraquecer: o teu próximo tiro (em {window} s) reduz todos os atributos do alvo em {percent}% por {seconds} s"
     },
     "passive": {
       "regen": "Regeneração: depois de {delay} s sem ser atingido, você recupera {percent} % dos PV máx. por segundo, até {cap} % dos PV máx.",

@@ -5,7 +5,7 @@
  */
 import { BR_WEAPONS } from "@/config/game.config";
 import type { BattleCharacter, BrConfig } from "./character";
-import { ABILITY_KINDS, BOOST_STATS, PASSIVE_KINDS } from "./character";
+import { ABILITY_KINDS, ALL_STATS, BOOST_STATS, PASSIVE_KINDS } from "./character";
 import { idiv } from "./fixed";
 
 /** Sous-unités par unité de carte. */
@@ -264,7 +264,7 @@ export function fighterFor(c: BattleCharacter, rules: Rules): Fighter {
     abilityPermille: c.ability.permille,
     abilityEffectTicks: ticks(c.ability.effectMs),
     abilityHits: c.ability.hits,
-    abilityStat: c.ability.stat ? BOOST_STATS.indexOf(c.ability.stat) : -1,
+    abilityStat: c.ability.stat === "all" ? ALL_STATS : c.ability.stat ? BOOST_STATS.indexOf(c.ability.stat) : -1,
     passive: PASSIVE_KINDS.indexOf(c.passive.kind),
     passivePermille: c.passive.permille,
   };
