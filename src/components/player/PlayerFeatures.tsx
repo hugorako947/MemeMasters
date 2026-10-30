@@ -74,7 +74,7 @@ async function SlideFrame({ soon = false, children }: { soon?: boolean; children
       {soon ? (
         <span className="justify-self-start rounded-full border-2 border-ink bg-paper px-3 py-1 text-xs font-extrabold text-ink">{t("soon")}</span>
       ) : null}
-      <div className="rounded-2xl bg-paper p-4 text-ink sm:p-6">{children}</div>
+      <div className="min-w-0 rounded-2xl bg-paper p-4 text-ink sm:p-6">{children}</div>
     </section>
   );
 }
@@ -120,7 +120,7 @@ async function BattlesSlide({
   const next = RANKS[rankIndex(player.trophies) + 1];
   return (
     <SlideFrame>
-      <div className="mx-auto grid max-w-2xl gap-5">
+      <div className="mx-auto grid max-w-2xl grid-cols-1 gap-5">
         <DuelScene left={sampleOf("epique")} right={sampleOf("legendaire")} />
         {counts ? <PlayerCounts initial={counts} compact /> : null}
         <div className="flex items-center gap-3">

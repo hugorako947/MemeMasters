@@ -97,7 +97,7 @@ export function TrainingPanel({
   ];
 
   return (
-    <div className="grid gap-4">
+    <div className="grid grid-cols-1 gap-4">
       <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label={tb("modes")}>
         {modes.map((m) => (
           <button
@@ -114,7 +114,7 @@ export function TrainingPanel({
         ))}
       </div>
 
-      <section className="grid gap-4 rounded-2xl border-2 border-ink bg-surface p-4" aria-labelledby="mm-training">
+      <section className="grid grid-cols-1 gap-4 rounded-2xl border-2 border-ink bg-surface p-4" aria-labelledby="mm-training">
         <div className="grid gap-1">
           <h3 id="mm-training" className="font-display text-3xl leading-none">
             {t("title")}
@@ -162,7 +162,7 @@ export function TrainingPanel({
           )}
         </div>
 
-        <div className="grid gap-2">
+        <div className="grid grid-cols-1 gap-2">
           <h4 id="mm-training-difficulty" className="font-extrabold">
             {t("difficulty")}
           </h4>
@@ -183,7 +183,7 @@ export function TrainingPanel({
           </div>
         </div>
 
-        <div className="grid gap-2 rounded-xl bg-paper p-3">
+        <div className="grid grid-cols-1 gap-2 rounded-xl bg-paper p-3">
           {/* Le bouton « Modifier » est à côté du titre : le joueur sait tout de suite qu'il peut changer ses commandes. */}
           <div className="flex items-center justify-between gap-2">
             <h4 className="min-w-0 truncate font-extrabold">{tc("title")}</h4>

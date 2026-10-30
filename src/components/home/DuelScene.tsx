@@ -6,7 +6,7 @@ import { CharacterBubble } from "./CharacterBubble";
 export async function DuelScene({ left, right }: { left: Card; right: Card }) {
   const t = await getTranslations("playerHome.battles");
   return (
-    <svg viewBox="0 0 360 140" role="img" aria-label={t("duelAlt")} className="mx-auto w-full max-w-sm">
+    <svg viewBox="0 0 360 140" role="img" aria-label={t("duelAlt")} className="mx-auto w-full min-w-0 max-w-sm">
       <CharacterBubble card={left} x={62} y={70} r={34} angle={0} id="mm-duel-left" />
       <CharacterBubble card={right} x={298} y={70} r={34} angle={180} id="mm-duel-right" />
       {/* Tir : éclair au bout du canon, une balle et sa traînée. */}

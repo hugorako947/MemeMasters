@@ -304,7 +304,10 @@ export function MatchScreen({ setup, roster, onQuit, onReplay }: { setup: MatchS
 
   return (
     <div
-      className="fixed inset-0 z-[60] touch-none overflow-hidden overscroll-none bg-[var(--mm-night)] text-ink select-none"
+      // Viewport dynamique (dvh/dvw) = zone réellement visible : sur un navigateur mobile en paysage
+      // (sans vrai plein écran), `inset-0` couvrirait le grand viewport derrière les barres du navigateur
+      // et la partie paraîtrait décalée. Ici elle remplit exactement ce que le joueur voit.
+      className="fixed left-0 top-0 z-[60] h-[100dvh] w-[100dvw] touch-none overflow-hidden overscroll-none bg-[var(--mm-night)] text-ink select-none"
       onPointerDown={(e) => {
         if (e.pointerType === "touch" && !touched) setTouched(true);
       }}
